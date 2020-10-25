@@ -407,15 +407,18 @@ class dimensionless(_units):
         if units is None :
             units = 'dimensionless'
         self.unit = self.checkUnit(units)
+        
+def customUnits(value,units):
+    return userUnits(value,units)
 
 class userUnits(_units):
-    classUnits = dictionary['customUnits']
+    classUnits = dictionary['userUnits']
     def __init__(self,value,units) :
         self.name = 'userUnits'
         self.kind = userUnits
         units = units.strip()
-        if units not in dictionary['customUnits'] :
-            dictionary['customUnits'].append(units)
+        if units not in dictionary['userUnits'] :
+            dictionary['userUnits'].append(units)
         self.value = self.checkValue(value)
         self.unit = self.checkUnit(units)
 

@@ -27,6 +27,7 @@ class uDigraph(object):
         self.fvf = None
         self.Memory = {} # (fromUnit,toUnit) : ( conversion factor , conversion path )
         self.fvf = None
+        self.print = False
         
     def addNode(self, node):
         if node in self.edges:
@@ -326,9 +327,6 @@ def _loadNetwork():
         if '_INVERSE' in unitKind :
             pass
 
-    if '_' in unitKind :
-        dictionary.pop(unitKind,None)
-
     # for unitKind in list(dictionary.keys()) :
     #     if '_REVERSE' in unitKind :
     #         for unitNode in 
@@ -487,10 +485,17 @@ def _loadNetwork():
                         network.addEdge(conversion(network.getNode(unitName), otherRate, network.edges[ network.getNode(unitName.split('/')[1]) ][1][ network.edges[ network.getNode(unitName.split('/')[1]) ][0].index(otherName) ]  ))
                         network.addEdge(conversion(otherRate, network.getNode(unitName), network.edges[ network.getNode(unitName.split('/')[1]) ][1][ network.edges[ network.getNode(unitName.split('/')[1]) ][0].index(otherName) ]  , True  ))
     
-    for dic in dictionary :
-        if '_' not in dic :
-            dictionary[dic] = tuple(dictionary[dic])
-    dictionary['customUnits'] = []
+    
+    toRemove = []
+    for unitKind in dictionary :
+        if '_' in unitKind :
+            toRemove.append(unitKind)
+        else : # if '_' not in unitKind :
+            dictionary[unitKind] = tuple(dictionary[unitKind])
+    dictionary['userUnits'] = []
+    
+    for unitKind in toRemove :
+        dictionary.pop(unitKind)
     
     return network
 

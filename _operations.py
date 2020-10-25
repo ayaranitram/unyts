@@ -52,13 +52,12 @@ def unitProduct(unit1,unit2):
         else :
             return unit1
     
-    if convertible(unit1,unit2) :
+    if unit1 != unit2 and convertible(unit1,unit2) :
         return unitProduct(unit1,unit1) 
     
     U1bas , U1pow = unitBasePower(unit1)
     U2bas , U2pow = unitBasePower(unit2)
 
-    
     if convertible(U1bas,U2bas) :
         Upow = U1pow+U2pow
         if Upow == -1 :
@@ -109,7 +108,7 @@ def unitDivision(unit1,unit2):
         else :
             return unit1
     
-    if convertible(unit1,unit2) :
+    if unit1 != unit2 and convertible(unit1,unit2) :
         return unitDivision(unit1,unit1)   
         
     U1bas , U1pow = unitBasePower(unit1)

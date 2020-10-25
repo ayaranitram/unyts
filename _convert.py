@@ -8,19 +8,22 @@ Created on Sat Oct 24 15:57:27 2020
 
 from ._database import unitsNetwork
 from ._dictionaries import dictionary
-from ._searches import BFS, printPath
+from ._searches import BFS as _BFS, printPath as _printPath
 import numpy as np
 
 def convertible(fromUnit, toUnit,PrintPath=False) :
-    if converter(1,fromUnit,toUnit,PrintPath) != None :
-        return True
-    else :
+    try :
+        if converter(1,fromUnit,toUnit,PrintPath) != None :
+            return True
+        else :
+            return False
+    except :
         return False
     
     
 def convertUnit(value, fromUnit, toUnit, PrintConversionPath=False ) :
-    if type(PrintConversionPath) != bool :
-        if type(PrintConversionPath) == int or type(PrintConversionPath) == float :
+    if type(PrintConversionPath) is not bool :
+        if type(PrintConversionPath) in [ int , float ] :
             if PrintConversionPath > 1 :
                 PrintConversionPath = False
             else :
@@ -39,25 +42,80 @@ def convertUnit(value, fromUnit, toUnit, PrintConversionPath=False ) :
         return value
 
 
-def converter(value, fromUnit, toUnit, PrintConversionPath=True , AllowRecursion=unitsNetwork.RecursionLimit , Start=True) :
+def _applyConversion(value,conversionPath,PrintConversionPath=True) :
+    if PrintConversionPath :
+        # print( "\n converting from '" + str(fromUnit) + "' to '" + str(toUnit) + "'")
+        print( "\n converting from '" + str(conversionPath[0]) + "' to '" + str(conversionPath[-1]) + "'\n  " + _printPath(conversionPath) )
+    for conversion in range(len(conversionPath)-1) :
+        value = unitsNetwork.convert(value,conversionPath[conversion],conversionPath[conversion+1])
+    return value
+
+
+def converter(value, fromUnit, toUnit, PrintConversionPath=None , AllowRecursion=unitsNetwork.RecursionLimit , Start=True) :
     """
-    returns the received value (string, float or numpy array) transformed
+    returns the received value (integer, float or numpy array) transformed
     from the units 'fromUnit' to the units 'tuUnits
     """
     
-    # dimensionless units does not require conversion
-    if fromUnit.lower().strip(' ()') in dictionary['dimensionless'] or toUnit.lower().strip(' ()') in dictionary['dimensionless'] :
+    if type(value) is list or type(value) is tuple :
+        value = np.array(value)
+    
+    PrintConversionPath = unitsNetwork.print if PrintConversionPath is None else bool(PrintConversionPath)
+    
+    # strip off the parentesis, the string o
+    if type(fromUnit) is str and fromUnit not in ('"',"'") :
+        fromUnit = fromUnit.strip("( ')").strip('( ")').strip("'")
+    if type(toUnit) is str and toUnit not in ('"',"'") :
+        toUnit = toUnit.strip("( ')").strip('( ")').strip("'")
+        
+    # no conversin required if from and to units the same units
+    if fromUnit == toUnit :
         return value
     
+    # no conversin required if from and to units are dates
+    if fromUnit in dictionary['date'] and toUnit in dictionary['date'] :
+        return value
+    
+    # dimensionless units does not require conversion
+    if fromUnit.lower().strip(' ()') in dictionary['dimensionless'] and toUnit.lower().strip(' ()') in dictionary['dimensionless'] :
+        return value
+    
+    # from dimensionless to ratio of same units
+    if fromUnit.lower().strip(' ()') in dictionary['dimensionless'] and '/' in toUnit and len(toUnit.split('/'))==2 and toUnit.lower().split('/')[0].strip(' ()') == toUnit.lower().split('/')[1].strip(' ()')  :
+        return value
+    
+    # from ratio of same units to dimensionless
+    if toUnit.lower().strip(' ()') in dictionary['dimensionless'] and '/' in fromUnit and len(fromUnit.split('/'))==2 and fromUnit.lower().split('/')[0].strip(' ()') == fromUnit.lower().split('/')[1].strip(' ()')  :
+        return value
+    
+    # if inverted ratios
+    if ( '/' in fromUnit and len(fromUnit.split('/'))==2 ) and ( '/' in toUnit and len(toUnit.split('/'))==2 ) and ( fromUnit.split('/')[0].strip() == toUnit.split('/')[1].strip() ) and ( fromUnit.split('/')[1].strip() == toUnit.split('/')[0].strip() ) :
+        return 1/value
+    
     # reset memory for this variable
-    if Start==True :
+    if Start :
         unitsNetwork.previous=[]
         
-    # strip off the parentesis, the string o
-    if type(fromUnit) == str and fromUnit not in ('"',"'") :
-        fromUnit = fromUnit.strip("( ')").strip('"')
-    if type(toUnit) == str and toUnit not in ('"',"'") :
-        toUnit = toUnit.strip("( ')").strip('"')
+    # check if already solved and memorized
+    if (fromUnit,toUnit) in unitsNetwork.Memory :
+        conversionPath = unitsNetwork.Memory[(fromUnit,toUnit)]
+        return _applyConversion(value, conversionPath, PrintConversionPath)
+    
+    # check if path is alredy defined in network
+    conversionPath = _BFS( unitsNetwork, unitsNetwork.getNode(fromUnit), unitsNetwork.getNode(toUnit) )
+    if conversionPath is not None :
+        unitsNetwork.Memory[(fromUnit,toUnit)] = conversionPath
+        return _applyConversion(value, conversionPath, PrintConversionPath)
+    
+    # check if pair from-to already visited
+    if (fromUnit,toUnit) in unitsNetwork.previous :
+        AllowRecursion = 0 # stop recursion here
+    # append this pair to this search history
+    unitsNetwork.previous.append((fromUnit,toUnit))
+    
+    #
+    
+        
     
 
     
@@ -87,8 +145,8 @@ def converter(value, fromUnit, toUnit, PrintConversionPath=True , AllowRecursion
     unitsNetwork.previous.append((fromUnit,toUnit))
     # try to found conversion path for the input parameters un the defined graph:
     try :
-        conversionPath = BFS(unitsNetwork, unitsNetwork.getNode(fromUnit), unitsNetwork.getNode(toUnit) )
-    except : # if the units doesn't exists the BFS function returns error
+        conversionPath = _BFS(unitsNetwork, unitsNetwork.getNode(fromUnit), unitsNetwork.getNode(toUnit) )
+    except : # if the units doesn't exists the _BFS function returns error
         conversionPath = None
     
     # if direct conversion fail, try to divide the unit to it fundamental units
@@ -230,7 +288,7 @@ def converter(value, fromUnit, toUnit, PrintConversionPath=True , AllowRecursion
         value = np.array(value)
     if PrintConversionPath == True and conversionPath != None:
         # print( "\n converting from '" + str(fromUnit) + "' to '" + str(toUnit) + "'")
-        print( "\n converting from '" + str(fromUnit) + "' to '" + str(toUnit) + "'\n  " + printPath(conversionPath) )
+        print( "\n converting from '" + str(fromUnit) + "' to '" + str(toUnit) + "'\n  " + _printPath(conversionPath) )
     for conversion in range(len(conversionPath)-1) :
         value = unitsNetwork.convert(value,conversionPath[conversion],conversionPath[conversion+1])
     # if type(value) == float and int(value) == value :
