@@ -45,7 +45,10 @@ class uDigraph(object):
     def childrenOf(self, node):
         return self.edges[node][0]
     def hasNode(self, node):
-        return node in self.edges
+        if type(node) is str :
+            return node in [ n.getName() for n in self.edges ]
+        else :
+            return node in self.edges
     def getNode(self, name):
         for n in self.edges:
             if n.getName() == name:
@@ -358,7 +361,7 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('Kelvin'), network.getNode('Rankine'), lambda t: t*5/9 ))
 
     
-    # lenght conversions
+    # length conversions
     network.addEdge(conversion(network.getNode('yard'), network.getNode('meter'), lambda d: d*0.9144 ))
     network.addEdge(conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048 ))
     network.addEdge(conversion(network.getNode('inch'), network.getNode('thou'), lambda d: d*1000 ))
@@ -500,5 +503,54 @@ def _loadNetwork():
     return network
 
 
+def _create_rates() :
+    # volumes / time
+    rates = list(dictionary['rate']) if 'rate' in dictionary else []
+    for volume in dictionary['volume'] :
+        for time in dictionary['time'] :
+            rates.append( volume+'/'+time )
+    # data / time
+    for data in dictionary['dataBYTE'] :
+        for time in dictionary['time'] :
+            rates.append( data+'/'+time )
+    for data in dictionary['dataBIT'] :
+        for time in dictionary['time'] :
+            rates.append( data+'/'+time )
+    dictionary['rate'] = tuple(set(rates))    
+
+
+def _create_volumeRatio() :
+    # volume / volume
+    ratio = list(dictionary['volumeRatio']) if 'volumeRatio' in dictionary else []
+    for numerator in dictionary['volume'] :
+        for denominator in dictionary['volume'] :
+            ratio = numerator+'/'+denominator
+    dictionary['volumeRatio'] = tuple(set(ratio))
+
+
+def _create_density() :
+    # mass / volume
+    density = list(dictionary['density']) if 'density' in dictionary else []
+    for numerator in dictionary['mass'] :
+        for denominator in dictionary['volume'] :
+            density = numerator+'/'+denominator
+    dictionary['density'] = tuple(set(density))
+
+
+def _create_speed() :
+    # length / time
+    speed = list(dictionary['speed']) if 'speed' in dictionary else []
+    for length in dictionary['length'] :
+        for time in dictionary['time'] :
+            speed.append( length+'/'+time )
+    dictionary['speed'] = tuple(set(speed))
+
+
 # load the network into an instance of the grath database
 unitsNetwork = _loadNetwork()
+
+# load the diccionary with ratio unis
+_create_rates()
+_create_volumeRatio()
+_create_density()
+_create_speed()

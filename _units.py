@@ -8,7 +8,7 @@ Created on Sat Oct 24 14:34:59 2020
 import numpy as np
 from ._errors import WrongUnits, WrongValue
 from ._operations import unitProduct, unitDivision, unitBasePower
-from ._convert import converter, convertible
+from ._convert import converter as _converter, convertible as _convertible
 from ._dictionaries import dictionary
 
 unitClasses = {}
@@ -47,7 +47,7 @@ class _units(object) :
                 newunit = newunit.unit
             except :
                 raise WrongUnits
-        return self.kind( converter(self.value,self.unit,newunit) , newunit )
+        return self.kind( _converter(self.value,self.unit,newunit) , newunit )
     def to(self,newunit):
         return self.convert(newunit)
     
@@ -60,7 +60,7 @@ class _units(object) :
                 if self.unit == other.unit :
                     return self.kind(self.value + other.value,self.unit)
                 else :
-                    return self.kind(self.value + converter(other.value,other.unit,self.unit),self.unit)
+                    return self.kind(self.value + _converter(other.value,other.unit,self.unit),self.unit)
             if other.kind is dimensionless :
                 return self.kind(self.value + other.value * self.value ,self.unit)
             else : # add different units
@@ -87,10 +87,10 @@ class _units(object) :
                 return self.kind(self.value * other.value,self.unit)
             elif self.unit == other.unit :
                 return units(self.value * other.value,unitProduct(self.unit,other.unit))
-            elif convertible(other.unit,self.unit) :
-                return units(self.value * converter(other.value,other.unit,self.unit),unitProduct(self.unit,other.unit))
-            elif convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
-                factor = converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
+            elif _convertible(other.unit,self.unit) :
+                return units(self.value * _converter(other.value,other.unit,self.unit),unitProduct(self.unit,other.unit))
+            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
+                factor = _converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
                 return units(self.value * other.value * factor , unitProduct(self.unit,other.unit))
             else :
                 return units(self.value * other.value,unitProduct(self.unit,other.unit))
@@ -112,10 +112,10 @@ class _units(object) :
                 return self.kind(self.value ** other.value,self.unit)
             elif self.unit == other.unit :
                 return units(self.value ** other.value,self.unit+'^'+other.unit)
-            elif convertible(other.unit,self.unit) :
-                return units(self.value ** converter(other.value,other.unit,self.unit),self.unit+'^'+self.unit)
-            elif convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
-                factor = converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
+            elif _convertible(other.unit,self.unit) :
+                return units(self.value ** _converter(other.value,other.unit,self.unit),self.unit+'^'+self.unit)
+            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
+                factor = _converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
                 return units(self.value ** (other.value * factor) , self.unit+'^'+other.unit)
             else :
                 return units(self.value ** other.value,self.unit+'^'+other.unit)
@@ -140,10 +140,10 @@ class _units(object) :
                 return self.kind(self.value / other.value,self.unit)
             elif self.unit == other.unit :
                 return units(self.value / other.value,unitDivision(self.unit,other.unit))
-            elif convertible(other.unit,self.unit) :
-                return units(self.value / converter(other.value,other.unit,self.unit),unitDivision(self.unit,other.unit))
-            elif convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
-                factor = converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
+            elif _convertible(other.unit,self.unit) :
+                return units(self.value / _converter(other.value,other.unit,self.unit),unitDivision(self.unit,other.unit))
+            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
+                factor = _converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
                 return units(self.value / (other.value * factor) , unitDivision(self.unit,other.unit))
             else :
                 return units(self.value / other.value,unitDivision(self.unit,other.unit))
@@ -165,10 +165,10 @@ class _units(object) :
                 return self.kind(self.value // other.value,self.unit)
             elif self.unit == other.unit :
                 return units(self.value // other.value,unitDivision(self.unit,other.unit))
-            elif convertible(other.unit,self.unit) :
-                return units(self.value // converter(other.value,other.unit,self.unit),unitDivision(self.unit,other.unit))
-            elif convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
-                factor = converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
+            elif _convertible(other.unit,self.unit) :
+                return units(self.value // _converter(other.value,other.unit,self.unit),unitDivision(self.unit,other.unit))
+            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
+                factor = _converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
                 return units(self.value // (other.value * factor) , unitDivision(self.unit,other.unit))
             else :
                 return units(self.value // other.value,unitDivision(self.unit,other.unit))
@@ -190,10 +190,10 @@ class _units(object) :
                 return self.kind(self.value % other.value,self.unit)
             elif self.unit == other.unit :
                 return units(self.value % other.value,self.unit)
-            elif convertible(other.unit,self.unit) :
-                return units(self.value % converter(other.value,other.unit,self.unit),self.unit)
-            elif convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
-                factor = converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
+            elif _convertible(other.unit,self.unit) :
+                return units(self.value % _converter(other.value,other.unit,self.unit),self.unit)
+            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
+                factor = _converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
                 return units(self.value % (other.value * factor) , self.unit)
             else :
                 return units(self.value % other.value,self.unit)
@@ -271,11 +271,11 @@ class _units(object) :
         return self.value
     
     def checkValue(self,value):
-        if type(value) == list or type(value) == list :
+        if type(value) in [ list , tuple ] :
             return np.array(value)
-        elif type(value) == int or type(value) == float :
+        elif type(value) in [ int , float ] :
             return value
-        elif type(value) == np.ndarray :
+        elif type(value) is np.ndarray :
             return value
         # elif type(value) == pandas.core.frame.DataFrame :
         #     return value
@@ -325,11 +325,11 @@ class weight(_units):
         self.value = self.checkValue(value)
         self.unit = self.checkUnit(units)
 
-class lenght(_units):
-    classUnits = dictionary['lenght']
+class length(_units):
+    classUnits = dictionary['length']
     def __init__(self,value,units) :
-        self.name = 'lenght'
-        self.kind = lenght
+        self.name = 'length'
+        self.kind = length
         self.value = self.checkValue(value)
         self.unit = self.checkUnit(units)
 
@@ -365,13 +365,13 @@ class compressibility(_units):
         self.value = self.checkValue(value)
         self.unit = self.checkUnit(units)
 
-# class volumeRatio(_units):
-#     classUnits = dictionary['volumeRatio']
-#     def __init__(self,value,units) :
-#         self.name = 'volumeRatio'
-#         self.kid = volumeRatio
-#         self.value = self.checkValue(value)
-#         self.unit = self.checkUnit(units)
+class volumeRatio(_units):
+    classUnits = dictionary['volumeRatio']
+    def __init__(self,value,units) :
+        self.name = 'volumeRatio'
+        self.kid = volumeRatio
+        self.value = self.checkValue(value)
+        self.unit = self.checkUnit(units)
 
 class rate(_units):
     classUnits = dictionary['rate']
@@ -380,7 +380,18 @@ class rate(_units):
         self.kind = rate
         self.value = self.checkValue(value)
         self.unit = self.checkUnit(units)
-        
+
+class speed(_units):
+    classUnits = dictionary['speed']
+    def __init__(self,value,units) :
+        self.name = 'speed'
+        self.kind = speed
+        self.value = self.checkValue(value)
+        self.unit = self.checkUnit(units)
+
+def velocity(value,units) :
+    return speed(value,units)
+
 # class productivityIndex(_units):
 #     classUnits = dictionary['productivityIndex']
 #     def __init__(self,value,units) :
@@ -426,8 +437,8 @@ class userUnits(_units):
 #     if value != None and units != None :
 #         if units in dictionary['temperature'] :
 #             return temperature(value,units)
-#         elif units in dictionary['lenght'] :
-#             return lenght(value,units)
+#         elif units in dictionary['length'] :
+#             return length(value,units)
 #         elif units in dictionary['area'] :
 #             return area(value,units)
 #         elif units in dictionary['volume'] :

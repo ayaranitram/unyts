@@ -7,6 +7,7 @@ Created on Sat Oct 24 17:52:34 2020
 """
 
 __all__ = ['BFS']
+__version__ = '0.1.20-10-25'
 
 def BFS(graph, start, end, toPrint=False):
     """Assumes graph is a Digraph; start and end are nodes

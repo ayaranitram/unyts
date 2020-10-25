@@ -39,7 +39,7 @@ SI = {
     'z' : (lambda X: X*1.0E-21,lambda X: X*1.0E-21**2,lambda X: X*1.0E-21) , # zepto
     'y' : (lambda X: X*1.0E-24,lambda X: X*1.0E-24**2,lambda X: X*1.0E-24) , # yocto
     }
-SI_order = (('lenght','pressure','weight','mass','time','dataBIT',),('area',),('rate','volume',),('dataBYTE',))
+SI_order = (('length','pressure','weight','mass','time','dataBIT',),('area',),('rate','volume',),('dataBYTE',))
 DATA = {          
     'Y' : (lambda X: X*1.0E+24,lambda X: X*2**80) , # yotta
     'Z' : (lambda X: X*1.0E+21,lambda X: X*2**70) , # zetta
@@ -86,10 +86,10 @@ dictionary['temperature_NAMES'] = {'Celsius' : ('Centigrades','C','DEG C','DEGRE
                      'Rankine' : ('R','DEG R','DEGREES R') ,
                      'Kelvin' : ('K','DEG K','DEGREES K') }
 
-dictionary['lenght'] = []
-dictionary['lenght_NAMES_UPPER_REVERSE'] = {'meter': ('m','meter')} 
-dictionary['lenght_SI'] = ('m',)
-dictionary['lenght_UK_NAMES_UPPER_REVERSE'] = {'thou' : ('th',) ,
+dictionary['length'] = []
+dictionary['length_NAMES_UPPER_REVERSE'] = {'meter': ('m','meter')} 
+dictionary['length_SI'] = ('m',)
+dictionary['length_UK_NAMES_UPPER_REVERSE'] = {'thou' : ('th',) ,
              'inch' : ('in','"') ,
              'foot' : ('feet','ft',"'") ,
              'yard' : ('yd',) ,
