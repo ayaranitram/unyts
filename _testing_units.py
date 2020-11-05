@@ -8,10 +8,29 @@ Created on Sat Oct 24 18:38:33 2020
 
 from units import *
 
-a = lenght(3,'m')
-b = lenght(4,'yd')
+a = length(3,'m')
+print(a,type(a))
+b = length(4,'yd')
+print(b,type(b))
 c = a*b
+print(c,type(c))
 d = b*a
+print(d,type(d))
+e = a/b
+print(e,type(e))
+f = b/a
+print(f,type(f))
+g = c//b
+print(g,type(g))
+h = c//a
+print(h,type(h))
+i = -a
+print(i,type(i))
+j = abs(i)
+print(j,type(j))
+k = a*c
+print(k,type(k))
+
 
 print(a,b)
 print(a+b)
