@@ -42,7 +42,12 @@ def unitProduct(unit1,unit2):
     if type(unit1) is str and len(unit1.strip(' ()'))==0 :
         unit1 = 'dimensionless'
     if type(unit2) is str and len(unit2.strip(' ()'))==0 :
-        unit2 = 'dimensionless'    
+        unit2 = 'dimensionless'
+    
+    if type(unit1) is str and len(unit1.split('/'))==2 and unit1.split('/')[0]==unit1.split('/')[1] :
+        unit1 = 'dimensionless'
+    if type(unit2) is str and len(unit2.split('/'))==2 and unit2.split('/')[0]==unit2.split('/')[1] :
+        unit2 = 'dimensionless'
 
     if unit2.lower().strip(' ()') in dictionary['dimensionless'] :
         return unit1
@@ -98,6 +103,11 @@ def unitDivision(unit1,unit2):
         unit1 = 'dimensionless'
     if type(unit2) is str and len(unit2.strip(' ()'))==0 :
         unit2 = 'dimensionless'    
+    
+    if type(unit1) is str and len(unit1.split('/'))==2 and unit1.split('/')[0]==unit1.split('/')[1] :
+        unit1 = 'dimensionless'
+    if type(unit2) is str and len(unit2.split('/'))==2 and unit2.split('/')[0]==unit2.split('/')[1] :
+        unit2 = 'dimensionless'
     
     if unit2.lower().strip(' ()') in dictionary['dimensionless'] :
         return unit1
