@@ -360,7 +360,6 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('Rankine'), network.getNode('Kelvin'), lambda t: t*9/5 ))
     network.addEdge(conversion(network.getNode('Kelvin'), network.getNode('Rankine'), lambda t: t*5/9 ))
 
-    
     # length conversions
     network.addEdge(conversion(network.getNode('yard'), network.getNode('meter'), lambda d: d*0.9144 ))
     network.addEdge(conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048 ))
@@ -443,7 +442,6 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('kilogram mass'), network.getNode('kilogram force'), lambda f: f* StandadEarthGravity ))
     network.addEdge(conversion(network.getNode('Dyne'), network.getNode('Newton'), lambda f: f*1E-5 ))
     network.addEdge(conversion(network.getNode('Newton'), network.getNode('Dyne'), lambda f: f*1E5 ))
-
 
     # density conversion
     network.addEdge(conversion(network.getNode('API'), network.getNode('SgO'), lambda d: 141.5/(131.5+d) ))

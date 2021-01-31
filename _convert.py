@@ -79,8 +79,8 @@ def _splitProduct(unit) :
 
 def converter(value, fromUnit, toUnit, PrintConversionPath=None , AllowRecursion=unitsNetwork.RecursionLimit , Start=True) :
     """
-    returns the received value (integer, float or numpy array) transformed
-    from the units 'fromUnit' to the units 'tuUnits
+    returns the received value (integer, float, array, series, dataframe, etc) 
+    transformed from the units 'fromUnit' to the units 'toUnits.
     """
     
     if type(value) is list or type(value) is tuple :
@@ -91,32 +91,36 @@ def converter(value, fromUnit, toUnit, PrintConversionPath=None , AllowRecursion
     # strip off the parentesis, the string o
     if type(fromUnit) is str and fromUnit not in ('"',"'") :
         fromUnit = fromUnit.strip("( ')").strip('( ")').strip("'")
+    else :
+        fromUnit = fromUnit.strip("( )")
     if type(toUnit) is str and toUnit not in ('"',"'") :
         toUnit = toUnit.strip("( ')").strip('( ")').strip("'")
+    else :
+        toUnit = toUnit.strip("( )")
         
-    # no conversin required if from and to units the same units
+    # no conversion required if 'from' and 'to' units are the same units
     if fromUnit == toUnit :
-        return value if value is not None else (lambda x: x)
+        return (lambda x: x) if value is None else value
     
-    # no conversin required if from and to units are dates
+    # no conversion required if 'from' and 'to' units are dates
     if fromUnit in dictionary['date'] and toUnit in dictionary['date'] :
-        return value if value is not None else (lambda x: x)
+        return (lambda x: x) if value is None else value
     
     # dimensionless units does not require conversion
-    if fromUnit.lower().strip(' ()') in dictionary['dimensionless'] and toUnit.lower().strip(' ()') in dictionary['dimensionless'] :
-        return value if value is not None else (lambda x: x)
+    if fromUnit.lower() in dictionary['dimensionless'] and toUnit.lower() in dictionary['dimensionless'] :
+        return (lambda x: x) if value is None else value
     
     # from dimensionless to ratio of same units
-    if fromUnit.lower().strip(' ()') in dictionary['dimensionless'] and '/' in toUnit and len(toUnit.split('/'))==2 and toUnit.lower().split('/')[0].strip(' ()') == toUnit.lower().split('/')[1].strip(' ()')  :
-        return value if value is not None else (lambda x: x)
+    if fromUnit.lower() in dictionary['dimensionless'] and '/' in toUnit and len(toUnit.split('/'))==2 and toUnit.lower().split('/')[0].strip(' ()') == toUnit.lower().split('/')[1].strip(' ()')  :
+        return (lambda x: x) if value is None else value
     
     # from ratio of same units to dimensionless
-    if toUnit.lower().strip(' ()') in dictionary['dimensionless'] and '/' in fromUnit and len(fromUnit.split('/'))==2 and fromUnit.lower().split('/')[0].strip(' ()') == fromUnit.lower().split('/')[1].strip(' ()')  :
-        return value if value is not None else (lambda x: x)
+    if toUnit.lower() in dictionary['dimensionless'] and '/' in fromUnit and len(fromUnit.split('/'))==2 and fromUnit.lower().split('/')[0].strip(' ()') == fromUnit.lower().split('/')[1].strip(' ()')  :
+        return (lambda x: x) if value is None else value
     
     # if inverted ratios
     if ( '/' in fromUnit and len(fromUnit.split('/'))==2 ) and ( '/' in toUnit and len(toUnit.split('/'))==2 ) and ( fromUnit.split('/')[0].strip() == toUnit.split('/')[1].strip() ) and ( fromUnit.split('/')[1].strip() == toUnit.split('/')[0].strip() ) :
-        return 1/value if value is not None else (lambda x: 1/x)
+        return (lambda x: 1/x) if value is None else 1/value
     
     # reset memory for this variable
     if Start :
@@ -127,7 +131,7 @@ def converter(value, fromUnit, toUnit, PrintConversionPath=None , AllowRecursion
         # conversionPath = unitsNetwork.Memory[(fromUnit,toUnit)]
         # return _applyConversion(value, conversionPath, PrintConversionPath) if value is not None else _lambdaConversion(fromUnit,toUnit)
         conversionLambda = unitsNetwork.Memory[(fromUnit,toUnit)]
-        return conversionLambda(value) if value is not None else conversionLambda
+        return conversionLambda if value is None else conversionLambda(value)
     
     # check if path is alredy defined in network
     if unitsNetwork.hasNode(fromUnit) and unitsNetwork.hasNode(toUnit) :
