@@ -522,7 +522,7 @@ def _create_volumeRatio() :
     ratio = list(dictionary['volumeRatio']) if 'volumeRatio' in dictionary else []
     for numerator in dictionary['volume'] :
         for denominator in dictionary['volume'] :
-            ratio = numerator+'/'+denominator
+            ratio.append( numerator+'/'+denominator )
     dictionary['volumeRatio'] = tuple(set(ratio))
 
 
@@ -531,7 +531,7 @@ def _create_density() :
     density = list(dictionary['density']) if 'density' in dictionary else []
     for numerator in dictionary['mass'] :
         for denominator in dictionary['volume'] :
-            density = numerator+'/'+denominator
+            density.append( numerator+'/'+denominator )
     dictionary['density'] = tuple(set(density))
 
 
