@@ -8,6 +8,10 @@ Created on Sat Oct 24 18:38:33 2020
 
 from units import *
 
+convert(1,'m','mm',True)
+convert(1,'m','in',True)
+convert(1,'g/cc','lb/ft3',True)
+
 a = length(3,'m')
 print(a,type(a))
 b = length(4,'yd')
