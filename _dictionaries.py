@@ -153,7 +153,7 @@ dictionary['pressure_NAMES_UPPER_REVERSE_SPACES'] = {
                                               'absolute psi' : ('psia','lb/in2','absolute pound/square inch','psi absolute'),
                                               'absolute bar' : ('bara','barsa','abs bar','bar absolute'),
                                               'atmosphere' : ('atm',),
-                                              'Pascal' : ('Pa',),
+                                              'Pascal' : ('Pa','Newton/m2'),
                                               'kPa' : ('KPa','kilopascal'),
                                               'hPa' : ('hectopascal',),
                                               'Torr' : ('millimeters of mercury',),
