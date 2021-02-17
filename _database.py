@@ -414,13 +414,13 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('bar gauge'), network.getNode('bara'), lambda p: p+1.01325))
     network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('bar gauge'), lambda p: p-1.01325))
     
-    network.addEdge(conversion(network.getNode('bara'), network.getNode('Pascal'), lambda p: p*100E3))
-    network.addEdge(conversion(network.getNode('atmosphere'), network.getNode('absolute bar'), lambda p: p*1.01325))
-    network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('absolute psi'), lambda p: p*14.5038))
+    network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('absolute psi'), lambda p: p*14.503773773))
+    network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('Pascal'), lambda p: p*100E3))
+    # network.addEdge(conversion(network.getNode('atmosphere'), network.getNode('absolute bar'), lambda p: p*1.01325))
     network.addEdge(conversion(network.getNode('atmosphere'), network.getNode('Pascal'), lambda p: p*101325))
     network.addEdge(conversion(network.getNode('atmosphere'), network.getNode('Torr'), lambda p: p*760))
 
-    # conversion weight
+    # mass conversion
     network.addEdge(conversion(network.getNode('grain'), network.getNode('milligrams'), lambda w: w*64.7989))
     network.addEdge(conversion(network.getNode('pennyweight'), network.getNode('grain'), lambda w: w*24))
     network.addEdge(conversion(network.getNode('dram'), network.getNode('pound'), lambda w: w/256))
@@ -432,9 +432,10 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('short hundredweight'), network.getNode('pound'), lambda w: w*100))
     network.addEdge(conversion(network.getNode('short ton'), network.getNode('short hundredweight'), lambda w: w*20))
     network.addEdge(conversion(network.getNode('long ton'), network.getNode('long hundredweight'), lambda w: w*20))
+    
     network.addEdge(conversion(network.getNode('metric ton'), network.getNode('kilogram'), lambda w: w*1000))
     network.addEdge(conversion(network.getNode('kilogram'), network.getNode('gram'), lambda w: w*1000))
-    network.addEdge(conversion(network.getNode('pound'), network.getNode('gram'), lambda w: w*453.59237))
+    # network.addEdge(conversion(network.getNode('pound'), network.getNode('gram'), lambda w: w*453.59237))
     network.addEdge(conversion(network.getNode('pound'), network.getNode('kilogram'), lambda w: w*0.45359237))
     
     # force conversion
