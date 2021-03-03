@@ -120,7 +120,7 @@ dictionary['volume_UK_NAMES_UPPER_REVERSE_PLURALwS'] = { 'fuild ounce' : ('fl oz
                                        'gallonUK' : ('gal','galUK','UKgal','UKgallon','gallon'),
                                        'gallonUS' : ('gal','galUS','USgal','USgallon','gallon'),
     }
-dictionary['volume_NAMES_UPPER_REVERSE_PLURALwS_SPACES'] = { 'litre' : ('l','liter','liter',),
+dictionary['volume_NAMES_UPPER_REVERSE_PLURALwS_SPACES'] = { 'litre' : ('l','liter',),
                                     'mililitre' : ('ml','mililiter','cubic centimeter'),
                                     'centilitre' : ('cl','centiliter'),
                                     'decilitre' : ('dl','deciliter') ,
