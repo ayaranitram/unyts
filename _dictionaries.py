@@ -260,7 +260,7 @@ dictionary['force_NAMES_SPACES_RECURSIVE_UPPER_REVERSE'] = {'Newton':('N','newto
 
 dictionary['productivityIndex'] = []
 dictionary['productivityIndex_UPPER_NAMES_REVERSE'] = {'stb/day/psi':('STB/DAY/','stbd/psi','stbd/psia','stb/day/psia','stb/day-psi','stb/day-psia','stb/d/psi'),
-                                                       'sm3/day/bar':('SM3/DAY/','sm3/d/b','sm3d/bar','sm3d/bara','sm3/day/bara','sm3/day-bar','sm3/day-bara')}
+                                                       'sm3/day/bar':('SM3/DAY/','sm3/d/b','sm3d/bar','sm3d/bara','sm3/day/bara','sm3/day-bar','sm3/day-bara'),
                                                        'sm3/day/KPa':('sm3d/KPa','sm3d/KPa','sm3/day-KPa','sm3/d/KPa')}
 
 dictionary['pressureGradient'] = []
