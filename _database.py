@@ -34,6 +34,7 @@ class uDigraph(object):
             raise ValueError('Duplicate node')
         else:
             self.edges[node] = [],[]
+
     def addEdge(self, edge , reverse=False):
         src = edge.getSource()
         dest = edge.getDestination()
@@ -341,11 +342,11 @@ def _loadNetwork():
     # network.addEdge(conversion(network.getNode('second'), network.getNode('millisecond'), lambda t: t*1000 ))
     network.addEdge(conversion(network.getNode('minute'), network.getNode('second'), lambda t: t*60 ))
     network.addEdge(conversion(network.getNode('hour'), network.getNode('minute'), lambda t: t*60 ))
-    network.addEdge(conversion(network.getNode('day'), network.getNode('hour'), lambda t: t*60 ))
-    network.addEdge(conversion(network.getNode('day'), network.getNode('month'), lambda t: t/365.25*12 ))
+    network.addEdge(conversion(network.getNode('day'), network.getNode('hour'), lambda t: t*24 ))
+    network.addEdge(conversion(network.getNode('day'), network.getNode('month'), lambda t: t/36525/100*12 ))
     network.addEdge(conversion(network.getNode('week'), network.getNode('day'), lambda t: t*7 ))
     network.addEdge(conversion(network.getNode('year'), network.getNode('month'), lambda t: t*12 ))
-    network.addEdge(conversion(network.getNode('year'), network.getNode('day'), lambda t: t*365.25 ))
+    network.addEdge(conversion(network.getNode('year'), network.getNode('day'), lambda t: t*36525/100 ))
     network.addEdge(conversion(network.getNode('lustrum'), network.getNode('year'), lambda t: t*5 ))
     network.addEdge(conversion(network.getNode('decade'), network.getNode('year'), lambda t: t*10 ))
     network.addEdge(conversion(network.getNode('century'), network.getNode('year'), lambda t: t*100 ))
@@ -361,8 +362,8 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('Kelvin'), network.getNode('Rankine'), lambda t: t*5/9 ))
 
     # length conversions
-    network.addEdge(conversion(network.getNode('yard'), network.getNode('meter'), lambda d: d*0.9144 ))
-    network.addEdge(conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048 ))
+    network.addEdge(conversion(network.getNode('yard'), network.getNode('meter'), lambda d: d*9144/10000 ))
+    # network.addEdge(conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048 ))
     network.addEdge(conversion(network.getNode('inch'), network.getNode('thou'), lambda d: d*1000 ))
     network.addEdge(conversion(network.getNode('foot'), network.getNode('inch'), lambda d: d*12))
     network.addEdge(conversion(network.getNode('yard'), network.getNode('foot'), lambda d: d*3))
@@ -371,15 +372,15 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('mile'), network.getNode('furlong'), lambda d: d*8))
     network.addEdge(conversion(network.getNode('league'), network.getNode('mile'), lambda d: d*3))
     network.addEdge(conversion(network.getNode('nautical mile'), network.getNode('meter'), lambda d: d*1852))
-    network.addEdge(conversion(network.getNode('rod'), network.getNode('yard'), lambda d: d*5.5))
+    network.addEdge(conversion(network.getNode('rod'), network.getNode('yard'), lambda d: d*55/10))
     
     # area conversions
     network.addEdge(conversion(network.getNode('square mile'), network.getNode('acre'), lambda d: d*640 ))
     network.addEdge(conversion(network.getNode('acre'), network.getNode('square yard'), lambda d: d*4840 ))
-    network.addEdge(conversion(network.getNode('square rod'), network.getNode('square yard'), lambda d: d*30.25))
+    network.addEdge(conversion(network.getNode('square rod'), network.getNode('square yard'), lambda d: d*3025/100))
     network.addEdge(conversion(network.getNode('square yard'), network.getNode('square foot'), lambda d: d*9))
     network.addEdge(conversion(network.getNode('square foot'), network.getNode('square inch'), lambda d: d*144))
-    network.addEdge(conversion(network.getNode('square foot'), network.getNode('square meter'), lambda d: d*0.3048**2))
+    network.addEdge(conversion(network.getNode('square foot'), network.getNode('square meter'), lambda d: d*(3048**2)/(10000**2)))
     network.addEdge(conversion(network.getNode('Darcy'), network.getNode('mD'), lambda d: d*1000 ))
     # network.addEdge(conversion(network.getNode('m*m'), network.getNode('m'), lambda d: d**0.5 ))
     # network.addEdge(conversion(network.getNode('m'), network.getNode('m*m'), lambda d: d**2 ))
@@ -399,8 +400,8 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('quart'), lambda v: v*4))
     network.addEdge(conversion(network.getNode('gallonUS'), network.getNode('cubic inch'), lambda v: v*231))
     network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('liter'), lambda v: v* 4.54609))
-    network.addEdge(conversion(network.getNode('cubic foot'), network.getNode('cubic meter'), lambda v: v*0.3048**3))  
-    network.addEdge(conversion(network.getNode('standard cubic foot'), network.getNode('standard cubic meter'), lambda v: v*0.3048**3)) 
+    network.addEdge(conversion(network.getNode('cubic foot'), network.getNode('cubic meter'), lambda v: v*(3048**3)/(10000**3)))  
+    network.addEdge(conversion(network.getNode('standard cubic foot'), network.getNode('standard cubic meter'), lambda v: v*(3048**3)/(10000**3))) 
     network.addEdge(conversion(network.getNode('standard barrel'), network.getNode('USgal'), lambda v: v*42))
     network.addEdge(conversion(network.getNode('standard cubic meter'), network.getNode('standard barrel'), lambda v: v*6.289814))
     network.addEdge(conversion(network.getNode('standard barrel'), network.getNode('standard cubic foot'), lambda v: v*5.614584))
@@ -414,8 +415,8 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('bar gauge'), network.getNode('bara'), lambda p: p+1.01325))
     network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('bar gauge'), lambda p: p-1.01325))
     
-    network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('absolute psi'), lambda p: p*14.503773773))
-    network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('Pascal'), lambda p: p*100E3))
+    network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('absolute psi'), lambda p: p*14.50377377322))
+    network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('Pascal'), lambda p: p*100000))
     # network.addEdge(conversion(network.getNode('atmosphere'), network.getNode('absolute bar'), lambda p: p*1.01325))
     network.addEdge(conversion(network.getNode('atmosphere'), network.getNode('Pascal'), lambda p: p*101325))
     network.addEdge(conversion(network.getNode('atmosphere'), network.getNode('Torr'), lambda p: p*760))
@@ -436,7 +437,7 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('metric ton'), network.getNode('kilogram'), lambda w: w*1000))
     network.addEdge(conversion(network.getNode('kilogram'), network.getNode('gram'), lambda w: w*1000))
     # network.addEdge(conversion(network.getNode('pound'), network.getNode('gram'), lambda w: w*453.59237))
-    network.addEdge(conversion(network.getNode('pound'), network.getNode('kilogram'), lambda w: w*0.45359237))
+    network.addEdge(conversion(network.getNode('pound'), network.getNode('kilogram'), lambda w: w*45359237/100000000))
     
     # force conversion
     # network.addEdge(conversion(network.getNode('kilogram'), network.getNode('kilogram force'), lambda f: f* converter(StandadEarthGravity,'m/s2','cm/s2',False) ))
