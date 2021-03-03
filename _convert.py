@@ -20,8 +20,9 @@ def convertible(fromUnit, toUnit,PrintPath=False) :
     except :
         return False
     
+defaultPrintConversionPath = True
     
-def convertUnit(value, fromUnit, toUnit, PrintConversionPath=False ) :
+def convertUnit(value, fromUnit, toUnit, PrintConversionPath=defaultPrintConversionPath ) :
     if type(PrintConversionPath) is not bool :
         if type(PrintConversionPath) in [ int , float ] :
             if PrintConversionPath > 1 :
@@ -42,7 +43,7 @@ def convertUnit(value, fromUnit, toUnit, PrintConversionPath=False ) :
         return value
 
 
-def _applyConversion(value,conversionPath,PrintConversionPath=True) :
+def _applyConversion(value,conversionPath,PrintConversionPath=defaultPrintConversionPath) :
     if PrintConversionPath :
         # print( "\n converting from '" + str(fromUnit) + "' to '" + str(toUnit) + "'")
         print( "\n converting from '" + str(conversionPath[0]) + "' to '" + str(conversionPath[-1]) + "'\n  " + _printPath(conversionPath) )
@@ -51,7 +52,7 @@ def _applyConversion(value,conversionPath,PrintConversionPath=True) :
     return value
 
 
-def _lambdaConversion(conversionPath,PrintConversionPath=True) :
+def _lambdaConversion(conversionPath,PrintConversionPath=defaultPrintConversionPath) :
     if PrintConversionPath :
         # print( "\n converting from '" + str(fromUnit) + "' to '" + str(toUnit) + "'")
         print( "\n converting from '" + str(conversionPath[0]) + "' to '" + str(conversionPath[-1]) + "'\n  " + _printPath(conversionPath) )
@@ -139,7 +140,7 @@ def converter(value, fromUnit, toUnit, PrintConversionPath=None , AllowRecursion
     else :
         conversionPath = None
     if conversionPath is not None :
-        unitsNetwork.Memory[(fromUnit,toUnit)] = _lambdaConversion(conversionPath,PrintConversionPath=False) 
+        unitsNetwork.Memory[(fromUnit,toUnit)] = _lambdaConversion(conversionPath,PrintConversionPath=defaultPrintConversionPath)   # PrintConversionPath=False
         return _applyConversion(value, conversionPath, PrintConversionPath) if value is not None else unitsNetwork.Memory[(fromUnit,toUnit)]
     
     # check if pair from-to already visited
