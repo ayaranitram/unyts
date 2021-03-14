@@ -440,37 +440,3 @@ class userUnits(_units):
             dictionary['userUnits'].append(units)
         self.value = self.checkValue(value)
         self.unit = self.checkUnit(units)
-
-# def makeUnit(value=None,units=None) :
-#     if value != None and units != None :
-#         if units in dictionary['temperature'] :
-#             return temperature(value,units)
-#         elif units in dictionary['length'] :
-#             return length(value,units)
-#         elif units in dictionary['area'] :
-#             return area(value,units)
-#         elif units in dictionary['volume'] :
-#             return volume(value,units)
-#         elif units in dictionary['pressure'] :
-#             return pressure(value,units)
-#         elif units in dictionary['weight'] :
-#             return weight(value,units)
-#         elif units in dictionary['density'] :
-#             return density(value,units)
-#         elif units in dictionary['compressibility'] :
-#             return compressibility(value,units)
-#         elif units in dictionary['volumeRatio'] :
-#             return volumeRatio(value,units)
-#         elif units in dictionary['rate'] :
-#             return rate(value,units)
-#         else :
-#             print('WARNING: unit "' + str(units) + '" not found in library, using customUnits.\n         Unit conversion is not possible.')
-#             dictionary['customUnits'].append(units)
-#             return userUnits(value, units)
-#     elif value != None or units != None :
-#         if units == None :
-#             raise WrongUnits('missing units, must be a string')
-#         else :
-#             raise WrongValue('missing value, may be float, integer, list, tuple or np.array')
-#     else :
-#         raise WrongValue
