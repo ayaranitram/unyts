@@ -10,14 +10,33 @@ __all__ = ['unitProduct','unitDivision']
 
 from ._dictionaries import dictionary
 from ._convert import convertible
+from ._helpers import isnumber
 
-def unitBasePower(unit) :
+def unitBasePower(unit):
+    """
+
+    Parameters
+    ----------
+    unit : str
+        a string representing the unit
+        
+
+    Returns
+    -------
+    tuple of base and power
+
+    """
     uBas , uPow = '' , '' 
     oth = ''
     inv = False
-    if unit.startswith('1/') :
-        unit = unit[2:]
+    if '/' in unit and len(unit.split('/')) > 1 and isnumber(unit.split('/')[0]):
+        unit = unit.split('/')[1]
+        invPow = unit.split('/')[0]
         inv = True
+        
+    # if unit.startswith('1/') :
+    #     unit = unit[2:]
+    #     inv = True
     for c in unit :
         if c.isdigit() :
             uPow += oth + c
@@ -29,10 +48,23 @@ def unitBasePower(unit) :
             oth = ''
     uPow = 1 if uPow == '' else float(uPow) if '.' in uPow else int(uPow)
     if inv :
-        uPow = uPow * -1
+        uPow = uPow * -1 * invPow
     return uBas,uPow
 
 def unitProduct(unit1,unit2):
+    """
+
+    Parameters
+    ----------
+    unit1 :
+        
+    unit2 :
+        
+
+    Returns
+    -------
+
+    """
     
     if unit1 is None :
         unit1 = 'dimensionless'
@@ -93,6 +125,19 @@ def unitProduct(unit1,unit2):
 
 
 def unitDivision(unit1,unit2):
+    """
+
+    Parameters
+    ----------
+    unit1 :
+        
+    unit2 :
+        
+
+    Returns
+    -------
+
+    """
     
     if unit1 is None :
         unit1 = 'dimensionless'
