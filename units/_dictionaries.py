@@ -39,6 +39,7 @@ SI = {
     'z' : (lambda X: X*1.0E-21,lambda X: X*1.0E-21**2,lambda X: X*1.0E-21) , # zepto
     'y' : (lambda X: X*1.0E-24,lambda X: X*1.0E-24**2,lambda X: X*1.0E-24) , # yocto
     }
+
 SI_order = (('length','pressure','weight','mass','time','dataBIT',),('area',),('rate','volume',),('dataBYTE',))
 DATA = {          
     'Y' : (lambda X: X*1.0E+24,lambda X: X*2**80) , # yotta
@@ -51,6 +52,7 @@ DATA = {
     'K' : (lambda X: X*1.0E+03,lambda X: X*2**10) , # kilo with uppercase K because it is very common
     'k' : (lambda X: X*1.0E+03,lambda X: X*2**10) , # kilo
     }
+
 DATA_order = (('dataBIT',),('dataBYTE',))
 
 
