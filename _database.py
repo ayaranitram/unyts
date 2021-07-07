@@ -43,30 +43,39 @@ class uDigraph(object):
             raise ValueError('Node not in graph')
         self.edges[src][0].append(dest)
         self.edges[src][1].append(conv)
+        
     def childrenOf(self, node):
         return self.edges[node][0]
+    
     def hasNode(self, node):
         if type(node) is str :
             return node in [ n.getName() for n in self.edges ]
         else :
             return node in self.edges
+        
     def getNode(self, name):
         for n in self.edges:
             if n.getName() == name:
                 return n
         raise NameError(name)
+    
+    def listNodes(self):
+        return list(set([ N.getName() for N in self.edge.keys() ]))
+        
     def convert(self,value,src,dest):
         if type(src) != uNode :
             src = self.getNode(src)
         if type(dest) != uNode :
             dest = self.getNode(dest)
         return self.edges[src][1][ self.edges[src][0].index(dest) ]( value )
+    
     def conversion(self,src,dest):
         if type(src) != uNode :
             src = self.getNode(src)
         if type(dest) != uNode :
             dest = self.getNode(dest)
         return self.edges[src][1][ self.edges[src][0].index(dest) ]
+    
     def __str__(self):
         result = ''
         for src in self.edges:
@@ -74,7 +83,7 @@ class uDigraph(object):
                 result = result + src.getName() + '->'\
                          + dest.getName() +\
                          str(self.conv) + '\n'
-        return result[:-1] #omit final newline
+        return result[:-1]  # remove final newline
 
     def set_fvf(self,FVF) :
         if type(FVF) is str :
@@ -110,7 +119,7 @@ class uDigraph(object):
                 else :
                     self.fvf = self.valid_fvf(self.fvf) 
         return self.fvf
-
+        
 
 class conversion(object):
     def __init__(self, src, dest, conv, reverse=False):
