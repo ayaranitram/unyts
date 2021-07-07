@@ -566,3 +566,16 @@ _create_rates()
 _create_volumeRatio()
 _create_density()
 _create_speed()
+
+def network2Frame():
+    network=unitsNetwork
+    from pandas import DataFrame
+    Frame = DataFrame(data={},columns=['source','target','lambda'])
+    
+    i = 0
+    for node in network.edges:
+        for children in network.childrenOf(node):
+            Frame.loc[i,'source'] = node.getName()
+            Frame.loc[i,'target'] = children.getName()
+            Frame.loc[i,'target'] = network.conversion(node,children)
+                
