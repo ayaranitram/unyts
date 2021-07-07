@@ -39,7 +39,7 @@ SI = {
     'z' : (lambda X: X*1.0E-21,lambda X: X*1.0E-42,lambda X: X*1.0E-63) , # zepto
     'y' : (lambda X: X*1.0E-24,lambda X: X*1.0E-48,lambda X: X*1.0E-72) , # yocto
     }
-SI_order = (('length','pressure','weight','mass','time','dataBIT',),('area',),('rate','volume',),('dataBYTE',))
+SI_order = (('length','pressure','weight','mass','time',),('area',),('rate','volume',),)
 DATA = {          
     'Y' : (lambda X: X*1.0E+24,lambda X: X*2**80) , # yotta
     'Z' : (lambda X: X*1.0E+21,lambda X: X*2**70) , # zetta
@@ -239,9 +239,9 @@ dictionary['rate_NAMES_UPPER_SPACES_REVERSE'] = { 'stb/day' : ('stbd',),
                                                  }
 
 dictionary['dataBYTE'] = []
-dictionary['dataBYTE_UPPER_PLURALwS_DATA_NAME'] = {'B':('Byte','byte')}
+dictionary['dataBYTE_UPPER_PLURALwS_DATA_NAME_REVERSE'] = {'B':('Byte','byte')}
 dictionary['dataBIT'] = []
-dictionary['dataBIT_UPPER_PLURALwS_DATA'] = ('bit',)
+dictionary['dataBIT_UPPER_PLURALwS_DATA_REVERSE'] = ('bit',)
 
 dictionary['viscosity'] = []
 dictionary['viscosity_UPPER_NAMES_REVERSE'] = {'centipoise':('cP',),
