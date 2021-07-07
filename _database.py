@@ -467,6 +467,9 @@ def _loadNetwork():
     # viscosity conversions
     network.addEdge(conversion(network.getNode('Pa*s'), network.getNode('Poise'), lambda v: v*10 ))
     
+    # data conversions
+    network.addEdge(conversion(network.getNode('byte'), network.getNode('bit'), lambda d: d*8 ))
+    network.addEdge(conversion(network.getNode('bit'), network.getNode('byte'), lambda d: d/8 ))  # _REVERSE not working here
     
     for unitKind in list(dictionary.keys()):
         if '_REVERSE' in unitKind :
