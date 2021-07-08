@@ -7,6 +7,7 @@ Created on Sat Oct 24 12:36:48 2020
 """
 
 __all__ = ['unitsNetwork']
+__version__ = '0.0.21-07-08'
 
 from ._dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, StandadEarthGravity
 
@@ -391,6 +392,7 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('square foot'), network.getNode('square inch'), lambda d: d*144))
     network.addEdge(conversion(network.getNode('square foot'), network.getNode('square meter'), lambda d: d*(3048**2)/(10000**2)))
     network.addEdge(conversion(network.getNode('Darcy'), network.getNode('mD'), lambda d: d*1000 ))
+    network.addEdge(conversion(network.getNode('Darcy'), network.getNode('µm2'), lambda d: d*0.9869233))
     # network.addEdge(conversion(network.getNode('m*m'), network.getNode('m'), lambda d: d**0.5 ))
     # network.addEdge(conversion(network.getNode('m'), network.getNode('m*m'), lambda d: d**2 ))
     # network.addEdge(conversion(network.getNode('rd*rd'), network.getNode('rd'), lambda d: d**0.5 ))

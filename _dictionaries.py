@@ -7,7 +7,7 @@ Created on Sat Oct 24 12:14:51 2020
 """
 
 __all__ = ['dictionary','SI','OGF','DATA','StandardAirDensity','StandadEarthGravity']
-__version__ = '0.0.20-10-24'
+__version__ = '0.0.21-07-08'
 
 StandardAirDensity = 1.225 # Kg/m3 or g/cc
 StandadEarthGravity = 9.80665 # m/s2 or 980.665 cm/s2 from
@@ -241,7 +241,7 @@ dictionary['rate_NAMES_UPPER_SPACES_REVERSE'] = { 'stb/day' : ('stbd',),
 dictionary['dataBYTE'] = []
 dictionary['dataBYTE_UPPER_PLURALwS_DATA_NAME_REVERSE'] = {'B':('Byte','byte')}
 dictionary['dataBIT'] = []
-dictionary['dataBIT_UPPER_PLURALwS_DATA_REVERSE'] = ('bit',)
+dictionary['dataBIT_UPPER_PLURALwS_DATA'] = ('bit',)
 
 dictionary['viscosity'] = []
 dictionary['viscosity_UPPER_NAMES_REVERSE'] = {'centipoise':('cP',),
@@ -250,7 +250,7 @@ dictionary['viscosity_UPPER_NAMES_REVERSE'] = {'centipoise':('cP',),
                                        }
 
 dictionary['permeability'] = []
-dictionary['permeability_UPPER'] = ('mD','Darcy',)
+dictionary['permeability_UPPER_REVERSE'] = ('mD','Darcy',)
 
 dictionary['force'] = []
 dictionary['force_NAMES_SPACES_RECURSIVE_UPPER_REVERSE'] = {'Newton':('N','newton','kg*m/s2'),
