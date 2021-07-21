@@ -133,7 +133,14 @@ class _units(object) :
                 result += [self ** each]
             return tuple(result)
         else :
-            return self.kind(self.value ** other,self.unit)
+            powunits = unitBasePower(self.unit)[1] * other
+            if powunits == 0 :
+                powunits = 'dimensionless'
+            elif powunits == 1 :
+                powunits = unitBasePower(self.unit)[0] 
+            else:
+                powunits = unitBasePower(self.unit)[0] + str(powunits)
+            return units(self.value ** other, powunits)
     
     def __sub__(self,other) :
         return self.__add__(other*-1)
