@@ -126,8 +126,10 @@ dictionary['volume_NAMES_UPPER_REVERSE_PLURALwS_SPACES'] = { 'litre' : ('l','lit
                                     'decilitre' : ('dl','deciliter') ,
                                     'cubic meter' : ('CM','m3'),
                                     'standard cubic meter' : ('scm','sm3','stm3','m3'),
-                                    'cubic centimeter' : ( 'cc','cm3'),
+                                    'cubic centimeter' : ( 'cc','cm3','standard cubic centimeter'),
+                                    'standard cubic centimeter' : ( 'scc','scm3'),
                                     'reservoir cubic meter' : ('rm3',),
+                                    'reservoir cubic centimeter' : ( 'rcc','rcm3'),
                                     'cubic foot' : ('cubic feet','ft3','cf'),
                                     'standard cubic foot' : ('scf','cf'),
                                     'cubic inch' : ('in3','cubic inches'),
@@ -147,12 +149,12 @@ dictionary['volume_product_NAMES'] = {'m3':('m2*m',),
                                        'cm3':('cm2*cm',),
                                        'ft3':('ft2*ft',),
                                        'in3':('in2*in',)}
-   
+
 dictionary['pressure'] = []
 dictionary['pressure_NAMES_UPPER_REVERSE_SPACES'] = {
                                               'absolute psi' : ('psia','lb/in2','absolute pound/square inch','psi absolute'),
                                               'absolute bar' : ('bara','barsa','abs bar','bar absolute'),
-                                              'atmosphere' : ('atm',),
+                                              'atmosphere' : ('atm','atma'),
                                               'Pascal' : ('Pa','Newton/m2'),
                                               'kPa' : ('KPa','kilopascal'),
                                               'hPa' : ('hectopascal',),
