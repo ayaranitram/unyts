@@ -7,7 +7,7 @@ Created on Sat Oct 24 12:14:51 2020
 """
 
 __all__ = ['dictionary','SI','OGF','DATA','StandardAirDensity','StandadEarthGravity']
-__version__ = '0.0.21-07-08'
+__version__ = '0.0.21-08-31'
 
 StandardAirDensity = 1.225 # Kg/m3 or g/cc
 StandadEarthGravity = 9.80665 # m/s2 or 980.665 cm/s2 from
@@ -16,7 +16,7 @@ StandadEarthGravity = 9.80665 # m/s2 or 980.665 cm/s2 from
 dictionary = {}
 
 # Sistema Internacional
-SI = {          
+SI = {
     'Y' : (lambda X: X*1.0E+24,lambda X: X*1.0E+48,lambda X: X*1.0E+72) , # yotta
     'Z' : (lambda X: X*1.0E+21,lambda X: X*1.0E+42,lambda X: X*1.0E+63) , # zetta
     'E' : (lambda X: X*1.0E+18,lambda X: X*1.0E+36,lambda X: X*1.0E+54) , # exa
@@ -24,7 +24,7 @@ SI = {
     'T' : (lambda X: X*1.0E+12,lambda X: X*1.0E+24,lambda X: X*1.0E+36) , # tera
     'G' : (lambda X: X*1.0E+09,lambda X: X*1.0E+18,lambda X: X*1.0E+27) , # giga
     'M' : (lambda X: X*1.0E+06,lambda X: X*1.0E+12,lambda X: X*1.0E+18) , # mega
-    'K' : (lambda X: X*1.0E+03,lambda X: X*1.0E+06,lambda X: X*1.0E+09) , # kilo with uppercase K because it is very common
+    'K' : (lambda X: X*1.0E+03,)*3 , # with uppercase K is commonly used to express x1000
     'k' : (lambda X: X*1.0E+03,lambda X: X*1.0E+06,lambda X: X*1.0E+09) , # kilo
     'h' : (lambda X: X*1.0E+02,lambda X: X*1.0E+04,lambda X: X*1.0E+06) , # hecto
     'd' : (lambda X: X*1.0E-01,lambda X: X*1.0E-02,lambda X: X*1.0E-03) , # deci
@@ -40,7 +40,7 @@ SI = {
     'y' : (lambda X: X*1.0E-24,lambda X: X*1.0E-48,lambda X: X*1.0E-72) , # yocto
     }
 SI_order = (('length','pressure','weight','mass','time',),('area',),('rate','volume',),)
-DATA = {          
+DATA = {
     'Y' : (lambda X: X*1.0E+24,lambda X: X*2**80) , # yotta
     'Z' : (lambda X: X*1.0E+21,lambda X: X*2**70) , # zetta
     'E' : (lambda X: X*1.0E+18,lambda X: X*2**60) , # exa
@@ -87,7 +87,7 @@ dictionary['temperature_NAMES'] = {'Celsius' : ('Centigrades','C','DEG C','DEGRE
                      'Kelvin' : ('K','DEG K','DEGREES K') }
 
 dictionary['length'] = []
-dictionary['length_NAMES_UPPER_REVERSE'] = {'meter': ('m','meter')} 
+dictionary['length_NAMES_UPPER_REVERSE'] = {'meter': ('m','meter')}
 dictionary['length_SI'] = ('m', 'l')  # litre is volumen but the conversion of SI prefixes is linear
 dictionary['length_UK_NAMES_UPPER_REVERSE'] = {'thou' : ('th',) ,
              'inch' : ('in','"') ,
@@ -109,7 +109,7 @@ dictionary['area_UK_NAMES_UPPER_REVERSE'] = { 'square mile' : ('sq mi','mi2','sq
                          'square yard' : ('sq yd','sqyd','yd2','yd*yd'),
                          'square foot' : ('sq ft','sqft','ft2','ft*ft','ft3/ft'),
                          'square inch' : ('sq in','sqin','in2','in*in','in3/in')
-                         } 
+                         }
 
 dictionary['volume'] = []
 dictionary['volume_SI_UPPER_REVERSE'] = ('m3','sm3','stm3','rm3',)  # 'l' # litre is volumen but the conversion of SI prefixes is linear
@@ -139,8 +139,8 @@ dictionary['volume_NAMES_UPPER_REVERSE_PLURALwS_SPACES'] = { 'litre' : ('l','lit
                                     }
 dictionary['volume_UPPER_REVERSE'] =  ('kstm3','Mstm3')
 dictionary['volume_PLURALwS'] = ('liter','mililiter','centiliter','deciliter','barrel','oil barrel','gals','UKgallons','USgallons','oil gallon')
-dictionary['volume_OGF'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl') 
-# dictionary['volume_oilgas_NAMES'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl') 
+dictionary['volume_OGF'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl')
+# dictionary['volume_oilgas_NAMES'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl')
 dictionary['volume_oilgas_UPPER'] =  ( 'sm3','m3','rm3','ksm3','Msm3','Gsm3',
                                       'scf','cf','ft3','Mscf','MMscf','Bscf','Tscf','Mcf','MMcf','Bcf','Tcf',
                                       'stb','bbl','rb','Mstb','MMstb','Bstb','Tstb','Mbbl','MMbbl','Mrb','MMrb')
@@ -221,7 +221,7 @@ dictionary['compressibility_UPPER_NAMES'] = {'1/psi':('1/psia','µsip','usip','1
                                              'µsip':('usip',),
                                             '1/bar':('1/bara','1/barg')}
 
-              
+
 dictionary['rate'] = []
 dictionary['rate_NAMES_UPPER_SPACES_REVERSE'] = {'standard barrel per day' : ('stb/day',),
                                                  'standard cubic foot per day' : ('scf/day','cf/day','scfd'),
@@ -281,6 +281,5 @@ dictionary['dimensionless_percentage_NAMES_REVERSE'] = {'percentage' : ('%'),}
 dictionary['date'] = []
 
 dictionary['date_UPPER_PLURALwS'] = ['date']
-    
-dictionary['userUnits'] = []
 
+dictionary['userUnits'] = []
