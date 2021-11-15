@@ -7,7 +7,7 @@ Created on Sat Oct 24 12:14:51 2020
 """
 
 __all__ = ['dictionary','SI','OGF','DATA','StandardAirDensity','StandadEarthGravity']
-__version__ = '0.0.20-10-24'
+__version__ = '0.0.21-08-31'
 
 StandardAirDensity = 1.225 # Kg/m3 or g/cc
 StandadEarthGravity = 9.80665 # m/s2 or 980.665 cm/s2 from
@@ -16,32 +16,31 @@ StandadEarthGravity = 9.80665 # m/s2 or 980.665 cm/s2 from
 dictionary = {}
 
 # Sistema Internacional
-SI = {          
-    'Y' : (lambda X: X*1.0E+24,lambda X: X*1.0E+24**2,lambda X: X*1.0E+24) , # yotta
-    'Z' : (lambda X: X*1.0E+21,lambda X: X*1.0E+21**2,lambda X: X*1.0E+21) , # zetta
-    'E' : (lambda X: X*1.0E+18,lambda X: X*1.0E+18**2,lambda X: X*1.0E+18) , # exa
-    'P' : (lambda X: X*1.0E+15,lambda X: X*1.0E+15**2,lambda X: X*1.0E+15) , # peta
-    'T' : (lambda X: X*1.0E+12,lambda X: X*1.0E+12**2,lambda X: X*1.0E+12) , # tera
-    'G' : (lambda X: X*1.0E+09,lambda X: X*1.0E+09**2,lambda X: X*1.0E+09) , # giga
-    'M' : (lambda X: X*1.0E+06,lambda X: X*1.0E+06**2,lambda X: X*1.0E+06) , # mega
-    'K' : (lambda X: X*1.0E+03,lambda X: X*1.0E+03**2,lambda X: X*1.0E+03) , # kilo with uppercase K because it is very common
-    'k' : (lambda X: X*1.0E+03,lambda X: X*1.0E+03**2,lambda X: X*1.0E+03) , # kilo
-    'h' : (lambda X: X*1.0E+02,lambda X: X*1.0E+02**2,lambda X: X*1.0E+02) , # hecto
-    'd' : (lambda X: X*1.0E-01,lambda X: X*1.0E-01**2,lambda X: X*1.0E-01) , # deci
-    'c' : (lambda X: X*1.0E-02,lambda X: X*1.0E-02**2,lambda X: X*1.0E-02) , # centi
-    'm' : (lambda X: X*1.0E-03,lambda X: X*1.0E-03**2,lambda X: X*1.0E-03) , # mili
-    'µ' : (lambda X: X*1.0E-06,lambda X: X*1.0E-06**2,lambda X: X*1.0E-06) , # micro
-    'u' : (lambda X: X*1.0E-06,lambda X: X*1.0E-06**2,lambda X: X*1.0E-06) , # micro
-    'n' : (lambda X: X*1.0E-09,lambda X: X*1.0E-09**2,lambda X: X*1.0E-09) , # nano
-    'p' : (lambda X: X*1.0E-12,lambda X: X*1.0E-12**2,lambda X: X*1.0E-12) , # pico
-    'f' : (lambda X: X*1.0E-15,lambda X: X*1.0E-15**2,lambda X: X*1.0E-15) , # femto
-    'a' : (lambda X: X*1.0E-18,lambda X: X*1.0E-18**2,lambda X: X*1.0E-18) , # atto
-    'z' : (lambda X: X*1.0E-21,lambda X: X*1.0E-21**2,lambda X: X*1.0E-21) , # zepto
-    'y' : (lambda X: X*1.0E-24,lambda X: X*1.0E-24**2,lambda X: X*1.0E-24) , # yocto
+SI = {
+    'Y' : (lambda X: X*1.0E+24,lambda X: X*1.0E+48,lambda X: X*1.0E+72) , # yotta
+    'Z' : (lambda X: X*1.0E+21,lambda X: X*1.0E+42,lambda X: X*1.0E+63) , # zetta
+    'E' : (lambda X: X*1.0E+18,lambda X: X*1.0E+36,lambda X: X*1.0E+54) , # exa
+    'P' : (lambda X: X*1.0E+15,lambda X: X*1.0E+30,lambda X: X*1.0E+46) , # peta
+    'T' : (lambda X: X*1.0E+12,lambda X: X*1.0E+24,lambda X: X*1.0E+36) , # tera
+    'G' : (lambda X: X*1.0E+09,lambda X: X*1.0E+18,lambda X: X*1.0E+27) , # giga
+    'M' : (lambda X: X*1.0E+06,lambda X: X*1.0E+12,lambda X: X*1.0E+18) , # mega
+    'K' : (lambda X: X*1.0E+03,)*3 , # with uppercase K is commonly used to express x1000
+    'k' : (lambda X: X*1.0E+03,lambda X: X*1.0E+06,lambda X: X*1.0E+09) , # kilo
+    'h' : (lambda X: X*1.0E+02,lambda X: X*1.0E+04,lambda X: X*1.0E+06) , # hecto
+    'd' : (lambda X: X*1.0E-01,lambda X: X*1.0E-02,lambda X: X*1.0E-03) , # deci
+    'c' : (lambda X: X*1.0E-02,lambda X: X*1.0E-04,lambda X: X*1.0E-06) , # centi
+    'm' : (lambda X: X*1.0E-03,lambda X: X*1.0E-06,lambda X: X*1.0E-09) , # mili
+    'µ' : (lambda X: X*1.0E-06,lambda X: X*1.0E-12,lambda X: X*1.0E-18) , # micro
+    'u' : (lambda X: X*1.0E-06,lambda X: X*1.0E-12,lambda X: X*1.0E-18) , # micro
+    'n' : (lambda X: X*1.0E-09,lambda X: X*1.0E-18,lambda X: X*1.0E-27) , # nano
+    'p' : (lambda X: X*1.0E-12,lambda X: X*1.0E-24,lambda X: X*1.0E-36) , # pico
+    'f' : (lambda X: X*1.0E-15,lambda X: X*1.0E-30,lambda X: X*1.0E-45) , # femto
+    'a' : (lambda X: X*1.0E-18,lambda X: X*1.0E-36,lambda X: X*1.0E-54) , # atto
+    'z' : (lambda X: X*1.0E-21,lambda X: X*1.0E-42,lambda X: X*1.0E-63) , # zepto
+    'y' : (lambda X: X*1.0E-24,lambda X: X*1.0E-48,lambda X: X*1.0E-72) , # yocto
     }
-
-SI_order = (('length','pressure','weight','mass','time','dataBIT',),('area',),('rate','volume',),('dataBYTE',))
-DATA = {          
+SI_order = (('length','pressure','weight','mass','time',),('area',),('rate','volume',),)
+DATA = {
     'Y' : (lambda X: X*1.0E+24,lambda X: X*2**80) , # yotta
     'Z' : (lambda X: X*1.0E+21,lambda X: X*2**70) , # zetta
     'E' : (lambda X: X*1.0E+18,lambda X: X*2**60) , # exa
@@ -52,7 +51,6 @@ DATA = {
     'K' : (lambda X: X*1.0E+03,lambda X: X*2**10) , # kilo with uppercase K because it is very common
     'k' : (lambda X: X*1.0E+03,lambda X: X*2**10) , # kilo
     }
-
 DATA_order = (('dataBIT',),('dataBYTE',))
 
 
@@ -89,8 +87,8 @@ dictionary['temperature_NAMES'] = {'Celsius' : ('Centigrades','C','DEG C','DEGRE
                      'Kelvin' : ('K','DEG K','DEGREES K') }
 
 dictionary['length'] = []
-dictionary['length_NAMES_UPPER_REVERSE'] = {'meter': ('m','meter')} 
-dictionary['length_SI'] = ('m',)
+dictionary['length_NAMES_UPPER_REVERSE'] = {'meter': ('m','meter')}
+dictionary['length_SI'] = ('m', 'l')  # litre is volumen but the conversion of SI prefixes is linear
 dictionary['length_UK_NAMES_UPPER_REVERSE'] = {'thou' : ('th',) ,
              'inch' : ('in','"') ,
              'foot' : ('feet','ft',"'") ,
@@ -100,7 +98,7 @@ dictionary['length_UK_NAMES_UPPER_REVERSE'] = {'thou' : ('th',) ,
              'furlong' : ('fur',),
              'mile' : ('mi',),
              'league' : ('lea',),
-             'nautical mile' : ('nmi',)}
+             'nautical mile' : ('nmi',),}
 
 dictionary['area'] = []
 dictionary['area_NAMES_UPPER_REVERSE'] = {'square meter' : ('sq m','m2','sqmeter','m*m','m3/m')}
@@ -111,10 +109,10 @@ dictionary['area_UK_NAMES_UPPER_REVERSE'] = { 'square mile' : ('sq mi','mi2','sq
                          'square yard' : ('sq yd','sqyd','yd2','yd*yd'),
                          'square foot' : ('sq ft','sqft','ft2','ft*ft','ft3/ft'),
                          'square inch' : ('sq in','sqin','in2','in*in','in3/in')
-                         } 
+                         }
 
 dictionary['volume'] = []
-dictionary['volume_SI_UPPER_REVERSE'] = ('m3','l','sm3','stm3','rm3')
+dictionary['volume_SI_UPPER_REVERSE'] = ('m3','sm3','stm3','rm3',)  # 'l' # litre is volumen but the conversion of SI prefixes is linear
 dictionary['volume_UK_NAMES_UPPER_REVERSE_PLURALwS'] = { 'fuild ounce' : ('fl oz','oz','ounce'),
                                        'gill' : ('gi',),
                                        'pint' : ('pt',),
@@ -128,8 +126,10 @@ dictionary['volume_NAMES_UPPER_REVERSE_PLURALwS_SPACES'] = { 'litre' : ('l','lit
                                     'decilitre' : ('dl','deciliter') ,
                                     'cubic meter' : ('CM','m3'),
                                     'standard cubic meter' : ('scm','sm3','stm3','m3'),
-                                    'cubic centimeter' : ( 'cc','cm3'),
+                                    'cubic centimeter' : ( 'cc','cm3','standard cubic centimeter'),
+                                    'standard cubic centimeter' : ( 'scc','scm3'),
                                     'reservoir cubic meter' : ('rm3',),
+                                    'reservoir cubic centimeter' : ( 'rcc','rcm3'),
                                     'cubic foot' : ('cubic feet','ft3','cf'),
                                     'standard cubic foot' : ('scf','cf'),
                                     'cubic inch' : ('in3','cubic inches'),
@@ -139,22 +139,22 @@ dictionary['volume_NAMES_UPPER_REVERSE_PLURALwS_SPACES'] = { 'litre' : ('l','lit
                                     }
 dictionary['volume_UPPER_REVERSE'] =  ('kstm3','Mstm3')
 dictionary['volume_PLURALwS'] = ('liter','mililiter','centiliter','deciliter','barrel','oil barrel','gals','UKgallons','USgallons','oil gallon')
-dictionary['volume_OGF'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl') 
-# dictionary['volume_oilgas_NAMES'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl') 
+dictionary['volume_OGF'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl')
+# dictionary['volume_oilgas_NAMES'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl')
 dictionary['volume_oilgas_UPPER'] =  ( 'sm3','m3','rm3','ksm3','Msm3','Gsm3',
                                       'scf','cf','ft3','Mscf','MMscf','Bscf','Tscf','Mcf','MMcf','Bcf','Tcf',
                                       'stb','bbl','rb','Mstb','MMstb','Bstb','Tstb','Mbbl','MMbbl','Mrb','MMrb')
 
-dictionary['volume_producto_NAMES'] = {'m3':('m2*m',),
+dictionary['volume_product_NAMES'] = {'m3':('m2*m',),
                                        'cm3':('cm2*cm',),
                                        'ft3':('ft2*ft',),
                                        'in3':('in2*in',)}
-   
+
 dictionary['pressure'] = []
 dictionary['pressure_NAMES_UPPER_REVERSE_SPACES'] = {
                                               'absolute psi' : ('psia','lb/in2','absolute pound/square inch','psi absolute'),
                                               'absolute bar' : ('bara','barsa','abs bar','bar absolute'),
-                                              'atmosphere' : ('atm',),
+                                              'atmosphere' : ('atm','atma'),
                                               'Pascal' : ('Pa','Newton/m2'),
                                               'kPa' : ('KPa','kilopascal'),
                                               'hPa' : ('hectopascal',),
@@ -221,7 +221,7 @@ dictionary['compressibility_UPPER_NAMES'] = {'1/psi':('1/psia','µsip','usip','1
                                              'µsip':('usip',),
                                             '1/bar':('1/bara','1/barg')}
 
-              
+
 dictionary['rate'] = []
 dictionary['rate_NAMES_UPPER_SPACES_REVERSE'] = {'standard barrel per day' : ('stb/day',),
                                                  'standard cubic foot per day' : ('scf/day','cf/day','scfd'),
@@ -241,7 +241,7 @@ dictionary['rate_NAMES_UPPER_SPACES_REVERSE'] = { 'stb/day' : ('stbd',),
                                                  }
 
 dictionary['dataBYTE'] = []
-dictionary['dataBYTE_UPPER_PLURALwS_DATA_NAME'] = {'B':('Byte','byte')}
+dictionary['dataBYTE_UPPER_PLURALwS_DATA_NAME_REVERSE'] = {'B':('Byte','byte')}
 dictionary['dataBIT'] = []
 dictionary['dataBIT_UPPER_PLURALwS_DATA'] = ('bit',)
 
@@ -252,7 +252,7 @@ dictionary['viscosity_UPPER_NAMES_REVERSE'] = {'centipoise':('cP',),
                                        }
 
 dictionary['permeability'] = []
-dictionary['permeability_UPPER'] = ('mD','Darcy',)
+dictionary['permeability_UPPER_REVERSE'] = ('mD','Darcy',)
 
 dictionary['force'] = []
 dictionary['force_NAMES_SPACES_RECURSIVE_UPPER_REVERSE'] = {'Newton':('N','newton','kg*m/s2'),
@@ -281,6 +281,5 @@ dictionary['dimensionless_percentage_NAMES_REVERSE'] = {'percentage' : ('%'),}
 dictionary['date'] = []
 
 dictionary['date_UPPER_PLURALwS'] = ['date']
-    
-dictionary['userUnits'] = []
 
+dictionary['userUnits'] = []

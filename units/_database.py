@@ -7,14 +7,15 @@ Created on Sat Oct 24 12:36:48 2020
 """
 
 __all__ = ['unitsNetwork']
+__version__ = '0.0.21-10-30'
 
 from ._dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, StandadEarthGravity
 
 class uNode(object) :
     def __init__(self,name) :
-        self.name = name if type(name) is str else ''             
+        self.name = name if type(name) is str else ''
     def getName(self):
-        return self.name    
+        return self.name
     def __str__(self):
         return self.name
 
@@ -28,7 +29,7 @@ class uDigraph(object):
         self.Memory = {} # (fromUnit,toUnit) : ( conversion factor , conversion path )
         self.fvf = None
         self.print = False
-        
+
     def addNode(self, node):
         if node in self.edges:
             raise ValueError('Duplicate node')
@@ -43,30 +44,39 @@ class uDigraph(object):
             raise ValueError('Node not in graph')
         self.edges[src][0].append(dest)
         self.edges[src][1].append(conv)
+
     def childrenOf(self, node):
         return self.edges[node][0]
+
     def hasNode(self, node):
         if type(node) is str :
             return node in [ n.getName() for n in self.edges ]
         else :
             return node in self.edges
+
     def getNode(self, name):
         for n in self.edges:
             if n.getName() == name:
                 return n
         raise NameError(name)
+
+    def listNodes(self):
+        return list(set([ N.getName() for N in self.edge.keys() ]))
+
     def convert(self,value,src,dest):
         if type(src) != uNode :
             src = self.getNode(src)
         if type(dest) != uNode :
             dest = self.getNode(dest)
         return self.edges[src][1][ self.edges[src][0].index(dest) ]( value )
+
     def conversion(self,src,dest):
         if type(src) != uNode :
             src = self.getNode(src)
         if type(dest) != uNode :
             dest = self.getNode(dest)
         return self.edges[src][1][ self.edges[src][0].index(dest) ]
+
     def __str__(self):
         result = ''
         for src in self.edges:
@@ -74,7 +84,7 @@ class uDigraph(object):
                 result = result + src.getName() + '->'\
                          + dest.getName() +\
                          str(self.conv) + '\n'
-        return result[:-1] #omit final newline
+        return result[:-1]  # remove final newline
 
     def set_fvf(self,FVF) :
         if type(FVF) is str :
@@ -86,7 +96,7 @@ class uDigraph(object):
             if FVF <= 0 :
                 print('FVF should be a positive number...')
             self.fvf = FVF
-    
+
     def get_fvf(self) :
         def valid_fvf(FVF) :
             if type(FVF) is str :
@@ -100,7 +110,7 @@ class uDigraph(object):
                 else :
                     return FVF
             return False
-    
+
         if self.fvf is None :
             print('Please enter formation volume factor (FVF) in reservoir_volume/standard_volume:')
             while self.fvf is None :
@@ -108,13 +118,13 @@ class uDigraph(object):
                 if not self.valid_fvf(self.fvf) :
                     self.fvf = None
                 else :
-                    self.fvf = self.valid_fvf(self.fvf) 
+                    self.fvf = self.valid_fvf(self.fvf)
         return self.fvf
 
 
 class conversion(object):
     def __init__(self, src, dest, conv, reverse=False):
-        """Assumes src and dest are nodes""" 
+        """Assumes src and dest are nodes"""
         self.src = src
         self.dest = dest
         self.conv = conv
@@ -134,12 +144,12 @@ class conversion(object):
             return self.conv
     def __str__(self):
         return self.src.getName() + '->' + self.dest.getName()
-        
+
 
 def _loadNetwork():
     network = uDigraph()
-    
-    for unitKind in list(dictionary.keys()): 
+
+    for unitKind in list(dictionary.keys()):
         # print('1: ' +unitKind)
         if '_' not in unitKind :
             for unitName in dictionary[unitKind] :
@@ -333,11 +343,11 @@ def _loadNetwork():
 
     # for unitKind in list(dictionary.keys()) :
     #     if '_REVERSE' in unitKind :
-    #         for unitNode in 
-    
+    #         for unitNode in
+
     # percentage & fraction :
     network.addEdge(conversion(network.getNode('fraction'), network.getNode('percentage'), lambda f: f*100 ))
-                    
+
     # time conversions
     # network.addEdge(conversion(network.getNode('second'), network.getNode('millisecond'), lambda t: t*1000 ))
     network.addEdge(conversion(network.getNode('minute'), network.getNode('second'), lambda t: t*60 ))
@@ -373,7 +383,7 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('league'), network.getNode('mile'), lambda d: d*3))
     network.addEdge(conversion(network.getNode('nautical mile'), network.getNode('meter'), lambda d: d*1852))
     network.addEdge(conversion(network.getNode('rod'), network.getNode('yard'), lambda d: d*55/10))
-    
+
     # area conversions
     network.addEdge(conversion(network.getNode('square mile'), network.getNode('acre'), lambda d: d*640 ))
     network.addEdge(conversion(network.getNode('acre'), network.getNode('square yard'), lambda d: d*4840 ))
@@ -382,6 +392,7 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('square foot'), network.getNode('square inch'), lambda d: d*144))
     network.addEdge(conversion(network.getNode('square foot'), network.getNode('square meter'), lambda d: d*(3048**2)/(10000**2)))
     network.addEdge(conversion(network.getNode('Darcy'), network.getNode('mD'), lambda d: d*1000 ))
+    network.addEdge(conversion(network.getNode('Darcy'), network.getNode('µm2'), lambda d: d*0.9869233))
     # network.addEdge(conversion(network.getNode('m*m'), network.getNode('m'), lambda d: d**0.5 ))
     # network.addEdge(conversion(network.getNode('m'), network.getNode('m*m'), lambda d: d**2 ))
     # network.addEdge(conversion(network.getNode('rd*rd'), network.getNode('rd'), lambda d: d**0.5 ))
@@ -392,7 +403,7 @@ def _loadNetwork():
     # network.addEdge(conversion(network.getNode('ft'), network.getNode('ft*ft'), lambda d: d**2 ))
     # network.addEdge(conversion(network.getNode('in*in'), network.getNode('in'), lambda d: d**0.5 ))
     # network.addEdge(conversion(network.getNode('in'), network.getNode('in*in'), lambda d: d**2 ))
-   
+
     # volume conversions
     network.addEdge(conversion(network.getNode('gill'), network.getNode('fuild ounce'), lambda v: v*5))
     network.addEdge(conversion(network.getNode('pint'), network.getNode('gill'), lambda v: v*4))
@@ -400,8 +411,8 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('quart'), lambda v: v*4))
     network.addEdge(conversion(network.getNode('gallonUS'), network.getNode('cubic inch'), lambda v: v*231))
     network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('liter'), lambda v: v* 4.54609))
-    network.addEdge(conversion(network.getNode('cubic foot'), network.getNode('cubic meter'), lambda v: v*(3048**3)/(10000**3)))  
-    network.addEdge(conversion(network.getNode('standard cubic foot'), network.getNode('standard cubic meter'), lambda v: v*(3048**3)/(10000**3))) 
+    network.addEdge(conversion(network.getNode('cubic foot'), network.getNode('cubic meter'), lambda v: v*(3048**3)/(10000**3)))
+    network.addEdge(conversion(network.getNode('standard cubic foot'), network.getNode('standard cubic meter'), lambda v: v*(3048**3)/(10000**3)))
     network.addEdge(conversion(network.getNode('standard barrel'), network.getNode('USgal'), lambda v: v*42))
     network.addEdge(conversion(network.getNode('standard cubic meter'), network.getNode('standard barrel'), lambda v: v*6.289814))
     network.addEdge(conversion(network.getNode('standard barrel'), network.getNode('standard cubic foot'), lambda v: v*5.614584))
@@ -414,8 +425,9 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('absolute psi'), network.getNode('psi gauge'), lambda p: p-14.6959))
     network.addEdge(conversion(network.getNode('bar gauge'), network.getNode('bara'), lambda p: p+1.01325))
     network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('bar gauge'), lambda p: p-1.01325))
-    
+
     network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('absolute psi'), lambda p: p*14.50377377322))
+    network.addEdge(conversion(network.getNode('bar gauge'), network.getNode('psi gauge'), lambda p: p*14.50377377322))
     network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('Pascal'), lambda p: p*100000))
     # network.addEdge(conversion(network.getNode('atmosphere'), network.getNode('absolute bar'), lambda p: p*1.01325))
     network.addEdge(conversion(network.getNode('atmosphere'), network.getNode('Pascal'), lambda p: p*101325))
@@ -433,12 +445,12 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('short hundredweight'), network.getNode('pound'), lambda w: w*100))
     network.addEdge(conversion(network.getNode('short ton'), network.getNode('short hundredweight'), lambda w: w*20))
     network.addEdge(conversion(network.getNode('long ton'), network.getNode('long hundredweight'), lambda w: w*20))
-    
+
     network.addEdge(conversion(network.getNode('metric ton'), network.getNode('kilogram'), lambda w: w*1000))
     network.addEdge(conversion(network.getNode('kilogram'), network.getNode('gram'), lambda w: w*1000))
     # network.addEdge(conversion(network.getNode('pound'), network.getNode('gram'), lambda w: w*453.59237))
     network.addEdge(conversion(network.getNode('pound'), network.getNode('kilogram'), lambda w: w*45359237/100000000))
-    
+
     # force conversion
     # network.addEdge(conversion(network.getNode('kilogram'), network.getNode('kilogram force'), lambda f: f* converter(StandadEarthGravity,'m/s2','cm/s2',False) ))
     network.addEdge(conversion(network.getNode('kilogram mass'), network.getNode('kilogram force'), lambda f: f* StandadEarthGravity ))
@@ -454,11 +466,14 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('psia/ft'), network.getNode('lb/ft3'), lambda d: d*144 ))
     network.addEdge(conversion(network.getNode('g/cm3'), network.getNode('lb/ft3'), lambda d: d*62.427960576144606 ))
     network.addEdge(conversion(network.getNode('lb/ft3'), network.getNode('lb/stb'), lambda d: d*5.614584 ))
-    
+
     # viscosity conversions
     network.addEdge(conversion(network.getNode('Pa*s'), network.getNode('Poise'), lambda v: v*10 ))
-    
-    
+
+    # data conversions
+    network.addEdge(conversion(network.getNode('byte'), network.getNode('bit'), lambda d: d*8 ))
+    network.addEdge(conversion(network.getNode('bit'), network.getNode('byte'), lambda d: d/8 ))  # _REVERSE not working here
+
     for unitKind in list(dictionary.keys()):
         if '_REVERSE' in unitKind :
             if type(dictionary[unitKind]) == dict :
@@ -473,7 +488,7 @@ def _loadNetwork():
                     if network.getNode(unitName)!=otherName :
                         network.addEdge(conversion(otherName, network.getNode(unitName),   network.edges[ network.getNode(unitName) ][1][ network.edges[ network.getNode(unitName) ][0].index(otherName) ]  , True  ))
 
-    for unitKind in list(dictionary.keys()): 
+    for unitKind in list(dictionary.keys()):
         if '_FROMvolume' in unitKind and unitKind.split('_')[0] in SI_order[2] :
             # if '_SI' in unitKind and unitKind.split('_')[0]  in SI_order[2] :
             for unitName in list( dictionary[unitKind] ) :
@@ -487,8 +502,8 @@ def _loadNetwork():
                         network.addNode(uNode( otherRate ))
                         network.addEdge(conversion(network.getNode(unitName), otherRate, network.edges[ network.getNode(unitName.split('/')[1]) ][1][ network.edges[ network.getNode(unitName.split('/')[1]) ][0].index(otherName) ]  ))
                         network.addEdge(conversion(otherRate, network.getNode(unitName), network.edges[ network.getNode(unitName.split('/')[1]) ][1][ network.edges[ network.getNode(unitName.split('/')[1]) ][0].index(otherName) ]  , True  ))
-    
-    
+
+
     toRemove = []
     for unitKind in dictionary :
         if '_' in unitKind :
@@ -496,10 +511,10 @@ def _loadNetwork():
         else : # if '_' not in unitKind :
             dictionary[unitKind] = tuple(dictionary[unitKind])
     dictionary['userUnits'] = []
-    
+
     for unitKind in toRemove :
         dictionary.pop(unitKind)
-    
+
     return network
 
 
@@ -516,7 +531,7 @@ def _create_rates() :
     for data in dictionary['dataBIT'] :
         for time in dictionary['time'] :
             rates.append( data+'/'+time )
-    dictionary['rate'] = tuple(set(rates))    
+    dictionary['rate'] = tuple(set(rates))
 
 
 def _create_volumeRatio() :
@@ -554,3 +569,15 @@ _create_rates()
 _create_volumeRatio()
 _create_density()
 _create_speed()
+
+def network2Frame():
+    network=unitsNetwork
+    from pandas import DataFrame
+    Frame = DataFrame(data={},columns=['source','target','lambda'])
+
+    i = 0
+    for node in network.edges:
+        for children in network.childrenOf(node):
+            Frame.loc[i,'source'] = node.getName()
+            Frame.loc[i,'target'] = children.getName()
+            Frame.loc[i,'target'] = network.conversion(node,children)
