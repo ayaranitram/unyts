@@ -97,7 +97,7 @@ class _units(object) :
                 return units(self.value * other.value,unitProduct(self.unit,other.unit))
             elif _convertible(other.unit,self.unit) :
                 return units(self.value * _converter(other.value,other.unit,self.unit),unitProduct(self.unit,other.unit))
-            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
+            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(other.unit)[0] ) :
                 factor = _converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
                 return units(self.value * other.value * factor , unitProduct(self.unit,other.unit))
             else :
@@ -122,7 +122,7 @@ class _units(object) :
                 return units(self.value ** other.value,self.unit+'^'+other.unit)
             elif _convertible(other.unit,self.unit) :
                 return units(self.value ** _converter(other.value,other.unit,self.unit),self.unit+'^'+self.unit)
-            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
+            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(other.unit)[0] ) :
                 factor = _converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
                 return units(self.value ** (other.value * factor) , self.unit+'^'+other.unit)
             else :
@@ -133,7 +133,14 @@ class _units(object) :
                 result += [self ** each]
             return tuple(result)
         else :
-            return self.kind(self.value ** other,self.unit)
+            powunits = unitBasePower(self.unit)[1] * other
+            if powunits == 0 :
+                powunits = 'dimensionless'
+            elif powunits == 1 :
+                powunits = unitBasePower(self.unit)[0] 
+            else:
+                powunits = unitBasePower(self.unit)[0] + str(powunits)
+            return units(self.value ** other, powunits)
     
     def __sub__(self,other) :
         return self.__add__(other*-1)
@@ -150,7 +157,7 @@ class _units(object) :
                 return units(self.value / other.value,unitDivision(self.unit,other.unit))
             elif _convertible(other.unit,self.unit) :
                 return units(self.value / _converter(other.value,other.unit,self.unit),unitDivision(self.unit,other.unit))
-            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
+            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(other.unit)[0] ) :
                 factor = _converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
                 return units(self.value / (other.value * factor) , unitDivision(self.unit,other.unit))
             else :
@@ -175,7 +182,7 @@ class _units(object) :
                 return units(self.value // other.value,unitDivision(self.unit,other.unit))
             elif _convertible(other.unit,self.unit) :
                 return units(self.value // _converter(other.value,other.unit,self.unit),unitDivision(self.unit,other.unit))
-            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
+            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(other.unit)[0] ) :
                 factor = _converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
                 return units(self.value // (other.value * factor) , unitDivision(self.unit,other.unit))
             else :
@@ -200,7 +207,7 @@ class _units(object) :
                 return units(self.value % other.value,self.unit)
             elif _convertible(other.unit,self.unit) :
                 return units(self.value % _converter(other.value,other.unit,self.unit),self.unit)
-            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(self.unit)[0] ) :
+            elif _convertible( unitBasePower(self.unit)[0] , unitBasePower(other.unit)[0] ) :
                 factor = _converter(1,unitBasePower(other.unit)[0],unitBasePower(self.unit)[0])
                 return units(self.value % (other.value * factor) , self.unit)
             else :
