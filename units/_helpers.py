@@ -8,13 +8,13 @@ helper functions for units modules
 """
 
 def isnumber(string):
-    """    
+    """
     Checks if a string represents a number.
     Valid numbers are:
         positive integers, as in .isnumeric() and .isdigit() methods from string class
         floats, numbers with pointsç
         negative numbers, with dash at the left of the digits
-        complex numbers, 
+        complex numbers,
 
     Parameters
     ----------
@@ -31,7 +31,7 @@ def isnumber(string):
         return True
     except:
         return False
-    
+
 def tonumber(string, decimalsign='auto', thousandseparator='auto', parethesismeansnegative=True):
     """
     Cast a string the appropiate numeric type.
@@ -39,8 +39,8 @@ def tonumber(string, decimalsign='auto', thousandseparator='auto', parethesismea
         integers
         real numbers
         complex numbers
-    
-    By default, automatically converts comma ',' to period '.' and remove thousand separators 
+
+    By default, automatically converts comma ',' to period '.' and remove thousand separators
 
     Parameters
     ----------
@@ -50,7 +50,7 @@ def tonumber(string, decimalsign='auto', thousandseparator='auto', parethesismea
         The string used as decimal symbol.
     thousandseparator : str
         The string used as thousands separator.
-        
+
     Returns
     -------
     None.
@@ -86,7 +86,7 @@ def tonumber(string, decimalsign='auto', thousandseparator='auto', parethesismea
                 except ValueError:
                     raise ValueError('could not convert string to number: ' + string)
         return value
-    
+
     def cleaner(string):
         """
         Helper function to clean the string before attemting to cast
@@ -140,21 +140,21 @@ def tonumber(string, decimalsign='auto', thousandseparator='auto', parethesismea
                             raise ValueError('the string format is incorrect: ' + string)
                         if not string.split('e')[-1][:-1].isdigit():
                             raise ValueError('the string format is incorrect: ' + string)
-                        
+
                     elif not string.split('e')[-1].isdigit():
                         raise ValueError('the string format is incorrect: ' + string)
                 return True
-            
+
             if 'j' in string:
                 for s in ('+','-'):
                     if s in string.strip('+-'):
                         return check(string.strip('+-').split(s)[0]) and check(string.strip('+-').split(s)[1])
             else:
                 return check(string)
-        
+
         string = string.strip().lower()
         newstring = string
-        
+
         # check parenthesis means negative
         if parethesismeansnegative:
             if '(' in newstring:
@@ -173,15 +173,15 @@ def tonumber(string, decimalsign='auto', thousandseparator='auto', parethesismea
                 raise ValueError('the string format is incorrect: ' + string)
             else:
                 pass
-            
-        
+
+
         # check thousands separator
         if thousandseparator in ('auto','.') and decimalsign in ('auto',','):
             if ',' in newstring and '.' in newstring:
                 if validate(string,ds=',',ts='.'):
                     newstring = newstring.replace('.','').replace(',','.')
                 return newstring
-        
+
         if thousandseparator.strip() == 'auto':
             for ts in ("'","`","´"," ",None):
                 if ts is not None and ts in string:
@@ -190,7 +190,7 @@ def tonumber(string, decimalsign='auto', thousandseparator='auto', parethesismea
         else:
             newstring = newstring.replace(thousandseparator,'')
             ts = thousandseparator
-            
+
         # check decimal symbol
         if decimalsign.strip() == 'auto':
             for ds in (",","p","."):
@@ -204,27 +204,27 @@ def tonumber(string, decimalsign='auto', thousandseparator='auto', parethesismea
                 raise ValueError('the string format is incorrect: ' + string)
             newstring = newstring.replace(decimalsign,'.')
             ds = decimalsign
-        
+
         if validate(string,ds=ds,ts=ts):
             return newstring
-    
+
     if type(string) is str:
         # first, clean the string if is type str
         string = cleaner(string)
-        
+
         # then, cast the string
         value = caster(string)
-        
+
         # convert to integer numbers in scientific notation without decimals digits
         if 'E' in string.upper() and '.' not in string:
             if type(value) is float:
                 if int(value) == value:
                     value = int(value)
-        
+
         return value
-    
+
     elif type(string) in (int,float,complex):
         return string
-    
+
     else:
         raise TypeError('string must be a str or a number')
