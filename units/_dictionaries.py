@@ -7,7 +7,8 @@ Created on Sat Oct 24 12:14:51 2020
 """
 
 __all__ = ['dictionary','SI','OGF','DATA','StandardAirDensity','StandadEarthGravity']
-__version__ = '0.0.21-08-31'
+__version__ = '0.1.0'
+__release__ = 20220524
 
 StandardAirDensity = 1.225 # Kg/m3 or g/cc
 StandadEarthGravity = 9.80665 # m/s2 or 980.665 cm/s2 from
