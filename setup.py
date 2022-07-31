@@ -10,8 +10,8 @@ from setuptools import setup, find_packages
 setup(
       author="Martin Carlos Araya",
       description="a unit converter based on graph network and classes to operate with units.",
-      name="unitconverter",
-      version="0.1.0",
+      name="unyts",
+      version="0.1.1",
       packages=find_packages(include=['units, units.*']),
       install_requires=['numpy'],
       python_requires='>=3.5.0'
