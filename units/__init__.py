@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: martin
 """
 
-__version__ = '0.1.0'
-__release__ = 20220524
+__version__ = '0.1.1'
+__release__ = 20220731
 
 from .units import *
 from ._convert import convertUnit

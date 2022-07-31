@@ -1,7 +1,0 @@
-LICENSE
-setup.py
-unitconverter.egg-info/PKG-INFO
-unitconverter.egg-info/SOURCES.txt
-unitconverter.egg-info/dependency_links.txt
-unitconverter.egg-info/requires.txt
-unitconverter.egg-info/top_level.txt
