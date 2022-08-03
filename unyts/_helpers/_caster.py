@@ -1,36 +1,42 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun May 23 11:18:15 2021
+Created on Wed Aug  3 21:14:44 2022
 
-@author: Martín Araya <martinaraya@gmail.com>
-
-helper functions for units modules
+@author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-def isnumber(string):
+
+def caster(string):
     """
-    Checks if a string represents a number.
-    Valid numbers are:
-        positive integers, as in .isnumeric() and .isdigit() methods from string class
-        floats, numbers with pointsç
-        negative numbers, with dash at the left of the digits
-        complex numbers,
+    Helper function to try to cast the string to number
 
     Parameters
     ----------
     string : str
-        the string to check if represents a numbers
+
+    Raises
+    ------
+    ValueError
+        if not possible to cast to int, to float or to complex
 
     Returns
     -------
-    True or False
+    value : int, float or complex
+        the casted number
 
     """
     try:
-        complex(string)
-        return True
-    except:
-        return False
+        value = int(string)
+    except ValueError:
+        try:
+            value = float(string)
+        except ValueError:
+            try:
+                value = complex(string)
+            except ValueError:
+                raise ValueError('could not convert string to number: ' + string)
+    return value
+
 
 def tonumber(string, decimalsign='auto', thousandseparator='auto', parethesismeansnegative=True):
     """
@@ -56,36 +62,6 @@ def tonumber(string, decimalsign='auto', thousandseparator='auto', parethesismea
     None.
 
     """
-    def caster(string):
-        """
-        Helper function to try to cast the string to number
-
-        Parameters
-        ----------
-        string : str
-
-        Raises
-        ------
-        ValueError
-            if not possible to cast to int, to float or to complex
-
-        Returns
-        -------
-        value : int, float or complex
-            the casted number
-
-        """
-        try:
-            value = int(string)
-        except ValueError:
-            try:
-                value = float(string)
-            except ValueError:
-                try:
-                    value = complex(string)
-                except ValueError:
-                    raise ValueError('could not convert string to number: ' + string)
-        return value
 
     def cleaner(string):
         """
@@ -100,7 +76,8 @@ def tonumber(string, decimalsign='auto', thousandseparator='auto', parethesismea
             string : the cleaned string
 
         """
-        def validate(string,ds,ts):
+
+        def validate(string, ds, ts):
             """
             Helper function to validate the string format
 
