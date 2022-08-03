@@ -3,36 +3,26 @@
 """
 Created on Sat Oct 24 14:34:59 2020
 
-@author: martin
+@author: Martín Carlos Araya <martinaraya@gmail.com>
 """
-__version__ = '0.1.0'
-__release__ = 20220524
 
-import numpy as np
-from ._errors import WrongUnits, WrongValue
+__version__ = '0.1.1'
+__release__ = 20220803
+
+
+import numpy as _np
+from ._errors import WrongUnits as _WrongUnits, WrongValue as _WrongValue
 from ._operations import unitProduct, unitDivision, unitBasePower
 from ._convert import converter as _converter, convertible as _convertible
-from ._dictionaries import dictionary
-
-unitClasses = {}
-
-
-def units(value, units=None):
-    if units is None and '.units.' in str(type(value)):
-        value, units = value.value, value.units
-    if units is None:
-        units = 'dimensionless'
-    if type(units) is not str:
-        raise TypeError("'units' must be a string.")
-    units = units.strip()
-    for kind in dictionary:
-        if units in dictionary[kind]:
-            return eval( kind + "(" + str(value) + ",'" + units + "')" )
-    return userUnits(value, units)
-
 
 class _units(object):
+    """
+    A class to cope with values associated to units, its arithmetic and logic
+    operations and conversions.
+    """
+
     def __init__(self):
+        from .units import dimensionless, userUnits
         self.unit = None
         self.value = None
         self.name = None
@@ -46,12 +36,12 @@ class _units(object):
     def __str__(self) :
         return str(self.value) + '_' + str(self.unit)
 
-    def convert(self,newunit):
+    def convert(self, newunit):
         if type(newunit) is not str:
             try:
                 newunit = newunit.unit
             except:
-                raise WrongUnits
+                raise _WrongUnits()
         return self.kind(_converter(self.value, self.unit, newunit), newunit)
 
     def to(self,newunit):
@@ -285,7 +275,7 @@ class _units(object):
 
     def __iter__(self):
         if type(self.value) in (int, float):
-            return np.array((self.value,)).__iter__()
+            return _np.array((self.value,)).__iter__()
         else:
             return self.value.__iter__()
 
@@ -300,163 +290,23 @@ class _units(object):
 
     def checkValue(self,value):
         if type(value) in (list, tuple):
-            return np.array(value)
+            return _np.array(value)
         elif type(value) in (int, float):
             return value
-        elif type(value) is np.ndarray:
+        elif type(value) is _np.ndarray:
             return value
         # elif type(value) == pandas.core.frame.DataFrame :
         #     return value
         else:
-            raise WrongValue
+            raise _WrongValue()
 
     def checkUnit(self,units):
         if type(units) is not str:
             try:
                 units = units.unit
             except:
-                raise WrongUnits
+                raise _WrongUnits
         if units in self.kind.classUnits:
             return units
         else:
-            raise WrongUnits
-
-class time(_units):
-    classUnits = dictionary['time']
-    def __init__(self, value, units):
-        self.name = 'time'
-        self.kind = time
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
-
-class temperature(_units):
-    classUnits = dictionary['temperature']
-    def __init__(self, value, units):
-        self.name = 'temperature'
-        self.kind = temperature
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
-
-class pressure(_units):
-    classUnits = dictionary['pressure']
-    def __init__(self, value, units):
-        self.name = 'pressure'
-        self.kind = pressure
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
-
-class weight(_units):
-    classUnits = dictionary['weight']
-    def __init__(self, value, units):
-        self.name = 'weight'
-        self.kind = weight
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
-
-class length(_units):
-    classUnits = dictionary['length']
-    def __init__(self, value, units):
-        self.name = 'length'
-        self.kind = length
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
-
-class area(_units):
-    classUnits = dictionary['area']
-    def __init__(self, value, units):
-        self.name = 'area'
-        self.kind = area
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
-
-class volume(_units):
-    classUnits = dictionary['volume']
-    def __init__(self, value, units):
-        self.name = 'volume'
-        self.kind = volume
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
-
-class density(_units):
-    classUnits = dictionary['density']
-    def __init__(self, value, units):
-        self.name = 'density'
-        self.kind = density
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
-
-class compressibility(_units):
-    classUnits = dictionary['compressibility']
-    def __init__(self, value, units):
-        self.name = 'compressibility'
-        self.kind = compressibility
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
-
-class volumeRatio(_units):
-    classUnits = dictionary['volumeRatio']
-    def __init__(self, value, units):
-        self.name = 'volumeRatio'
-        self.kid = volumeRatio
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
-
-class rate(_units):
-    classUnits = dictionary['rate']
-    def __init__(self, value, units):
-        self.name = 'rate'
-        self.kind = rate
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
-
-class speed(_units):
-    classUnits = dictionary['speed']
-    def __init__(self, value, units):
-        self.name = 'speed'
-        self.kind = speed
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
-
-def velocity(value,units):
-    return speed(value, units)
-
-# class productivityIndex(_units):
-#     classUnits = dictionary['productivityIndex']
-#     def __init__(self,value,units) :
-#         self.name = 'productivityIndex'
-#         self.kind = productivityIndex
-#         self.value = self.checkValue(value)
-#         self.unit = self.checkUnit(units)
-
-# class pressureGradient(_units):
-#     classUnits = dictionary['pressureGradient']
-#     def __init__(self,value,units) :
-#         self.name = 'pressureGradient'
-#         self.kind = pressureGradient
-#         self.value = self.checkValue(value)
-#         self.unit = self.checkUnit(units)
-
-
-class dimensionless(_units):
-    classUnits = dictionary['dimensionless']
-    def __init__(self, value, units=None):
-        self.name = 'dimensionless'
-        self.kind = dimensionless
-        self.value = self.checkValue(value)
-        if units is None :
-            units = 'dimensionless'
-        self.unit = self.checkUnit(units)
-
-def customUnits(value, units):
-    return userUnits(value,units)
-
-class userUnits(_units):
-    classUnits = dictionary['userUnits']
-    def __init__(self, value, units):
-        self.name = 'userUnits'
-        self.kind = userUnits
-        units = units.strip()
-        if units not in dictionary['userUnits']:
-            dictionary['userUnits'].append(units)
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+            raise _WrongUnits

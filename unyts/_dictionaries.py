@@ -103,6 +103,7 @@ dictionary['length_UK_NAMES_UPPER_REVERSE'] = {
     'mile': ('mi',),
     'league': ('lea',),
     'nautical mile': ('nmi',),
+    'nautical league': ('nlea',),
     }
 
 dictionary['area'] = []

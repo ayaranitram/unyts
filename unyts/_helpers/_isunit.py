@@ -1,15 +1,15 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Sat Oct 24 14:46:04 2020
 
-@author: martin
+@author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
 __version__ = '0.1.0'
 __release__ = 20220524
 
-from ._dictionaries import dictionary
+from .._dictionaries import dictionary
+
 
 def isUnit(Unit):
     if type(Unit) is str:

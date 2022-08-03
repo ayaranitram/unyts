@@ -14,7 +14,7 @@ import numpy as np
 __version__ = '0.1.0'
 __release__ = 20220524
 
-defaultPrintConversionPath = True
+#defaultPrintConversionPath = unitsNetwork.print  # True
 
 
 def convertible(fromUnit, toUnit, PrintPath=False):
@@ -27,7 +27,7 @@ def convertible(fromUnit, toUnit, PrintPath=False):
         return False
 
 
-def convertUnit(value, fromUnit, toUnit, PrintConversionPath=defaultPrintConversionPath):
+def convertUnit(value, fromUnit, toUnit, PrintConversionPath=False):
     if type(PrintConversionPath) is not bool:
         if type(PrintConversionPath) in [int, float]:
             if PrintConversionPath > 1:
@@ -48,7 +48,7 @@ def convertUnit(value, fromUnit, toUnit, PrintConversionPath=defaultPrintConvers
         return value
 
 
-def _applyConversion(value, conversionPath, PrintConversionPath=defaultPrintConversionPath):
+def _applyConversion(value, conversionPath, PrintConversionPath=False):
     if PrintConversionPath:
         print( "\n converting from '" + str(conversionPath[0]) + "' to '" + str(conversionPath[-1]) + "'\n  " + _printPath(conversionPath) )
     for conversion in range(len(conversionPath) - 1):
@@ -56,7 +56,7 @@ def _applyConversion(value, conversionPath, PrintConversionPath=defaultPrintConv
     return value
 
 
-def _lambdaConversion(conversionPath, PrintConversionPath=defaultPrintConversionPath):
+def _lambdaConversion(conversionPath, PrintConversionPath=False):
     if PrintConversionPath:
         print("\n converting from '" + str(conversionPath[0]) + "' to '" + str(conversionPath[-1]) + "'\n  " + _printPath(conversionPath))
     bigLambda = []
@@ -142,7 +142,7 @@ def converter(value, fromUnit, toUnit, PrintConversionPath=None,
     else:
         conversionPath = None
     if conversionPath is not None:
-        unitsNetwork.Memory[(fromUnit, toUnit)] = _lambdaConversion(conversionPath, PrintConversionPath=defaultPrintConversionPath)
+        unitsNetwork.Memory[(fromUnit, toUnit)] = _lambdaConversion(conversionPath, PrintConversionPath=False)
         return _applyConversion(value, conversionPath, PrintConversionPath) if value is not None else unitsNetwork.Memory[(fromUnit,toUnit)]
 
     # check if pair from-to already visited

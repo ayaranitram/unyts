@@ -12,6 +12,7 @@ __release__ = 20220524
 
 from ._dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, StandadEarthGravity
 
+
 class uNode(object):
     def __init__(self,name):
         self.name = name if type(name) is str else ''
@@ -19,6 +20,7 @@ class uNode(object):
         return self.name
     def __str__(self):
         return self.name
+
 
 class uDigraph(object):
     """edges is a dict mapping each node to a list of its children"""
@@ -29,7 +31,7 @@ class uDigraph(object):
         self.fvf = None
         self.Memory = {}
         self.fvf = None
-        self.print = False
+        self.print = True
 
     def addNode(self, node):
         if node in self.edges:
@@ -382,6 +384,7 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('furlong'), network.getNode('chain'), lambda d: d*10))
     network.addEdge(conversion(network.getNode('mile'), network.getNode('furlong'), lambda d: d*8))
     network.addEdge(conversion(network.getNode('league'), network.getNode('mile'), lambda d: d*3))
+    network.addEdge(conversion(network.getNode('nautical league'), network.getNode('nautical mile'), lambda d: d*3))
     network.addEdge(conversion(network.getNode('nautical mile'), network.getNode('meter'), lambda d: d*1852))
     network.addEdge(conversion(network.getNode('rod'), network.getNode('yard'), lambda d: d*55/10))
 
@@ -582,6 +585,10 @@ def network2Frame():
     i = 0
     for node in network.edges:
         for children in network.childrenOf(node):
-            Frame.loc[i,'source'] = node.getName()
-            Frame.loc[i,'target'] = children.getName()
-            Frame.loc[i,'target'] = network.conversion(node,children)
+            Frame.loc[i,['source', 'target', 'lambda']] = [node.getName(), children.getName(), network.conversion(node, children)]
+            i += 1
+            #Frame.loc[i,'source'] = node.getName()
+            #Frame.loc[i,'target'] = children.getName()
+            #Frame.loc[i,'lambda'] = network.conversion(node,children)
+
+    return Frame.drop_duplicates(['source', 'target'])
