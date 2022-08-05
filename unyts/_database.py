@@ -7,36 +7,39 @@ Created on Sat Oct 24 12:36:48 2020
 """
 
 __all__ = ['unitsNetwork']
-__version__ = '0.0.21-10-30'
+__version__ = '0.1.0'
+__release__ = 20220524
 
 from ._dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, StandadEarthGravity
 
-class uNode(object) :
-    def __init__(self,name) :
+
+class uNode(object):
+    def __init__(self,name):
         self.name = name if type(name) is str else ''
     def getName(self):
         return self.name
     def __str__(self):
         return self.name
 
+
 class uDigraph(object):
     """edges is a dict mapping each node to a list of its children"""
     def __init__(self):
         self.edges = {}
-        self.previous=[(None,None)]
+        self.previous=[(None, None)]
         self.RecursionLimit = 5
         self.fvf = None
-        self.Memory = {} # (fromUnit,toUnit) : ( conversion factor , conversion path )
+        self.Memory = {}
         self.fvf = None
-        self.print = False
+        self.print = True
 
     def addNode(self, node):
         if node in self.edges:
             raise ValueError('Duplicate node')
         else:
-            self.edges[node] = [],[]
+            self.edges[node] = [], []
 
-    def addEdge(self, edge , reverse=False):
+    def addEdge(self, edge, reverse=False):
         src = edge.getSource()
         dest = edge.getDestination()
         conv = edge.getConvert()
@@ -49,9 +52,9 @@ class uDigraph(object):
         return self.edges[node][0]
 
     def hasNode(self, node):
-        if type(node) is str :
-            return node in [ n.getName() for n in self.edges ]
-        else :
+        if type(node) is str:
+            return node in [n.getName() for n in self.edges]
+        else:
             return node in self.edges
 
     def getNode(self, name):
@@ -61,21 +64,21 @@ class uDigraph(object):
         raise NameError(name)
 
     def listNodes(self):
-        return list(set([ N.getName() for N in self.edge.keys() ]))
+        return list(set([N.getName() for N in self.edge.keys()]))
 
     def convert(self,value,src,dest):
-        if type(src) != uNode :
+        if type(src) != uNode:
             src = self.getNode(src)
-        if type(dest) != uNode :
+        if type(dest) != uNode:
             dest = self.getNode(dest)
-        return self.edges[src][1][ self.edges[src][0].index(dest) ]( value )
+        return self.edges[src][1][self.edges[src][0].index(dest)](value)
 
     def conversion(self,src,dest):
-        if type(src) != uNode :
+        if type(src) != uNode:
             src = self.getNode(src)
-        if type(dest) != uNode :
+        if type(dest) != uNode:
             dest = self.getNode(dest)
-        return self.edges[src][1][ self.edges[src][0].index(dest) ]
+        return self.edges[src][1][self.edges[src][0].index(dest)]
 
     def __str__(self):
         result = ''
@@ -86,38 +89,38 @@ class uDigraph(object):
                          str(self.conv) + '\n'
         return result[:-1]  # remove final newline
 
-    def set_fvf(self,FVF) :
-        if type(FVF) is str :
-            try :
+    def set_fvf(self, FVF):
+        if type(FVF) is str:
+            try:
                 FVF = float(FVF)
             except:
                 print('received FVF value is not a number: ' + str(FVF))
-        if type(FVF) in [ int , float ] :
-            if FVF <= 0 :
+        if type(FVF) in [int, float]:
+            if FVF <= 0:
                 print('FVF should be a positive number...')
             self.fvf = FVF
 
-    def get_fvf(self) :
-        def valid_fvf(FVF) :
-            if type(FVF) is str :
-                try :
+    def get_fvf(self):
+        def valid_fvf(FVF):
+            if type(FVF) is str:
+                try:
                     FVF = float(FVF)
                 except:
                     return False
-            if type(FVF) is int or type(FVF) is float :
-                if FVF <= 0 :
+            if type(FVF) is int or type(FVF) is float:
+                if FVF <= 0:
                     return False
-                else :
+                else:
                     return FVF
             return False
 
-        if self.fvf is None :
+        if self.fvf is None:
             print('Please enter formation volume factor (FVF) in reservoir_volume/standard_volume:')
-            while self.fvf is None :
+            while self.fvf is None:
                 self.fvf = input(' FVF (rV/stV) = ')
-                if not self.valid_fvf(self.fvf) :
+                if not self.valid_fvf(self.fvf):
                     self.fvf = None
-                else :
+                else:
                     self.fvf = self.valid_fvf(self.fvf)
         return self.fvf
 
@@ -138,9 +141,9 @@ class conversion(object):
     def reverse(self,value):
         return value/self.conv(1)
     def getConvert(self):
-        if self.rev and type(self.conv) != None :
+        if self.rev and self.conv is not None:
             return lambda X: X/self.conv(1)
-        else :
+        else:
             return self.conv
     def __str__(self):
         return self.src.getName() + '->' + self.dest.getName()
@@ -152,126 +155,126 @@ def _loadNetwork():
     for unitKind in list(dictionary.keys()):
         # print('1: ' +unitKind)
         if '_' not in unitKind :
-            for unitName in dictionary[unitKind] :
+            for unitName in dictionary[unitKind]:
                 # print('_ 2: ' + unitName)
                 network.addNode(uNode(unitName))
-        if '_NAMES' in unitKind :
-            for unitName in list(dictionary[unitKind].keys()) :
+        if '_NAMES' in unitKind:
+            for unitName in list(dictionary[unitKind].keys()):
                 # print('N  2: ' + unitName,unitKind.split('_')[0])
                 network.addNode(uNode(unitName))
                 dictionary[unitKind.split('_')[0]].append(unitName)
-                for secondName in dictionary[unitKind][unitName] :
+                for secondName in dictionary[unitKind][unitName]:
                     # print('N   3: ' + unitName)
                     network.addNode(uNode(secondName))
-                    network.addEdge(conversion(network.getNode(secondName), network.getNode(unitName), lambda X: X ))
-                    network.addEdge(conversion(network.getNode(unitName), network.getNode(secondName), lambda X: X ))
+                    network.addEdge(conversion(network.getNode(secondName), network.getNode(unitName), lambda X: X))
+                    network.addEdge(conversion(network.getNode(unitName), network.getNode(secondName), lambda X: X))
                     dictionary[unitKind.split('_')[0]].append(secondName)
 
-        if '_SPACES' in unitKind :
-            for unitName in list(dictionary[unitKind].keys()) :
+        if '_SPACES' in unitKind:
+            for unitName in list(dictionary[unitKind].keys()):
                 # print('N  2: ' + unitName,unitKind.split('_')[0])
-                if ' ' in unitName :
+                if ' ' in unitName:
                     network.addNode(uNode(unitName))
-                    network.addNode(uNode(unitName.replace(' ','-')))
+                    network.addNode(uNode(unitName.replace(' ', '-')))
                     dictionary[unitKind.split('_')[0]].append(unitName)
-                    dictionary[unitKind.split('_')[0]].append(unitName.replace(' ','-'))
-                    network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName.replace(' ','-')), lambda X: X ))
-                    network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName.replace(' ','-')), lambda X: X ))
-                    for secondName in dictionary[unitKind][unitName] :
+                    dictionary[unitKind.split('_')[0]].append(unitName.replace(' ', '-'))
+                    network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName.replace(' ', '-')), lambda X: X))
+                    network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName.replace(' ', '-')), lambda X: X))
+                    for secondName in dictionary[unitKind][unitName]:
                         # print('N   3: ' + unitName)
-                        if ' ' in secondName :
+                        if ' ' in secondName:
                             network.addNode(uNode(secondName))
-                            network.addNode(uNode(secondName.replace(' ','-')))
-                            network.addEdge(conversion(network.getNode(secondName.replace(' ','-')), network.getNode(secondName), lambda X: X ))
-                            network.addEdge(conversion(network.getNode(secondName), network.getNode(secondName.replace(' ','-')), lambda X: X ))
+                            network.addNode(uNode(secondName.replace(' ', '-')))
+                            network.addEdge(conversion(network.getNode(secondName.replace(' ', '-')), network.getNode(secondName), lambda X: X))
+                            network.addEdge(conversion(network.getNode(secondName), network.getNode(secondName.replace(' ', '-')), lambda X: X))
                             dictionary[unitKind.split('_')[0]].append(secondName)
-                            dictionary[unitKind.split('_')[0]].append(secondName.replace(' ','-'))
-                else :
-                    for secondName in dictionary[unitKind][unitName] :
+                            dictionary[unitKind.split('_')[0]].append(secondName.replace(' ', '-'))
+                else:
+                    for secondName in dictionary[unitKind][unitName]:
                         # print('N   3: ' + unitName)
-                        if ' ' in secondName :
+                        if ' ' in secondName:
                             network.addNode(uNode(secondName))
-                            network.addNode(uNode(secondName.replace(' ','-')))
-                            network.addEdge(conversion(network.getNode(secondName.replace(' ','-')), network.getNode(secondName), lambda X: X ))
-                            network.addEdge(conversion(network.getNode(secondName), network.getNode(secondName.replace(' ','-')), lambda X: X ))
+                            network.addNode(uNode(secondName.replace(' ', '-')))
+                            network.addEdge(conversion(network.getNode(secondName.replace(' ', '-')), network.getNode(secondName), lambda X: X))
+                            network.addEdge(conversion(network.getNode(secondName), network.getNode(secondName.replace(' ', '-')), lambda X: X))
                             dictionary[unitKind.split('_')[0]].append(secondName)
-                            dictionary[unitKind.split('_')[0]].append(secondName.replace(' ','-'))
+                            dictionary[unitKind.split('_')[0]].append(secondName.replace(' ', '-'))
 
-        if '_SI' in unitKind and unitKind.split('_')[0] in SI_order[0] :
-            for unitName in list( dictionary[unitKind] ) :
+        if '_SI' in unitKind and unitKind.split('_')[0] in SI_order[0]:
+            for unitName in list(dictionary[unitKind]):
                 # print('S  2: ' + unitName)
                 network.addNode(uNode(unitName))
                 dictionary[unitKind.split('_')[0]].append(unitName)
-                for prefix in list(SI.keys()) :
+                for prefix in list(SI.keys()):
                     # print('S   3: ' + prefix+unitName+'_'+str(SI[prefix][0]))
                     network.addNode(uNode(prefix+unitName))
-                    network.addEdge(conversion(network.getNode(prefix+unitName), network.getNode(unitName), SI[prefix][0] ))
-                    network.addEdge(conversion(network.getNode(unitName), network.getNode(prefix+unitName), SI[prefix][0] , True ))
+                    network.addEdge(conversion(network.getNode(prefix+unitName), network.getNode(unitName), SI[prefix][0]))
+                    network.addEdge(conversion(network.getNode(unitName), network.getNode(prefix+unitName), SI[prefix][0], True))
                     dictionary[unitKind.split('_')[0]].append(prefix+unitName)
-        if '_SI' in unitKind and unitKind.split('_')[0]  in SI_order[1] :
-            for unitName in list( dictionary[unitKind] ) :
+        if '_SI' in unitKind and unitKind.split('_')[0]  in SI_order[1]:
+            for unitName in list(dictionary[unitKind]):
                 # print('S  2: ' + unitName)
                 network.addNode(uNode(unitName))
                 dictionary[unitKind.split('_')[0]].append(unitName)
-                for prefix in list(SI.keys()) :
+                for prefix in list(SI.keys()):
                     # print('S   3: ' + prefix+unitName+'_'+str(SI[prefix][1]))
                     network.addNode(uNode(prefix+unitName))
-                    network.addEdge(conversion(network.getNode(prefix+unitName), network.getNode(unitName), SI[prefix][1] ))
-                    network.addEdge(conversion(network.getNode(unitName), network.getNode(prefix+unitName), SI[prefix][1] , True ))
+                    network.addEdge(conversion(network.getNode(prefix+unitName), network.getNode(unitName), SI[prefix][1]))
+                    network.addEdge(conversion(network.getNode(unitName), network.getNode(prefix+unitName), SI[prefix][1], True))
                     dictionary[unitKind.split('_')[0]].append(prefix+unitName)
-        if '_SI' in unitKind and unitKind.split('_')[0]  in SI_order[2] :
-            for unitName in list( dictionary[unitKind] ) :
+        if '_SI' in unitKind and unitKind.split('_')[0]  in SI_order[2]:
+            for unitName in list(dictionary[unitKind]):
                 # print('S  2: ' + unitName)
                 network.addNode(uNode(unitName))
                 dictionary[unitKind.split('_')[0]].append(unitName)
-                for prefix in list(SI.keys()) :
+                for prefix in list(SI.keys()):
                     # print('S   3: ' + prefix+unitName+'_'+str(SI[prefix]))
                     network.addNode(uNode(prefix+unitName))
-                    network.addEdge(conversion(network.getNode(prefix+unitName), network.getNode(unitName), SI[prefix][2] ))
-                    network.addEdge(conversion(network.getNode(unitName), network.getNode(prefix+unitName), SI[prefix][2] , True ))
+                    network.addEdge(conversion(network.getNode(prefix+unitName), network.getNode(unitName), SI[prefix][2]))
+                    network.addEdge(conversion(network.getNode(unitName), network.getNode(prefix+unitName), SI[prefix][2], True))
                     dictionary[unitKind.split('_')[0]].append(prefix+unitName)
-        if '_DATA' in unitKind and unitKind.split('_')[0]  in DATA_order[0] :
-            for unitName in list( dictionary[unitKind] ) :
+        if '_DATA' in unitKind and unitKind.split('_')[0]  in DATA_order[0]:
+            for unitName in list(dictionary[unitKind]):
                 # print('S  2: ' + unitName)
                 network.addNode(uNode(unitName))
                 dictionary[unitKind.split('_')[0]].append(unitName)
-                for prefix in list(DATA.keys()) :
+                for prefix in list(DATA.keys()):
                     # print('S   3: ' + prefix+unitName+'_'+str(SI[prefix]))
                     network.addNode(uNode(prefix+unitName))
-                    network.addEdge(conversion(network.getNode(prefix+unitName), network.getNode(unitName), DATA[prefix][0] ))
-                    network.addEdge(conversion(network.getNode(unitName), network.getNode(prefix+unitName), DATA[prefix][0] , True ))
+                    network.addEdge(conversion(network.getNode(prefix+unitName), network.getNode(unitName), DATA[prefix][0]))
+                    network.addEdge(conversion(network.getNode(unitName), network.getNode(prefix+unitName), DATA[prefix][0], True))
                     dictionary[unitKind.split('_')[0]].append(prefix+unitName)
-        if '_DATA' in unitKind and unitKind.split('_')[0]  in DATA_order[1] :
-            for unitName in list( dictionary[unitKind] ) :
+        if '_DATA' in unitKind and unitKind.split('_')[0]  in DATA_order[1]:
+            for unitName in list(dictionary[unitKind]):
                 # print('S  2: ' + unitName)
                 network.addNode(uNode(unitName))
                 dictionary[unitKind.split('_')[0]].append(unitName)
-                for prefix in list(DATA.keys()) :
+                for prefix in list(DATA.keys()):
                     # print('S   3: ' + prefix+unitName+'_'+str(SI[prefix]))
                     network.addNode(uNode(prefix+unitName))
-                    network.addEdge(conversion(network.getNode(prefix+unitName), network.getNode(unitName), DATA[prefix][1] ))
-                    network.addEdge(conversion(network.getNode(unitName), network.getNode(prefix+unitName), DATA[prefix][1] , True ))
+                    network.addEdge(conversion(network.getNode(prefix+unitName), network.getNode(unitName), DATA[prefix][1]))
+                    network.addEdge(conversion(network.getNode(unitName), network.getNode(prefix+unitName), DATA[prefix][1], True))
                     dictionary[unitKind.split('_')[0]].append(prefix+unitName)
-        if '_OGF' in unitKind and unitKind.split('_')[0] in OGF_order[2] :
-            for unitName in list( dictionary[unitKind] ) :
+        if '_OGF' in unitKind and unitKind.split('_')[0] in OGF_order[2]:
+            for unitName in list(dictionary[unitKind]):
                 # print('O  2: ' + unitName)
                 network.addNode(uNode(unitName))
                 dictionary[unitKind.split('_')[0]].append(unitName)
-                for prefix in list(OGF.keys()) :
+                for prefix in list(OGF.keys()):
                     # print('S   3: ' + prefix+unitName+'_'+str(SI[prefix]))
                     network.addNode(uNode(prefix+unitName))
-                    network.addEdge(conversion(network.getNode(prefix+unitName), network.getNode(unitName), OGF[prefix][2] ))
-                    network.addEdge(conversion(network.getNode(unitName), network.getNode(prefix+unitName), OGF[prefix][2] , True ))
+                    network.addEdge(conversion(network.getNode(prefix+unitName), network.getNode(unitName), OGF[prefix][2]))
+                    network.addEdge(conversion(network.getNode(unitName), network.getNode(prefix+unitName), OGF[prefix][2], True))
                     dictionary[unitKind.split('_')[0]].append(prefix+unitName)
-        if '_PLURALwS' in unitKind :
-            if type( dictionary[unitKind] ) == dict :
+        if '_PLURALwS' in unitKind:
+            if type(dictionary[unitKind]) is dict:
                 listNames = list(dictionary[unitKind].keys())
-                for unitName in list(dictionary[unitKind].keys()) :
+                for unitName in list(dictionary[unitKind].keys()):
                     # print('U  2: ' + unitName,unitKind.split('_')[0])
                     network.addNode(uNode(unitName))
                     network.addNode(uNode(unitName+'s'))
-                    network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName+'s'), lambda X: X ))
-                    network.addEdge(conversion(network.getNode(unitName+'s'), network.getNode(unitName), lambda X: X ))
+                    network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName+'s'), lambda X: X))
+                    network.addEdge(conversion(network.getNode(unitName+'s'), network.getNode(unitName), lambda X: X))
                     dictionary[unitKind.split('_')[0]].append(unitName+'s')
                     # for secondName in dictionary[unitKind][unitName] :
                     #     # print('U   3: ' + unitName)
@@ -280,23 +283,23 @@ def _loadNetwork():
                     #     network.addEdge(conversion(network.getNode(secondName), network.getNode(secondName+'s'), lambda X: X ))
                     #     network.addEdge(conversion(network.getNode(secondName+'s'), network.getNode(secondName), lambda X: X ))
                     #     dictionary[unitKind.split('_')[0]].append(secondName+'s')
-            else :
-                for unitName in list( dictionary[unitKind] ) :
+            else:
+                for unitName in list(dictionary[unitKind]):
                     # print('U  2: ' + unitName,unitKind.split('_')[0])
                     network.addNode(uNode(unitName))
                     network.addNode(uNode(unitName+'s'))
-                    network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName+'s'), lambda X: X ))
-                    network.addEdge(conversion(network.getNode(unitName+'s'), network.getNode(unitName), lambda X: X ))
+                    network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName+'s'), lambda X: X))
+                    network.addEdge(conversion(network.getNode(unitName+'s'), network.getNode(unitName), lambda X: X))
                     dictionary[unitKind.split('_')[0]].append(unitName+'s')
-            if '_UPPER' in unitKind :
-                if type( dictionary[unitKind] ) == dict :
+            if '_UPPER' in unitKind:
+                if type( dictionary[unitKind] ) is dict:
                     listNames = list(dictionary[unitKind].keys())
-                    for unitName in list(dictionary[unitKind].keys()) :
+                    for unitName in list(dictionary[unitKind].keys()):
                         # print('U  2: ' + unitName,unitKind.split('_')[0])
                         network.addNode(uNode(unitName))
                         network.addNode(uNode(unitName.upper()+'S'))
-                        network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName.upper()+'S'), lambda X: X ))
-                        network.addEdge(conversion(network.getNode(unitName.upper()+'S'), network.getNode(unitName), lambda X: X ))
+                        network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName.upper()+'S'), lambda X: X))
+                        network.addEdge(conversion(network.getNode(unitName.upper()+'S'), network.getNode(unitName), lambda X: X))
                         dictionary[unitKind.split('_')[0]].append(unitName.upper()+'S')
                         # for secondName in dictionary[unitKind][unitName] :
                         #     # print('U   3: ' + unitName)
@@ -305,40 +308,40 @@ def _loadNetwork():
                         #     network.addEdge(conversion(network.getNode(secondName), network.getNode(secondName.upper()+'S'), lambda X: X ))
                         #     network.addEdge(conversion(network.getNode(secondName.upper()+'S'), network.getNode(secondName), lambda X: X ))
                         #     dictionary[unitKind.split('_')[0]].append(secondName.upper()+'S')
-                else :
-                    for unitName in list( dictionary[unitKind] ) :
+                else:
+                    for unitName in list( dictionary[unitKind] ):
                         # print('U  2: ' + unitName,unitKind.split('_')[0])
                         network.addNode(uNode(unitName))
                         network.addNode(uNode(unitName.upper()+'S'))
-                        network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName.upper()+'S'), lambda X: X ))
-                        network.addEdge(conversion(network.getNode(unitName.upper()+'S'), network.getNode(unitName), lambda X: X ))
+                        network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName.upper()+'S'), lambda X: X))
+                        network.addEdge(conversion(network.getNode(unitName.upper()+'S'), network.getNode(unitName), lambda X: X))
                         dictionary[unitKind.split('_')[0]].append(unitName.upper()+'S')
-        if '_UPPER' in unitKind :
-            if type( dictionary[unitKind] ) == dict :
+        if '_UPPER' in unitKind:
+            if type( dictionary[unitKind] ) is dict:
                 listNames = list(dictionary[unitKind].keys())
-                for unitName in list(dictionary[unitKind].keys()) :
+                for unitName in list(dictionary[unitKind].keys()):
                     # print('U  2: ' + unitName,unitKind.split('_')[0])
                     network.addNode(uNode(unitName))
                     network.addNode(uNode(unitName.upper()))
-                    network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName.upper()), lambda X: X ))
-                    network.addEdge(conversion(network.getNode(unitName.upper()), network.getNode(unitName), lambda X: X ))
+                    network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName.upper()), lambda X: X))
+                    network.addEdge(conversion(network.getNode(unitName.upper()), network.getNode(unitName), lambda X: X))
                     dictionary[unitKind.split('_')[0]].append(unitName.upper())
-                    for secondName in dictionary[unitKind][unitName] :
+                    for secondName in dictionary[unitKind][unitName]:
                         # print('U   3: ' + unitName)
                         network.addNode(uNode(secondName))
                         network.addNode(uNode(secondName.upper()))
-                        network.addEdge(conversion(network.getNode(secondName), network.getNode(secondName.upper()), lambda X: X ))
-                        network.addEdge(conversion(network.getNode(secondName.upper()), network.getNode(secondName), lambda X: X ))
+                        network.addEdge(conversion(network.getNode(secondName), network.getNode(secondName.upper()), lambda X: X))
+                        network.addEdge(conversion(network.getNode(secondName.upper()), network.getNode(secondName), lambda X: X))
                         dictionary[unitKind.split('_')[0]].append(secondName.upper())
-            else :
-                for unitName in list( dictionary[unitKind] ) :
+            else:
+                for unitName in list( dictionary[unitKind] ):
                     # print('U  2: ' + unitName,unitKind.split('_')[0])
                     network.addNode(uNode(unitName))
                     network.addNode(uNode(unitName.upper()))
-                    network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName.upper()), lambda X: X ))
-                    network.addEdge(conversion(network.getNode(unitName.upper()), network.getNode(unitName), lambda X: X ))
+                    network.addEdge(conversion(network.getNode(unitName), network.getNode(unitName.upper()), lambda X: X))
+                    network.addEdge(conversion(network.getNode(unitName.upper()), network.getNode(unitName), lambda X: X))
                     dictionary[unitKind.split('_')[0]].append(unitName.upper())
-        if '_INVERSE' in unitKind :
+        if '_INVERSE' in unitKind:
             pass
 
     # for unitKind in list(dictionary.keys()) :
@@ -346,63 +349,64 @@ def _loadNetwork():
     #         for unitNode in
 
     # percentage & fraction :
-    network.addEdge(conversion(network.getNode('fraction'), network.getNode('percentage'), lambda f: f*100 ))
+    network.addEdge(conversion(network.getNode('fraction'), network.getNode('percentage'), lambda f: f*100))
 
     # time conversions
-    # network.addEdge(conversion(network.getNode('second'), network.getNode('millisecond'), lambda t: t*1000 ))
-    network.addEdge(conversion(network.getNode('minute'), network.getNode('second'), lambda t: t*60 ))
-    network.addEdge(conversion(network.getNode('hour'), network.getNode('minute'), lambda t: t*60 ))
-    network.addEdge(conversion(network.getNode('day'), network.getNode('hour'), lambda t: t*24 ))
-    network.addEdge(conversion(network.getNode('day'), network.getNode('month'), lambda t: t/36525/100*12 ))
-    network.addEdge(conversion(network.getNode('week'), network.getNode('day'), lambda t: t*7 ))
-    network.addEdge(conversion(network.getNode('year'), network.getNode('month'), lambda t: t*12 ))
-    network.addEdge(conversion(network.getNode('year'), network.getNode('day'), lambda t: t*36525/100 ))
-    network.addEdge(conversion(network.getNode('lustrum'), network.getNode('year'), lambda t: t*5 ))
-    network.addEdge(conversion(network.getNode('decade'), network.getNode('year'), lambda t: t*10 ))
-    network.addEdge(conversion(network.getNode('century'), network.getNode('year'), lambda t: t*100 ))
+    # network.addEdge(conversion(network.getNode('second'), network.getNode('millisecond'), lambda t: t*1000))
+    network.addEdge(conversion(network.getNode('minute'), network.getNode('second'), lambda t: t*60))
+    network.addEdge(conversion(network.getNode('hour'), network.getNode('minute'), lambda t: t*60))
+    network.addEdge(conversion(network.getNode('day'), network.getNode('hour'), lambda t: t*24))
+    network.addEdge(conversion(network.getNode('day'), network.getNode('month'), lambda t: t/36525/100*12))
+    network.addEdge(conversion(network.getNode('week'), network.getNode('day'), lambda t: t*7))
+    network.addEdge(conversion(network.getNode('year'), network.getNode('month'), lambda t: t*12))
+    network.addEdge(conversion(network.getNode('year'), network.getNode('day'), lambda t: t*36525/100))
+    network.addEdge(conversion(network.getNode('lustrum'), network.getNode('year'), lambda t: t*5))
+    network.addEdge(conversion(network.getNode('decade'), network.getNode('year'), lambda t: t*10))
+    network.addEdge(conversion(network.getNode('century'), network.getNode('year'), lambda t: t*100))
 
     # temperature conversions
-    network.addEdge(conversion(network.getNode('Celsius'), network.getNode('Kelvin'), lambda t: t + 273.15 ))
-    network.addEdge(conversion(network.getNode('Kelvin'), network.getNode('Celsius'), lambda t: t - 273.15 ))
-    network.addEdge(conversion(network.getNode('Celsius'), network.getNode('Fahrenheit'), lambda t: t*9/5 + 32 ))
-    network.addEdge(conversion(network.getNode('Fahrenheit'), network.getNode('Celsius'), lambda t: (t-32) * 5/9 ))
-    network.addEdge(conversion(network.getNode('Fahrenheit'), network.getNode('Rankine'), lambda t: t+459.67 ))
-    network.addEdge(conversion(network.getNode('Rankine'), network.getNode('Fahrenheit'), lambda t: t-459.67 ))
-    network.addEdge(conversion(network.getNode('Rankine'), network.getNode('Kelvin'), lambda t: t*9/5 ))
-    network.addEdge(conversion(network.getNode('Kelvin'), network.getNode('Rankine'), lambda t: t*5/9 ))
+    network.addEdge(conversion(network.getNode('Celsius'), network.getNode('Kelvin'), lambda t: t + 273.15))
+    network.addEdge(conversion(network.getNode('Kelvin'), network.getNode('Celsius'), lambda t: t - 273.15))
+    network.addEdge(conversion(network.getNode('Celsius'), network.getNode('Fahrenheit'), lambda t: t*9/5 + 32))
+    network.addEdge(conversion(network.getNode('Fahrenheit'), network.getNode('Celsius'), lambda t: (t-32) * 5/9))
+    network.addEdge(conversion(network.getNode('Fahrenheit'), network.getNode('Rankine'), lambda t: t+459.67))
+    network.addEdge(conversion(network.getNode('Rankine'), network.getNode('Fahrenheit'), lambda t: t-459.67))
+    network.addEdge(conversion(network.getNode('Rankine'), network.getNode('Kelvin'), lambda t: t*9/5))
+    network.addEdge(conversion(network.getNode('Kelvin'), network.getNode('Rankine'), lambda t: t*5/9))
 
     # length conversions
-    network.addEdge(conversion(network.getNode('yard'), network.getNode('meter'), lambda d: d*9144/10000 ))
-    # network.addEdge(conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048 ))
-    network.addEdge(conversion(network.getNode('inch'), network.getNode('thou'), lambda d: d*1000 ))
+    network.addEdge(conversion(network.getNode('yard'), network.getNode('meter'), lambda d: d*9144/10000))
+    # network.addEdge(conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048))
+    network.addEdge(conversion(network.getNode('inch'), network.getNode('thou'), lambda d: d*1000))
     network.addEdge(conversion(network.getNode('foot'), network.getNode('inch'), lambda d: d*12))
     network.addEdge(conversion(network.getNode('yard'), network.getNode('foot'), lambda d: d*3))
     network.addEdge(conversion(network.getNode('chain'), network.getNode('yard'), lambda d: d*22))
     network.addEdge(conversion(network.getNode('furlong'), network.getNode('chain'), lambda d: d*10))
     network.addEdge(conversion(network.getNode('mile'), network.getNode('furlong'), lambda d: d*8))
     network.addEdge(conversion(network.getNode('league'), network.getNode('mile'), lambda d: d*3))
+    network.addEdge(conversion(network.getNode('nautical league'), network.getNode('nautical mile'), lambda d: d*3))
     network.addEdge(conversion(network.getNode('nautical mile'), network.getNode('meter'), lambda d: d*1852))
     network.addEdge(conversion(network.getNode('rod'), network.getNode('yard'), lambda d: d*55/10))
 
     # area conversions
-    network.addEdge(conversion(network.getNode('square mile'), network.getNode('acre'), lambda d: d*640 ))
-    network.addEdge(conversion(network.getNode('acre'), network.getNode('square yard'), lambda d: d*4840 ))
+    network.addEdge(conversion(network.getNode('square mile'), network.getNode('acre'), lambda d: d*640))
+    network.addEdge(conversion(network.getNode('acre'), network.getNode('square yard'), lambda d: d*4840))
     network.addEdge(conversion(network.getNode('square rod'), network.getNode('square yard'), lambda d: d*3025/100))
     network.addEdge(conversion(network.getNode('square yard'), network.getNode('square foot'), lambda d: d*9))
     network.addEdge(conversion(network.getNode('square foot'), network.getNode('square inch'), lambda d: d*144))
     network.addEdge(conversion(network.getNode('square foot'), network.getNode('square meter'), lambda d: d*(3048**2)/(10000**2)))
-    network.addEdge(conversion(network.getNode('Darcy'), network.getNode('mD'), lambda d: d*1000 ))
+    network.addEdge(conversion(network.getNode('Darcy'), network.getNode('mD'), lambda d: d*1000))
     network.addEdge(conversion(network.getNode('Darcy'), network.getNode('µm2'), lambda d: d*0.9869233))
-    # network.addEdge(conversion(network.getNode('m*m'), network.getNode('m'), lambda d: d**0.5 ))
-    # network.addEdge(conversion(network.getNode('m'), network.getNode('m*m'), lambda d: d**2 ))
-    # network.addEdge(conversion(network.getNode('rd*rd'), network.getNode('rd'), lambda d: d**0.5 ))
-    # network.addEdge(conversion(network.getNode('rd'), network.getNode('rd*rd'), lambda d: d**2 ))
-    # network.addEdge(conversion(network.getNode('yd*yd'), network.getNode('yd'), lambda d: d**0.5 ))
-    # network.addEdge(conversion(network.getNode('yd'), network.getNode('yd*yd'), lambda d: d**2 ))
-    # network.addEdge(conversion(network.getNode('ft*ft'), network.getNode('ft'), lambda d: d**0.5 ))
-    # network.addEdge(conversion(network.getNode('ft'), network.getNode('ft*ft'), lambda d: d**2 ))
-    # network.addEdge(conversion(network.getNode('in*in'), network.getNode('in'), lambda d: d**0.5 ))
-    # network.addEdge(conversion(network.getNode('in'), network.getNode('in*in'), lambda d: d**2 ))
+    # network.addEdge(conversion(network.getNode('m*m'), network.getNode('m'), lambda d: d**0.5))
+    # network.addEdge(conversion(network.getNode('m'), network.getNode('m*m'), lambda d: d**2))
+    # network.addEdge(conversion(network.getNode('rd*rd'), network.getNode('rd'), lambda d: d**0.5))
+    # network.addEdge(conversion(network.getNode('rd'), network.getNode('rd*rd'), lambda d: d**2))
+    # network.addEdge(conversion(network.getNode('yd*yd'), network.getNode('yd'), lambda d: d**0.5))
+    # network.addEdge(conversion(network.getNode('yd'), network.getNode('yd*yd'), lambda d: d**2))
+    # network.addEdge(conversion(network.getNode('ft*ft'), network.getNode('ft'), lambda d: d**0.5))
+    # network.addEdge(conversion(network.getNode('ft'), network.getNode('ft*ft'), lambda d: d**2))
+    # network.addEdge(conversion(network.getNode('in*in'), network.getNode('in'), lambda d: d**0.5))
+    # network.addEdge(conversion(network.getNode('in'), network.getNode('in*in'), lambda d: d**2))
 
     # volume conversions
     network.addEdge(conversion(network.getNode('gill'), network.getNode('fuild ounce'), lambda v: v*5))
@@ -452,112 +456,115 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('pound'), network.getNode('kilogram'), lambda w: w*45359237/100000000))
 
     # force conversion
-    # network.addEdge(conversion(network.getNode('kilogram'), network.getNode('kilogram force'), lambda f: f* converter(StandadEarthGravity,'m/s2','cm/s2',False) ))
-    network.addEdge(conversion(network.getNode('kilogram mass'), network.getNode('kilogram force'), lambda f: f* StandadEarthGravity ))
-    network.addEdge(conversion(network.getNode('Dyne'), network.getNode('Newton'), lambda f: f*1E-5 ))
+    # network.addEdge(conversion(network.getNode('kilogram'), network.getNode('kilogram force'), lambda f: f* converter(StandadEarthGravity,'m/s2','cm/s2',False)))
+    network.addEdge(conversion(network.getNode('kilogram mass'), network.getNode('kilogram force'), lambda f: f* StandadEarthGravity))
+    network.addEdge(conversion(network.getNode('Dyne'), network.getNode('Newton'), lambda f: f*1E-5))
     network.addEdge(conversion(network.getNode('Newton'), network.getNode('Dyne'), lambda f: f*1E5 ))
 
     # density conversion
-    network.addEdge(conversion(network.getNode('API'), network.getNode('SgO'), lambda d: 141.5/(131.5+d) ))
-    network.addEdge(conversion(network.getNode('SgO'), network.getNode('API'), lambda d: 141.5/d-131.5 ))
-    network.addEdge(conversion(network.getNode('SgO'), network.getNode('g/cc'), lambda d: d ))
-    network.addEdge(conversion(network.getNode('SgW'), network.getNode('g/cc'), lambda d: d ))
-    network.addEdge(conversion(network.getNode('SgG'), network.getNode('g/cc'), lambda d: d * StandardAirDensity ))
-    network.addEdge(conversion(network.getNode('psia/ft'), network.getNode('lb/ft3'), lambda d: d*144 ))
-    network.addEdge(conversion(network.getNode('g/cm3'), network.getNode('lb/ft3'), lambda d: d*62.427960576144606 ))
-    network.addEdge(conversion(network.getNode('lb/ft3'), network.getNode('lb/stb'), lambda d: d*5.614584 ))
+    network.addEdge(conversion(network.getNode('API'), network.getNode('SgO'), lambda d: 141.5/(131.5+d)))
+    network.addEdge(conversion(network.getNode('SgO'), network.getNode('API'), lambda d: 141.5/d-131.5))
+    network.addEdge(conversion(network.getNode('SgO'), network.getNode('g/cc'), lambda d: d))
+    network.addEdge(conversion(network.getNode('SgW'), network.getNode('g/cc'), lambda d: d))
+    network.addEdge(conversion(network.getNode('SgG'), network.getNode('g/cc'), lambda d: d * StandardAirDensity))
+    network.addEdge(conversion(network.getNode('psia/ft'), network.getNode('lb/ft3'), lambda d: d*144))
+    network.addEdge(conversion(network.getNode('g/cm3'), network.getNode('lb/ft3'), lambda d: d*62.427960576144606))
+    network.addEdge(conversion(network.getNode('lb/ft3'), network.getNode('lb/stb'), lambda d: d*5.614584))
 
     # viscosity conversions
-    network.addEdge(conversion(network.getNode('Pa*s'), network.getNode('Poise'), lambda v: v*10 ))
+    network.addEdge(conversion(network.getNode('Pa*s'), network.getNode('Poise'), lambda v: v*10))
 
     # data conversions
-    network.addEdge(conversion(network.getNode('byte'), network.getNode('bit'), lambda d: d*8 ))
-    network.addEdge(conversion(network.getNode('bit'), network.getNode('byte'), lambda d: d/8 ))  # _REVERSE not working here
+    network.addEdge(conversion(network.getNode('byte'), network.getNode('bit'), lambda d: d*8))
+    network.addEdge(conversion(network.getNode('bit'), network.getNode('byte'), lambda d: d/8))  # _REVERSE not working here
 
     for unitKind in list(dictionary.keys()):
-        if '_REVERSE' in unitKind :
-            if type(dictionary[unitKind]) == dict :
+        if '_REVERSE' in unitKind:
+            if type(dictionary[unitKind]) is dict:
                 nameList = list(dictionary[unitKind].keys())
-            else :
+            else:
                 nameList = list(dictionary[unitKind])
             # print(nameList)
-            for unitName in nameList :
+            for unitName in nameList:
                 # print('R  2: ' + unitName)
-                for otherName in network.childrenOf( network.getNode(unitName) ) :
+                for otherName in network.childrenOf( network.getNode(unitName)):
                     # print('R   3: '+unitName,otherName.getName())
-                    if network.getNode(unitName)!=otherName :
-                        network.addEdge(conversion(otherName, network.getNode(unitName),   network.edges[ network.getNode(unitName) ][1][ network.edges[ network.getNode(unitName) ][0].index(otherName) ]  , True  ))
+                    if network.getNode(unitName)!=otherName:
+                        network.addEdge(conversion(otherName, network.getNode(unitName), network.edges[network.getNode(unitName)][1][network.edges[network.getNode(unitName)][0].index(otherName) ], True))
 
     for unitKind in list(dictionary.keys()):
-        if '_FROMvolume' in unitKind and unitKind.split('_')[0] in SI_order[2] :
+        if '_FROMvolume' in unitKind and unitKind.split('_')[0] in SI_order[2]:
             # if '_SI' in unitKind and unitKind.split('_')[0]  in SI_order[2] :
-            for unitName in list( dictionary[unitKind] ) :
+            for unitName in list(dictionary[unitKind]):
                 # print('S  2: ' + unitName)
                 network.addNode(uNode(unitName))
                 dictionary[unitKind.split('_')[0]].append(unitName)
-                for otherName in network.childrenOf( network.getNode(unitName.split('/')[0] ) ) :
-                    if network.getNode(unitName.split('/')[0])!=otherName :
+                for otherName in network.childrenOf( network.getNode(unitName.split('/')[0])):
+                    if network.getNode(unitName.split('/')[0])!=otherName:
                         print('R   3: '+unitName,otherName.getName())
                         otherRate = otherName.getName() +'/'+ unitName.split('/')[1]
-                        network.addNode(uNode( otherRate ))
-                        network.addEdge(conversion(network.getNode(unitName), otherRate, network.edges[ network.getNode(unitName.split('/')[1]) ][1][ network.edges[ network.getNode(unitName.split('/')[1]) ][0].index(otherName) ]  ))
-                        network.addEdge(conversion(otherRate, network.getNode(unitName), network.edges[ network.getNode(unitName.split('/')[1]) ][1][ network.edges[ network.getNode(unitName.split('/')[1]) ][0].index(otherName) ]  , True  ))
+                        network.addNode(uNode(otherRate))
+                        network.addEdge(conversion(network.getNode(unitName), otherRate, network.edges[ network.getNode(unitName.split('/')[1]) ][1][network.edges[network.getNode(unitName.split('/')[1])][0].index(otherName)]))
+                        network.addEdge(conversion(otherRate, network.getNode(unitName), network.edges[ network.getNode(unitName.split('/')[1]) ][1][network.edges[network.getNode(unitName.split('/')[1]) ][0].index(otherName) ], True))
 
 
     toRemove = []
-    for unitKind in dictionary :
-        if '_' in unitKind :
+    for unitKind in dictionary:
+        if '_' in unitKind:
             toRemove.append(unitKind)
         else : # if '_' not in unitKind :
             dictionary[unitKind] = tuple(dictionary[unitKind])
     dictionary['userUnits'] = []
 
-    for unitKind in toRemove :
+    for unitKind in toRemove:
         dictionary.pop(unitKind)
 
     return network
 
 
-def _create_rates() :
+def _create_rates():
     # volumes / time
     rates = list(dictionary['rate']) if 'rate' in dictionary else []
-    for volume in dictionary['volume'] :
-        for time in dictionary['time'] :
-            rates.append( volume+'/'+time )
+    for volume in dictionary['volume']:
+        for time in dictionary['time']:
+            rates.append(volume+'/'+time)
+    for weight in dictionary['weight']:
+        for time in dictionary['time']:
+            rates.append(weight+'/'+time)
     # data / time
-    for data in dictionary['dataBYTE'] :
-        for time in dictionary['time'] :
-            rates.append( data+'/'+time )
-    for data in dictionary['dataBIT'] :
-        for time in dictionary['time'] :
-            rates.append( data+'/'+time )
+    for data in dictionary['dataBYTE']:
+        for time in dictionary['time']:
+            rates.append(data+'/'+time)
+    for data in dictionary['dataBIT']:
+        for time in dictionary['time']:
+            rates.append(data+'/'+time)
     dictionary['rate'] = tuple(set(rates))
 
 
-def _create_volumeRatio() :
+def _create_volumeRatio():
     # volume / volume
     ratio = list(dictionary['volumeRatio']) if 'volumeRatio' in dictionary else []
-    for numerator in dictionary['volume'] :
-        for denominator in dictionary['volume'] :
-            ratio.append( numerator+'/'+denominator )
+    for numerator in dictionary['volume']:
+        for denominator in dictionary['volume']:
+            ratio.append(numerator+'/'+denominator)
     dictionary['volumeRatio'] = tuple(set(ratio))
 
 
-def _create_density() :
+def _create_density():
     # mass / volume
     density = list(dictionary['density']) if 'density' in dictionary else []
-    for numerator in dictionary['mass'] :
-        for denominator in dictionary['volume'] :
-            density.append( numerator+'/'+denominator )
+    for numerator in dictionary['mass']:
+        for denominator in dictionary['volume']:
+            density.append(numerator+'/'+denominator)
     dictionary['density'] = tuple(set(density))
 
 
-def _create_speed() :
+def _create_speed():
     # length / time
     speed = list(dictionary['speed']) if 'speed' in dictionary else []
-    for length in dictionary['length'] :
-        for time in dictionary['time'] :
-            speed.append( length+'/'+time )
+    for length in dictionary['length']:
+        for time in dictionary['time']:
+            speed.append(length+'/'+time)
     dictionary['speed'] = tuple(set(speed))
 
 
@@ -578,6 +585,10 @@ def network2Frame():
     i = 0
     for node in network.edges:
         for children in network.childrenOf(node):
-            Frame.loc[i,'source'] = node.getName()
-            Frame.loc[i,'target'] = children.getName()
-            Frame.loc[i,'target'] = network.conversion(node,children)
+            Frame.loc[i,['source', 'target', 'lambda']] = [node.getName(), children.getName(), network.conversion(node, children)]
+            i += 1
+            #Frame.loc[i,'source'] = node.getName()
+            #Frame.loc[i,'target'] = children.getName()
+            #Frame.loc[i,'lambda'] = network.conversion(node,children)
+
+    return Frame.drop_duplicates(['source', 'target'])

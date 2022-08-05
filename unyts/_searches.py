@@ -7,7 +7,9 @@ Created on Sat Oct 24 17:52:34 2020
 """
 
 __all__ = ['BFS']
-__version__ = '0.1.20-10-25'
+__version__ = '0.1.0'
+__release__ = 20220524
+
 
 def BFS(graph, start, end, toPrint=False):
     """Assumes graph is a Digraph; start and end are nodes
@@ -44,8 +46,8 @@ def printPath(path):
         for i in range(len(path)):
             if type(path[i]) == str :
                 result = result + ' ' +  path[i] + ' '
-            else: 
+            else:
                 result = result + str(path[i])
                 if i != len(path) - 1:
                     result = result + ' ' + chr(11157) + ' '
-    return result 
+    return result
