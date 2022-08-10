@@ -11,7 +11,7 @@ setup(
       author="Martin Carlos Araya",
       description="a unit converter based on graph network and classes to operate with units.",
       name="unyts",
-      version="0.1.4",
+      version="0.1.5",
       packages=find_packages(include=['unyts, unyts.*']),
       install_requires=['numpy'],
       python_requires='>=3.5.0'

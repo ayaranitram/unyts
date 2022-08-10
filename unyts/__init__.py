@@ -6,7 +6,7 @@ Created on Sat Oct 24 18:24:20 2020
 @author: martin
 """
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 __release__ = 20220803
 
 from .units import *
