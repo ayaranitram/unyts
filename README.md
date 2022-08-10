@@ -1,4 +1,3 @@
- @@ -0,0 +1,12 @@
 # unyts
 After culminated a project for a class from MITx couses, I saw the opportunity to use a *dgraph network* to built a unit converter able to from any units to any units without the need to populate a huge but finite table of possible conversions. Powered by BFS algorith to search through the network, this converter is able to found conversions from a particular unit (or ratio of units) to any other unit (or ratio) as long as a path connecting them exists.
 
