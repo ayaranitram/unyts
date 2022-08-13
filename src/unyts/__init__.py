@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: martin
 """
 
-__version__ = '0.1.6'
-__release__ = 20220811
+__version__ = '0.1.7'
+__release__ = 20220813
 
 # from .units.custom import *
 from .units.define import units

@@ -7,8 +7,8 @@ Created on Sat Oct 24 14:38:58 2020
 """
 
 __all__ = ['unitProduct','unitDivision']
-__version__ = '0.1.0'
-__release__ = 20220524
+__version__ = '0.1.2'
+__release__ = 20220813
 
 from ._dictionaries import dictionary
 from ._convert import convertible
@@ -116,14 +116,14 @@ def unitProduct(unit1,unit2):
 
     else:
         for c in ['+','-','*','/','^']:
-            if c in U1bas:
-                U1bas = '('+U1bas+')'
+            if c in unit1:
+                unit1 = '('+unit1+')'
                 break
         for c in ['+','-','*','/','^']:
-            if c in U2bas:
-                U2bas = '('+U2bas+')'
+            if c in unit2:
+                unit2 = '('+unit2+')'
                 break
-        result = U1bas + '*' + U2bas
+        result = unit1 + '*' + unit2
 
     return result
 
