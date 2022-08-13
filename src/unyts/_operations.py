@@ -26,7 +26,7 @@ def unitBasePower(unit):
 
     Returns
     -------
-    tuple of base and power
+        tuple of base and power
 
     """
     uBas , uPow = '' , ''
@@ -190,13 +190,13 @@ def unitDivision(unit1, unit2):
 
     else:
         for c in ['+','-','*','/','^']:
-            if c in U1bas:
-                U1bas = '('+U1bas+')'
+            if c in unit1:
+                unit1 = '('+unit1+')'
                 break
         for c in ['+','-','*','/','^']:
-            if c in U2bas:
-                U2bas = '('+U2bas+')'
+            if c in unit2:
+                unit2 = '('+unit2+')'
                 break
-        result = U1bas + '/' + U2bas
+        result = unit1 + '/' + unit2
 
     return result

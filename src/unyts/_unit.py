@@ -15,6 +15,7 @@ from ._errors import WrongUnits as _WrongUnits, WrongValue as _WrongValue
 from ._operations import unitProduct, unitDivision, unitBasePower
 from ._convert import converter as _converter, convertible as _convertible
 
+
 class _units(object):
     """
     A class to cope with values associated to units, its arithmetic and logic
@@ -22,7 +23,6 @@ class _units(object):
     """
 
     def __init__(self):
-        from .units import dimensionless, userUnits
         self.unit = None
         self.value = None
         self.name = None
@@ -51,6 +51,8 @@ class _units(object):
         return self.kind(self.value * -1, self.unit)
 
     def __bool__(self):
+        from .units.custom import userUnits
+        from .units.unitless import dimensionless
         if self.kind in [dimensionless, userUnits]:
             return False
         return True
@@ -59,6 +61,7 @@ class _units(object):
         return self.kind(abs(self.value), self.unit)
 
     def __add__(self,other):
+        from .units.unitless import dimensionless
         if '.units.' in str(type(other)):
             if other.kind is self.kind:
                 if self.unit == other.unit:
@@ -84,6 +87,8 @@ class _units(object):
         return self.__add__(other)
 
     def __mul__(self,other):
+        from .units.unitless import dimensionless
+        from .units.define import units
         if '.units.' in str(type(other)):
             if self.kind is dimensionless:
                 return other.kind(self.value * other.value, other.unit)
@@ -110,6 +115,8 @@ class _units(object):
         return self.__mul__(other)
 
     def __pow__(self,other):
+        from .units.unitless import dimensionless
+        from .units.define import units
         if '.units.' in str(type(other)):
             if self.kind is dimensionless:
                 return other.kind(self.value ** other.value, other.unit)
@@ -146,6 +153,8 @@ class _units(object):
         return -self + other
 
     def __truediv__(self, other):
+        from .units.unitless import dimensionless
+        from .units.define import units
         if '.units.' in str(type(other)):
             if self.kind is dimensionless:
                 return other.kind(self.value / other.value, other.unit)
@@ -168,9 +177,12 @@ class _units(object):
         else:
             return units(self.value / other, self.unit)
     def __rtruediv__(self, other):
+        from .units.define import units
         return units( other / self.value, self.unit + '-1' )
 
     def __floordiv__(self, other):
+        from .units.unitless import dimensionless
+        from .units.define import units
         if '.units.' in str(type(other)):
             if self.kind is dimensionless:
                 return other.kind(self.value // other.value, other.unit)
@@ -193,10 +205,13 @@ class _units(object):
         else:
             return self.kind(self.value / other, self.unit)
     def __rfloordiv__(self, other):
+        from .units.define import units
         return units( other // self.value, self.unit+'-1' )
 
     def __mod__(self, other):
+        from .units.define import units
         if '.units.' in str(type(other)):
+            from .units.unitless import dimensionless
             if self.kind is dimensionless:
                 return other.kind(self.value % other.value, self.unit)
             elif other.kind is dimensionless:

@@ -9,7 +9,8 @@ Created on Sat Oct 24 18:24:20 2020
 __version__ = '0.1.6'
 __release__ = 20220811
 
-from .units import *
+# from .units.custom import *
+from .units.define import units
 from ._convert import convertUnit
 from ._convert import convertUnit as convert
 from ._database import unitsNetwork
