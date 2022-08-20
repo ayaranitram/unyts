@@ -7,7 +7,6 @@ Created on Sun May 23 11:18:15 2021
 helper functions for units modules
 """
 
-
 def isnumber(string):
     """
     Checks if a string represents a number.
