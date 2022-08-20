@@ -3,7 +3,7 @@
 """
 Created on Sat Oct 24 17:52:34 2020
 
-@author: martin
+@author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
 __all__ = ['BFS']

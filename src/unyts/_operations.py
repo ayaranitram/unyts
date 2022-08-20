@@ -3,7 +3,7 @@
 """
 Created on Sat Oct 24 14:38:58 2020
 
-@author: martin
+@author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
 __all__ = ['unitProduct','unitDivision']

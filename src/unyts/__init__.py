@@ -3,7 +3,7 @@
 """
 Created on Sat Oct 24 18:24:20 2020
 
-@author: martin
+@author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
 __version__ = '0.1.7'

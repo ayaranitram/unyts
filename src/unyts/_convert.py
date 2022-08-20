@@ -3,7 +3,7 @@
 """
 Created on Sat Oct 24 15:57:27 2020
 
-@author: martin
+@author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
 from ._database import unitsNetwork
