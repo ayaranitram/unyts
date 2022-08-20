@@ -7,8 +7,8 @@ Created on Sat Oct 24 14:38:58 2020
 """
 
 __all__ = ['unitProduct','unitDivision']
-__version__ = '0.1.2'
-__release__ = 20220813
+__version__ = '0.1.3'
+__release__ = 20220819
 
 from ._dictionaries import dictionary
 from ._convert import convertible
@@ -53,6 +53,23 @@ def unitBasePower(unit):
     if inv :
         uPow = uPow * -1 * invPow
     return uBas,uPow
+
+
+def unitBase(unit):
+    """
+    
+
+    Parameters
+    ----------
+    unit : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    return unitBasePower(unit)[0]
 
 
 def unitProduct(unit1,unit2):
@@ -108,18 +125,18 @@ def unitProduct(unit1,unit2):
         elif Upow == 0:
             result = U1bas + '/' + U1bas
         else :
-            for c in ['+','-','*','/','^']:
+            for c in ['+','-','^']:  # '*','/'
                 if c in U1bas:
                     U1bas = '('+U1bas+')'
                     break
             result = U1bas + str(Upow)
 
     else:
-        for c in ['+','-','*','/','^']:
+        for c in ['+','-','^']:  # '*','/'
             if c in unit1:
                 unit1 = '('+unit1+')'
                 break
-        for c in ['+','-','*','/','^']:
+        for c in ['+','-','^']:  # '*','/'
             if c in unit2:
                 unit2 = '('+unit2+')'
                 break
@@ -182,18 +199,29 @@ def unitDivision(unit1, unit2):
         elif Upow == 0:
             result = U1bas + '/' + U1bas
         else:
-            for c in ['+','-','*','/','^']:
+            for c in ['+','-','^']:  # '*','/'
                 if c in U1bas:
                     U1bas = '('+U1bas+')'
                     break
             result = U1bas + str(Upow)
 
+    elif ('+' not in unit1 and '-' not in unit1 and '^' not in unit1) and (
+            '+' not in unit2 and '-' not in unit2 and '^' not in unit2):
+        if '*' in unit1 and unitBase(unit2) in map(unitBase, unit1.split('*')):
+            result = ''
+            for u in unit1.split('*'):
+                if unit2 == u:
+                    return '*'.join([u for u in unit1.split('*') if u != unit2])
+                elif unitBase(unit2) == unitBase(u):
+                    result = (result + '*' + unitDivision(u, unit2).strip('*')).strip('*')
+                else:
+                    result = (result + '*' + u).strip('*')
     else:
-        for c in ['+','-','*','/','^']:
+        for c in ['+','-','^']:  # '*','/'
             if c in unit1:
                 unit1 = '('+unit1+')'
                 break
-        for c in ['+','-','*','/','^']:
+        for c in ['+','-','^']:  # '*','/'
             if c in unit2:
                 unit2 = '('+unit2+')'
                 break
