@@ -29,17 +29,13 @@ def unitBasePower(unit):
         tuple of base and power
 
     """
-    uBas , uPow = '' , ''
+    uBas, uPow = '', ''
     oth = ''
     inv = False
-    if '/' in unit and len(unit.split('/')) > 1 and isnumber(unit.split('/')[0]):
-        unit = unit.split('/')[1]
-        invPow = unit.split('/')[0]
+    if '/' in unit and len(unit.split('/')) == 2 and isnumber(unit.split('/')[0]):
+        invPow, unit = unit.split('/')
         inv = True
 
-    # if unit.startswith('1/'):
-    #     unit = unit[2:]
-    #     inv = True
     for c in unit :
         if c.isdigit() :
             uPow += oth + c
@@ -51,8 +47,8 @@ def unitBasePower(unit):
             oth = ''
     uPow = 1 if uPow == '' else float(uPow) if '.' in uPow else int(uPow)
     if inv :
-        uPow = uPow * -1 * invPow
-    return uBas,uPow
+        uPow = uPow * -1 * (float(invPow) if '.' in invPow else int(invPow))
+    return uBas, uPow
 
 
 def unitBase(unit):
