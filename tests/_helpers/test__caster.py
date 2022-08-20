@@ -1,26 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun May 23 11:27:57 2021
+Created on Sat Aug 20 22:58:51 2022
 
-@author: martin
+@author: Martín Carlos Araya <martinaraya@gmail.com>
 """
-from units._helpers import isnumber, tonumber
+from unyts._helpers._caster import caster, tonumber
 
-def test_isnumber():
-    assert isnumber(1) is True
-    assert isnumber(0) is True
-    assert isnumber(-1) is True
-    assert isnumber(1.0) is True
-    assert isnumber(-1.0) is True
-    assert isnumber('1') is True
-    assert isnumber('-1') is True
-    assert isnumber('1.0') is True
-    assert isnumber('-1.0') is True
-    assert isnumber('1+1j') is True
-    assert isnumber('-1+1j') is True
-    assert isnumber('-1-1j') is True
-    assert isnumber('A') is False
-    
+def test_caster():
+    assert caster('1') == 1 and type(caster('1')) is int
+    assert caster('1.5') == 1.5 and type(caster('1.5')) is float
+    assert caster('-1-1j') == -1-1j and type(caster('1+1j')) is complex
+        
 def test_tonumber():
     assert tonumber('1') == 1 and type(tonumber('1')) is int
     assert tonumber('-1') == -1 and type(tonumber('-1')) is int
@@ -69,4 +59,3 @@ def test_tonumber():
             raise AssertionError('evaluating tonumber in ' + t)
         except ValueError:
             pass
-        
