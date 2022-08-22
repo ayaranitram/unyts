@@ -21,15 +21,15 @@ __release__ = 20220822
 
 def convertible(fromUnit, toUnit, PrintPath=False):
     try:
-        if converter(1, fromUnit, toUnit, PrintPath) is not None:
-            return True
-        else:
+        if converter2(1, fromUnit, toUnit, PrintPath) is None:
             return False
+        else:
+            return True
     except:
         return False
 
 
-def convertUnit(value, fromUnit, toUnit, PrintConversionPath=False):
+def convertUnit_old(value, fromUnit, toUnit, PrintConversionPath=False):
     if type(PrintConversionPath) is not bool:
         if type(PrintConversionPath) in [int, float]:
             if PrintConversionPath > 1:
@@ -50,7 +50,7 @@ def convertUnit(value, fromUnit, toUnit, PrintConversionPath=False):
         return value
 
 
-def convertUnit2(value, fromUnit, toUnit, PrintConversionPath=False):
+def convertUnit(value, fromUnit, toUnit, PrintConversionPath=False):
     if type(PrintConversionPath) is not bool:
         if type(PrintConversionPath) in [int, float]:
             if PrintConversionPath > 1:
@@ -66,6 +66,24 @@ def convertUnit2(value, fromUnit, toUnit, PrintConversionPath=False):
             return conv
     except NoConversionFound:
         return None
+
+
+def convertUnit_for_SimPandas(value, fromUnit, toUnit, PrintConversionPath=False):
+    if type(PrintConversionPath) is not bool:
+        if type(PrintConversionPath) in [int, float]:
+            if PrintConversionPath > 1:
+                PrintConversionPath = False
+            else:
+                PrintConversionPath = bool(PrintConversionPath)
+        else:
+            PrintConversionPath = True
+
+    try:
+        conv = converter2(value, fromUnit, toUnit, PrintConversionPath)
+        if conv is not None:
+            return conv
+    except NoConversionFound:
+        return value
 
 
 def _applyConversion(value, conversionPath, PrintConversionPath=False):

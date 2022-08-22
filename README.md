@@ -8,5 +8,8 @@ This package is under development and is regularly updated. Backcompatibility is
 - Prefixes applied to the basic units, like _k_ to _m_ to make _km_, are loaded as a network of conversions paths allowing the algorith to apply the prefix to any other unit on the same system.
 - It provides classes of _units_ useful powered with arithmetich and logic operations to intrincically consider unit conversions when making calculations.
 
+## Requisites
+- numpy
+
 ## To install this package:
 pip install unyts
