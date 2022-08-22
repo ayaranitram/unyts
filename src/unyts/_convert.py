@@ -13,8 +13,8 @@ from ._errors import NoConversionFound
 import numpy as np
 from functools import reduce
 
-__version__ = '0.2.0'
-__release__ = 20220819
+__version__ = '0.2.1'
+__release__ = 20220822
 
 #defaultPrintConversionPath = unitsNetwork.print  # True
 
@@ -48,7 +48,7 @@ def convertUnit(value, fromUnit, toUnit, PrintConversionPath=False):
         if type(value) is float and int(value) == value:
             value = int(value)
         return value
-    
+
 
 def convertUnit2(value, fromUnit, toUnit, PrintConversionPath=False):
     if type(PrintConversionPath) is not bool:
@@ -59,7 +59,7 @@ def convertUnit2(value, fromUnit, toUnit, PrintConversionPath=False):
                 PrintConversionPath = bool(PrintConversionPath)
         else:
             PrintConversionPath = True
-    
+
     try:
         conv = converter2(value, fromUnit, toUnit, PrintConversionPath)
         if conv is not None:
@@ -116,17 +116,17 @@ def _splitUnit(unit):
 
 
 def _getPairChild(unit):
-    
+
     # get the unit node if the name received
     unit = unitsNetwork.getNode(unit) if type(unit) is str else unit
-    
+
     # get pair of units children
     pairChild = list(filter(lambda u: '/' in u or '*' in u, [u.getName() for u in unitsNetwork.childrenOf(unit)]))
-    
-    ## if pair of units child is found, return the one with the shorter name 
+
+    ## if pair of units child is found, return the one with the shorter name
     if len(pairChild) > 0:
         pairChild = sorted(pairChild, key=len)[0]
-    
+
     ## if no children found at this level, look for children in next level
     else:
         for child in unitsNetwork.childrenOf(unit):
@@ -134,7 +134,7 @@ def _getPairChild(unit):
             if len(pairGrandchild) > 0:
                 pairChild = sorted(pairGrandchild, key=len)[0]
                 break
-    
+
     if type(pairChild) is str:
         return pairChild
 
@@ -144,7 +144,7 @@ def _get_conversion(value, fromUnit, toUnit, PrintConversionPath=None, getPath=F
     ## no conversion required if 'from' and 'to' units are the same units
     if fromUnit == toUnit:
         return (lambda x: x) if value is None else value
-    
+
     ## no conversion required if 'from' and 'to' units are dates
     if fromUnit in dictionary['date'] and toUnit in dictionary['date']:
         return (lambda x: x) if value is None else value
@@ -164,7 +164,7 @@ def _get_conversion(value, fromUnit, toUnit, PrintConversionPath=None, getPath=F
     ## if inverted ratios
     if ('/' in fromUnit and len(fromUnit.split('/')) == 2) and ('/' in toUnit and len(toUnit.split('/')) == 2) and (fromUnit.split('/')[0].strip() == toUnit.split('/')[1].strip()) and (fromUnit.split('/')[1].strip() == toUnit.split('/')[0].strip()):
         return (lambda x: 1/x) if value is None else 1/value
-    
+
     ## from dimensionless/None to some units or viceversa (to allow assign units to dimensionless numbers)
     if fromUnit is None or toUnit is None:
         return (lambda x: x) if value is None else value
@@ -197,9 +197,9 @@ def converter2(value, fromUnit, toUnit, PrintConversionPath=None):
     """
     if hasattr(value, '__iter__') and type(value) is not np.array:
         value = np.array(value)
-    
+
     PrintConversionPath = unitsNetwork.print if PrintConversionPath is None else bool(PrintConversionPath)
-    
+
     # cleaning inputs
     ## strip off the parentesis, the string o
     if type(fromUnit) is str and fromUnit not in ('"',"'"):
@@ -210,26 +210,25 @@ def converter2(value, fromUnit, toUnit, PrintConversionPath=None):
         toUnit = toUnit.strip("( ')").strip('( ")').strip("'")
     else:
         toUnit = toUnit.strip("( )")
-        
+
     # reset memory for this variable
-    if Start:
-        unitsNetwork.previous = []
+    unitsNetwork.previous = []
 
     # try to convert
-    conversion = _get_conversion(value, fromUnit, toUnit, 
+    conversion = _get_conversion(value, fromUnit, toUnit,
                                  PrintConversionPath=PrintConversionPath)
-    
+
     ## if convertion found
     if conversion is not None:
         return conversion
-    
+
     # else, if conversion path not found, start a new search part by part
     ## check if pair from-to already visited
     if (fromUnit, toUnit) in unitsNetwork.previous:
         AllowRecursion = 0  # stop recursion here
     ## append this pair to this search history
-    unitsNetwork.previous.append((fromUnit, toUnit))    
-    
+    unitsNetwork.previous.append((fromUnit, toUnit))
+
     listConversion = []
     splitFrom = _splitUnit(fromUnit)
     splitTo = _splitUnit(toUnit)
@@ -244,8 +243,8 @@ def converter2(value, fromUnit, toUnit, PrintConversionPath=None):
                 continue
             if splitTo[t] in '*/':
                 continue
-            conversion = _get_conversion(1, splitFrom[f], splitTo[t], 
-                                         PrintConversionPath=PrintConversionPath, 
+            conversion = _get_conversion(1, splitFrom[f], splitTo[t],
+                                         PrintConversionPath=PrintConversionPath,
                                          getPath=False)
             if conversion is not None:
                 flag = True
@@ -257,12 +256,12 @@ def converter2(value, fromUnit, toUnit, PrintConversionPath=None):
         if not flag:
             failed = True
             break
-    
+
     if listConversion != [] and not failed:
         conversionFactor = reduce(lambda x, y : x * y, listConversion)
         unitsNetwork.Memory[(fromUnit, toUnit)] = lambda x : x * conversionFactor
         return value * conversionFactor if value is not None else unitsNetwork.Memory[(fromUnit, toUnit)]
-    
+
     # look for one to pair conversion
     if ('/' in toUnit or '*' in toUnit) and ('/' not in fromUnit and '*' not in fromUnit):
         fromUnitChild = _getPairChild(fromUnit)
@@ -281,7 +280,7 @@ def converter2(value, fromUnit, toUnit, PrintConversionPath=None):
                 conversionFactor = baseConversion * numerator / denominator
                 unitsNetwork.Memory[(fromUnit, toUnit)] = lambda x : x * conversionFactor
                 return value * conversionFactor if value is not None else unitsNetwork.Memory[(fromUnit, toUnit)]
-               
+
     # no conversion found
     raise NoConversionFound("from '" + str(fromUnit) + "' to '" + str(toUnit) + "'")
 
