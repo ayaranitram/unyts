@@ -568,6 +568,38 @@ def _create_speed():
     dictionary['speed'] = tuple(set(speed))
 
 
+def _create_productivityIndex():
+    # volume / time / pressure
+    productivityIndex = list(dictionary['productivityIndex']) if 'productivityIndex' in dictionary else []
+    for volume in dictionary['volume']:
+        for time in dictionary['time']:
+            for pressure in dictionary['pressure']:
+                productivityIndex.append(volume+'/'+time+'/'+pressure)
+    dictionary['productivityIndex'] = tuple(set(productivityIndex))
+
+
+def _create_pressureGradient():
+    # pressure / length
+    pressureGradient = list(dictionary['pressureGradient']) if 'pressureGradient' in dictionary else []
+    for pressure in dictionary['pressure']:
+        for length in dictionary['length']:
+            pressureGradient.append(pressure+'/'+length)
+    dictionary['pressureGradient'] = tuple(set(pressureGradient))
+    
+
+def _create_acceleration():
+    # length / time / time
+    acceleration = list(dictionary['acceleration']) if 'acceleration' in dictionary else []
+    for length in dictionary['length']:
+        for time1 in dictionary['time']:
+            for time2 in dictionary['time']:
+                if time1 == time2:
+                    acceleration.append(length+'/'+time1+'2')
+                else:
+                    acceleration.append(length+'/'+time1+'/'+time2)
+    dictionary['acceleration'] = tuple(set(acceleration))
+
+
 # load the network into an instance of the grath database
 unitsNetwork = _loadNetwork()
 
@@ -576,6 +608,9 @@ _create_rates()
 _create_volumeRatio()
 _create_density()
 _create_speed()
+_create_productivityIndex()
+_create_pressureGradient()
+
 
 def network2Frame():
     network=unitsNetwork

@@ -15,8 +15,8 @@ from .geometry import length, area, volume
 from .temperature import temperature
 from .time import time
 from .unitless import dimensionless
-from .ratios import density, volumeRatio
-from .rates import rate, speed
+from .ratios import density, volumeRatio, productivityIndex, pressureGradient
+from .rates import rate, speed, velocity
 
 
 def units(value, units=None):
