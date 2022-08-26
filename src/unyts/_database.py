@@ -7,8 +7,8 @@ Created on Sat Oct 24 12:36:48 2020
 """
 
 __all__ = ['unitsNetwork']
-__version__ = '0.1.0'
-__release__ = 20220524
+__version__ = '0.1.2'
+__release__ = 20220826
 
 from ._dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, StandadEarthGravity
 
@@ -412,8 +412,17 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('gill'), network.getNode('fuild ounce'), lambda v: v*5))
     network.addEdge(conversion(network.getNode('pint'), network.getNode('gill'), lambda v: v*4))
     network.addEdge(conversion(network.getNode('quart'), network.getNode('pint'), lambda v: v*2))
-    network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('quart'), lambda v: v*4))
+    network.addEdge(conversion(network.getNode('gallonUS'), network.getNode('fuild ounce'), lambda v: v*128))
+    network.addEdge(conversion(network.getNode('gallonUS'), network.getNode('quart'), lambda v: v*4))
     network.addEdge(conversion(network.getNode('gallonUS'), network.getNode('cubic inch'), lambda v: v*231))
+    
+    network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('quartUK'), lambda v: v*4))
+    network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('fuild ounce UK'), lambda v: v*160))
+    network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('litre'), lambda v: v*4.54609))
+    network.addEdge(conversion(network.getNode('gillUK'), network.getNode('fuild ounce UK'), lambda v: v*5))
+    network.addEdge(conversion(network.getNode('pintUK'), network.getNode('gillUK'), lambda v: v*4))
+    network.addEdge(conversion(network.getNode('quartUK'), network.getNode('pintUK'), lambda v: v*2))
+    
     network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('liter'), lambda v: v* 4.54609))
     network.addEdge(conversion(network.getNode('cubic foot'), network.getNode('cubic meter'), lambda v: v*(3048**3)/(10000**3)))
     network.addEdge(conversion(network.getNode('standard cubic foot'), network.getNode('standard cubic meter'), lambda v: v*(3048**3)/(10000**3)))

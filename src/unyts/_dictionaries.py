@@ -7,8 +7,8 @@ Created on Sat Oct 24 12:14:51 2020
 """
 
 __all__ = ['dictionary','SI','OGF','DATA','StandardAirDensity','StandadEarthGravity']
-__version__ = '0.1.0'
-__release__ = 20220524
+__version__ = '0.1.2'
+__release__ = 20220826
 
 StandardAirDensity = 1.225 # Kg/m3 or g/cc
 StandadEarthGravity = 9.80665 # m/s2 or 980.665 cm/s2 from
@@ -121,12 +121,16 @@ dictionary['area_UK_NAMES_UPPER_REVERSE'] = {
 dictionary['volume'] = []
 dictionary['volume_SI_UPPER_REVERSE'] = ('m3', 'sm3', 'stm3', 'rm3',)  # 'l' # litre is volumen but the conversion of SI prefixes is linear
 dictionary['volume_UK_NAMES_UPPER_REVERSE_PLURALwS'] = {
-    'fuild ounce': ('fl oz','oz','ounce'),
-    'gill': ('gi',),
-    'pint': ('pt',),
-    'quart': ('qt',),
-    'gallonUK': ('gal', 'galUK', 'UKgal', 'UKgallon', 'gallon'),
+    'fuild ounce': ('fl oz','oz','ounce', 'ozUS', 'ounce'),
+    'gill': ('gi', 'gillUS', 'giUS'),
+    'pint': ('pt', 'pintUS', 'ptUS'),
+    'quart': ('qt', 'quartUS', 'qtUS'),
     'gallonUS': ('gal', 'galUS', 'USgal', 'USgallon', 'gallon'),
+    'gallonUK': ('imperial gallon', 'galUK', 'UKgal', 'UKgallon'),  # 'gal', 'gallon'
+    'fuild ounce UK': ('fl oz UK','ozUK','ounceUK'),
+    'gillUK': ('giUK',),
+    'pintUK': ('ptUK',),
+    'quartUK': ('qtUK',),
     }
 dictionary['volume_NAMES_UPPER_REVERSE_PLURALwS_SPACES'] = {
     'litre': ('l', 'liter', 'litro'),
