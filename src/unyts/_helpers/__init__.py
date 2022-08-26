@@ -9,3 +9,4 @@ helper functions for units modules
 
 from ._isnumber import isnumber
 from ._caster import tonumber
+from ._multisplit import multisplit

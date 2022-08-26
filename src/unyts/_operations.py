@@ -7,13 +7,17 @@ Created on Sat Oct 24 14:38:58 2020
 """
 
 __all__ = ['unitProduct','unitDivision']
-__version__ = '0.1.3'
-__release__ = 20220819
+__version__ = '0.1.4'
+__release__ = 20220826
 
 from ._dictionaries import dictionary
 from ._convert import convertible
-from ._helpers import isnumber
+from ._helpers import isnumber, multisplit
 
+
+def unitSplit(unit):
+    us = multisplit(unit)
+    return us
 
 def unitBasePower(unit):
     """
