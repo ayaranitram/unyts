@@ -30,19 +30,19 @@ class volumeRatio(_units):
         self.unit = self.checkUnit(units)
 
 
-# class productivityIndex(_units):
-#     classUnits = dictionary['productivityIndex']
-#     def __init__(self,value,units) :
-#         self.name = 'productivityIndex'
-#         self.kind = productivityIndex
-#         self.value = self.checkValue(value)
-#         self.unit = self.checkUnit(units)
+class productivityIndex(_units):
+    classUnits = dictionary['productivityIndex']
+    def __init__(self, value, units) :
+        self.name = 'productivityIndex'
+        self.kind = productivityIndex
+        self.value = self.checkValue(value)
+        self.unit = self.checkUnit(units)
 
-# class pressureGradient(_units):
-#     classUnits = dictionary['pressureGradient']
-#     def __init__(self,value,units) :
-#         self.name = 'pressureGradient'
-#         self.kind = pressureGradient
-#         self.value = self.checkValue(value)
-#         self.unit = self.checkUnit(units)
+class pressureGradient(_units):
+    classUnits = dictionary['pressureGradient']
+    def __init__(self, value, units) :
+        self.name = 'pressureGradient'
+        self.kind = pressureGradient
+        self.value = self.checkValue(value)
+        self.unit = self.checkUnit(units)
 
