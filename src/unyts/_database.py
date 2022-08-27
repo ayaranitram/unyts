@@ -7,8 +7,8 @@ Created on Sat Oct 24 12:36:48 2020
 """
 
 __all__ = ['unitsNetwork']
-__version__ = '0.1.3'
-__release__ = 20220826
+__version__ = '0.1.4'
+__release__ = 20220828
 
 from ._dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, StandadEarthGravity
 
@@ -409,7 +409,7 @@ def _loadNetwork():
     # network.addEdge(conversion(network.getNode('in'), network.getNode('in*in'), lambda d: d**2))
 
     # volume conversions
-    network.addEdge(conversion(network.getNode('gill'), network.getNode('fuild ounce'), lambda v: v*5))
+    network.addEdge(conversion(network.getNode('gill'), network.getNode('fuild ounce'), lambda v: v*4))
     network.addEdge(conversion(network.getNode('pint'), network.getNode('gill'), lambda v: v*4))
     network.addEdge(conversion(network.getNode('quart'), network.getNode('pint'), lambda v: v*2))
     network.addEdge(conversion(network.getNode('gallonUS'), network.getNode('fuild ounce'), lambda v: v*128))
