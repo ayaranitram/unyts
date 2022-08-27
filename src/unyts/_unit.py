@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.1.1'
-__release__ = 20220803
+__version__ = '0.1.2'
+__release__ = 20220826
 
 
 import numpy as _np
@@ -44,7 +44,7 @@ class _units(object):
                 raise _WrongUnits()
         return self.kind(_converter(self.value, self.unit, newunit), newunit)
 
-    def to(self,newunit):
+    def to(self, newunit):
         return self.convert(newunit)
 
     def __neg__(self):
@@ -60,7 +60,7 @@ class _units(object):
     def __abs__(self):
         return self.kind(abs(self.value), self.unit)
 
-    def __add__(self,other):
+    def __add__(self, other):
         from .units.unitless import dimensionless
         if '.units.' in str(type(other)):
             if other.kind is self.kind:
@@ -294,7 +294,7 @@ class _units(object):
         else:
             return self.value.__iter__()
 
-    # def __next__(self) :
+    # def __next__(self):
     #     pass
 
     def getUnit(self):
@@ -303,10 +303,10 @@ class _units(object):
     def getValue(self):
         return self.value
 
-    def checkValue(self,value):
+    def checkValue(self, value):
         if type(value) in (list, tuple):
             return _np.array(value)
-        elif type(value) in (int, float):
+        elif type(value) in (int, float, complex):
             return value
         elif type(value) is _np.ndarray:
             return value
@@ -315,7 +315,7 @@ class _units(object):
         else:
             raise _WrongValue()
 
-    def checkUnit(self,units):
+    def checkUnit(self, units):
         if type(units) is not str:
             try:
                 units = units.unit

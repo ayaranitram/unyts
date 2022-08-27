@@ -21,7 +21,7 @@ __release__ = 20220822
 
 def convertible(fromUnit, toUnit, PrintPath=False):
     try:
-        if converter2(1, fromUnit, toUnit, PrintPath) is None:
+        if converter(1, fromUnit, toUnit, PrintPath) is None:
             return False
         else:
             return True
@@ -39,7 +39,7 @@ def convertUnit_old(value, fromUnit, toUnit, PrintConversionPath=False):
         else:
             PrintConversionPath = True
 
-    conv = converter(value, fromUnit, toUnit, PrintConversionPath)
+    conv = converter_old(value, fromUnit, toUnit, PrintConversionPath)
     if conv is not None:
         return conv
     else:
@@ -61,7 +61,7 @@ def convertUnit(value, fromUnit, toUnit, PrintConversionPath=False):
             PrintConversionPath = True
 
     try:
-        conv = converter2(value, fromUnit, toUnit, PrintConversionPath)
+        conv = converter(value, fromUnit, toUnit, PrintConversionPath)
         if conv is not None:
             return conv
     except NoConversionFound:
@@ -79,7 +79,7 @@ def convertUnit_for_SimPandas(value, fromUnit, toUnit, PrintConversionPath=False
             PrintConversionPath = True
 
     try:
-        conv = converter2(value, fromUnit, toUnit, PrintConversionPath)
+        conv = converter(value, fromUnit, toUnit, PrintConversionPath)
         if conv is not None:
             return conv
     except NoConversionFound:
@@ -208,7 +208,7 @@ def _get_conversion(value, fromUnit, toUnit, PrintConversionPath=None, getPath=F
         return _applyConversion(value, conversionPath, PrintConversionPath) if value is not None else unitsNetwork.Memory[(fromUnit,toUnit)]
 
 
-def converter2(value, fromUnit, toUnit, PrintConversionPath=None):
+def converter(value, fromUnit, toUnit, PrintConversionPath=None):
     """
     returns the received value (integer, float, array, series, dataframe, etc)
     transformed from the units 'fromUnit' to the units 'toUnits.
@@ -303,7 +303,7 @@ def converter2(value, fromUnit, toUnit, PrintConversionPath=None):
     raise NoConversionFound("from '" + str(fromUnit) + "' to '" + str(toUnit) + "'")
 
 
-def converter(value, fromUnit, toUnit, PrintConversionPath=None,
+def converter_old(value, fromUnit, toUnit, PrintConversionPath=None,
               AllowRecursion=unitsNetwork.RecursionLimit, Start=True):
     """
     returns the received value (integer, float, array, series, dataframe, etc)
@@ -381,11 +381,11 @@ def converter(value, fromUnit, toUnit, PrintConversionPath=None,
         toUp, toDown = _splitRatio(toUnit)
 
         # convert numerators, from 'A' to 'C'
-        numerator = converter(None, fromUp, toUp, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
+        numerator = converter_old(None, fromUp, toUp, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
         if numerator is not None and (fromUp, toUp) not in unitsNetwork.Memory:
             unitsNetwork.Memory[(fromUp, toUp)] = numerator
         # convert denominators, from 'B' to 'D'
-        denominator = converter(None, fromDown, toDown, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
+        denominator = converter_old(None, fromDown, toDown, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
         if denominator is not None and (fromDown,toDown) not in unitsNetwork.Memory:
             unitsNetwork.Memory[(fromDown, toDown)] = denominator
 
@@ -397,11 +397,11 @@ def converter(value, fromUnit, toUnit, PrintConversionPath=None,
 
         ### try to convert the inverse, from 'B/A' to 'C/D'
         # convert numerators, from 'B' to 'C'
-        numerator = converter(None, fromDown, toUp, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
+        numerator = converter_old(None, fromDown, toUp, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
         if numerator is not None and (fromDown,toUp) not in unitsNetwork.Memory:
             unitsNetwork.Memory[(fromDown,toUp)] = numerator
         # convert denominators, from 'A' to 'D'
-        denominator = converter(None, fromUp, toDown, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
+        denominator = converter_old(None, fromUp, toDown, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
         if denominator is not None and (fromUp, toDown) not in unitsNetwork.Memory:
             unitsNetwork.Memory[(fromUp,toDown)] = denominator
 
@@ -419,22 +419,22 @@ def converter(value, fromUnit, toUnit, PrintConversionPath=None,
         toLeft, toRight = _splitProduct(toUnit)
 
         # convert Left
-        left = converter(None, fromLeft, toLeft, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
+        left = converter_old(None, fromLeft, toLeft, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
         if left is not None and (fromLeft,toLeft) not in unitsNetwork.Memory:
             unitsNetwork.Memory[(fromLeft,toLeft)] = left
         # convert Right
-        right = converter(None, fromRight, toRight, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
+        right = converter_old(None, fromRight, toRight, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
         if right is not None and (fromRight, toRight) not in unitsNetwork.Memory:
             unitsNetwork.Memory[(fromRight, toRight)] = right
 
         # if some is not None, try the other combination
         if left is None or right is None:
             # convert Left to Right
-            left = converter(None, fromLeft, toRight, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
+            left = converter_old(None, fromLeft, toRight, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
             if left is not None and (fromLeft,toRight) not in unitsNetwork.Memory:
                 unitsNetwork.Memory[(fromLeft,toRight)] = left
             # convert Right to Left
-            right = converter(None, fromRight, toLeft, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
+            right = converter_old(None, fromRight, toLeft, PrintConversionPath=PrintConversionPath, AllowRecursion=AllowRecursion-1, Start=False)
             if right is not None and (fromRight,toLeft) not in unitsNetwork.Memory:
                 unitsNetwork.Memory[(fromRight, toLeft)] = right
 

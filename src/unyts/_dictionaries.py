@@ -284,6 +284,28 @@ dictionary['force_NAMES_SPACES_RECURSIVE_UPPER_REVERSE'] = {
     'Dyne': ('dyne', 'dyn', 'g*cm/s2')
     }
 
+
+dictionary['energy'] = []
+dictionary['energy_UPPER_NAMES_REVERSE'] = {
+    'Joule': ('J', 'Watt second', 'N*m', 'kg*m2/s2', 'Joules'),
+    'Kilojoule': ('kJ',),
+    'kilowatt hour': ('kWh', 'kW*h', 'kilovatio hora'),
+    'British thermal unit': ('BTU',),
+    'Watt second': ('Watt*second', 'W*s', 'Ws'),
+    'Watt hour': ('Wh', 'W*h',),
+    'gram calorie': ('cal', 'calorie', 'Calorie'),
+    }
+dictionary['energy_SI'] = ('Wh', 'Ws',)
+
+
+dictionary['power'] = []
+dictionary['power_UPPER_NAMES_REVERSE'] = {
+    'Horsepower': ('hp',),
+    'Watt': ('W', 'J/s'),
+    }
+dictionary['power_SI'] = ('W',)
+
+
 dictionary['productivityIndex'] = []
 dictionary['productivityIndex_UPPER_NAMES_REVERSE'] = {
     'stb/day/psi': ('STB/DAY/', 'stbd/psi', 'stbd/psia', 'stb/day/psia', 'stb/day-psi', 'stb/day-psia', 'stb/d/psi'),
