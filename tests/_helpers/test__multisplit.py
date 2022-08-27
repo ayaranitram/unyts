@@ -4,6 +4,7 @@ Created on Sun May 23 11:27:57 2021
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
+
 from unyts._helpers._multisplit import multisplit
 
 def test_multisplit():

@@ -2,7 +2,7 @@
 """
 Created on Sun May 23 09:56:26 2021
 
-@author: martin
+@author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
 from unyts._operations import unitBasePower, unitProduct, unitDivision

@@ -7,7 +7,7 @@ Created on Sat Oct 24 12:36:48 2020
 """
 
 __all__ = ['unitsNetwork']
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 __release__ = 20220826
 
 from ._dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, StandadEarthGravity
@@ -356,7 +356,7 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('minute'), network.getNode('second'), lambda t: t*60))
     network.addEdge(conversion(network.getNode('hour'), network.getNode('minute'), lambda t: t*60))
     network.addEdge(conversion(network.getNode('day'), network.getNode('hour'), lambda t: t*24))
-    network.addEdge(conversion(network.getNode('day'), network.getNode('month'), lambda t: t/36525/100*12))
+    network.addEdge(conversion(network.getNode('day'), network.getNode('month'), lambda t: t/365.25*12))
     network.addEdge(conversion(network.getNode('week'), network.getNode('day'), lambda t: t*7))
     network.addEdge(conversion(network.getNode('year'), network.getNode('month'), lambda t: t*12))
     network.addEdge(conversion(network.getNode('year'), network.getNode('day'), lambda t: t*36525/100))
@@ -371,8 +371,8 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('Fahrenheit'), network.getNode('Celsius'), lambda t: (t-32) * 5/9))
     network.addEdge(conversion(network.getNode('Fahrenheit'), network.getNode('Rankine'), lambda t: t+459.67))
     network.addEdge(conversion(network.getNode('Rankine'), network.getNode('Fahrenheit'), lambda t: t-459.67))
-    network.addEdge(conversion(network.getNode('Rankine'), network.getNode('Kelvin'), lambda t: t*9/5))
-    network.addEdge(conversion(network.getNode('Kelvin'), network.getNode('Rankine'), lambda t: t*5/9))
+    network.addEdge(conversion(network.getNode('Rankine'), network.getNode('Kelvin'), lambda t: t*5/9))
+    network.addEdge(conversion(network.getNode('Kelvin'), network.getNode('Rankine'), lambda t: t*9/5))
 
     # length conversions
     network.addEdge(conversion(network.getNode('yard'), network.getNode('meter'), lambda d: d*9144/10000))
@@ -470,6 +470,15 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('Dyne'), network.getNode('Newton'), lambda f: f*1E-5))
     network.addEdge(conversion(network.getNode('Newton'), network.getNode('Dyne'), lambda f: f*1E5 ))
 
+    # energy conversion
+    network.addEdge(conversion(network.getNode('Joule'), network.getNode('gram calorie'), lambda e: e/4.184))
+    network.addEdge(conversion(network.getNode('Kilojoule'), network.getNode('Joule'), lambda e: e*1000))
+    network.addEdge(conversion(network.getNode('Kilojoule'), network.getNode('kilowatt hour'), lambda e: e/3600))
+    network.addEdge(conversion(network.getNode('Kilojoule'), network.getNode('British thermal unit'), lambda e: e/1.055))
+
+    # power conversion
+    network.addEdge(conversion(network.getNode('Horsepower'), network.getNode('Watt'), lambda e: e*745.699872))
+
     # density conversion
     network.addEdge(conversion(network.getNode('API'), network.getNode('SgO'), lambda d: 141.5/(131.5+d)))
     network.addEdge(conversion(network.getNode('SgO'), network.getNode('API'), lambda d: 141.5/d-131.5))
@@ -534,78 +543,104 @@ def _loadNetwork():
 def _create_rates():
     # volumes / time
     rates = list(dictionary['rate']) if 'rate' in dictionary else []
-    for volume in dictionary['volume']:
-        for time in dictionary['time']:
-            rates.append(volume+'/'+time)
-    for weight in dictionary['weight']:
-        for time in dictionary['time']:
-            rates.append(weight+'/'+time)
+    # for volume in dictionary['volume']:
+    #     for time in dictionary['time']:
+    #         rates.append(volume+'/'+time)
+    rates += [volume+'/'+time for volume in dictionary['volume'] for time in dictionary['time']]
+    # for weight in dictionary['weight']:
+    #     for time in dictionary['time']:
+    #         rates.append(weight+'/'+time)
+    rates += [weight+'/'+time for weight in dictionary['weight'] for time in dictionary['time']]
     # data / time
-    for data in dictionary['dataBYTE']:
-        for time in dictionary['time']:
-            rates.append(data+'/'+time)
-    for data in dictionary['dataBIT']:
-        for time in dictionary['time']:
-            rates.append(data+'/'+time)
+    # for data in dictionary['dataBYTE']:
+    #     for time in dictionary['time']:
+    #         rates.append(data+'/'+time)
+    rates += [data+'/'+time for data in dictionary['dataBYTE'] for time in dictionary['time']]
+    # for data in dictionary['dataBIT']:
+    #     for time in dictionary['time']:
+    #         rates.append(data+'/'+time)
+    rates += [data+'/'+time for data in dictionary['dataBIT'] for time in dictionary['time']]
     dictionary['rate'] = tuple(set(rates))
 
 
 def _create_volumeRatio():
     # volume / volume
     ratio = list(dictionary['volumeRatio']) if 'volumeRatio' in dictionary else []
-    for numerator in dictionary['volume']:
-        for denominator in dictionary['volume']:
-            ratio.append(numerator+'/'+denominator)
+    # for numerator in dictionary['volume']:
+    #     for denominator in dictionary['volume']:
+    #         ratio.append(numerator+'/'+denominator)
+    ratio += [numerator+'/'+denominator for numerator in dictionary['volume'] for denominator in dictionary['volume']]
     dictionary['volumeRatio'] = tuple(set(ratio))
 
 
 def _create_density():
     # mass / volume
     density = list(dictionary['density']) if 'density' in dictionary else []
-    for numerator in dictionary['mass']:
-        for denominator in dictionary['volume']:
-            density.append(numerator+'/'+denominator)
+    # for mass in dictionary['mass']:
+    #     for volume in dictionary['volume']:
+    #         density.append(mass+'/'+volume)
+    density += [mass+'/'+volume for mass in dictionary['mass'] for volume in dictionary['volume']]
     dictionary['density'] = tuple(set(density))
 
 
 def _create_speed():
     # length / time
     speed = list(dictionary['speed']) if 'speed' in dictionary else []
-    for length in dictionary['length']:
-        for time in dictionary['time']:
-            speed.append(length+'/'+time)
+    # for length in dictionary['length']:
+    #     for time in dictionary['time']:
+    #         speed.append(length+'/'+time)
+    speed += [length+'/'+time for length in dictionary['length'] for time in dictionary['time']]
     dictionary['speed'] = tuple(set(speed))
+    
+    
+def _create_power():
+    # length / time
+    power = list(dictionary['power']) if 'power' in dictionary else []
+    # for energy in dictionary['energy']:
+    #     for time in dictionary['time']:
+    #         power.append(energy+'/'+time)
+    power += [energy+'/'+time for energy in dictionary['energy'] for time in dictionary['time']]
+    dictionary['power'] = tuple(set(power))
 
 
 def _create_productivityIndex():
     # volume / time / pressure
     productivityIndex = list(dictionary['productivityIndex']) if 'productivityIndex' in dictionary else []
-    for volume in dictionary['volume']:
-        for time in dictionary['time']:
-            for pressure in dictionary['pressure']:
-                productivityIndex.append(volume+'/'+time+'/'+pressure)
+    # for volume in dictionary['volume']:
+    #     for time in dictionary['time']:
+    #         for pressure in dictionary['pressure']:
+    #             productivityIndex.append(volume+'/'+time+'/'+pressure)
+    productivityIndex += [volume+'/'+time+'/'+pressure 
+                          for volume in dictionary['volume'] 
+                          for time in dictionary['time'] 
+                          for pressure in dictionary['pressure']]
     dictionary['productivityIndex'] = tuple(set(productivityIndex))
 
 
 def _create_pressureGradient():
     # pressure / length
     pressureGradient = list(dictionary['pressureGradient']) if 'pressureGradient' in dictionary else []
-    for pressure in dictionary['pressure']:
-        for length in dictionary['length']:
-            pressureGradient.append(pressure+'/'+length)
+    # for pressure in dictionary['pressure']:
+    #     for length in dictionary['length']:
+    #         pressureGradient.append(pressure+'/'+length)
+    pressureGradient += [pressure+'/'+length for pressure in dictionary['pressure'] for length in dictionary['length']]
     dictionary['pressureGradient'] = tuple(set(pressureGradient))
     
 
 def _create_acceleration():
     # length / time / time
     acceleration = list(dictionary['acceleration']) if 'acceleration' in dictionary else []
-    for length in dictionary['length']:
-        for time1 in dictionary['time']:
-            for time2 in dictionary['time']:
-                if time1 == time2:
-                    acceleration.append(length+'/'+time1+'2')
-                else:
-                    acceleration.append(length+'/'+time1+'/'+time2)
+    # for length in dictionary['length']:
+    #     for time1 in dictionary['time']:
+    #         for time2 in dictionary['time']:
+    #             if time1 == time2:
+    #                 acceleration.append(length+'/'+time1+'2')
+    #             else:
+    #                 acceleration.append(length+'/'+time1+'/'+time2)
+    acceleration += [(length+'/'+time1+'2') if time1 == time2 else (length+'/'+time1+'/'+time2)
+                     for length in dictionary['length']
+                     for time1 in dictionary['time']
+                     for time2 in dictionary['time']]
     dictionary['acceleration'] = tuple(set(acceleration))
 
 
@@ -619,6 +654,7 @@ _create_density()
 _create_speed()
 _create_productivityIndex()
 _create_pressureGradient()
+_create_power()
 
 
 def network2Frame():

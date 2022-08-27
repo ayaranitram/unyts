@@ -4,6 +4,7 @@ Created on Sat Aug 20 22:58:51 2022
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
+
 from unyts._helpers._caster import caster, tonumber
 
 def test_caster():
