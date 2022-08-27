@@ -5,8 +5,8 @@ Created on Sat Oct 24 14:34:59 2020
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
-__version__ = '0.1.1'
-__release__ = 20220803
+__version__ = '0.1.3'
+__release__ = 20220826
 
 from .._dictionaries import dictionary
 from .custom import userUnits
@@ -17,6 +17,7 @@ from .time import time
 from .unitless import dimensionless
 from .ratios import density, volumeRatio, productivityIndex, pressureGradient
 from .rates import rate, speed, velocity
+from .energy import energy, power
 
 
 def units(value, units=None):
