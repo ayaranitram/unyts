@@ -5,8 +5,11 @@ Created on Sat Oct 24 14:34:59 2020
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
-__version__ = '0.1.3'
-__release__ = 20220826
+__version__ = '0.2.5'
+__release__ = 20220830
+
+from pandas import Series, DataFrame
+from numpy import ndarray
 
 from .._dictionaries import dictionary
 from .custom import userUnits
@@ -51,6 +54,13 @@ def units(value, units=None):
     units = units.strip()
     for kind in dictionary:
         if units in dictionary[kind]:
-            return eval( kind + "(" + str(value) + ",'" + units + "')" )
+            if type(value) in (int, float, complex):
+                return eval( kind + "(" + str(value) + ",'" + units + "')" )
+            elif isinstance(value, (Series, DataFrame, ndarray)):
+                u = eval( kind + "(" + str(0) + ",'" + units + "')" )
+                u.value = value
+                return u
+            else:
+                raise TypeError("'value' parameter must be numeric.")
     return userUnits(value, units)
 

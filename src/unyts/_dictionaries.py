@@ -7,8 +7,8 @@ Created on Sat Oct 24 12:14:51 2020
 """
 
 __all__ = ['dictionary','SI','OGF','DATA','StandardAirDensity','StandadEarthGravity']
-__version__ = '0.2.0'
-__release__ = 20220829
+__version__ = '0.2.5'
+__release__ = 20220830
 
 
 StandardAirDensity = 1.225 # Kg/m3 or g/cc
@@ -74,7 +74,7 @@ dictionary['time'] = []
 dictionary['time_NAMES_UPPER_PLURALwS_REVERSE'] = {
     'nanosecond': ('ns',),
     'millisecond': ('ms',),
-    'second': ('s', 'sec'),
+    'second': ('s', 'sec',),
     'minute': ('min',),
     'hour': ('h', 'hr'),
     'day': ('d', 'día', 'días', 'DíA'),

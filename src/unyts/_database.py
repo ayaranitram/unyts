@@ -7,8 +7,8 @@ Created on Sat Oct 24 12:36:48 2020
 """
 
 __all__ = ['unitsNetwork']
-__version__ = '0.2.0'
-__release__ = 20220829
+__version__ = '0.2.5'
+__release__ = 20220830
 
 from ._dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, StandadEarthGravity
 
@@ -31,7 +31,7 @@ class uDigraph(object):
         self.fvf = None
         self.Memory = {}
         self.fvf = None
-        self.print = True
+        self.print = False
 
     def addNode(self, node):
         if node in self.edges:

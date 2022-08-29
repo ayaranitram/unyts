@@ -13,18 +13,16 @@ from ._errors import NoConversionFound
 import numpy as np
 from functools import reduce
 
-__version__ = '0.2.4'
-__release__ = 20220829
+__version__ = '0.2.5'
+__release__ = 20220830
 
 #defaultPrintConversionPath = unitsNetwork.print  # True
 
 
 def convertible(fromUnit, toUnit, PrintPath=False):
     try:
-        if converter(1, fromUnit, toUnit, PrintPath) is None:
-            return False
-        else:
-            return True
+        converter(1, fromUnit, toUnit, False)
+        return True
     except:
         return False
 

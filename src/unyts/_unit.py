@@ -6,11 +6,12 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.1.2'
-__release__ = 20220826
+__version__ = '0.2.5'
+__release__ = 20220830
 
 
-import numpy as _np
+import numpy as np
+from pandas import Series, DataFrame
 from ._errors import WrongUnits as _WrongUnits, WrongValue as _WrongValue
 from ._operations import unitProduct, unitDivision, unitBasePower
 from ._convert import converter as _converter, convertible as _convertible
@@ -308,10 +309,10 @@ class _units(object):
             return _np.array(value)
         elif type(value) in (int, float, complex):
             return value
-        elif type(value) is _np.ndarray:
-            return value
-        # elif type(value) == pandas.core.frame.DataFrame :
+        # elif type(value) is _np.ndarray:
         #     return value
+        elif isinstance(value, (Series, DataFrame, np.ndarray)):
+             return value
         else:
             raise _WrongValue()
 

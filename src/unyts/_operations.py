@@ -7,8 +7,8 @@ Created on Sat Oct 24 14:38:58 2020
 """
 
 __all__ = ['unitProduct','unitDivision']
-__version__ = '0.1.4'
-__release__ = 20220826
+__version__ = '0.2.5'
+__release__ = 20220830
 
 from ._dictionaries import dictionary
 from ._convert import convertible
@@ -206,8 +206,8 @@ def unitDivision(unit1, unit2):
             result = U1bas + str(Upow)
 
     elif ('+' not in unit1 and '-' not in unit1 and '^' not in unit1) and (
-            '+' not in unit2 and '-' not in unit2 and '^' not in unit2):
-        if '*' in unit1 and unitBase(unit2) in map(unitBase, unit1.split('*')):
+            '+' not in unit2 and '-' not in unit2 and '^' not in unit2) and (
+                '*' in unit1 and unitBase(unit2) in map(unitBase, unit1.split('*'))):
             result = ''
             for u in unit1.split('*'):
                 if unit2 == u:
