@@ -11,10 +11,10 @@ __release__ = 20220826
 
 # from .units.custom import *
 from .units.define import units
-from ._convert import convertUnit
-from ._convert import convertUnit_old as convert_old  # mainteined while testing
+#from ._convert import convertUnit
+#from ._convert import convertUnit_old as convert_old  # mainteined while testing
 from ._convert import convertUnit as convert
-from ._database import unitsNetwork
+#from ._database import unitsNetwork
 
 def print_path(switch):
     if type(switch) is str and switch.lower().strip() == 'off':

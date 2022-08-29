@@ -7,8 +7,8 @@ Created on Sat Oct 24 12:36:48 2020
 """
 
 __all__ = ['unitsNetwork']
-__version__ = '0.1.4'
-__release__ = 20220828
+__version__ = '0.2.0'
+__release__ = 20220829
 
 from ._dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, StandadEarthGravity
 
@@ -169,6 +169,12 @@ def _loadNetwork():
                     network.addEdge(conversion(network.getNode(secondName), network.getNode(unitName), lambda X: X))
                     network.addEdge(conversion(network.getNode(unitName), network.getNode(secondName), lambda X: X))
                     dictionary[unitKind.split('_')[0]].append(secondName)
+                # for secondName in dictionary[unitKind][unitName]:
+                #     for t in range(dictionary[unitKind][unitName].index(secondName)+1, len(dictionary[unitKind][unitName])):
+                #         thirdName = dictionary[unitKind][unitName][t]
+                #         network.addEdge(conversion(network.getNode(secondName), network.getNode(thirdName), lambda X: X))
+                #         network.addEdge(conversion(network.getNode(thirdName), network.getNode(secondName), lambda X: X))
+                    
 
         if '_SPACES' in unitKind:
             for unitName in list(dictionary[unitKind].keys()):
@@ -350,6 +356,7 @@ def _loadNetwork():
 
     # percentage & fraction :
     network.addEdge(conversion(network.getNode('fraction'), network.getNode('percentage'), lambda f: f*100))
+    network.addEdge(conversion(network.getNode('percentage'), network.getNode('fraction'), lambda p: p/100))
 
     # time conversions
     # network.addEdge(conversion(network.getNode('second'), network.getNode('millisecond'), lambda t: t*1000))
@@ -419,7 +426,7 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('quartUK'), lambda v: v*4))
     network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('fuild ounce UK'), lambda v: v*160))
     network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('litre'), lambda v: v*4.54609))
-    network.addEdge(conversion(network.getNode('gillUK'), network.getNode('fuild ounce UK'), lambda v: v*5))
+    network.addEdge(conversion(network.getNode('gillUK'), network.getNode('fuild ounce UK'), lambda v: v*4))
     network.addEdge(conversion(network.getNode('pintUK'), network.getNode('gillUK'), lambda v: v*4))
     network.addEdge(conversion(network.getNode('quartUK'), network.getNode('pintUK'), lambda v: v*2))
     
@@ -436,7 +443,7 @@ def _loadNetwork():
     # pressure conversions
     network.addEdge(conversion(network.getNode('psi gauge'), network.getNode('absolute psi'), lambda p: p+14.6959))
     network.addEdge(conversion(network.getNode('absolute psi'), network.getNode('psi gauge'), lambda p: p-14.6959))
-    network.addEdge(conversion(network.getNode('bar gauge'), network.getNode('bara'), lambda p: p+1.01325))
+    network.addEdge(conversion(network.getNode('bar gauge'), network.getNode('absolute bar'), lambda p: p+1.01325))
     network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('bar gauge'), lambda p: p-1.01325))
 
     network.addEdge(conversion(network.getNode('absolute bar'), network.getNode('absolute psi'), lambda p: p*14.50377377322))
@@ -466,7 +473,8 @@ def _loadNetwork():
 
     # force conversion
     # network.addEdge(conversion(network.getNode('kilogram'), network.getNode('kilogram force'), lambda f: f* converter(StandadEarthGravity,'m/s2','cm/s2',False)))
-    network.addEdge(conversion(network.getNode('kilogram mass'), network.getNode('kilogram force'), lambda f: f* StandadEarthGravity))
+    network.addEdge(conversion(network.getNode('kilogram mass'), network.getNode('kilogram force'), lambda f: f * StandadEarthGravity))
+    network.addEdge(conversion(network.getNode('kilogram force'), network.getNode('kilogram mass'), lambda f: f / StandadEarthGravity))
     network.addEdge(conversion(network.getNode('Dyne'), network.getNode('Newton'), lambda f: f*1E-5))
     network.addEdge(conversion(network.getNode('Newton'), network.getNode('Dyne'), lambda f: f*1E5 ))
 
@@ -494,7 +502,8 @@ def _loadNetwork():
 
     # data conversions
     network.addEdge(conversion(network.getNode('byte'), network.getNode('bit'), lambda d: d*8))
-    network.addEdge(conversion(network.getNode('bit'), network.getNode('byte'), lambda d: d/8))  # _REVERSE not working here
+    network.addEdge(conversion(network.getNode('byte'), network.getNode('B'), lambda d: d))
+    network.addEdge(conversion(network.getNode('bit'), network.getNode('b'), lambda d: d))
 
     for unitKind in list(dictionary.keys()):
         if '_REVERSE' in unitKind:

@@ -13,8 +13,8 @@ from ._errors import NoConversionFound
 import numpy as np
 from functools import reduce
 
-__version__ = '0.2.1'
-__release__ = 20220822
+__version__ = '0.2.4'
+__release__ = 20220829
 
 #defaultPrintConversionPath = unitsNetwork.print  # True
 
@@ -51,6 +51,27 @@ def convertUnit_old(value, fromUnit, toUnit, PrintConversionPath=False):
 
 
 def convertUnit(value, fromUnit, toUnit, PrintConversionPath=False):
+    """
+    returns the received value (integer, float, array, Series, DataFrame, etc)
+    transformed from the units 'fromUnit' to the units 'toUnits.
+
+    Parameters
+    ----------
+    value : int, float, array, Series, DataFrame, etc
+        the value to be converted.
+    fromUnit : str
+        the units of the provided value.
+    toUnit : str
+        the units to convert the value.
+    PrintConversionPath : bool, optional
+        Set to True to show the path used for conversion. The default is False.
+
+    Returns
+    -------
+    converted_value : int, float, array, Series, DataFrame ... 
+        the converted value
+
+    """
     if type(PrintConversionPath) is not bool:
         if type(PrintConversionPath) in [int, float]:
             if PrintConversionPath > 1:
@@ -167,9 +188,9 @@ def _get_conversion(value, fromUnit, toUnit, PrintConversionPath=None, getPath=F
     if fromUnit in dictionary['date'] and toUnit in dictionary['date']:
         return (lambda x: x) if value is None else value
 
-    ## dimensionless units does not require conversion
-    if fromUnit.lower() in dictionary['dimensionless'] and toUnit.lower() in dictionary['dimensionless']:
-        return (lambda x: x) if value is None else value
+    # ## dimensionless units does not require conversion
+    # if fromUnit.lower() in dictionary['dimensionless'] and toUnit.lower() in dictionary['dimensionless']:
+    #     return (lambda x: x) if value is None else value
 
     ## from dimensionless to ratio of same units
     if fromUnit.lower() in dictionary['dimensionless'] and '/' in toUnit and len(toUnit.split('/')) == 2 and toUnit.lower().split('/')[0].strip(' ()') == toUnit.lower().split('/')[1].strip(' ()'):
@@ -186,7 +207,7 @@ def _get_conversion(value, fromUnit, toUnit, PrintConversionPath=None, getPath=F
     ## from dimensionless/None to some units or viceversa (to allow assign units to dimensionless numbers)
     if fromUnit is None or toUnit is None:
         return (lambda x: x) if value is None else value
-    if fromUnit.lower() in dictionary['dimensionless'] or toUnit.lower() in dictionary['dimensionless']:
+    if (fromUnit.lower() in dictionary['dimensionless'] or toUnit.lower() in dictionary['dimensionless']) and (fromUnit is None or toUnit is None):
         return (lambda x: x) if value is None else value
 
     # check if already solved and memorized

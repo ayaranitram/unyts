@@ -21,6 +21,27 @@ from .energy import energy, power
 
 
 def units(value, units=None):
+    """
+    return an instance of the provided units.
+
+    Parameters
+    ----------
+    value : int, float, array, Series, DataFrame
+        the value to assign the units.
+    units : str, optional
+        the units to assign the value. The default is None.
+
+    Raises
+    ------
+    TypeError
+        if value or units are not the appropriate kind.
+
+    Returns
+    -------
+    units
+        instance of units.
+
+    """
     if units is None and '.units.' in str(type(value)):
         value, units = value.value, value.units
     if units is None:

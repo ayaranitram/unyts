@@ -7,8 +7,8 @@ Created on Sat Oct 24 12:14:51 2020
 """
 
 __all__ = ['dictionary','SI','OGF','DATA','StandardAirDensity','StandadEarthGravity']
-__version__ = '0.1.4'
-__release__ = 20220828
+__version__ = '0.2.0'
+__release__ = 20220829
 
 
 StandardAirDensity = 1.225 # Kg/m3 or g/cc
@@ -196,7 +196,7 @@ dictionary['pressure_SI'] = ('Pa', 'bara', 'bar')
 dictionary['weight'] = []
 dictionary['weight_NAMES_UPPER_REVERSE_SPACES_PLURALwS'] = {
     'gram': ('g',),
-    'kilogram': ('kg', 'kgm', 'Kgm',),
+    'kilogram': ('kg', 'kgm', 'Kgm', 'kilogram mass'),
     'milligrams': ('mg',),
     'metric ton': ('Tonne',),
     'g-mol': ('g-moles',),
@@ -227,9 +227,9 @@ dictionary['density'] = []
 dictionary['density_oilgas'] = {}
 dictionary['density_NAMES_UPPER'] = {
     'API': ('DEGREES',),
-    'SgO': ('gas-gravity','gas-specific-gravity'),
+    'SgG': ('gas-gravity','gas-specific-gravity'),
     'SgW': ('water-gravity',),
-    'SgG': ('oil-gravity',),
+    'SgO': ('oil-gravity',),
     }
 dictionary['density_NAMES_UPPER_REVERSE'] = {
     'g/cm3': ('g/cc',),
@@ -273,9 +273,11 @@ dictionary['rate_NAMES_UPPER_SPACES_REVERSE'] = {
 
 
 dictionary['dataBYTE'] = []
-dictionary['dataBYTE_UPPER_PLURALwS_DATA_NAME_REVERSE'] = {'B': ('Byte', 'byte')}
+dictionary['dataBYTE_UPPER_PLURALwS_DATA_NAME_REVERSE'] = {'byte': ('Byte',)}
+dictionary['dataBYTE_DATA_REVERSE'] = ('B',)
 dictionary['dataBIT'] = []
-dictionary['dataBIT_UPPER_PLURALwS_DATA'] = ('bit',)
+dictionary['dataBIT_DATA_PLURALwS_NAME_REVERSE'] = {'bit': ('Bit', 'BIT',)}
+dictionary['dataBIT_DATA_REVERSE'] = ('b',)
 
 
 dictionary['viscosity'] = []
@@ -293,7 +295,7 @@ dictionary['permeability_UPPER_REVERSE'] = ('mD', 'Darcy',)
 dictionary['force'] = []
 dictionary['force_NAMES_SPACES_RECURSIVE_UPPER_REVERSE'] = {
     'Newton': ('N', 'newton', 'kg*m/s2'),
-    'kilogram force': ('kgf', 'kilopondio', 'kilogram'),
+    'kilogram force': ('kgf', 'kilopondio',),  # 'kilogram'
     'kilopondio': ('kp',),
     'Dyne': ('dyne', 'dyn', 'g*cm/s2')
     }
@@ -332,7 +334,7 @@ dictionary['pressureGradient'] = []
 dictionary['pressureGradient'] = ('psi/ft', 'psia/ft', 'psig/ft', 'psi/m', 'psia/m', 'psig/m', 'bar/m', 'bars/m', 'barsa/m', 'bara/m', 'barg/m')
 
 
-dictionary['acceleration'] = ('m/s2', 'ft/s2')
+dictionary['acceleration'] = ('m/s2', 'ft/s2',)
 
 
 dictionary['other'] = []
@@ -344,7 +346,8 @@ dictionary['other_UPPER_NAMES'] = {
 
 dictionary['dimensionless'] = []
 dictionary['dimensionless_fractions_UPPER_NAMES'] = {'fraction': ('ratio', 'dimensionless', 'unitless', 'None', '')}
-dictionary['dimensionless_percentage_NAMES_REVERSE'] = {'percentage': ('%'),}
+# dictionary['dimensionless_percentage_NAMES_REVERSE'] = {'percentage': ('%',),}
+dictionary['dimensionless_percentage_NAMES_REVERSE'] = {'percentage': ('%',),}
 
 
 dictionary['date'] = []
