@@ -8,6 +8,31 @@ This package is under development and is regularly updated. Backcompatibility is
 - Prefixes applied to the basic units, like _k_ to _m_ to make _km_, are loaded as a network of conversions paths allowing the algorith to apply the prefix to any other unit on the same system.
 - It provides classes of _units_ useful powered with arithmetich and logic operations to intrincically consider unit conversions when making calculations.
 
+## How To Use It
+To install it from pypi repository:  
+**pip install unyts**
+
+#### To use the _converter_:
+from **unyts** import **convert**
+**convert**(_value_, _sourceUnits_, _unitsToConvertTo_)
+where:
+- _value_ is number (int, float, etc)
+- _sourceUnits_ is a string defining the units of _value_ (i.e.: 'ft')
+- _unitsToConvertTo_ is a string representing the units to convert _value_ (i.e.: 'km')
+
+#### To use the _units_ class:
+from **unyts** import **units**
+variable = **units**(_value_, _units_)
+- _value_ is number (int, float, etc)
+- _units_ is a string defining the units of _value_ (i.e.: 'ft')
+
+Then simple operate with the **units** instances or its variables:
+ In: **units**(6, 'in') + **units**(1, 'ft')
+Out: 18_in
+
+#### For further examples:
+The Jupyter notebook **unyts_demo** intends to be a guide on how to use this converter and units classes.
+
 ## Requisites
 - numpy
 
