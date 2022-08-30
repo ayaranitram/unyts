@@ -12,23 +12,23 @@ This package is under development and is regularly updated. Back compatibility i
 To install it from the PyPI repository:  
 **pip install unyts**
 
-#### To use the _converter_:
-from **unyts** import **convert**
+### To use the _converter_:
+from **unyts** import **convert**  
 **convert**(_value_, _sourceUnits_, _unitsToConvertTo_)
 where:
 - _value_ is a number (int, float, etc)
 - _sourceUnits_ is a string defining the units of _value_ (i.e.: 'ft')
 - _unitsToConvertTo_ is a string representing the units to convert _value_ (i.e.: 'km')
 
-#### To use the _units_ class:
-from **unyts** import **units**
-variable = **units**(_value_, _units_)
+### To use the _units_ class:
+from **unyts** import **units**  
+variable = **units**(_value_, _units_)  
 - _value_ is a number (int, float, etc)
 - _units_ is a string defining the units of _value_ (i.e.: 'ft')
 
-Then simple operate with the **units** instances or their variables:
- In: **units**(6, 'in') + **units**(1, 'ft')
-Out: 18_in
+Then simple operate with the **units** instances or their variables:  
+ In: **units**(6, 'in') + **units**(1, 'ft')  
+Out: 18_in  
 
 #### For further examples:
 The Jupyter notebook **unyts_demo** intends to be a guide on how to use this converter and units classes.
