@@ -5,8 +5,8 @@ Created on Sat Oct 24 14:34:59 2020
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
-__version__ = '0.2.5'
-__release__ = 20220830
+__version__ = '0.2.6'
+__release__ = 20220831
 
 from pandas import Series, DataFrame
 from numpy import ndarray
@@ -15,7 +15,7 @@ from .._dictionaries import dictionary
 from .custom import userUnits
 from .force import pressure, weight, compressibility
 from .geometry import length, area, volume
-from .temperature import temperature
+from .temperature import temperature, temperatureGradient
 from .time import time
 from .unitless import dimensionless
 from .ratios import density, volumeRatio, productivityIndex, pressureGradient

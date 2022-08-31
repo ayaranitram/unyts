@@ -7,8 +7,8 @@ Created on Sat Oct 24 12:14:51 2020
 """
 
 __all__ = ['dictionary','SI','OGF','DATA','StandardAirDensity','StandadEarthGravity']
-__version__ = '0.2.5'
-__release__ = 20220830
+__version__ = '0.2.6'
+__release__ = 20220831
 
 
 StandardAirDensity = 1.225 # Kg/m3 or g/cc
@@ -95,6 +95,9 @@ dictionary['temperature_NAMES'] = {
     'Rankine': ('R','DEG R','DEGREES R'),
     'Kelvin': ('K','DEG K','DEGREES K')
     }
+
+
+dictionary['temperatureGradient'] = []
 
 
 dictionary['length'] = []
@@ -357,3 +360,17 @@ dictionary['date_UPPER_PLURALwS'] = ['date']
 
 
 dictionary['userUnits'] = []
+
+
+temperatureRatioFactors = {'Celsius':9,
+                           'Fahrenheit':5,
+                           'Kelvin':9,
+                           'Rankine':5,
+                           }
+temperatureRatioConversions = {}
+for t1, c1 in temperatureRatioFactors.items():
+    for t1a in ((t1,) + dictionary['temperature_NAMES'][t1]):
+        for t2, c2 in temperatureRatioFactors.items():
+            for t2a in ((t2,) + dictionary['temperature_NAMES'][t2]):
+                temperatureRatioConversions[(t1a,t2a)] = c1/c2
+del temperatureRatioFactors

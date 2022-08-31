@@ -7,14 +7,14 @@ Created on Sat Oct 24 15:57:27 2020
 """
 
 from ._database import unitsNetwork
-from ._dictionaries import dictionary
+from ._dictionaries import dictionary, temperatureRatioConversions
 from ._searches import BFS as _BFS, printPath as _printPath
 from ._errors import NoConversionFound
 import numpy as np
 from functools import reduce
 
-__version__ = '0.2.5'
-__release__ = 20220830
+__version__ = '0.2.6'
+__release__ = 20220831
 
 #defaultPrintConversionPath = unitsNetwork.print  # True
 
@@ -185,6 +185,15 @@ def _get_conversion(value, fromUnit, toUnit, PrintConversionPath=None, getPath=F
     ## no conversion required if 'from' and 'to' units are dates
     if fromUnit in dictionary['date'] and toUnit in dictionary['date']:
         return (lambda x: x) if value is None else value
+
+    ## special case for temperature ratios
+    if '/' in fromUnit and len(fromUnit.split('/'))==2 and fromUnit.split('/')[0] in dictionary['temperature'] \
+        and '/' in toUnit and len(toUnit.split('/'))==2 and toUnit.split('/')[0] in dictionary['temperature']:
+            t1, d1 = fromUnit.split('/')
+            t2, d2 = toUnit.split('/')
+            num = temperatureRatioConversions[(t1, t2)]
+            den = _get_conversion(1, d1, d2, PrintConversionPath=PrintConversionPath, getPath=getPath)
+            return (lambda x: x * num / den) if value is None else (value * num / den)
 
     # ## dimensionless units does not require conversion
     # if fromUnit.lower() in dictionary['dimensionless'] and toUnit.lower() in dictionary['dimensionless']:

@@ -7,8 +7,8 @@ Created on Sat Oct 24 12:36:48 2020
 """
 
 __all__ = ['unitsNetwork']
-__version__ = '0.2.5'
-__release__ = 20220830
+__version__ = '0.2.6'
+__release__ = 20220831
 
 from ._dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, StandadEarthGravity
 
@@ -636,6 +636,16 @@ def _create_pressureGradient():
     dictionary['pressureGradient'] = tuple(set(pressureGradient))
     
 
+def _create_temperatureGradient():
+    # pressure / length
+    temperatureGradient = list(dictionary['temperatureGradient']) if 'temperatureGradient' in dictionary else []
+    # for pressure in dictionary['pressure']:
+    #     for length in dictionary['length']:
+    #         pressureGradient.append(pressure+'/'+length)
+    temperatureGradient += [temperature+'/'+length for temperature in dictionary['temperature'] for length in dictionary['length']]
+    dictionary['temperatureGradient'] = tuple(set(temperatureGradient))
+    
+
 def _create_acceleration():
     # length / time / time
     acceleration = list(dictionary['acceleration']) if 'acceleration' in dictionary else []
@@ -663,6 +673,7 @@ _create_density()
 _create_speed()
 _create_productivityIndex()
 _create_pressureGradient()
+_create_temperatureGradient()
 _create_power()
 
 
