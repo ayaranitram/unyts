@@ -8,8 +8,6 @@ Created on Sat Oct 24 14:34:59 2020
 __version__ = '0.2.6'
 __release__ = 20220831
 
-from pandas import Series, DataFrame
-from numpy import ndarray
 
 from .._dictionaries import dictionary
 from .custom import userUnits
@@ -22,6 +20,14 @@ from .ratios import density, volumeRatio, productivityIndex, pressureGradient
 from .rates import rate, speed, velocity
 from .energy import energy, power
 
+from numpy import ndarray
+
+arraylike = [ndarray]
+try:
+    from pandas import Series, DataFrame
+    arraylike += [Series, DataFrame]
+except:
+    pass
 
 def units(value, units=None):
     """
@@ -56,11 +62,10 @@ def units(value, units=None):
         if units in dictionary[kind]:
             if type(value) in (int, float, complex):
                 return eval( kind + "(" + str(value) + ",'" + units + "')" )
-            elif isinstance(value, (Series, DataFrame, ndarray)):
+            elif isinstance(value, arraylike):
                 u = eval( kind + "(" + str(0) + ",'" + units + "')" )
                 u.value = value
                 return u
             else:
                 raise TypeError("'value' parameter must be numeric.")
     return userUnits(value, units)
-
