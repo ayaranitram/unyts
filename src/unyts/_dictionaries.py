@@ -152,11 +152,11 @@ dictionary['volume_NAMES_UPPER_REVERSE_PLURALwS_SPACES'] = {
     'decilitre': ('dl', 'deciliter') ,
     'cubic meter': ('CM', 'm3'),
     'standard cubic meter': ('scm', 'sm3', 'stm3', 'm3'),
-    'cubic centimeter': ( 'cc', 'cm3', 'standard cubic centimeter'),
-    'standard cubic centimeter': ( 'scc', 'scm3'),
+    'cubic centimeter': ('cc', 'cm3', 'standard cubic centimeter'),
+    'standard cubic centimeter': ('scc', 'scm3'),
     'reservoir cubic meter': ('rm3',),
-    'reservoir cubic centimeter': ( 'rcc', 'rcm3'),
-    'cubic foot': ('cubic feet', 'ft3', 'cf'),
+    'reservoir cubic centimeter': ('rcc', 'rcm3'),
+    'cubic foot': ('cubic feet', 'ft3', 'cf', 'pie cúbico', 'pie cubico', 'pc'),
     'standard cubic foot': ('scf', 'cf'),
     'cubic inch': ('in3', 'cubic inches'),
     'barrel': ('bbl', 'stb'),
@@ -180,7 +180,7 @@ dictionary['volume_product_NAMES'] = {
 
 dictionary['pressure'] = []
 dictionary['pressure_NAMES_UPPER_REVERSE_SPACES'] = {
-    'absolute psi': ('psia', 'lb/in2', 'absolute pound/square inch', 'psi absolute'),
+    'absolute psi': ('psia', 'lb/in2', 'absolute pound/square inch', 'psi absolute', 'libras/pulgada cuadrada absoluta', 'lpca'),
     'absolute bar': ('bara', 'barsa', 'abs bar', 'bar absolute'),
     'atmosphere': ('atm', 'atma'),
     'Pascal': ('Pa', 'Newton/m2'),
