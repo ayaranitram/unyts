@@ -13,8 +13,8 @@ from ._errors import NoConversionFound
 import numpy as np
 from functools import reduce
 
-__version__ = '0.2.6'
-__release__ = 20220831
+__version__ = '0.2.7'
+__release__ = 20220908
 
 #defaultPrintConversionPath = unitsNetwork.print  # True
 
@@ -66,7 +66,7 @@ def convertUnit(value, fromUnit, toUnit, PrintConversionPath=False):
 
     Returns
     -------
-    converted_value : int, float, array, Series, DataFrame ... 
+    converted_value : int, float, array, Series, DataFrame ...
         the converted value
 
     """
@@ -193,11 +193,21 @@ def _get_conversion(value, fromUnit, toUnit, PrintConversionPath=None, getPath=F
             t2, d2 = toUnit.split('/')
             num = temperatureRatioConversions[(t1, t2)]
             den = _get_conversion(1, d1, d2, PrintConversionPath=PrintConversionPath, getPath=getPath)
+            if num is None or den is None:
+                return None  # raise NoConversionFound("from '" + str(d1) + "' to '" + str(d2) + "'")
             return (lambda x: x * num / den) if value is None else (value * num / den)
 
-    # ## dimensionless units does not require conversion
-    # if fromUnit.lower() in dictionary['dimensionless'] and toUnit.lower() in dictionary['dimensionless']:
-    #     return (lambda x: x) if value is None else value
+    ## from dimensionless/None to some units or viceversa (to allow assign units to dimensionless numbers)
+    if fromUnit is None or toUnit is None:
+        return (lambda x: x) if value is None else value
+    if (fromUnit.lower() in dictionary['dimensionless'] or toUnit.lower() in dictionary['dimensionless']) and (fromUnit is None or toUnit is None):
+        return (lambda x: x) if value is None else value
+
+    ## from dimensionless to percentage or viceversa
+    if (fromUnit is None or fromUnit.lower() in dictionary['dimensionless']) and toUnit.lower() in dictionary['percentage']:
+        return (lambda x: x * 100) if value is None else value * 100
+    if fromUnit.lower() in dictionary['percentage'] and (toUnit is None or toUnit.lower() in dictionary['dimensionless']):
+        return (lambda x: x / 100) if value is None else value / 100
 
     ## from dimensionless to ratio of same units
     if fromUnit.lower() in dictionary['dimensionless'] and '/' in toUnit and len(toUnit.split('/')) == 2 and toUnit.lower().split('/')[0].strip(' ()') == toUnit.lower().split('/')[1].strip(' ()'):
@@ -210,12 +220,6 @@ def _get_conversion(value, fromUnit, toUnit, PrintConversionPath=None, getPath=F
     ## if inverted ratios
     if ('/' in fromUnit and len(fromUnit.split('/')) == 2) and ('/' in toUnit and len(toUnit.split('/')) == 2) and (fromUnit.split('/')[0].strip() == toUnit.split('/')[1].strip()) and (fromUnit.split('/')[1].strip() == toUnit.split('/')[0].strip()):
         return (lambda x: 1/x) if value is None else 1/value
-
-    ## from dimensionless/None to some units or viceversa (to allow assign units to dimensionless numbers)
-    if fromUnit is None or toUnit is None:
-        return (lambda x: x) if value is None else value
-    if (fromUnit.lower() in dictionary['dimensionless'] or toUnit.lower() in dictionary['dimensionless']) and (fromUnit is None or toUnit is None):
-        return (lambda x: x) if value is None else value
 
     # check if already solved and memorized
     if not getPath and (fromUnit, toUnit) in unitsNetwork.Memory:

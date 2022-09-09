@@ -7,8 +7,8 @@ Created on Sat Oct 24 12:14:51 2020
 """
 
 __all__ = ['dictionary','SI','OGF','DATA','StandardAirDensity','StandadEarthGravity']
-__version__ = '0.2.6'
-__release__ = 20220831
+__version__ = '0.2.7'
+__release__ = 20220908
 
 
 StandardAirDensity = 1.225 # Kg/m3 or g/cc
@@ -340,8 +340,8 @@ dictionary['pressureGradient'] = ('psi/ft', 'psia/ft', 'psig/ft', 'psi/m', 'psia
 dictionary['acceleration'] = ('m/s2', 'ft/s2',)
 
 
-dictionary['other'] = []
-dictionary['other_UPPER_NAMES'] = {
+dictionary['otherUnits'] = []
+dictionary['otherUnits_UPPER_NAMES'] = {
     'sec/day': ('sec/d',),
     's2': ('s*s',)
     }
@@ -349,8 +349,9 @@ dictionary['other_UPPER_NAMES'] = {
 
 dictionary['dimensionless'] = []
 dictionary['dimensionless_fractions_UPPER_NAMES'] = {'fraction': ('ratio', 'dimensionless', 'unitless', 'None', '')}
-# dictionary['dimensionless_percentage_NAMES_REVERSE'] = {'percentage': ('%',),}
-dictionary['dimensionless_percentage_NAMES_REVERSE'] = {'percentage': ('%',),}
+
+dictionary['percentage'] = []
+dictionary['percentage_NAMES_REVERSE'] = {'percentage': ('%', 'perc'),}
 
 
 dictionary['date'] = []

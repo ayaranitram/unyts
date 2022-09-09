@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.2.6'
-__release__ = 20220831
+__version__ = '0.2.7'
+__release__ = 20220908
 
 # from .units.custom import *
 from .units.define import units
@@ -23,4 +23,3 @@ def print_path(switch=None):
         unitsNetwork.print = bool(switch)
     else:
         unitsNetwork.print = False if unitsNetwork.print is True else True
-        

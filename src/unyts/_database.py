@@ -7,8 +7,8 @@ Created on Sat Oct 24 12:36:48 2020
 """
 
 __all__ = ['unitsNetwork']
-__version__ = '0.2.6'
-__release__ = 20220831
+__version__ = '0.2.7'
+__release__ = 20220908
 
 from ._dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, StandadEarthGravity
 
@@ -174,7 +174,7 @@ def _loadNetwork():
                 #         thirdName = dictionary[unitKind][unitName][t]
                 #         network.addEdge(conversion(network.getNode(secondName), network.getNode(thirdName), lambda X: X))
                 #         network.addEdge(conversion(network.getNode(thirdName), network.getNode(secondName), lambda X: X))
-                    
+
 
         if '_SPACES' in unitKind:
             for unitName in list(dictionary[unitKind].keys()):
@@ -355,8 +355,8 @@ def _loadNetwork():
     #         for unitNode in
 
     # percentage & fraction :
-    network.addEdge(conversion(network.getNode('fraction'), network.getNode('percentage'), lambda f: f*100))
-    network.addEdge(conversion(network.getNode('percentage'), network.getNode('fraction'), lambda p: p/100))
+    network.addEdge(conversion(network.getNode('fraction'), network.getNode('percentage'), lambda f: f * 100))
+    network.addEdge(conversion(network.getNode('percentage'), network.getNode('fraction'), lambda p: p / 100))
 
     # time conversions
     # network.addEdge(conversion(network.getNode('second'), network.getNode('millisecond'), lambda t: t*1000))
@@ -422,14 +422,14 @@ def _loadNetwork():
     network.addEdge(conversion(network.getNode('gallonUS'), network.getNode('fuild ounce'), lambda v: v*128))
     network.addEdge(conversion(network.getNode('gallonUS'), network.getNode('quart'), lambda v: v*4))
     network.addEdge(conversion(network.getNode('gallonUS'), network.getNode('cubic inch'), lambda v: v*231))
-    
+
     network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('quartUK'), lambda v: v*4))
     network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('fuild ounce UK'), lambda v: v*160))
     network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('litre'), lambda v: v*4.54609))
     network.addEdge(conversion(network.getNode('gillUK'), network.getNode('fuild ounce UK'), lambda v: v*4))
     network.addEdge(conversion(network.getNode('pintUK'), network.getNode('gillUK'), lambda v: v*4))
     network.addEdge(conversion(network.getNode('quartUK'), network.getNode('pintUK'), lambda v: v*2))
-    
+
     network.addEdge(conversion(network.getNode('gallonUK'), network.getNode('liter'), lambda v: v* 4.54609))
     network.addEdge(conversion(network.getNode('cubic foot'), network.getNode('cubic meter'), lambda v: v*(3048**3)/(10000**3)))
     network.addEdge(conversion(network.getNode('standard cubic foot'), network.getNode('standard cubic meter'), lambda v: v*(3048**3)/(10000**3)))
@@ -600,8 +600,8 @@ def _create_speed():
     #         speed.append(length+'/'+time)
     speed += [length+'/'+time for length in dictionary['length'] for time in dictionary['time']]
     dictionary['speed'] = tuple(set(speed))
-    
-    
+
+
 def _create_power():
     # length / time
     power = list(dictionary['power']) if 'power' in dictionary else []
@@ -619,9 +619,9 @@ def _create_productivityIndex():
     #     for time in dictionary['time']:
     #         for pressure in dictionary['pressure']:
     #             productivityIndex.append(volume+'/'+time+'/'+pressure)
-    productivityIndex += [volume+'/'+time+'/'+pressure 
-                          for volume in dictionary['volume'] 
-                          for time in dictionary['time'] 
+    productivityIndex += [volume+'/'+time+'/'+pressure
+                          for volume in dictionary['volume']
+                          for time in dictionary['time']
                           for pressure in dictionary['pressure']]
     dictionary['productivityIndex'] = tuple(set(productivityIndex))
 
@@ -634,7 +634,7 @@ def _create_pressureGradient():
     #         pressureGradient.append(pressure+'/'+length)
     pressureGradient += [pressure+'/'+length for pressure in dictionary['pressure'] for length in dictionary['length']]
     dictionary['pressureGradient'] = tuple(set(pressureGradient))
-    
+
 
 def _create_temperatureGradient():
     # pressure / length
@@ -644,7 +644,7 @@ def _create_temperatureGradient():
     #         pressureGradient.append(pressure+'/'+length)
     temperatureGradient += [temperature+'/'+length for temperature in dictionary['temperature'] for length in dictionary['length']]
     dictionary['temperatureGradient'] = tuple(set(temperatureGradient))
-    
+
 
 def _create_acceleration():
     # length / time / time
