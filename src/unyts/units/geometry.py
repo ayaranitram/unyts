@@ -5,14 +5,16 @@ Created on Sat Oct 24 14:34:59 2020
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
-__version__ = '0.1.1'
-__release__ = 20220803
 
-from .._dictionaries import dictionary
-from .._unit import _units
+__version__ = '0.4.0'
+__release__ = 20220920
+__all__ = ['length', 'area', 'volume']
+
+from ..dictionaries import dictionary
+from ..unit_class import unit
 
 
-class length(_units):
+class length(unit):
     classUnits = dictionary['length']
     def __init__(self, value, units):
         self.name = 'length'
@@ -21,7 +23,7 @@ class length(_units):
         self.unit = self.checkUnit(units)
 
 
-class area(_units):
+class area(unit):
     classUnits = dictionary['area']
     def __init__(self, value, units):
         self.name = 'area'
@@ -30,7 +32,7 @@ class area(_units):
         self.unit = self.checkUnit(units)
 
 
-class volume(_units):
+class volume(unit):
     classUnits = dictionary['volume']
     def __init__(self, value, units):
         self.name = 'volume'

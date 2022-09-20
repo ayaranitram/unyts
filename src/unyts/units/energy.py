@@ -5,14 +5,16 @@ Created on Fri Aug 26 21:17:35 2020
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
-__version__ = '0.1.1'
-__release__ = 20220803
 
-from .._dictionaries import dictionary
-from .._unit import _units
+__version__ = '0.4.0'
+__release__ = 20220920
+__all__ = ['energy', 'power']
+
+from ..dictionaries import dictionary
+from ..unit_class import unit
 
 
-class energy(_units):
+class energy(unit):
     classUnits = dictionary['energy']
     def __init__(self, value, units):
         self.name = 'energy'
@@ -21,7 +23,7 @@ class energy(_units):
         self.unit = self.checkUnit(units)
 
 
-class power(_units):
+class power(unit):
     classUnits = dictionary['power']
     def __init__(self, value, units):
         self.name = 'power'

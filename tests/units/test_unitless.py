@@ -6,7 +6,7 @@ Created on Thu Sep  8 18:28:23 2022
 """
 
 from unyts.units.unitless import dimensionless, percentage
-from unyts._dictionaries import dictionary
+from unyts.dictionaries import dictionary
 from unyts import units, convert
 
 

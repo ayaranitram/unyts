@@ -6,9 +6,9 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
+__version__ = '0.4.0'
+__release__ = 20220920
 __all__ = ['dictionary','SI','OGF','DATA','StandardAirDensity','StandadEarthGravity']
-__version__ = '0.2.7'
-__release__ = 20220908
 
 
 StandardAirDensity = 1.225 # Kg/m3 or g/cc
@@ -88,6 +88,7 @@ dictionary['time_NAMES_UPPER_PLURALwS_REVERSE'] = {
 dictionary['time_SI'] = ('s',)
 
 
+# temperature and related
 dictionary['temperature'] = ['C', 'K', 'F', 'R']
 dictionary['temperature_NAMES'] = {
     'Celsius': ('Centigrades', 'C', 'DEG C', 'DEGREES C'),
@@ -95,11 +96,10 @@ dictionary['temperature_NAMES'] = {
     'Rankine': ('R','DEG R','DEGREES R'),
     'Kelvin': ('K','DEG K','DEGREES K')
     }
-
-
 dictionary['temperatureGradient'] = []
 
 
+# length
 dictionary['length'] = []
 dictionary['length_NAMES_UPPER_REVERSE'] = {'meter': ('m', 'meter', 'metro')}
 dictionary['length_SI'] = ('m', 'l')  # litre is volumen but the conversion of SI prefixes is linear
@@ -118,6 +118,7 @@ dictionary['length_UK_NAMES_UPPER_REVERSE'] = {
     }
 
 
+# area
 dictionary['area'] = []
 dictionary['area_NAMES_UPPER_REVERSE'] = {'square meter': ('sq m', 'm2', 'sqmeter', 'm*m', 'm3/m')}
 dictionary['area_SI'] = ('m2',)
@@ -131,6 +132,7 @@ dictionary['area_UK_NAMES_UPPER_REVERSE'] = {
     }
 
 
+# volume
 dictionary['volume'] = []
 dictionary['volume_SI_UPPER_REVERSE'] = ('m3', 'sm3', 'stm3', 'rm3',)  # 'l' # litre is volumen but the conversion of SI prefixes is linear
 dictionary['volume_UK_NAMES_UPPER_REVERSE_PLURALwS'] = {
@@ -178,6 +180,7 @@ dictionary['volume_product_NAMES'] = {
     }
 
 
+# pressure
 dictionary['pressure'] = []
 dictionary['pressure_NAMES_UPPER_REVERSE_SPACES'] = {
     'absolute psi': ('psia', 'lb/in2', 'absolute pound/square inch', 'psi absolute', 'libras/pulgada cuadrada absoluta', 'lpca'),
@@ -195,7 +198,11 @@ dictionary['pressure_NAMES_UPPER_SPACES'] = {
     }
 dictionary['pressure_SI'] = ('Pa', 'bara', 'bar')
 
+dictionary['pressureGradient'] = []
+dictionary['pressureGradient'] = ('psi/ft', 'psia/ft', 'psig/ft', 'psi/m', 'psia/m', 'psig/m', 'bar/m', 'bars/m', 'barsa/m', 'bara/m', 'barg/m')
 
+
+# weight
 dictionary['weight'] = []
 dictionary['weight_NAMES_UPPER_REVERSE_SPACES_PLURALwS'] = {
     'gram': ('g',),
@@ -223,9 +230,11 @@ dictionary['weight_UK_NAMES_UPPER_REVERSE_SPACES_PLURALwS'] = {
 dictionary['weight_SI'] = ('g', 'g-mol')
 
 
+# mass
 dictionary['mass'] = ['kilogram mass']
 
 
+# density
 dictionary['density'] = []
 dictionary['density_oilgas'] = {}
 dictionary['density_NAMES_UPPER'] = {
@@ -246,6 +255,7 @@ dictionary['density_NAMES_UPPER_REVERSE'] = {
     }
 
 
+# compressibility
 dictionary['compressibility'] = []
 dictionary['compressibility_UPPER_NAMES'] = {
     '1/psi': ('1/psia', 'µsip', 'usip', '1/psig'),
@@ -254,6 +264,7 @@ dictionary['compressibility_UPPER_NAMES'] = {
     }
 
 
+# rate
 dictionary['rate'] = []
 dictionary['rate_NAMES_UPPER_SPACES_REVERSE'] = {
     'standard barrel per day': ('stb/day',),
@@ -275,6 +286,7 @@ dictionary['rate_NAMES_UPPER_SPACES_REVERSE'] = {
     }
 
 
+# digital data
 dictionary['dataBYTE'] = []
 dictionary['dataBYTE_UPPER_PLURALwS_DATA_NAME_REVERSE'] = {'byte': ('Byte',)}
 dictionary['dataBYTE_DATA_REVERSE'] = ('B',)
@@ -283,6 +295,7 @@ dictionary['dataBIT_DATA_PLURALwS_NAME_REVERSE'] = {'bit': ('Bit', 'BIT',)}
 dictionary['dataBIT_DATA_REVERSE'] = ('b',)
 
 
+# viscosity
 dictionary['viscosity'] = []
 dictionary['viscosity_UPPER_NAMES_REVERSE'] = {
     'centipoise': ('cP',),
@@ -291,10 +304,12 @@ dictionary['viscosity_UPPER_NAMES_REVERSE'] = {
     }
 
 
+# permeability
 dictionary['permeability'] = []
 dictionary['permeability_UPPER_REVERSE'] = ('mD', 'Darcy',)
 
 
+# force
 dictionary['force'] = []
 dictionary['force_NAMES_SPACES_RECURSIVE_UPPER_REVERSE'] = {
     'Newton': ('N', 'newton', 'kg*m/s2'),
@@ -304,6 +319,7 @@ dictionary['force_NAMES_SPACES_RECURSIVE_UPPER_REVERSE'] = {
     }
 
 
+ # energy
 dictionary['energy'] = []
 dictionary['energy_UPPER_NAMES_REVERSE'] = {
     'Joule': ('J', 'Watt second', 'N*m', 'kg*m2/s2', 'Joules'),
@@ -317,6 +333,7 @@ dictionary['energy_UPPER_NAMES_REVERSE'] = {
 dictionary['energy_SI'] = ('Wh', 'Ws',)
 
 
+# power
 dictionary['power'] = []
 dictionary['power_UPPER_NAMES_REVERSE'] = {
     'Horsepower': ('hp',),
@@ -325,6 +342,7 @@ dictionary['power_UPPER_NAMES_REVERSE'] = {
 dictionary['power_SI'] = ('W',)
 
 
+# productivity index
 dictionary['productivityIndex'] = []
 dictionary['productivityIndex_UPPER_NAMES_REVERSE'] = {
     'stb/day/psi': ('STB/DAY/', 'stbd/psi', 'stbd/psia', 'stb/day/psia', 'stb/day-psi', 'STB/DAY-PSI', 'stb/day-psia', 'STB/DAY-PSIA','stb/d/psi'),
@@ -333,20 +351,11 @@ dictionary['productivityIndex_UPPER_NAMES_REVERSE'] = {
     }
 
 
-dictionary['pressureGradient'] = []
-dictionary['pressureGradient'] = ('psi/ft', 'psia/ft', 'psig/ft', 'psi/m', 'psia/m', 'psig/m', 'bar/m', 'bars/m', 'barsa/m', 'bara/m', 'barg/m')
-
-
+# acceleration
 dictionary['acceleration'] = ('m/s2', 'ft/s2',)
 
 
-dictionary['otherUnits'] = []
-dictionary['otherUnits_UPPER_NAMES'] = {
-    'sec/day': ('sec/d',),
-    's2': ('s*s',)
-    }
-
-
+# dimensionless
 dictionary['dimensionless'] = []
 dictionary['dimensionless_fractions_UPPER_NAMES'] = {'fraction': ('ratio', 'dimensionless', 'unitless', 'None', '')}
 
@@ -354,13 +363,20 @@ dictionary['percentage'] = []
 dictionary['percentage_NAMES_REVERSE'] = {'percentage': ('%', 'perc'),}
 
 
+# dates
 dictionary['date'] = []
-
-
 dictionary['date_UPPER_PLURALwS'] = ['date']
 
 
 dictionary['userUnits'] = []
+
+
+# other
+dictionary['otherUnits'] = []
+dictionary['otherUnits_UPPER_NAMES'] = {
+    'sec/day': ('sec/d',),
+    's2': ('s*s',)
+    }
 
 
 temperatureRatioFactors = {'Celsius':9,

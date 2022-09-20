@@ -5,11 +5,13 @@ Created on Sat Oct 24 14:34:59 2020
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
-__version__ = '0.2.7'
-__release__ = 20220908
+
+__version__ = '0.4.0'
+__release__ = 20220920
+__all__ = ['units']
 
 
-from .._dictionaries import dictionary
+from ..dictionaries import dictionary
 from .custom import userUnits, otherUnits
 from .force import pressure, weight, compressibility
 from .geometry import length, area, volume
@@ -30,6 +32,7 @@ try:
 except:
     pass
 arraylike = tuple(arraylike)
+
 
 def units(value, units=None):
     """
@@ -70,4 +73,5 @@ def units(value, units=None):
                 return u
             else:
                 raise TypeError("'value' parameter must be numeric.")
+
     return userUnits(value, units)

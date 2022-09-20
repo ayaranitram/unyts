@@ -7,8 +7,9 @@ Created on Fri Aug 26 13:12:52 2022
 helper functions for units modules
 """
 
-__version__ = '0.15.0'
-__release__ = 210505
+__version__ = '0.4.0'
+__release__ = 20220920
+__all__ = ['multisplit']
 
 
 def multisplit(string, sep=['*','/'], remove=[' ']):
@@ -33,24 +34,6 @@ def multisplit(string, sep=['*','/'], remove=[' ']):
         for j in range(s-i-1) :
             if len(sep[j]) < len(sep[j+1]):
                 sep[j], sep[j+1] = sep[j+1], sep[j]
-
-
-    # # prepare for parenthesis
-    ## I'm working on it...
-    # for pa in [')(', ') (']:
-    #     if pa in string:
-    #         string = string.replace(pa, ')*(')
-    # while '(' in string:
-    #     op = string.index('(')
-    #     cp = string[op:].index(')')
-    #     ss = multisplit(string[op:cp+1])
-        
-    #     if op > 0:
-    #         sp, si = string[:op][-1], -1
-    #         while sp == ' ' and si < 0:
-    #             si = si - 1 if len(string[:op]) >= abs(si - 1) else 0
-    #             sp = string[:op][si]
-    #         string = string[:op] + ' '.join(ss) + string[cp+1:]
 
     # initialize counters
     stringlist = []

@@ -6,9 +6,9 @@ Created on Fri Aug 26 21:34:21 2022
 """
 
 from unyts import units, convert
-from unyts._dictionaries import dictionary
+from unyts.dictionaries import dictionary
 from unyts.units.unitless import dimensionless, percentage
-from unyts._operations import unitProduct, unitDivision
+from unyts.operations import unitProduct, unitDivision
 import numpy as np
 import pandas as pd
 

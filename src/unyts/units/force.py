@@ -5,14 +5,16 @@ Created on Sat Oct 24 14:34:59 2020
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
-__version__ = '0.1.1'
-__release__ = 20220803
 
-from .._dictionaries import dictionary
-from .._unit import _units
+__version__ = '0.4.0'
+__release__ = 20220920
+__all__ = ['pressure', 'weight', 'compressibility']
+
+from ..dictionaries import dictionary
+from ..unit_class import unit
 
 
-class pressure(_units):
+class pressure(unit):
     classUnits = dictionary['pressure']
     def __init__(self, value, units):
         self.name = 'pressure'
@@ -21,7 +23,7 @@ class pressure(_units):
         self.unit = self.checkUnit(units)
 
 
-class weight(_units):
+class weight(unit):
     classUnits = dictionary['weight']
     def __init__(self, value, units):
         self.name = 'weight'
@@ -30,7 +32,7 @@ class weight(_units):
         self.unit = self.checkUnit(units)
 
 
-class compressibility(_units):
+class compressibility(unit):
     classUnits = dictionary['compressibility']
     def __init__(self, value, units):
         self.name = 'compressibility'

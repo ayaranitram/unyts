@@ -5,15 +5,17 @@ Created on Sat Oct 24 14:34:59 2020
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
-__version__ = '0.2.0'
-__release__ = 20220809
 
-from .._dictionaries import dictionary
-from .._unit import _units
-from .._errors import WrongUnits
+__version__ = '0.4.0'
+__release__ = 20220820
+__all__ = ['dimensionless', 'percentage']
+
+from ..dictionaries import dictionary
+from ..unit_class import unit
+from ..errors import WrongUnitsError
 
 
-class dimensionless(_units):
+class dimensionless(unit):
     classUnits = dictionary['dimensionless']
     def __init__(self, value, units=None):
         self.name = 'dimensionless'
@@ -28,7 +30,7 @@ class dimensionless(_units):
             try:
                 newunit = newunit.unit
             except:
-                raise WrongUnits("'" + str(newunit) + "' for '" + str(self.name) + "'")
+                raise WrongUnitsError("'" + str(newunit) + "' for '" + str(self.name) + "'")
         if newunit is None or len(newunit) == 0:
             return self.value
         elif newunit in dictionary['percentage']:

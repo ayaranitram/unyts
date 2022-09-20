@@ -6,9 +6,9 @@ Created on Sat Oct 24 17:52:34 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
+__version__ = '0.4.0'
+__release__ = 20220920
 __all__ = ['BFS']
-__version__ = '0.1.0'
-__release__ = 20220524
 
 
 def BFS(graph, start, end, toPrint=False):
@@ -22,10 +22,10 @@ def BFS(graph, start, end, toPrint=False):
         tmpPath = pathQueue.pop(0)
         if tmpPath in visited :
             if toPrint:
-                print(' <UnitsConv> ' + str(len(pathQueue)) + ' paths in queue. ' + 'Already visited BFS path:\n', printPath(tmpPath))
+                print('<UnitsConv> ' + str(len(pathQueue)) + ' paths in queue. ' + 'Already visited BFS path:\n', printPath(tmpPath))
         else :
             if toPrint:
-                print(' <UnitsConv> ' + str(len(pathQueue)) + ' paths in queue. ' + 'Current BFS path:\n', printPath(tmpPath))
+                print('<UnitsConv> ' + str(len(pathQueue)) + ' paths in queue. ' + 'Current BFS path:\n', printPath(tmpPath))
             lastNode = tmpPath[-1]
             if lastNode == end:
                 return tmpPath

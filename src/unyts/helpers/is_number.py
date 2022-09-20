@@ -7,7 +7,12 @@ Created on Sun May 23 11:18:15 2021
 helper functions for units modules
 """
 
-def isnumber(string):
+__version__ = '0.4.0'
+__release__ = 20220920
+__all__ = ['is_number']
+
+
+def is_number(string):
     """
     Checks if a string represents a number.
     Valid numbers are:

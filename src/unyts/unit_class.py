@@ -6,14 +6,13 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.2.7'
-__release__ = 20220908
-__all__ = []
+__version__ = '0.4.0'
+__release__ = 20220920
+__all__ = ['unit']
 
-
-from ._errors import WrongUnits, WrongValue, NoConversionFound
-from ._operations import unitProduct, unitDivision, unitBasePower
-from ._convert import converter, convertible
+from .errors import WrongUnitsError, WrongValueError, NoConversionFoundError
+from .operations import unitProduct, unitDivision, unitBasePower
+from .convert import converter, convertible
 
 import numpy as np
 from pandas import Series, DataFrame
@@ -28,7 +27,7 @@ except:
 arraylike = tuple(arraylike)
 
 
-class _units(object):
+class unit(object):
     """
     A class to cope with values associated to units, its arithmetic and logic
     operations and conversions.
@@ -54,7 +53,7 @@ class _units(object):
             try:
                 newunit = newunit.unit
             except:
-                raise WrongUnits("'" + str(newunit) + "' for '" + str(self.name) + "'")
+                raise WrongUnitsError("'" + str(newunit) + "' for '" + str(self.name) + "'")
         return self.kind(converter(self.value, self.unit, newunit), newunit)
 
     def to(self, newunit):
@@ -84,7 +83,7 @@ class _units(object):
                 elif convertible(self.unit, other.unit):
                     return self.kind(other.value + converter(self.value, self.unit, other.unit), other.unit)
                 else:
-                    raise NoConversionFound("from '" + self.unit + "' to '" + other.unit + "'")
+                    raise NoConversionFoundError("from '" + self.unit + "' to '" + other.unit + "'")
             if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
                 return self.kind(self.value + other.value, other.unit)
             elif self.kind is percentage and other.kind in (dimensionless, percentage):
@@ -160,9 +159,9 @@ class _units(object):
                 return units(self.value ** converter(other.value, other.unit, self.unit), self.unit + '^' + self.unit)
             elif convertible(unitBasePower(self.unit)[0], unitBasePower(other.unit)[0]):
                 factor = converter(1, unitBasePower(other.unit)[0], unitBasePower(self.unit)[0])
-                return units(self.value ** (other.value * factor), self.unit+'^'+other.unit)
+                return units(self.value ** (other.value * factor), self.unit + '^' + other.unit)
             else:
-                return units(self.value ** other.value, self.unit+'^'+other.unit)
+                return units(self.value ** other.value, self.unit + '^' + other.unit)
         elif type(other) is tuple:
             result = []
             for each in other:
@@ -203,7 +202,7 @@ class _units(object):
                 elif convertible(self.unit, other.unit):
                     return self.kind(other.value - converter(self.value, self.unit, other.unit), other.unit)
                 else:
-                    raise NoConversionFound("from '" + self.unit + "' to '" + other.unit + "'")
+                    raise NoConversionFoundError("from '" + self.unit + "' to '" + other.unit + "'")
             if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
                 return self.kind(self.value - other.value, other.unit)
             elif self.kind is percentage and other.kind in (dimensionless, percentage):
@@ -222,7 +221,7 @@ class _units(object):
                     result += each
             return tuple(result) if flag else other + (self,)
         elif self.kind is percentage:
-            return self.kind((self.value - other) * 100,self.unit)
+            return self.kind((self.value - other) * 100, self.unit)
         else:
             return self.kind(self.value - other, self.unit)
 
@@ -340,41 +339,59 @@ class _units(object):
         if type(self) == type(other):
             return self.value < other.convert(self.unit).value
         else:
-            msg = "'<' not supported between instances of '" +   (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','')   + "' and '" +   (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.', '')   + "'"
+            msg = "'<' not supported between instances of '" + \
+                (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','') + \
+                    "' and '" + \
+                        (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.', '') + "'"
             raise TypeError(msg)
 
     def __le__(self, other):
         if type(self) == type(other):
             return self.value <= other.convert(self.unit).value
         else :
-            msg = "'<=' not supported between instances of '" +   (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','')   + "' and '" +   (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','')   + "'"
+            msg = "'<=' not supported between instances of '" + \
+                (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','') + \
+                    "' and '" + \
+                        (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','') + "'"
             raise TypeError(msg)
 
     def __eq__(self, other):
         if type(self) == type(other):
             return self.value == other.convert(self.unit).value
         else:
-            msg = "'==' not supported between instances of '" +   (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','')   + "' and '" +   (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','')   + "'"
+            msg = "'==' not supported between instances of '" + \
+                (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','') + \
+                    "' and '" + \
+                        (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','') + "'"
             raise TypeError(msg)
 
     def __ne__(self, other):
         if type(self) == type(other):
             return self.value != other.convert(self.unit).value
         else:
-            msg = "'!=' not supported between instances of '" +   (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','')   + "' and '" +   (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','')   + "'"
+            msg = "'!=' not supported between instances of '" + \
+                (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','') + \
+                    "' and '" + \
+                        (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','') + "'"
             raise TypeError(msg)
 
     def __ge__(self, other):
         if type(self) == type(other):
             return self.value >= other.convert(self.unit).value
         else :
-            msg = "'>=' not supported between instances of '" +   (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','')   + "' and '" +   (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','')   + "'"
+            msg = "'>=' not supported between instances of '" + \
+                (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','') + \
+                    "' and '" + \
+                        (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','') + "'"
             raise TypeError(msg)
     def __gt__(self, other):
         if type(self) == type(other):
             return self.value > other.convert(self.unit).value
         else :
-            msg = "'>' not supported between instances of '" +   (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','')   + "' and '" +   (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','')   + "'"
+            msg = "'>' not supported between instances of '" + \
+                (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','') + \
+                    "' and '" + \
+                        (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','') + "'"
             raise TypeError(msg)
 
     def __len__(self):
@@ -401,9 +418,6 @@ class _units(object):
         else:
             return self.value.__iter__()
 
-    # def __next__(self):
-    #     pass
-
     def getUnit(self):
         return self.unit
 
@@ -415,21 +429,21 @@ class _units(object):
             try:
                 return np.array(value)
             except:
-                raise WrongValue(str(value))
+                raise WrongValueError(str(value))
         elif isinstance(value, Number):
             return value
         elif isinstance(value, arraylike):
              return value
         else:
-            raise WrongValue(str(value))
+            raise WrongValueError(str(value))
 
     def checkUnit(self, units):
         if type(units) is not str:
             try:
                 units = units.unit
             except:
-                raise WrongUnits("'" + str(units) + "' for '" + str(self.name) + "'")
+                raise WrongUnitsError("'" + str(units) + "' for '" + str(self.name) + "'")
         if units in self.kind.classUnits:
             return units
         else:
-            raise WrongUnits("'" + str(units) + "' for '" + str(self.name) + "'")
+            raise WrongUnitsError("'" + str(units) + "' for '" + str(self.name) + "'")

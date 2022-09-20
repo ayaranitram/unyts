@@ -5,6 +5,10 @@ Created on Wed Aug  3 21:14:44 2022
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
+__version__ = '0.4.0'
+__release__ = 20220920
+__all__ = ['caster', 'to_number']
+
 
 def caster(string):
     """
@@ -38,7 +42,7 @@ def caster(string):
     return value
 
 
-def tonumber(string, decimalsign='auto', thousandseparator='auto', parethesismeansnegative=True):
+def to_number(string, decimalsign='auto', thousandseparator='auto', parethesismeansnegative=True):
     """
     Cast a string the appropiate numeric type.
     Valid numbers are:

@@ -6,11 +6,11 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
+__version__ = '0.4.0'
+__release__ = 20220920
 __all__ = ['unitsNetwork']
-__version__ = '0.2.7'
-__release__ = 20220908
 
-from ._dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, StandadEarthGravity
+from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, StandadEarthGravity
 
 
 class uNode(object):
