@@ -6,7 +6,7 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 __release__ = 20220920
 __all__ = ['converter', 'convertible', 'convertUnit']
 
@@ -69,7 +69,7 @@ def convertUnit(value, fromUnit, toUnit, printConversionPath=False):
         conv = converter(value, fromUnit, toUnit, printConversionPath)
         if conv is not None:
             return conv
-    except NoConversionFound:
+    except NoConversionFoundError:
         return None
 
 
@@ -82,7 +82,7 @@ def convertUnit_for_SimPandas(value, fromUnit, toUnit, printConversionPath=False
             return conv
         else:
             return value
-    except NoConversionFound:
+    except NoConversionFoundError:
         return value
 
 
