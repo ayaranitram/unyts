@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:38:58 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20220920
+__version__ = '0.4.1'
+__release__ = 20220921
 __all__ = ['unitProduct','unitDivision']
 
 from .dictionaries import dictionary
@@ -173,3 +173,39 @@ def unitDivision(unit_string1, unit_string2):
                 break
         result = unit_string1 + '/' + unit_string2
     return result
+
+
+def unitPower(unit_string, power):
+    if unit_string is None:
+        unit_string = 'dimensionless'
+    if power is None:
+        power = 1
+
+    if type(unit_string) is str and len(unit_string.strip(' ()')) == 0:
+        unit_string = 'dimensionless'
+    if type(power) is str and len(power.strip(' ()')) == 0:
+        power = 1
+
+    U1bas, U1pow = unitBasePower(unit_string)
+
+    if type(power) in (int, float):
+        Upow = U1pow * power
+        if Upow == 0:
+            return 'dimensionless'
+        elif Upow == 1:
+            return U1bas
+        else:
+            return U1bas + str(Upow)
+
+    elif type(power) is str:
+        U2bas, U2pow = unitBasePower(power)
+        Upow = U1pow * U2pow
+        if Upow == 0:
+            return 'dimensionless'
+        elif Upow == 1:
+            return U1bas + '^' + U2bas
+        else:
+            return U1bas + '^' + str(Upow) + U2bas
+
+    else:
+        raise TypeError('power must be units string or numeric')
