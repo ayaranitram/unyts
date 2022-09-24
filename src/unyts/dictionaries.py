@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20220920
+__version__ = '0.4.1'
+__release__ = 20220924
 __all__ = ['dictionary','SI','OGF','DATA','StandardAirDensity','StandadEarthGravity']
 
 
@@ -99,39 +99,6 @@ dictionary['temperature_NAMES'] = {
 dictionary['temperatureGradient'] = []
 
 
-# length
-dictionary['length'] = []
-dictionary['length_NAMES_UPPER_REVERSE'] = {'meter': ('m', 'meter', 'metro')}
-dictionary['length_SI'] = ('m', 'l')  # litre is volumen but the conversion of SI prefixes is linear
-dictionary['length_UK_NAMES_UPPER_REVERSE'] = {
-    'thou': ('th',),
-    'inch': ('in', '"'),
-    'foot': ('feet','ft',"'"),
-    'yard': ('yd',),
-    'chain': ('ch',),
-    'rod': ('rd',),
-    'furlong': ('fur',),
-    'mile': ('mi',),
-    'league': ('lea',),
-    'nautical mile': ('nmi',),
-    'nautical league': ('nlea',),
-    }
-
-
-# area
-dictionary['area'] = []
-dictionary['area_NAMES_UPPER_REVERSE'] = {'square meter': ('sq m', 'm2', 'sqmeter', 'm*m', 'm3/m')}
-dictionary['area_SI'] = ('m2',)
-dictionary['area_UK_NAMES_UPPER_REVERSE'] = {
-    'square mile': ('sq mi','mi2','sqmile','mi*mi'),
-    'acre': tuple(),
-    'square rod': ('sq rd', 'sqrd', 'rd2', 'rd*rd'),
-    'square yard': ('sq yd', 'sqyd', 'yd2', 'yd*yd'),
-    'square foot': ('sq ft', 'sqft', 'ft2', 'ft*ft', 'ft3/ft'),
-    'square inch': ('sq in', 'sqin', 'in2', 'in*in', 'in3/in')
-    }
-
-
 # volume
 dictionary['volume'] = []
 dictionary['volume_SI_UPPER_REVERSE'] = ('m3', 'sm3', 'stm3', 'rm3',)  # 'l' # litre is volumen but the conversion of SI prefixes is linear
@@ -177,6 +144,39 @@ dictionary['volume_product_NAMES'] = {
     'cm3': ('cm2*cm',),
     'ft3': ('ft2*ft',),
     'in3':('in2*in',)
+    }
+
+
+# length
+dictionary['length'] = []
+dictionary['length_NAMES_UPPER_REVERSE'] = {'meter': ('m', 'meter', 'metro')}
+dictionary['length_SI'] = ('m', 'l')  # litre is volumen but the conversion of SI prefixes is linear
+dictionary['length_UK_NAMES_UPPER_REVERSE'] = {
+    'thou': ('th',),
+    'inch': ('in', '"'),
+    'foot': ('feet','ft',"'"),
+    'yard': ('yd',),
+    'chain': ('ch',),
+    'rod': ('rd',),
+    'furlong': ('fur',),
+    'mile': ('mi',),
+    'league': ('lea',),
+    'nautical mile': ('nmi',),
+    'nautical league': ('nlea',),
+    }
+
+
+# area
+dictionary['area'] = []
+dictionary['area_NAMES_UPPER_REVERSE'] = {'square meter': ('sq m', 'm2', 'sqmeter', 'm*m', 'm3/m')}
+dictionary['area_SI'] = ('m2',)
+dictionary['area_UK_NAMES_UPPER_REVERSE'] = {
+    'square mile': ('sq mi','mi2','sqmile','mi*mi'),
+    'acre': tuple(),
+    'square rod': ('sq rd', 'sqrd', 'rd2', 'rd*rd'),
+    'square yard': ('sq yd', 'sqyd', 'yd2', 'yd*yd'),
+    'square foot': ('sq ft', 'sqft', 'ft2', 'ft*ft', 'ft3/ft'),
+    'square inch': ('sq in', 'sqin', 'in2', 'in*in', 'in3/in')
     }
 
 

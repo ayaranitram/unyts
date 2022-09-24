@@ -6,7 +6,7 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.3'
+__version__ = '0.4.4'
 __release__ = 20220924
 __all__ = ['units', 'convert']
 
