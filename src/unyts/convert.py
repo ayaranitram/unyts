@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.1'
-__release__ = 20220920
+__version__ = '0.4.2'
+__release__ = 20220924
 __all__ = ['converter', 'convertible', 'convertUnit']
 
 
@@ -313,4 +313,4 @@ def converter(value, fromUnit, toUnit, printConversionPath=None):
                 return value * conversionFactor if value is not None else unitsNetwork.Memory[(fromUnit, toUnit)]
 
     # no conversion found
-    raise NoConversionFound("from '" + str(fromUnit) + "' to '" + str(toUnit) + "'")
+    raise NoConversionFoundError("from '" + str(fromUnit) + "' to '" + str(toUnit) + "'")
