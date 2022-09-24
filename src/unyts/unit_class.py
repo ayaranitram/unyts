@@ -33,11 +33,18 @@ class unit(object):
     operations and conversions.
     """
 
-    def __init__(self):
+    def __init__(self, value=None, unit=None):
         self.unit = None
         self.value = None
         self.name = None
         self.kind = None
+        if value is not None and unit is not None:
+            from .units.define import units
+            u = units(value, unit)
+            self.unit = u.unit
+            self.value = u.value
+            self.name = u.name
+            self.kind = u.kind
 
     def __call__(self):
         return self.value
