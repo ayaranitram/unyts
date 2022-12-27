@@ -5,14 +5,14 @@ Created on Thu Sep  8 18:14:12 2022
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-from unyts.units.time import Time
+from unyts.units.time import time
 from unyts import units
 
-t = Time(60, 's')
+t = time(60, 's')
 
-assert type(t) is Time
-assert t.name == 'Time'
-assert t.kind is Time
+assert type(t) is time
+assert t.name == 'time'
+assert t.kind is time
 assert t.value == 60
 assert t.unit == 's'
 

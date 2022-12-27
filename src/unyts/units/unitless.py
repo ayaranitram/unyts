@@ -8,22 +8,22 @@ Created on Sat Oct 24 14:34:59 2020
 
 __version__ = '0.4.5'
 __release__ = 20221226
-__all__ = ['Dimensionless', 'Percentage']
+__all__ = ['dimensionless', 'percentage']
 
 from ..dictionaries import dictionary
 from ..unit_class import Unit
 from ..errors import WrongUnitsError
 
 
-class Dimensionless(Unit):
-    classUnits = dictionary['Dimensionless']
+class dimensionless(Unit):
+    classUnits = dictionary['dimensionless']
 
     def __init__(self, value, units=None):
-        self.name = 'Dimensionless'
-        self.kind = Dimensionless
+        self.name = 'dimensionless'
+        self.kind = dimensionless
         self.value = self.check_value(value)
         if units is None:
-            units = 'Dimensionless'
+            units = 'dimensionless'
         self.unit = self.check_unit(units)
 
     def convert(self, new_unit=None):
@@ -34,10 +34,10 @@ class Dimensionless(Unit):
                 raise WrongUnitsError("'" + str(new_unit) + "' for '" + str(self.name) + "'")
         if new_unit is None or len(new_unit) == 0:
             return self.value
-        elif new_unit in dictionary['Percentage']:
-            return Percentage(self.value * 100, new_unit)
-        elif new_unit in dictionary['Dimensionless']:
-            return Dimensionless(self.value, new_unit)
+        elif new_unit in dictionary['percentage']:
+            return percentage(self.value * 100, new_unit)
+        elif new_unit in dictionary['dimensionless']:
+            return dimensionless(self.value, new_unit)
         else:
             from .define import units
             return units(self.value, new_unit)
@@ -46,15 +46,15 @@ class Dimensionless(Unit):
         return self.convert(new_unit)
 
 
-class Percentage(Dimensionless):
-    classUnits = dictionary['Percentage']
+class percentage(dimensionless):
+    classUnits = dictionary['percentage']
 
     def __init__(self, value, units=None):
-        self.name = 'Percentage'
-        self.kind = Percentage
+        self.name = 'percentage'
+        self.kind = percentage
         self.value = self.check_value(value) / 100
         if units is None:
-            units = 'Percentage'
+            units = 'percentage'
         self.unit = self.check_unit(units)
 
     def __repr__(self):

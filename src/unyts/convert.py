@@ -168,9 +168,9 @@ def _get_conversion(value, from_unit, to_unit, print_conversion_path=None, get_p
     if from_unit in dictionary['date'] and to_unit in dictionary['date']:
         return (lambda x: x) if value is None else value
 
-    # special case for Temperature ratios
-    if '/' in from_unit and len(from_unit.split('/')) == 2 and from_unit.split('/')[0] in dictionary['Temperature'] \
-            and '/' in to_unit and len(to_unit.split('/')) == 2 and to_unit.split('/')[0] in dictionary['Temperature']:
+    # special case for temperature ratios
+    if '/' in from_unit and len(from_unit.split('/')) == 2 and from_unit.split('/')[0] in dictionary['temperature'] \
+            and '/' in to_unit and len(to_unit.split('/')) == 2 and to_unit.split('/')[0] in dictionary['temperature']:
         t1, d1 = from_unit.split('/')
         t2, d2 = to_unit.split('/')
         num = temperatureRatioConversions[(t1, t2)]
@@ -182,25 +182,25 @@ def _get_conversion(value, from_unit, to_unit, print_conversion_path=None, get_p
     # from Dimensionless/None to some units or viceversa (to allow assign units to Dimensionless numbers)
     if from_unit is None or to_unit is None:
         return (lambda x: x) if value is None else value
-    if (from_unit.lower() in dictionary['Dimensionless'] or to_unit.lower() in dictionary['Dimensionless']) and (
+    if (from_unit.lower() in dictionary['dimensionless'] or to_unit.lower() in dictionary['dimensionless']) and (
             from_unit is None or to_unit is None):
         return (lambda x: x) if value is None else value
 
     # from Dimensionless to Percentage or viceversa
-    if (from_unit is None or from_unit.lower() in dictionary['Dimensionless']) and to_unit.lower() in dictionary[
-        'Percentage']:
+    if (from_unit is None or from_unit.lower() in dictionary['dimensionless']) and to_unit.lower() in dictionary[
+        'percentage']:
         return (lambda x: x * 100) if value is None else value * 100
-    if from_unit.lower() in dictionary['Percentage'] and (
-            to_unit is None or to_unit.lower() in dictionary['Dimensionless']):
+    if from_unit.lower() in dictionary['percentage'] and (
+            to_unit is None or to_unit.lower() in dictionary['dimensionless']):
         return (lambda x: x / 100) if value is None else value / 100
 
     # from Dimensionless to ratio of same units
-    if from_unit.lower() in dictionary['Dimensionless'] and '/' in to_unit and len(to_unit.split('/')) == 2 and \
+    if from_unit.lower() in dictionary['dimensionless'] and '/' in to_unit and len(to_unit.split('/')) == 2 and \
             to_unit.lower().split('/')[0].strip(' ()') == to_unit.lower().split('/')[1].strip(' ()'):
         return (lambda x: x) if value is None else value
 
     # from ratio of same units to Dimensionless
-    if to_unit.lower() in dictionary['Dimensionless'] and '/' in from_unit and len(from_unit.split('/')) == 2 and \
+    if to_unit.lower() in dictionary['dimensionless'] and '/' in from_unit and len(from_unit.split('/')) == 2 and \
             from_unit.lower().split('/')[0].strip(' ()') == from_unit.lower().split('/')[1].strip(' ()'):
         return (lambda x: x) if value is None else value
 

@@ -124,7 +124,7 @@ class UDigraph(object):
             return False
 
         if self.fvf is None:
-            print('Please enter formation Volume factor (FVF) in reservoir_volume/standard_volume:')
+            print('Please enter formation volume factor (FVF) in reservoir_volume/standard_volume:')
             while self.fvf is None:
                 self.fvf = input(' FVF (rV/stV) = ')
                 if not self.valid_fvf(self.fvf):
@@ -200,9 +200,11 @@ def _load_network():
                     dictionary[unit_kind.split('_')[0]].append(unit_name)
                     dictionary[unit_kind.split('_')[0]].append(unit_name.replace(' ', '-'))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', '-')), lambda X: X))
+                        Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', '-')),
+                                   lambda X: X))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', '-')), lambda X: X))
+                        Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', '-')),
+                                   lambda X: X))
                     for secondName in dictionary[unit_kind][unit_name]:
                         # print('N   3: ' + unit_name)
                         if ' ' in secondName:
@@ -242,7 +244,8 @@ def _load_network():
                     network.add_edge(
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), SI[prefix][0]))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][0], True))
+                        Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][0],
+                                   True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[1]:
             for unit_name in list(dictionary[unit_kind]):
@@ -255,7 +258,8 @@ def _load_network():
                     network.add_edge(
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), SI[prefix][1]))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][1], True))
+                        Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][1],
+                                   True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[2]:
             for unit_name in list(dictionary[unit_kind]):
@@ -268,7 +272,8 @@ def _load_network():
                     network.add_edge(
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), SI[prefix][2]))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][2], True))
+                        Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][2],
+                                   True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_DATA' in unit_kind and unit_kind.split('_')[0] in DATA_order[0]:
             for unit_name in list(dictionary[unit_kind]):
@@ -309,7 +314,8 @@ def _load_network():
                     network.add_edge(
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), OGF[prefix][2]))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), OGF[prefix][2], True))
+                        Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), OGF[prefix][2],
+                                   True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_PLURALwS' in unit_kind:
             if type(dictionary[unit_kind]) is dict:
@@ -318,8 +324,10 @@ def _load_network():
                     # print('U  2: ' + unit_name,unit_kind.split('_')[0])
                     network.add_node(UNode(unit_name))
                     network.add_node(UNode(unit_name + 's'))
-                    network.add_edge(Conversion(network.get_node(unit_name), network.get_node(unit_name + 's'), lambda X: X))
-                    network.add_edge(Conversion(network.get_node(unit_name + 's'), network.get_node(unit_name), lambda X: X))
+                    network.add_edge(
+                        Conversion(network.get_node(unit_name), network.get_node(unit_name + 's'), lambda X: X))
+                    network.add_edge(
+                        Conversion(network.get_node(unit_name + 's'), network.get_node(unit_name), lambda X: X))
                     dictionary[unit_kind.split('_')[0]].append(unit_name + 's')
                     # for secondName in dictionary[unit_kind][unit_name] :
                     #     # print('U   3: ' + unit_name)
@@ -333,8 +341,10 @@ def _load_network():
                     # print('U  2: ' + unit_name,unit_kind.split('_')[0])
                     network.add_node(UNode(unit_name))
                     network.add_node(UNode(unit_name + 's'))
-                    network.add_edge(Conversion(network.get_node(unit_name), network.get_node(unit_name + 's'), lambda X: X))
-                    network.add_edge(Conversion(network.get_node(unit_name + 's'), network.get_node(unit_name), lambda X: X))
+                    network.add_edge(
+                        Conversion(network.get_node(unit_name), network.get_node(unit_name + 's'), lambda X: X))
+                    network.add_edge(
+                        Conversion(network.get_node(unit_name + 's'), network.get_node(unit_name), lambda X: X))
                     dictionary[unit_kind.split('_')[0]].append(unit_name + 's')
             if '_UPPER' in unit_kind:
                 if type(dictionary[unit_kind]) is dict:
@@ -344,9 +354,11 @@ def _load_network():
                         network.add_node(UNode(unit_name))
                         network.add_node(UNode(unit_name.upper() + 'S'))
                         network.add_edge(
-                            Conversion(network.get_node(unit_name), network.get_node(unit_name.upper() + 'S'), lambda X: X))
+                            Conversion(network.get_node(unit_name), network.get_node(unit_name.upper() + 'S'),
+                                       lambda X: X))
                         network.add_edge(
-                            Conversion(network.get_node(unit_name.upper() + 'S'), network.get_node(unit_name), lambda X: X))
+                            Conversion(network.get_node(unit_name.upper() + 'S'), network.get_node(unit_name),
+                                       lambda X: X))
                         dictionary[unit_kind.split('_')[0]].append(unit_name.upper() + 'S')
                         # for secondName in dictionary[unit_kind][unit_name] :
                         #     # print('U   3: ' + unit_name)
@@ -361,9 +373,11 @@ def _load_network():
                         network.add_node(UNode(unit_name))
                         network.add_node(UNode(unit_name.upper() + 'S'))
                         network.add_edge(
-                            Conversion(network.get_node(unit_name), network.get_node(unit_name.upper() + 'S'), lambda X: X))
+                            Conversion(network.get_node(unit_name), network.get_node(unit_name.upper() + 'S'),
+                                       lambda X: X))
                         network.add_edge(
-                            Conversion(network.get_node(unit_name.upper() + 'S'), network.get_node(unit_name), lambda X: X))
+                            Conversion(network.get_node(unit_name.upper() + 'S'), network.get_node(unit_name),
+                                       lambda X: X))
                         dictionary[unit_kind.split('_')[0]].append(unit_name.upper() + 'S')
         if '_UPPER' in unit_kind:
             if type(dictionary[unit_kind]) is dict:
@@ -403,11 +417,11 @@ def _load_network():
     #     if '_REVERSE' in unit_kind :
     #         for unitNode in
 
-    # Percentage & fraction :
-    network.add_edge(Conversion(network.get_node('fraction'), network.get_node('Percentage'), lambda f: f * 100))
-    network.add_edge(Conversion(network.get_node('Percentage'), network.get_node('fraction'), lambda p: p / 100))
+    # percentage & fraction :
+    network.add_edge(Conversion(network.get_node('fraction'), network.get_node('percentage'), lambda f: f * 100))
+    network.add_edge(Conversion(network.get_node('percentage'), network.get_node('fraction'), lambda p: p / 100))
 
-    # Time conversions
+    # time conversions
     # network.addEdge(Conversion(network.getNode('second'), network.getNode('millisecond'), lambda t: t*1000))
     network.add_edge(Conversion(network.get_node('minute'), network.get_node('second'), lambda t: t * 60))
     network.add_edge(Conversion(network.get_node('hour'), network.get_node('minute'), lambda t: t * 60))
@@ -420,17 +434,18 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('decade'), network.get_node('year'), lambda t: t * 10))
     network.add_edge(Conversion(network.get_node('century'), network.get_node('year'), lambda t: t * 100))
 
-    # Temperature conversions
+    # temperature conversions
     network.add_edge(Conversion(network.get_node('Celsius'), network.get_node('Kelvin'), lambda t: t + 273.15))
     network.add_edge(Conversion(network.get_node('Kelvin'), network.get_node('Celsius'), lambda t: t - 273.15))
     network.add_edge(Conversion(network.get_node('Celsius'), network.get_node('Fahrenheit'), lambda t: t * 9 / 5 + 32))
-    network.add_edge(Conversion(network.get_node('Fahrenheit'), network.get_node('Celsius'), lambda t: (t - 32) * 5 / 9))
+    network.add_edge(
+        Conversion(network.get_node('Fahrenheit'), network.get_node('Celsius'), lambda t: (t - 32) * 5 / 9))
     network.add_edge(Conversion(network.get_node('Fahrenheit'), network.get_node('Rankine'), lambda t: t + 459.67))
     network.add_edge(Conversion(network.get_node('Rankine'), network.get_node('Fahrenheit'), lambda t: t - 459.67))
     network.add_edge(Conversion(network.get_node('Rankine'), network.get_node('Kelvin'), lambda t: t * 5 / 9))
     network.add_edge(Conversion(network.get_node('Kelvin'), network.get_node('Rankine'), lambda t: t * 9 / 5))
 
-    # Length conversions
+    # length conversions
     network.add_edge(Conversion(network.get_node('yard'), network.get_node('meter'), lambda d: d * 9144 / 10000))
     # network.addEdge(Conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048))
     network.add_edge(Conversion(network.get_node('inch'), network.get_node('thou'), lambda d: d * 1000))
@@ -440,14 +455,16 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('furlong'), network.get_node('chain'), lambda d: d * 10))
     network.add_edge(Conversion(network.get_node('mile'), network.get_node('furlong'), lambda d: d * 8))
     network.add_edge(Conversion(network.get_node('league'), network.get_node('mile'), lambda d: d * 3))
-    network.add_edge(Conversion(network.get_node('nautical league'), network.get_node('nautical mile'), lambda d: d * 3))
+    network.add_edge(
+        Conversion(network.get_node('nautical league'), network.get_node('nautical mile'), lambda d: d * 3))
     network.add_edge(Conversion(network.get_node('nautical mile'), network.get_node('meter'), lambda d: d * 1852))
     network.add_edge(Conversion(network.get_node('rod'), network.get_node('yard'), lambda d: d * 55 / 10))
 
-    # Area conversions
+    # area conversions
     network.add_edge(Conversion(network.get_node('square mile'), network.get_node('acre'), lambda d: d * 640))
     network.add_edge(Conversion(network.get_node('acre'), network.get_node('square yard'), lambda d: d * 4840))
-    network.add_edge(Conversion(network.get_node('square rod'), network.get_node('square yard'), lambda d: d * 3025 / 100))
+    network.add_edge(
+        Conversion(network.get_node('square rod'), network.get_node('square yard'), lambda d: d * 3025 / 100))
     network.add_edge(Conversion(network.get_node('square yard'), network.get_node('square foot'), lambda d: d * 9))
     network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square inch'), lambda d: d * 144))
     network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square meter'),
@@ -465,7 +482,7 @@ def _load_network():
     # network.addEdge(Conversion(network.getNode('in*in'), network.getNode('in'), lambda d: d**0.5))
     # network.addEdge(Conversion(network.getNode('in'), network.getNode('in*in'), lambda d: d**2))
 
-    # Volume conversions
+    # volume conversions
     network.add_edge(Conversion(network.get_node('gill'), network.get_node('fuild ounce'), lambda v: v * 4))
     network.add_edge(Conversion(network.get_node('pint'), network.get_node('gill'), lambda v: v * 4))
     network.add_edge(Conversion(network.get_node('quart'), network.get_node('pint'), lambda v: v * 2))
@@ -487,16 +504,18 @@ def _load_network():
                                 lambda v: v * (3048 ** 3) / (10000 ** 3)))
     network.add_edge(Conversion(network.get_node('standard barrel'), network.get_node('USgal'), lambda v: v * 42))
     network.add_edge(
-        Conversion(network.get_node('standard cubic meter'), network.get_node('standard barrel'), lambda v: v * 6.289814))
+        Conversion(network.get_node('standard cubic meter'), network.get_node('standard barrel'),
+                   lambda v: v * 6.289814))
     network.add_edge(
-        Conversion(network.get_node('standard barrel'), network.get_node('standard cubic foot'), lambda v: v * 5.614584))
+        Conversion(network.get_node('standard barrel'), network.get_node('standard cubic foot'),
+                   lambda v: v * 5.614584))
     network.add_edge(Conversion(network.get_node('reservoir cubic meter'), network.get_node('reservoir barrel'),
                                 lambda v: v * 6.289814))
     network.add_edge(Conversion(network.get_node('reservoir cubic meter'), network.get_node('standard cubic meter'),
                                 lambda v: v / network.get_fvf()))
     # network.addEdge(Conversion(network.getNode('standard cubic meter'), network.getNode('standard cubic foot'), lambda v: v/5.614584))
 
-    # Pressure conversions
+    # pressure conversions
     network.add_edge(Conversion(network.get_node('psi gauge'), network.get_node('absolute psi'), lambda p: p + 14.6959))
     network.add_edge(Conversion(network.get_node('absolute psi'), network.get_node('psi gauge'), lambda p: p - 14.6959))
     network.add_edge(Conversion(network.get_node('bar gauge'), network.get_node('absolute bar'), lambda p: p + 1.01325))
@@ -521,7 +540,8 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('pound'), network.get_node('ounce'), lambda w: w * 16))
     network.add_edge(Conversion(network.get_node('long hundredweight'), network.get_node('quarter'), lambda w: w * 4))
     network.add_edge(Conversion(network.get_node('short hundredweight'), network.get_node('pound'), lambda w: w * 100))
-    network.add_edge(Conversion(network.get_node('short ton'), network.get_node('short hundredweight'), lambda w: w * 20))
+    network.add_edge(
+        Conversion(network.get_node('short ton'), network.get_node('short hundredweight'), lambda w: w * 20))
     network.add_edge(Conversion(network.get_node('long ton'), network.get_node('long hundredweight'), lambda w: w * 20))
 
     network.add_edge(Conversion(network.get_node('metric ton'), network.get_node('kilogram'), lambda w: w * 1000))
@@ -539,24 +559,25 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('Dyne'), network.get_node('Newton'), lambda f: f * 1E-5))
     network.add_edge(Conversion(network.get_node('Newton'), network.get_node('Dyne'), lambda f: f * 1E5))
 
-    # Energy Conversion
+    # energy Conversion
     network.add_edge(Conversion(network.get_node('Joule'), network.get_node('gram calorie'), lambda e: e / 4.184))
     network.add_edge(Conversion(network.get_node('Kilojoule'), network.get_node('Joule'), lambda e: e * 1000))
     network.add_edge(Conversion(network.get_node('Kilojoule'), network.get_node('kilowatt hour'), lambda e: e / 3600))
     network.add_edge(
         Conversion(network.get_node('Kilojoule'), network.get_node('British thermal Unit'), lambda e: e / 1.055))
 
-    # Power Conversion
+    # power Conversion
     network.add_edge(Conversion(network.get_node('Horsepower'), network.get_node('Watt'), lambda e: e * 745.699872))
 
-    # Density Conversion
+    # density Conversion
     network.add_edge(Conversion(network.get_node('API'), network.get_node('SgO'), lambda d: 141.5 / (131.5 + d)))
     network.add_edge(Conversion(network.get_node('SgO'), network.get_node('API'), lambda d: 141.5 / d - 131.5))
     network.add_edge(Conversion(network.get_node('SgO'), network.get_node('g/cc'), lambda d: d))
     network.add_edge(Conversion(network.get_node('SgW'), network.get_node('g/cc'), lambda d: d))
     network.add_edge(Conversion(network.get_node('SgG'), network.get_node('g/cc'), lambda d: d * StandardAirDensity))
     network.add_edge(Conversion(network.get_node('psia/ft'), network.get_node('lb/ft3'), lambda d: d * 144))
-    network.add_edge(Conversion(network.get_node('g/cm3'), network.get_node('lb/ft3'), lambda d: d * 62.427960576144606))
+    network.add_edge(
+        Conversion(network.get_node('g/cm3'), network.get_node('lb/ft3'), lambda d: d * 62.427960576144606))
     network.add_edge(Conversion(network.get_node('lb/ft3'), network.get_node('lb/stb'), lambda d: d * 5.614584))
 
     # viscosity conversions
@@ -581,7 +602,7 @@ def _load_network():
                     if network.get_node(unit_name) != otherName:
                         network.add_edge(Conversion(otherName, network.get_node(unit_name),
                                                     network.edges[network.get_node(unit_name)][1][
-                                                       network.edges[network.get_node(unit_name)][0].index(otherName)],
+                                                        network.edges[network.get_node(unit_name)][0].index(otherName)],
                                                     True))
 
     for unit_kind in list(dictionary.keys()):
@@ -598,12 +619,14 @@ def _load_network():
                         network.add_node(UNode(otherRate))
                         network.add_edge(Conversion(network.get_node(unit_name), otherRate,
                                                     network.edges[network.get_node(unit_name.split('/')[1])][1][
-                                                       network.edges[network.get_node(unit_name.split('/')[1])][0].index(
-                                                           otherName)]))
+                                                        network.edges[network.get_node(unit_name.split('/')[1])][
+                                                            0].index(
+                                                            otherName)]))
                         network.add_edge(Conversion(otherRate, network.get_node(unit_name),
                                                     network.edges[network.get_node(unit_name.split('/')[1])][1][
-                                                       network.edges[network.get_node(unit_name.split('/')[1])][0].index(
-                                                           otherName)], True))
+                                                        network.edges[network.get_node(unit_name.split('/')[1])][
+                                                            0].index(
+                                                            otherName)], True))
 
     to_remove = []
     for unit_kind in dictionary:
@@ -611,7 +634,7 @@ def _load_network():
             to_remove.append(unit_kind)
         else:  # if '_' not in unit_kind :
             dictionary[unit_kind] = tuple(dictionary[unit_kind])
-    dictionary['UserUnits'] = []
+    dictionary['userUnits'] = []
 
     for unit_kind in to_remove:
         dictionary.pop(unit_kind)
@@ -620,87 +643,88 @@ def _load_network():
 
 
 def _create_rates():
-    # volumes / Time
-    rates = list(dictionary['Rate']) if 'Rate' in dictionary else []
-    rates += [volume + '/' + time for volume in dictionary['Volume'] for time in dictionary['Time']]
-    rates += [weight + '/' + time for weight in dictionary['Weight'] for time in dictionary['Time']]
-    rates += [data + '/' + time for data in dictionary['dataBYTE'] for time in dictionary['Time']]
-    rates += [data + '/' + time for data in dictionary['dataBIT'] for time in dictionary['Time']]
-    dictionary['Rate'] = tuple(set(rates))
+    # volumes / time
+    rates = list(dictionary['rate']) if 'rate' in dictionary else []
+    rates += [volume + '/' + time for volume in dictionary['volume'] for time in dictionary['time']]
+    rates += [weight + '/' + time for weight in dictionary['weight'] for time in dictionary['time']]
+    rates += [data + '/' + time for data in dictionary['dataBYTE'] for time in dictionary['time']]
+    rates += [data + '/' + time for data in dictionary['dataBIT'] for time in dictionary['time']]
+    dictionary['rate'] = tuple(set(rates))
 
 
 def _create_volumeRatio():
-    # Volume / Volume
-    ratio = list(dictionary['VolumeRatio']) if 'VolumeRatio' in dictionary else []
-    ratio += [numerator + '/' + denominator for numerator in dictionary['Volume'] for denominator in
-              dictionary['Volume']]
-    dictionary['VolumeRatio'] = tuple(set(ratio))
+    # volume / volume
+    ratio = list(dictionary['volumeRatio']) if 'volumeRatio' in dictionary else []
+    ratio += [numerator + '/' + denominator for numerator in dictionary['volume'] for denominator in
+              dictionary['volume']]
+    dictionary['volumeRatio'] = tuple(set(ratio))
 
 
 def _create_density():
-    # mass / Volume
-    density = list(dictionary['Density']) if 'Density' in dictionary else []
-    density += [mass + '/' + volume for mass in dictionary['mass'] for volume in dictionary['Volume']]
-    dictionary['Density'] = tuple(set(density))
+    # mass / volume
+    density = list(dictionary['density']) if 'density' in dictionary else []
+    density += [mass + '/' + volume for mass in dictionary['mass'] for volume in dictionary['volume']]
+    dictionary['density'] = tuple(set(density))
 
 
 def _create_speed():
-    # Length / Time
-    speed = list(dictionary['Speed']) if 'Speed' in dictionary else []
-    speed += [length + '/' + time for length in dictionary['Length'] for time in dictionary['Time']]
-    dictionary['Speed'] = tuple(set(speed))
+    # length / time
+    speed = list(dictionary['speed']) if 'speed' in dictionary else []
+    speed += [length + '/' + time for length in dictionary['length'] for time in dictionary['time']]
+    dictionary['speed'] = tuple(set(speed))
 
 
 def _create_power():
-    # Length / Time
-    power = list(dictionary['Power']) if 'Power' in dictionary else []
-    power += [energy + '/' + time for energy in dictionary['Energy'] for time in dictionary['Time']]
-    dictionary['Power'] = tuple(set(power))
+    # length / time
+    power = list(dictionary['power']) if 'power' in dictionary else []
+    power += [energy + '/' + time for energy in dictionary['energy'] for time in dictionary['time']]
+    dictionary['power'] = tuple(set(power))
 
 
 def _create_productivityIndex():
-    # Volume / Time / Pressure
-    productivityIndex = list(dictionary['ProductivityIndex']) if 'ProductivityIndex' in dictionary else []
+    # volume / time / pressure
+    productivityIndex = list(dictionary['productivityIndex']) if 'productivityIndex' in dictionary else []
     productivityIndex += [volume + '/' + time + '/' + pressure
-                          for volume in dictionary['Volume']
-                          for time in dictionary['Time']
-                          for pressure in dictionary['Pressure']]
-    dictionary['ProductivityIndex'] = tuple(set(productivityIndex))
+                          for volume in dictionary['volume']
+                          for time in dictionary['time']
+                          for pressure in dictionary['pressure']]
+    dictionary['productivityIndex'] = tuple(set(productivityIndex))
 
 
 def _create_pressureGradient():
-    # Pressure / Length
-    pressureGradient = list(dictionary['PressureGradient']) if 'PressureGradient' in dictionary else []
-    pressureGradient += [pressure + '/' + length for pressure in dictionary['Pressure'] for length in
-                         dictionary['Length']]
-    dictionary['PressureGradient'] = tuple(set(pressureGradient))
+    # pressure / length
+    pressureGradient = list(dictionary['pressureGradient']) if 'pressureGradient' in dictionary else []
+    pressureGradient += [pressure + '/' + length for pressure in dictionary['pressure'] for length in
+                         dictionary['length']]
+    dictionary['pressureGradient'] = tuple(set(pressureGradient))
 
 
 def _create_temperatureGradient():
-    # Pressure / Length
-    temperatureGradient = list(dictionary['TemperatureGradient']) if 'TemperatureGradient' in dictionary else []
-    temperatureGradient += [temperature + '/' + length for temperature in dictionary['Temperature'] for length in
-                            dictionary['Length']]
-    dictionary['TemperatureGradient'] = tuple(set(temperatureGradient))
+    # pressure / length
+    temperatureGradient = list(dictionary['temperatureGradient']) if 'temperatureGradient' in dictionary else []
+    temperatureGradient += [temperature + '/' + length for temperature in dictionary['temperature'] for length in
+                            dictionary['length']]
+    dictionary['temperatureGradient'] = tuple(set(temperatureGradient))
 
 
 def _create_acceleration():
-    # Length / Time / Time
+    # length / time / time
     acceleration = list(dictionary['acceleration']) if 'acceleration' in dictionary else []
     acceleration += [(length + '/' + time1 + '2') if time1 == time2 else (length + '/' + time1 + '/' + time2)
-                     for length in dictionary['Length']
-                     for time1 in dictionary['Time']
-                     for time2 in dictionary['Time']]
+                     for length in dictionary['length']
+                     for time1 in dictionary['time']
+                     for time2 in dictionary['time']]
     dictionary['acceleration'] = tuple(set(acceleration))
 
 
 def rebuild_units():
-    from dictionaries import _load_dictionary
+    from .dictionaries import _load_dictionary
     dictionary, temperatureRatioConversions = _load_dictionary()
     unitsNetwork = _load_network()
     unyts_parameters_.reload_ = True
     unyts_parameters_.save_params()
     return unitsNetwork, dictionary, temperatureRatioConversions
+
 
 # load the network into an instance of the graph database
 if not unyts_parameters_.reload_ and \

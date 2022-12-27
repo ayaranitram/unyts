@@ -8,37 +8,37 @@ Created on Sat Oct 24 14:34:59 2020
 
 __version__ = '0.4.5'
 __release__ = 20221226
-__all__ = ['Length', 'Area', 'Volume']
+__all__ = ['length', 'area', 'volume']
 
 from ..dictionaries import dictionary
 from ..unit_class import Unit
 
 
-class Length(Unit):
-    classUnits = dictionary['Length']
+class length(Unit):
+    classUnits = dictionary['length']
 
     def __init__(self, value, units):
-        self.name = 'Length'
-        self.kind = Length
+        self.name = 'length'
+        self.kind = length
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
 
 
-class Area(Unit):
-    classUnits = dictionary['Area']
+class area(Unit):
+    classUnits = dictionary['area']
 
     def __init__(self, value, units):
-        self.name = 'Area'
-        self.kind = Area
+        self.name = 'area'
+        self.kind = area
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
 
 
-class Volume(Unit):
-    classUnits = dictionary['Volume']
+class volume(Unit):
+    classUnits = dictionary['volume']
 
     def __init__(self, value, units):
-        self.name = 'Volume'
-        self.kind = Volume
+        self.name = 'volume'
+        self.kind = volume
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

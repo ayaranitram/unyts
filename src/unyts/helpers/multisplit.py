@@ -28,7 +28,7 @@ def multisplit(string, sep=['*', '/'], remove=[' ']):
     # eliminate duplicated separators
     sep = list(set(sep))
 
-    # sort sep by Length
+    # sort sep by length
     s = len(sep)
     for i in range(s-1):
         for j in range(s-i-1):

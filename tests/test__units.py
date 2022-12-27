@@ -7,7 +7,7 @@ Created on Fri Aug 26 21:34:21 2022
 
 from unyts import units, convert
 from unyts.dictionaries import dictionary
-from unyts.units.unitless import Dimensionless, Percentage
+from unyts.units.unitless import dimensionless, percentage
 from unyts.operations import unit_product, unit_division
 import numpy as np
 import pandas as pd
@@ -17,14 +17,14 @@ array = np.array([1, 2, 3, 4, 5])
 limit_dict_units = 3
 
 
-for kind in [k for k in dictionary if k in ['Length']]:
+for kind in [k for k in dictionary if k in ['length']]:
     for unit1 in range(len(dictionary[kind][:limit_dict_units])-1):
         print(dictionary[kind][unit1])
         u1 = units(3.0, dictionary[kind][unit1])
 
         assert str(u1) == (str(u1.value) + '_' + str(u1.Unit))
         assert -u1 == (u1 * -1)
-        assert bool(u1) is False if u1.kind in (Dimensionless, Percentage) else True
+        assert bool(u1) is False if u1.kind in (dimensionless, percentage) else True
         assert abs(u1) == u1.kind(abs(u1.value), u1.Unit)
 
         for op in ('+', '-', '*', '/', '%'):
@@ -71,7 +71,7 @@ for kind in [k for k in dictionary if k in ['Length']]:
             assert (u2 > u1) is (u2.value > convert(u1.value, u1.Unit, u2.Unit))
 
 
-for kind in [k for k in dictionary if k in ['Length']]:  # [k for k in dictionary if k not in ['Dimensionless', 'Percentage']]:
+for kind in [k for k in dictionary if k in ['length']]:  # [k for k in dictionary if k not in ['Dimensionless', 'Percentage']]:
     for unit1 in range(len(dictionary[kind][:limit_dict_units])-1):
         print(dictionary[kind][unit1])
         u1 = units(array, dictionary[kind][unit1])

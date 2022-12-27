@@ -11,31 +11,31 @@ __release__ = 20221226
 __all__ = ['units']
 
 from ..dictionaries import dictionary
-from .custom import UserUnits, OtherUnits
-from .force import Pressure, Weight, Compressibility
-from .geometry import Length, Area, Volume
-from .temperature import Temperature, TemperatureGradient
-from .time import Time
-from .unitless import Dimensionless, Percentage
-from .ratios import Density, VolumeRatio, ProductivityIndex, PressureGradient
-from .rates import Rate, Speed, Velocity
-from .energy import Energy, Power
+from .custom import userUnits, otherUnits
+from .force import pressure, weight, compressibility
+from .geometry import length, area, volume
+from .temperature import temperature, temperatureGradient
+from .time import time
+from .unitless import dimensionless, percentage
+from .ratios import density, volumeRatio, productivityIndex, pressureGradient
+from .rates import rate, speed, velocity
+from .energy import energy, power
 
 from numpy import ndarray
 from numbers import Number
+from typing import Union
 
 array_like = [ndarray]
 try:
     from pandas import Series, DataFrame
 
     array_like += [Series, DataFrame]
-except:
+except ModuleNotFoundError:
     pass
+except ImportError:
+    pass
+numeric = Union[int, float, complex, ndarray]
 array_like = tuple(array_like)
-
-from typing import Union
-
-numeric = Union[int, float, complex] + array_like
 
 
 def units(value, unit=None):
@@ -63,7 +63,7 @@ def units(value, unit=None):
     if unit is None and '.units.' in str(type(value)):
         value, unit = value.value, value.units
     if unit is None:
-        unit = 'Dimensionless'
+        unit = 'dimensionless'
     if type(unit) is not str:
         raise TypeError("'units' must be a string.")
 

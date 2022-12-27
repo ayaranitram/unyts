@@ -64,10 +64,10 @@ def unit_product(unit_string1, unit_string2) -> str:
     if type(unit_string2) is str and len(unit_string2.split('/')) == 2 and unit_string2.split('/')[0] == unit_string2.split('/')[1]:
         unit_string2 = 'Dimensionless'
 
-    if unit_string2.lower().strip(' ()') in dictionary['Dimensionless']:
+    if unit_string2.lower().strip(' ()') in dictionary['dimensionless']:
         return unit_string1
-    if unit_string1.lower().strip(' ()') in dictionary['Dimensionless']:
-        if unit_string2.lower().strip(' ()') not in dictionary['Dimensionless']:
+    if unit_string1.lower().strip(' ()') in dictionary['dimensionless']:
+        if unit_string2.lower().strip(' ()') not in dictionary['dimensionless']:
             return unit_string2
         else :
             return unit_string1
@@ -107,24 +107,24 @@ def unit_product(unit_string1, unit_string2) -> str:
 
 def unit_division(unit_string1, unit_string2) -> str:
     if unit_string1 is None:
-        unit_string1 = 'Dimensionless'
+        unit_string1 = 'dimensionless'
     if unit_string2 is None:
-        unit_string2 = 'Dimensionless'
+        unit_string2 = 'dimensionless'
 
     if type(unit_string1) is str and len(unit_string1.strip(' ()')) == 0:
-        unit_string1 = 'Dimensionless'
+        unit_string1 = 'dimensionless'
     if type(unit_string2) is str and len(unit_string2.strip(' ()')) == 0:
-        unit_string2 = 'Dimensionless'
+        unit_string2 = 'dimensionless'
 
     if type(unit_string1) is str and len(unit_string1.split('/')) == 2 and unit_string1.split('/')[0] == unit_string1.split('/')[1]:
-        unit_string1 = 'Dimensionless'
+        unit_string1 = 'dimensionless'
     if type(unit_string2) is str and len(unit_string2.split('/')) == 2 and unit_string2.split('/')[0] == unit_string2.split('/')[1]:
-        unit_string2 = 'Dimensionless'
+        unit_string2 = 'dimensionless'
 
-    if unit_string2.lower().strip(' ()') in dictionary['Dimensionless']:
+    if unit_string2.lower().strip(' ()') in dictionary['dimensionless']:
         return unit_string1
-    if unit_string1.lower().strip(' ()') in dictionary['Dimensionless']:
-        if unit_string2.lower().strip(' ()') not in dictionary['Dimensionless']:
+    if unit_string1.lower().strip(' ()') in dictionary['dimensionless']:
+        if unit_string2.lower().strip(' ()') not in dictionary['dimensionless']:
             u_bas, u_pow = unit_base_power('1/' + unit_string2)
             return u_bas+str(u_pow)
         else:
@@ -206,4 +206,4 @@ def unit_power(unit_string, power) -> str:
         else:
             return u1bas + '^' + str(u_pow) + u2bas
     else:
-        raise TypeError('Power must be units string or numeric')
+        raise TypeError('power must be units string or numeric')

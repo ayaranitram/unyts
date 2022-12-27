@@ -17,21 +17,18 @@ from .convert import converter, convertible
 import numpy as np
 from pandas import Series, DataFrame
 from numbers import Number
+from typing import Union
 
 array_like = [np.ndarray]
 try:
     from pandas import Series, DataFrame
-
     array_like += [Series, DataFrame]
 except ModuleNotFoundError:
     pass
 except ImportError:
     pass
+numeric = Union[int, float, complex, np.ndarray]
 array_like = tuple(array_like)
-
-from typing import Union
-
-numeric = Union[int, float, complex] + array_like
 
 
 class Unit(object):

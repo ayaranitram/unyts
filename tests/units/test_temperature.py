@@ -5,18 +5,18 @@ Created on Thu Sep  8 18:23:13 2022
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-from unyts.units.temperature import Temperature, TemperatureGradient
+from unyts.units.temperature import temperature, temperatureGradient
 
-t = Temperature(35, 'C')
-assert type(t) is Temperature
-assert t.name == 'Temperature'
-assert t.kind is Temperature
+t = temperature(35, 'C')
+assert type(t) is temperature
+assert t.name == 'temperature'
+assert t.kind is temperature
 assert t.value == 35
 assert t.unit == 'C'
 
-t = TemperatureGradient(0.01, 'F/ft')
-assert type(t) is TemperatureGradient
-assert t.name == 'TemperatureGradient'
-assert t.kind is TemperatureGradient
+t = temperatureGradient(0.01, 'F/ft')
+assert type(t) is temperatureGradient
+assert t.name == 'temperatureGradient'
+assert t.kind is temperatureGradient
 assert t.value == 0.01
 assert t.unit == 'F/ft'

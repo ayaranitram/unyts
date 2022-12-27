@@ -4,7 +4,7 @@ After culminating a project for a class from MITx courses, I saw the opportunity
 This package is under development and is regularly updated. Back compatibility is intended to be maintained when possible.
 
 ## What Contains This Package
-- It is loaded with the network of units preloaded for distances, Area, Volume, mass and Time conversions defined for SI and Imperial systems according to the definition of each Unit, i.e.: _1_foot = 12_inches_.
+- It is loaded with the network of units preloaded for distances, area, volume, mass and time conversions defined for SI and Imperial systems according to the definition of each Unit, i.e.: _1_foot = 12_inches_.
 - Prefixes applied to the basic units, like _k_ to _m_ to make _km_, are loaded as a network of Conversion paths allowing the algorithm to apply the prefix to any other Unit on the same system.
 - It provides classes of _unit_ useful powered with arithmetic and logic operations to intrinsically consider Unit conversions when making calculations.
 

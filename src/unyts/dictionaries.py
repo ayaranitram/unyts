@@ -43,7 +43,7 @@ SI = {
     'y': (lambda X: X * 1E-24, lambda X: X * 1E-48, lambda X: X * 1E-72),  # yocto
 }
 
-SI_order = (('Length', 'Pressure', 'Weight', 'mass', 'Time',), ('Area',), ('Rate', 'Volume',),)
+SI_order = (('length', 'lressure', 'weight', 'mass', 'time',), ('area',), ('rate', 'volume',),)
 
 DATA = {
     'Y': (lambda X: X * 1E+24, lambda X: X * 2 ** 80),  # yotta
@@ -65,7 +65,7 @@ OGF = {'M': (None, None, lambda X: X * 1E+03),
        'B': (None, None, lambda X: X * 1E+09),
        'T': (None, None, lambda X: X * 1E+12),
        }
-OGF_order = (tuple(), tuple, ('Volume', 'Rate',))
+OGF_order = (tuple(), tuple, ('volume', 'rate',))
 
 
 def _load_dictionary() -> (dict, dict):
@@ -74,7 +74,7 @@ def _load_dictionary() -> (dict, dict):
     # the dictionary that contains all the units definitions
     dictionary = {}
 
-    dictionary['Time'] = []
+    dictionary['time'] = []
     dictionary['time_NAMES_UPPER_PLURALwS_REVERSE'] = {
         'nanosecond': ('ns',),
         'millisecond': ('ms',),
@@ -91,20 +91,20 @@ def _load_dictionary() -> (dict, dict):
     }
     dictionary['time_SI'] = ('s',)
 
-    # Temperature and related
-    dictionary['Temperature'] = ['C', 'K', 'F', 'R']
+    # temperature and related
+    dictionary['temperature'] = ['C', 'K', 'F', 'R']
     dictionary['temperature_NAMES'] = {
         'Celsius': ('Centigrade', 'C', 'DEG C', 'DEGREES C'),
         'Fahrenheit': ('F', 'DEG F', 'DEGREES F'),
         'Rankine': ('R', 'DEG R', 'DEGREES R'),
         'Kelvin': ('K', 'DEG K', 'DEGREES K')
     }
-    dictionary['TemperatureGradient'] = []
+    dictionary['temperatureGradient'] = []
 
-    # Volume
-    dictionary['Volume'] = []
+    # volume
+    dictionary['volume'] = []
     dictionary['volume_SI_UPPER_REVERSE'] = (
-    'm3', 'sm3', 'stm3', 'rm3',)  # 'l' # litre is volumen but the Conversion of SI prefixes is linear
+        'm3', 'sm3', 'stm3', 'rm3',)  # 'l' # litre is volumen but the Conversion of SI prefixes is linear
     dictionary['volume_UK_NAMES_UPPER_REVERSE_PLURALwS'] = {
         'fuild ounce': ('fl oz', 'oz', 'ounce', 'ozUS', 'ounce'),
         'gill': ('gi', 'gillUS', 'giUS'),
@@ -152,10 +152,10 @@ def _load_dictionary() -> (dict, dict):
         'in3': ('in2*in',)
     }
 
-    # Length
-    dictionary['Length'] = []
+    # length
+    dictionary['length'] = []
     dictionary['length_NAMES_UPPER_REVERSE'] = {'meter': ('m', 'meter', 'metro')}
-    dictionary['length_SI'] = ('m', 'l')  # litre is Volume but the Conversion of SI prefixes is linear
+    dictionary['length_SI'] = ('m', 'l')  # litre is volume but the Conversion of SI prefixes is linear
     dictionary['length_UK_NAMES_UPPER_REVERSE'] = {
         'thou': ('th',),
         'inch': ('in', '"'),
@@ -170,8 +170,8 @@ def _load_dictionary() -> (dict, dict):
         'nautical league': ('nlea',),
     }
 
-    # Area
-    dictionary['Area'] = []
+    # area
+    dictionary['area'] = []
     dictionary['area_NAMES_UPPER_REVERSE'] = {'square meter': ('sq m', 'm2', 'sqmeter', 'm*m', 'm3/m')}
     dictionary['area_SI'] = ('m2',)
     dictionary['area_UK_NAMES_UPPER_REVERSE'] = {
@@ -183,8 +183,8 @@ def _load_dictionary() -> (dict, dict):
         'square inch': ('sq in', 'sqin', 'in2', 'in*in', 'in3/in')
     }
 
-    # Pressure
-    dictionary['Pressure'] = []
+    # pressure
+    dictionary['pressure'] = []
     dictionary['pressure_NAMES_UPPER_REVERSE_SPACES'] = {
         'absolute psi': (
             'psia', 'lb/in2', 'absolute pound/square inch', 'psi absolute', 'libras/pulgada cuadrada absoluta', 'lpca'),
@@ -202,12 +202,12 @@ def _load_dictionary() -> (dict, dict):
     }
     dictionary['pressure_SI'] = ('Pa', 'bara', 'bar')
 
-    dictionary['PressureGradient'] = []
-    dictionary['PressureGradient'] = ('psi/ft', 'psia/ft', 'psig/ft', 'psi/m', 'psia/m', 'psig/m', 'bar/m', 'bars/m',
+    dictionary['pressureGradient'] = []
+    dictionary['pressureGradient'] = ('psi/ft', 'psia/ft', 'psig/ft', 'psi/m', 'psia/m', 'psig/m', 'bar/m', 'bars/m',
                                       'barsa/m', 'bara/m', 'barg/m')
 
-    # Weight
-    dictionary['Weight'] = []
+    # weight
+    dictionary['weight'] = []
     dictionary['weight_NAMES_UPPER_REVERSE_SPACES_PLURALwS'] = {
         'gram': ('g',),
         'kilogram': ('kg', 'kgm', 'Kgm', 'kilogram mass'),
@@ -236,8 +236,8 @@ def _load_dictionary() -> (dict, dict):
     # mass
     dictionary['mass'] = ['kilogram mass']
 
-    # Density
-    dictionary['Density'] = []
+    # density
+    dictionary['density'] = []
     dictionary['density_oilgas'] = {}
     dictionary['density_NAMES_UPPER'] = {
         'API': ('DEGREES',),
@@ -256,16 +256,16 @@ def _load_dictionary() -> (dict, dict):
         'bara/m': ('bar/m',),
     }
 
-    # Compressibility
-    dictionary['Compressibility'] = []
+    # compressibility
+    dictionary['compressibility'] = []
     dictionary['compressibility_UPPER_NAMES'] = {
         '1/psi': ('1/psia', 'µsip', 'usip', '1/psig'),
         'µsip': ('usip',),
         '1/bar': ('1/bara', '1/barg')
     }
 
-    # Rate
-    dictionary['Rate'] = []
+    # rate
+    dictionary['rate'] = []
     dictionary['rate_NAMES_UPPER_SPACES_REVERSE'] = {
         'standard barrel per day': ('stb/day',),
         'standard cubic foot per day': ('scf/day', 'cf/day', 'scfd'),
@@ -314,8 +314,8 @@ def _load_dictionary() -> (dict, dict):
         'Dyne': ('dyne', 'dyn', 'g*cm/s2')
     }
 
-    # Energy
-    dictionary['Energy'] = []
+    # energy
+    dictionary['energy'] = []
     dictionary['energy_UPPER_NAMES_REVERSE'] = {
         'Joule': ('J', 'Watt second', 'N*m', 'kg*m2/s2', 'Joules'),
         'Kilojoule': ('kJ',),
@@ -327,8 +327,8 @@ def _load_dictionary() -> (dict, dict):
     }
     dictionary['energy_SI'] = ('Wh', 'Ws',)
 
-    # Power
-    dictionary['Power'] = []
+    # power
+    dictionary['power'] = []
     dictionary['power_UPPER_NAMES_REVERSE'] = {
         'Horsepower': ('hp',),
         'Watt': ('W', 'J/s'),
@@ -336,7 +336,7 @@ def _load_dictionary() -> (dict, dict):
     dictionary['power_SI'] = ('W',)
 
     # productivity index
-    dictionary['ProductivityIndex'] = []
+    dictionary['productivityIndex'] = []
     dictionary['productivityIndex_UPPER_NAMES_REVERSE'] = {
         'stb/day/psi': (
             'STB/DAY/', 'stbd/psi', 'stbd/psia', 'stb/day/psia', 'stb/day-psi', 'STB/DAY-PSI', 'stb/day-psia',
@@ -353,17 +353,17 @@ def _load_dictionary() -> (dict, dict):
     dictionary['acceleration'] = ('m/s2', 'ft/s2',)
 
     # Dimensionless
-    dictionary['Dimensionless'] = []
+    dictionary['dimensionless'] = []
     dictionary['dimensionless_fractions_UPPER_NAMES'] = {'fraction': ('ratio', 'Dimensionless', 'unitless', 'None', '')}
 
-    dictionary['Percentage'] = []
-    dictionary['percentage_NAMES_REVERSE'] = {'Percentage': ('%', 'perc'), }
+    dictionary['percentage'] = []
+    dictionary['percentage_NAMES_REVERSE'] = {'percentage': ('%', 'perc'), }
 
     # dates
     dictionary['date'] = []
     dictionary['date_UPPER_PLURALwS'] = ['date']
 
-    dictionary['UserUnits'] = []
+    dictionary['userUnits'] = []
 
     # other
     dictionary['otherUnits'] = []

@@ -8,17 +8,17 @@ Created on Sat Oct 24 14:34:59 2020
 
 __version__ = '0.4.5'
 __release__ = 20221226
-__all__ = ['Time']
+__all__ = ['time']
 
 from ..dictionaries import dictionary
 from ..unit_class import Unit
 
 
-class Time(Unit):
-    classUnits = dictionary['Time']
+class time(Unit):
+    classUnits = dictionary['time']
 
     def __init__(self, value, units):
-        self.name = 'Time'
-        self.kind = Time
+        self.name = 'time'
+        self.kind = time
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

@@ -8,47 +8,47 @@ Created on Sat Oct 24 14:34:59 2020
 
 __version__ = '0.4.5'
 __release__ = 20221226
-__all__ = ['Density', 'VolumeRatio', 'ProductivityIndex', 'PressureGradient']
+__all__ = ['density', 'volumeRatio', 'productivityIndex', 'pressureGradient']
 
 from ..dictionaries import dictionary
 from ..unit_class import Unit
 
 
-class Density(Unit):
-    classUnits = dictionary['Density']
+class density(Unit):
+    classUnits = dictionary['density']
 
     def __init__(self, value, units):
-        self.name = 'Density'
-        self.kind = Density
+        self.name = 'density'
+        self.kind = density
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
 
 
-class VolumeRatio(Unit):
-    classUnits = dictionary['VolumeRatio']
+class volumeRatio(Unit):
+    classUnits = dictionary['volumeRatio']
 
     def __init__(self, value, units):
-        self.name = 'VolumeRatio'
-        self.kid = VolumeRatio
+        self.name = 'volumeRatio'
+        self.kid = volumeRatio
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
 
 
-class ProductivityIndex(Unit):
-    classUnits = dictionary['ProductivityIndex']
+class productivityIndex(Unit):
+    classUnits = dictionary['productivityIndex']
 
     def __init__(self, value, units):
-        self.name = 'ProductivityIndex'
-        self.kind = ProductivityIndex
+        self.name = 'productivityIndex'
+        self.kind = productivityIndex
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
 
 
-class PressureGradient(Unit):
-    classUnits = dictionary['PressureGradient']
+class pressureGradient(Unit):
+    classUnits = dictionary['pressureGradient']
 
     def __init__(self, value, units):
-        self.name = 'PressureGradient'
-        self.kind = PressureGradient
+        self.name = 'pressureGradient'
+        self.kind = pressureGradient
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
