@@ -8,26 +8,33 @@ Created on Sat Oct 24 14:34:59 2020
 
 __version__ = '0.4.0'
 __release__ = 20220920
-__all__ = ['unit']
+__all__ = ['Unit']
 
 from .errors import WrongUnitsError, WrongValueError, NoConversionFoundError
-from .operations import unitProduct, unitDivision, unitBasePower
+from .operations import unit_product, unit_division, unit_base_power
 from .convert import converter, convertible
 
 import numpy as np
 from pandas import Series, DataFrame
 from numbers import Number
 
-arraylike = [np.ndarray]
+array_like = [np.ndarray]
 try:
     from pandas import Series, DataFrame
-    arraylike += [Series, DataFrame]
-except:
+
+    array_like += [Series, DataFrame]
+except ModuleNotFoundError:
     pass
-arraylike = tuple(arraylike)
+except ImportError:
+    pass
+array_like = tuple(array_like)
+
+from typing import Union
+
+numeric = Union[int, float, complex] + array_like
 
 
-class unit(object):
+class Unit(object):
     """
     A class to cope with values associated to units, its arithmetic and logic
     operations and conversions.
@@ -46,33 +53,33 @@ class unit(object):
             self.name = u.name
             self.kind = u.kind
 
-    def __call__(self):
+    def __call__(self) -> numeric:
         return self.value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self.value) + '_' + str(self.unit)
 
-    def __str__(self) :
+    def __str__(self) -> str:
         return str(self.value) + '_' + str(self.unit)
 
-    def convert(self, newunit):
-        if type(newunit) is not str:
+    def convert(self, new_unit):
+        if type(new_unit) is not str:
             try:
-                newunit = newunit.unit
+                new_unit = new_unit.Unit
             except:
-                raise WrongUnitsError("'" + str(newunit) + "' for '" + str(self.name) + "'")
-        return self.kind(converter(self.value, self.unit, newunit), newunit)
+                raise WrongUnitsError("'" + str(new_unit) + "' for '" + str(self.name) + "'")
+        return self.kind(converter(self.value, self.unit, new_unit), new_unit)
 
-    def to(self, newunit):
-        return self.convert(newunit)
+    def to(self, new_unit):
+        return self.convert(new_unit)
 
     def __neg__(self):
         return self.kind(self.value * -1, self.unit)
 
     def __bool__(self):
-        from .units.custom import userUnits
-        from .units.unitless import dimensionless, percentage
-        if self.kind in (dimensionless, percentage, userUnits):
+        from .units.custom import UserUnits
+        from .units.unitless import Dimensionless, Percentage
+        if self.kind in (Dimensionless, Percentage, UserUnits):
             return False
         return True
 
@@ -80,25 +87,25 @@ class unit(object):
         return self.kind(abs(self.value), self.unit)
 
     def __add__(self, other):
-        from .units.unitless import dimensionless, percentage
+        from .units.unitless import Dimensionless, Percentage
         if '.units.' in str(type(other)):
             if other.kind is self.kind:
-                if self.unit == other.unit:
+                if self.unit == other.Unit:
                     return self.kind(self.value + other.value, self.unit)
-                elif convertible(other.unit, self.unit):
-                    return self.kind(self.value + converter(other.value, other.unit, self.unit), self.unit)
-                elif convertible(self.unit, other.unit):
-                    return self.kind(other.value + converter(self.value, self.unit, other.unit), other.unit)
+                elif convertible(other.Unit, self.unit):
+                    return self.kind(self.value + converter(other.value, other.Unit, self.unit), self.unit)
+                elif convertible(self.unit, other.Unit):
+                    return self.kind(other.value + converter(self.value, self.unit, other.Unit), other.Unit)
                 else:
-                    raise NoConversionFoundError("from '" + self.unit + "' to '" + other.unit + "'")
-            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
-                return self.kind(self.value + other.value, other.unit)
-            elif self.kind is percentage and other.kind in (dimensionless, percentage):
+                    raise NoConversionFoundError("from '" + self.unit + "' to '" + other.Unit + "'")
+            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+                return self.kind(self.value + other.value, other.Unit)
+            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
                 return self.kind((self.value + other.value) * 100, self.unit)
-            elif other.kind in (dimensionless, percentage):
+            elif other.kind in (Dimensionless, Percentage):
                 return self.kind(self.value + other.value, self.unit)
             else:  # add different units
-                return (self, other)
+                return self, other
         elif type(other) is tuple:
             result, flag = [], False
             for each in other:
@@ -108,8 +115,8 @@ class unit(object):
                 else:
                     result += each
             return tuple(result) if flag else other + (self,)
-        elif self.kind is percentage:
-            return self.kind((self.value + other) * 100,self.unit)
+        elif self.kind is Percentage:
+            return self.kind((self.value + other) * 100, self.unit)
         else:
             return self.kind(self.value + other, self.unit)
 
@@ -117,32 +124,34 @@ class unit(object):
         return self.__add__(other)
 
     def __mul__(self, other):
-        from .units.unitless import dimensionless, percentage
+        from .units.unitless import Dimensionless, Percentage
         from .units.define import units
         if '.units.' in str(type(other)):
-            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
-                return other.kind(self.value * other.value, other.unit)
-            elif self.kind is percentage and other.kind in (dimensionless, percentage):
+            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+                return other.kind(self.value * other.value, other.Unit)
+            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
                 return self.kind((self.value * other.value) * 100, self.unit)
-            elif other.kind in (dimensionless, percentage):
+            elif other.kind in (Dimensionless, Percentage):
                 return self.kind(self.value * other.value, self.unit)
-            elif self.unit == other.unit:
-                return units(self.value * other.value, unitProduct(self.unit, other.unit))
-            elif convertible(other.unit, self.unit):
-                return units(self.value * converter(other.value, other.unit, self.unit), unitProduct(self.unit, other.unit))
-            elif convertible(self.unit, other.unit):
-                return units(other.value * converter(self.value, self.unit, other.unit), unitProduct(other.unit, self.unit))
-            elif convertible(unitBasePower(self.unit)[0], unitBasePower(other.unit)[0]):
-                factor = converter(1, unitBasePower(other.unit)[0], unitBasePower(self.unit)[0])
-                return units(self.value * other.value * factor, unitProduct(self.unit, other.unit))
+            elif self.unit == other.Unit:
+                return units(self.value * other.value, unit_product(self.unit, other.Unit))
+            elif convertible(other.Unit, self.unit):
+                return units(self.value * converter(other.value, other.Unit, self.unit),
+                             unit_product(self.unit, other.Unit))
+            elif convertible(self.unit, other.Unit):
+                return units(other.value * converter(self.value, self.unit, other.Unit),
+                             unit_product(other.Unit, self.unit))
+            elif convertible(unit_base_power(self.unit)[0], unit_base_power(other.Unit)[0]):
+                factor = converter(1, unit_base_power(other.Unit)[0], unit_base_power(self.unit)[0])
+                return units(self.value * other.value * factor, unit_product(self.unit, other.Unit))
             else:
-                return units(self.value * other.value, unitProduct(self.unit, other.unit))
+                return units(self.value * other.value, unit_product(self.unit, other.Unit))
         elif type(other) is tuple:
             result = []
             for each in other:
                 result += [self * each]
             return tuple(result)
-        elif self.kind is percentage:
+        elif self.kind is Percentage:
             return self.kind(self.value * other * 100, self.unit)
         else:
             return self.kind(self.value * other, self.unit)
@@ -151,73 +160,73 @@ class unit(object):
         return self.__mul__(other)
 
     def __pow__(self, other):
-        from .units.unitless import dimensionless, percentage
+        from .units.unitless import Dimensionless, Percentage
         from .units.define import units
         if '.units.' in str(type(other)):
-            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
-                return other.kind(self.value ** other.value, other.unit)
-            elif self.kind is percentage and other.kind in (dimensionless, percentage):
+            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+                return other.kind(self.value ** other.value, other.Unit)
+            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
                 return self.kind((self.value ** other.value) * 100, self.unit)
-            elif other.kind in (dimensionless, percentage):
+            elif other.kind in (Dimensionless, Percentage):
                 return self.kind(self.value ** other.value, self.unit)
-            elif self.unit == other.unit:
-                return units(self.value ** other.value, self.unit + '^' + other.unit)
-            elif convertible(other.unit, self.unit):
-                return units(self.value ** converter(other.value, other.unit, self.unit), self.unit + '^' + self.unit)
-            elif convertible(unitBasePower(self.unit)[0], unitBasePower(other.unit)[0]):
-                factor = converter(1, unitBasePower(other.unit)[0], unitBasePower(self.unit)[0])
-                return units(self.value ** (other.value * factor), self.unit + '^' + other.unit)
+            elif self.unit == other.Unit:
+                return units(self.value ** other.value, self.unit + '^' + other.Unit)
+            elif convertible(other.Unit, self.unit):
+                return units(self.value ** converter(other.value, other.Unit, self.unit), self.unit + '^' + self.unit)
+            elif convertible(unit_base_power(self.unit)[0], unit_base_power(other.Unit)[0]):
+                factor = converter(1, unit_base_power(other.Unit)[0], unit_base_power(self.unit)[0])
+                return units(self.value ** (other.value * factor), self.unit + '^' + other.Unit)
             else:
-                return units(self.value ** other.value, self.unit + '^' + other.unit)
+                return units(self.value ** other.value, self.unit + '^' + other.Unit)
         elif type(other) is tuple:
             result = []
             for each in other:
                 result += [self ** each]
             return tuple(result)
         else:
-            if self.kind is percentage:
+            if self.kind is Percentage:
                 return self.kind((self.value ** other) * 100, self.unit)
             else:
-                powunits = unitBasePower(self.unit)[1] * other
-                if powunits == 0:
-                    powunits = 'dimensionless'
-                elif powunits == 1:
-                    powunits = unitBasePower(self.unit)[0]
+                pow_units = unit_base_power(self.unit)[1] * other
+                if pow_units == 0:
+                    pow_units = 'Dimensionless'
+                elif pow_units == 1:
+                    pow_units = unit_base_power(self.unit)[0]
                 else:
-                    powunits = unitBasePower(self.unit)[0] + str(powunits)
-                return units(self.value ** other, powunits)
+                    pow_units = unit_base_power(self.unit)[0] + str(pow_units)
+                return units(self.value ** other, pow_units)
 
     def __rpow__(self, other):
-        from .units.unitless import dimensionless, percentage
+        from .units.unitless import Dimensionless, Percentage
         from .units.define import units
-        if self.kind is percentage:
-            return units((other ** self.value), 'dimensionless')
-        elif self.kind is dimensionless:
+        if self.kind is Percentage:
+            return units((other ** self.value), 'Dimensionless')
+        elif self.kind is Dimensionless:
             return units(other ** self.value, self.unit)
         else:
             raise TypeError("unsupported operand type(s) for ** or pow(): '" + str(type(other)) + "' and '" + self.name)
 
     def __sub__(self, other):
         # return self.__add__(other * -1)
-        from .units.unitless import dimensionless, percentage
+        from .units.unitless import Dimensionless, Percentage
         if '.units.' in str(type(other)):
             if other.kind is self.kind:
-                if self.unit == other.unit:
+                if self.unit == other.Unit:
                     return self.kind(self.value - other.value, self.unit)
-                elif convertible(other.unit, self.unit):
-                    return self.kind(self.value - converter(other.value, other.unit, self.unit), self.unit)
-                elif convertible(self.unit, other.unit):
-                    return self.kind(other.value - converter(self.value, self.unit, other.unit), other.unit)
+                elif convertible(other.Unit, self.unit):
+                    return self.kind(self.value - converter(other.value, other.Unit, self.unit), self.unit)
+                elif convertible(self.unit, other.Unit):
+                    return self.kind(other.value - converter(self.value, self.unit, other.Unit), other.Unit)
                 else:
-                    raise NoConversionFoundError("from '" + self.unit + "' to '" + other.unit + "'")
-            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
-                return self.kind(self.value - other.value, other.unit)
-            elif self.kind is percentage and other.kind in (dimensionless, percentage):
+                    raise NoConversionFoundError("from '" + self.unit + "' to '" + other.Unit + "'")
+            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+                return self.kind(self.value - other.value, other.Unit)
+            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
                 return self.kind((self.value - other.value) * 100, self.unit)
-            elif other.kind in (dimensionless, percentage):
+            elif other.kind in (Dimensionless, Percentage):
                 return self.kind(self.value - other.value, self.unit)
             else:  # add different units
-                return (self, other)
+                return self, other
         elif type(other) is tuple:
             result, flag = [], False
             for each in other:
@@ -227,7 +236,7 @@ class unit(object):
                 else:
                     result += each
             return tuple(result) if flag else other + (self,)
-        elif self.kind is percentage:
+        elif self.kind is Percentage:
             return self.kind((self.value - other) * 100, self.unit)
         else:
             return self.kind(self.value - other, self.unit)
@@ -236,99 +245,101 @@ class unit(object):
         return -self + other
 
     def __truediv__(self, other):
-        from .units.unitless import dimensionless, percentage
+        from .units.unitless import Dimensionless, Percentage
         from .units.define import units
         if '.units.' in str(type(other)):
-            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
-                return other.kind(self.value / other.value, '1/' + other.unit)
-            elif self.kind is percentage and other.kind in (dimensionless, percentage):
+            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+                return other.kind(self.value / other.value, '1/' + other.Unit)
+            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
                 return self.kind((self.value / other.value) * 100, self.unit)
-            elif other.kind in (dimensionless, percentage):
+            elif other.kind in (Dimensionless, Percentage):
                 return self.kind(self.value / other.value, self.unit)
-            elif self.unit == other.unit:
-                return units(self.value / other.value, unitDivision(self.unit, other.unit))
-            elif convertible(other.unit, self.unit):
-                return units(self.value / converter(other.value, other.unit, self.unit), unitDivision(self.unit, other.unit))
-            elif convertible(unitBasePower(self.unit)[0], unitBasePower(other.unit)[0]):
-                factor = converter(1, unitBasePower(other.unit)[0], unitBasePower(self.unit)[0])
-                return units(self.value / (other.value * factor), unitDivision(self.unit, other.unit))
+            elif self.unit == other.Unit:
+                return units(self.value / other.value, unit_division(self.unit, other.Unit))
+            elif convertible(other.Unit, self.unit):
+                return units(self.value / converter(other.value, other.Unit, self.unit),
+                             unit_division(self.unit, other.Unit))
+            elif convertible(unit_base_power(self.unit)[0], unit_base_power(other.Unit)[0]):
+                factor = converter(1, unit_base_power(other.Unit)[0], unit_base_power(self.unit)[0])
+                return units(self.value / (other.value * factor), unit_division(self.unit, other.Unit))
             else:
-                return units(self.value / other.value, unitDivision(self.unit, other.unit))
+                return units(self.value / other.value, unit_division(self.unit, other.Unit))
         elif type(other) is tuple:
             result = []
             for each in other:
                 result += [self / each]
             return tuple(result)
-        elif self.kind is percentage:
+        elif self.kind is Percentage:
             return self.kind(self.value / other * 100, self.unit)
         else:
             return units(self.value / other, self.unit)
 
     def __rtruediv__(self, other):
         from .units.define import units
-        from .units.unitless import dimensionless, percentage
-        if self.kind is percentage:
+        from .units.unitless import Dimensionless, Percentage
+        if self.kind is Percentage:
             return units(other / self.value * 100, self.unit)
-        elif self.kind is dimensionless:
+        elif self.kind is Dimensionless:
             return units(other / self.value, self.unit)
         else:
             return units(other / self.value, self.unit + '-1')
 
     def __floordiv__(self, other):
-        from .units.unitless import dimensionless, percentage
+        from .units.unitless import Dimensionless, Percentage
         from .units.define import units
         if '.units.' in str(type(other)):
-            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
-                return other.kind(self.value // other.value, '1/' + other.unit)
-            elif self.kind is percentage and other.kind in (dimensionless, percentage):
+            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+                return other.kind(self.value // other.value, '1/' + other.Unit)
+            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
                 return self.kind((self.value // other.value) * 100, self.unit)
-            elif other.kind in (dimensionless, percentage):
+            elif other.kind in (Dimensionless, Percentage):
                 return self.kind(self.value // other.value, self.unit)
-            elif self.unit == other.unit:
-                return units(self.value // other.value, unitDivision(self.unit, other.unit))
-            elif convertible(other.unit, self.unit):
-                return units(self.value // converter(other.value, other.unit, self.unit), unitDivision(self.unit, other.unit))
-            elif convertible(unitBasePower(self.unit)[0], unitBasePower(other.unit)[0]):
-                factor = converter(1, unitBasePower(other.unit)[0], unitBasePower(self.unit)[0])
-                return units(self.value // (other.value * factor), unitDivision(self.unit, other.unit))
+            elif self.unit == other.Unit:
+                return units(self.value // other.value, unit_division(self.unit, other.Unit))
+            elif convertible(other.Unit, self.unit):
+                return units(self.value // converter(other.value, other.Unit, self.unit),
+                             unit_division(self.unit, other.Unit))
+            elif convertible(unit_base_power(self.unit)[0], unit_base_power(other.Unit)[0]):
+                factor = converter(1, unit_base_power(other.Unit)[0], unit_base_power(self.unit)[0])
+                return units(self.value // (other.value * factor), unit_division(self.unit, other.Unit))
             else:
-                return units(self.value // other.value, unitDivision(self.unit, other.unit))
+                return units(self.value // other.value, unit_division(self.unit, other.Unit))
         elif type(other) is tuple:
             result = []
             for each in other:
                 result += [self // each]
             return tuple(result)
-        elif self.kind is percentage:
+        elif self.kind is Percentage:
             return self.kind(self.value // other * 100, self.unit)
         else:
             return self.kind(self.value // other, self.unit)
 
     def __rfloordiv__(self, other):
         from .units.define import units
-        from .units.unitless import dimensionless, percentage
-        if self.kind is percentage:
+        from .units.unitless import Dimensionless, Percentage
+        if self.kind is Percentage:
             return units(other // self.value * 100, self.unit)
-        elif self.kind is dimensionless:
+        elif self.kind is Dimensionless:
             return units(other // self.value, self.unit)
         else:
             return units(other // self.value, self.unit + '-1')
 
     def __mod__(self, other):
-        from .units.unitless import dimensionless, percentage
+        from .units.unitless import Dimensionless, Percentage
         from .units.define import units
         if '.units.' in str(type(other)):
-            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
+            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
                 return other.kind(self.value % other.value, self.unit)
-            elif self.kind is percentage and other.kind in (dimensionless, percentage):
+            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
                 return self.kind((self.value % other.value) * 100, self.unit)
-            elif other.kind in (dimensionless, percentage):
+            elif other.kind in (Dimensionless, Percentage):
                 return self.kind(self.value % other.value, self.unit)
-            elif self.unit == other.unit:
+            elif self.unit == other.Unit:
                 return units(self.value % other.value, self.unit)
-            elif convertible(other.unit, self.unit):
-                return units(self.value % converter(other.value, other.unit, self.unit), self.unit)
-            elif convertible(unitBasePower(self.unit)[0], unitBasePower(other.unit)[0]):
-                factor = converter(1, unitBasePower(other.unit)[0], unitBasePower(self.unit)[0])
+            elif convertible(other.Unit, self.unit):
+                return units(self.value % converter(other.value, other.Unit, self.unit), self.unit)
+            elif convertible(unit_base_power(self.unit)[0], unit_base_power(other.Unit)[0]):
+                factor = converter(1, unit_base_power(other.Unit)[0], unit_base_power(self.unit)[0])
                 return units(self.value % (other.value * factor), self.unit)
             else:
                 return units(self.value % other.value, self.unit)
@@ -337,39 +348,51 @@ class unit(object):
             for each in other:
                 result += [self % each]
             return tuple(result)
-        elif self.kind is percentage:
+        elif self.kind is Percentage:
             return self.kind(self.value % other * 100, self.unit)
         else:
             return self.kind(self.value % other, self.unit)
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         if type(self) == type(other):
             return self.value < other.convert(self.unit).value
         else:
             msg = "'<' not supported between instances of '" + \
-                (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','') + \
-                    "' and '" + \
-                        (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.', '') + "'"
+                  (str(type(self))[
+                   str(type(self)).index("'") + 1:len(str(type(self))) - str(type(self))[::-1].index("'") - 1]).replace(
+                      '__main__.', '') + \
+                  "' and '" + \
+                  (str(type(other))[
+                   str(type(other)).index("'") + 1:len(str(type(other))) - str(type(other))[::-1].index(
+                       "'") - 1]).replace('__main__.', '') + "'"
             raise TypeError(msg)
 
-    def __le__(self, other):
+    def __le__(self, other) -> bool:
         if type(self) == type(other):
             return self.value <= other.convert(self.unit).value
-        else :
+        else:
             msg = "'<=' not supported between instances of '" + \
-                (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','') + \
-                    "' and '" + \
-                        (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','') + "'"
+                  (str(type(self))[
+                   str(type(self)).index("'") + 1:len(str(type(self))) - str(type(self))[::-1].index("'") - 1]).replace(
+                      '__main__.', '') + \
+                  "' and '" + \
+                  (str(type(other))[
+                   str(type(other)).index("'") + 1:len(str(type(other))) - str(type(other))[::-1].index(
+                       "'") - 1]).replace('__main__.', '') + "'"
             raise TypeError(msg)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if type(self) == type(other):
             return self.value == other.convert(self.unit).value
         else:
             msg = "'==' not supported between instances of '" + \
-                (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','') + \
-                    "' and '" + \
-                        (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','') + "'"
+                  (str(type(self))[
+                   str(type(self)).index("'") + 1:len(str(type(self))) - str(type(self))[::-1].index("'") - 1]).replace(
+                      '__main__.', '') + \
+                  "' and '" + \
+                  (str(type(other))[
+                   str(type(other)).index("'") + 1:len(str(type(other))) - str(type(other))[::-1].index(
+                       "'") - 1]).replace('__main__.', '') + "'"
             raise TypeError(msg)
 
     def __ne__(self, other):
@@ -377,28 +400,41 @@ class unit(object):
             return self.value != other.convert(self.unit).value
         else:
             msg = "'!=' not supported between instances of '" + \
-                (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','') + \
-                    "' and '" + \
-                        (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','') + "'"
+                  (str(type(self))[
+                   str(type(self)).index("'") + 1:len(str(type(self))) - str(type(self))[::-1].index("'") - 1]).replace(
+                      '__main__.', '') + \
+                  "' and '" + \
+                  (str(type(other))[
+                   str(type(other)).index("'") + 1:len(str(type(other))) - str(type(other))[::-1].index(
+                       "'") - 1]).replace('__main__.', '') + "'"
             raise TypeError(msg)
 
     def __ge__(self, other):
         if type(self) == type(other):
             return self.value >= other.convert(self.unit).value
-        else :
+        else:
             msg = "'>=' not supported between instances of '" + \
-                (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','') + \
-                    "' and '" + \
-                        (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','') + "'"
+                  (str(type(self))[
+                   str(type(self)).index("'") + 1:len(str(type(self))) - str(type(self))[::-1].index("'") - 1]).replace(
+                      '__main__.', '') + \
+                  "' and '" + \
+                  (str(type(other))[
+                   str(type(other)).index("'") + 1:len(str(type(other))) - str(type(other))[::-1].index(
+                       "'") - 1]).replace('__main__.', '') + "'"
             raise TypeError(msg)
+
     def __gt__(self, other):
         if type(self) == type(other):
             return self.value > other.convert(self.unit).value
-        else :
+        else:
             msg = "'>' not supported between instances of '" + \
-                (str(type(self))[str(type(self)).index("'")+1:len(str(type(self))) - str(type(self))[::-1].index("'")-1]).replace('__main__.','') + \
-                    "' and '" + \
-                        (str(type(other))[str(type(other)).index("'")+1:len(str(type(other))) - str(type(other))[::-1].index("'")-1]).replace('__main__.','') + "'"
+                  (str(type(self))[
+                   str(type(self)).index("'") + 1:len(str(type(self))) - str(type(self))[::-1].index("'") - 1]).replace(
+                      '__main__.', '') + \
+                  "' and '" + \
+                  (str(type(other))[
+                   str(type(other)).index("'") + 1:len(str(type(other))) - str(type(other))[::-1].index(
+                       "'") - 1]).replace('__main__.', '') + "'"
             raise TypeError(msg)
 
     def __len__(self):
@@ -413,8 +449,8 @@ class unit(object):
                 raise IndexError
         else:
             raise ValueError
-        from .units.unitless import percentage
-        if self.kind is percentage:
+        from .units.unitless import Percentage
+        if self.kind is Percentage:
             return self.kind(self.value[item] * 100, self.unit)
         else:
             return self.kind(self.value[item], self.unit)
@@ -425,13 +461,13 @@ class unit(object):
         else:
             return self.value.__iter__()
 
-    def getUnit(self):
+    def get_unit(self):
         return self.unit
 
-    def getValue(self):
+    def get_value(self):
         return self.value
 
-    def checkValue(self, value):
+    def check_value(self, value):
         if type(value) in (list, tuple):
             try:
                 return np.array(value)
@@ -439,15 +475,15 @@ class unit(object):
                 raise WrongValueError(str(value))
         elif isinstance(value, Number):
             return value
-        elif isinstance(value, arraylike):
-             return value
+        elif isinstance(value, array_like):
+            return value
         else:
             raise WrongValueError(str(value))
 
-    def checkUnit(self, units):
+    def check_unit(self, units):
         if type(units) is not str:
             try:
-                units = units.unit
+                units = units.Unit
             except:
                 raise WrongUnitsError("'" + str(units) + "' for '" + str(self.name) + "'")
         if units in self.kind.classUnits:

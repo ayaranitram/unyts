@@ -6,36 +6,39 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20220920
-__all__ = ['pressure', 'weight', 'compressibility']
+__version__ = '0.4.5'
+__release__ = 20221226
+__all__ = ['Pressure', 'Weight', 'Compressibility']
 
 from ..dictionaries import dictionary
-from ..unit_class import unit
+from ..unit_class import Unit
 
 
-class pressure(unit):
-    classUnits = dictionary['pressure']
+class Pressure(Unit):
+    classUnits = dictionary['Pressure']
+
     def __init__(self, value, units):
-        self.name = 'pressure'
-        self.kind = pressure
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+        self.name = 'Pressure'
+        self.kind = Pressure
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)
 
 
-class weight(unit):
-    classUnits = dictionary['weight']
+class Weight(Unit):
+    classUnits = dictionary['Weight']
+
     def __init__(self, value, units):
-        self.name = 'weight'
-        self.kind = weight
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+        self.name = 'Weight'
+        self.kind = Weight
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)
 
 
-class compressibility(unit):
-    classUnits = dictionary['compressibility']
+class Compressibility(Unit):
+    classUnits = dictionary['Compressibility']
+
     def __init__(self, value, units):
-        self.name = 'compressibility'
-        self.kind = compressibility
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+        self.name = 'Compressibility'
+        self.kind = Compressibility
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)

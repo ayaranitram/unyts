@@ -6,27 +6,29 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20220920
-__all__ = ['temperature', 'temperatureGradient']
+__version__ = '0.4.5'
+__release__ = 20221226
+__all__ = ['Temperature', 'TemperatureGradient']
 
 from ..dictionaries import dictionary
-from ..unit_class import unit
+from ..unit_class import Unit
 
 
-class temperature(unit):
-    classUnits = dictionary['temperature']
+class Temperature(Unit):
+    classUnits = dictionary['Temperature']
+
     def __init__(self, value, units):
-        self.name = 'temperature'
-        self.kind = temperature
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+        self.name = 'Temperature'
+        self.kind = Temperature
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)
 
 
-class temperatureGradient(unit):
-    classUnits = dictionary['temperatureGradient']
+class TemperatureGradient(Unit):
+    classUnits = dictionary['TemperatureGradient']
+
     def __init__(self, value, units):
-        self.name = 'temperatureGradient'
-        self.kind = temperatureGradient
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+        self.name = 'TemperatureGradient'
+        self.kind = TemperatureGradient
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)

@@ -6,36 +6,39 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20220920
-__all__ = ['length', 'area', 'volume']
+__version__ = '0.4.5'
+__release__ = 20221226
+__all__ = ['Length', 'Area', 'Volume']
 
 from ..dictionaries import dictionary
-from ..unit_class import unit
+from ..unit_class import Unit
 
 
-class length(unit):
-    classUnits = dictionary['length']
+class Length(Unit):
+    classUnits = dictionary['Length']
+
     def __init__(self, value, units):
-        self.name = 'length'
-        self.kind = length
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+        self.name = 'Length'
+        self.kind = Length
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)
 
 
-class area(unit):
-    classUnits = dictionary['area']
+class Area(Unit):
+    classUnits = dictionary['Area']
+
     def __init__(self, value, units):
-        self.name = 'area'
-        self.kind = area
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+        self.name = 'Area'
+        self.kind = Area
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)
 
 
-class volume(unit):
-    classUnits = dictionary['volume']
+class Volume(Unit):
+    classUnits = dictionary['Volume']
+
     def __init__(self, value, units):
-        self.name = 'volume'
-        self.kind = volume
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+        self.name = 'Volume'
+        self.kind = Volume
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)

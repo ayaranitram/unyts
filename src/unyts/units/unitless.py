@@ -6,59 +6,61 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20220820
-__all__ = ['dimensionless', 'percentage']
+__version__ = '0.4.5'
+__release__ = 20221226
+__all__ = ['Dimensionless', 'Percentage']
 
 from ..dictionaries import dictionary
-from ..unit_class import unit
+from ..unit_class import Unit
 from ..errors import WrongUnitsError
 
 
-class dimensionless(unit):
-    classUnits = dictionary['dimensionless']
-    def __init__(self, value, units=None):
-        self.name = 'dimensionless'
-        self.kind = dimensionless
-        self.value = self.checkValue(value)
-        if units is None:
-            units = 'dimensionless'
-        self.unit = self.checkUnit(units)
+class Dimensionless(Unit):
+    classUnits = dictionary['Dimensionless']
 
-    def convert(self, newunit=None):
-        if newunit is not None and type(newunit) is not str:
+    def __init__(self, value, units=None):
+        self.name = 'Dimensionless'
+        self.kind = Dimensionless
+        self.value = self.check_value(value)
+        if units is None:
+            units = 'Dimensionless'
+        self.unit = self.check_unit(units)
+
+    def convert(self, new_unit=None):
+        if new_unit is not None and type(new_unit) is not str:
             try:
-                newunit = newunit.unit
+                new_unit = new_unit.unit
             except:
-                raise WrongUnitsError("'" + str(newunit) + "' for '" + str(self.name) + "'")
-        if newunit is None or len(newunit) == 0:
+                raise WrongUnitsError("'" + str(new_unit) + "' for '" + str(self.name) + "'")
+        if new_unit is None or len(new_unit) == 0:
             return self.value
-        elif newunit in dictionary['percentage']:
-            return percentage(self.value * 100, newunit)
-        elif newunit in dictionary['dimensionless']:
-            return dimensionless(self.value, newunit)
+        elif new_unit in dictionary['Percentage']:
+            return Percentage(self.value * 100, new_unit)
+        elif new_unit in dictionary['Dimensionless']:
+            return Dimensionless(self.value, new_unit)
         else:
             from .define import units
-            return units(self.value, newunit)
+            return units(self.value, new_unit)
 
-    def to(self, newunit=None):
-        return self.convert(newunit)
+    def to(self, new_unit=None):
+        return self.convert(new_unit)
 
 
-class percentage(dimensionless):
-    classUnits = dictionary['percentage']
+class Percentage(Dimensionless):
+    classUnits = dictionary['Percentage']
+
     def __init__(self, value, units=None):
-        self.name = 'percentage'
-        self.kind = percentage
-        self.value = self.checkValue(value) / 100
+        self.name = 'Percentage'
+        self.kind = Percentage
+        self.value = self.check_value(value) / 100
         if units is None:
-            units = 'percentage'
-        self.unit = self.checkUnit(units)
+            units = 'Percentage'
+        self.unit = self.check_unit(units)
 
     def __repr__(self):
         return str(self.value * 100) + '_' + str(self.unit)
 
-    def __str__(self) :
+    def __str__(self):
         return str(self.value * 100) + '_' + str(self.unit)
 
     def __neg__(self):

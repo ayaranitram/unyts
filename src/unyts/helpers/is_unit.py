@@ -5,8 +5,8 @@ Created on Sat Oct 24 14:46:04 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20220920
+__version__ = '0.4.5'
+__release__ = 20221226
 __all__ = ['is_unit']
 
 from ..dictionaries import dictionary
@@ -23,15 +23,15 @@ def is_unit(unit):
                 return True
 
     if '/' in unit or '*' in unit:
-        unitSplit = []
+        unit_split = []
         for each in unit.split('/'):
-            unitSplit += each.split('*')
-        ret = [False] * len(unitSplit)
+            unit_split += each.split('*')
+        ret = [False] * len(unit_split)
 
         for each in list(dictionary.keys()):
             if '_' not in each :
-                for subU in range(len(unitSplit)):
-                    if unitSplit[subU] in list(dictionary[each]):
+                for subU in range(len(unit_split)):
+                    if unit_split[subU] in list(dictionary[each]):
                         ret[subU] = True
 
         for each in ret:

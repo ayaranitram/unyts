@@ -6,35 +6,39 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20220920
+__version__ = '0.4.5'
+__release__ = 20221226
 __all__ = ['units']
 
-
 from ..dictionaries import dictionary
-from .custom import userUnits, otherUnits
-from .force import pressure, weight, compressibility
-from .geometry import length, area, volume
-from .temperature import temperature, temperatureGradient
-from .time import time
-from .unitless import dimensionless, percentage
-from .ratios import density, volumeRatio, productivityIndex, pressureGradient
-from .rates import rate, speed, velocity
-from .energy import energy, power
+from .custom import UserUnits, OtherUnits
+from .force import Pressure, Weight, Compressibility
+from .geometry import Length, Area, Volume
+from .temperature import Temperature, TemperatureGradient
+from .time import Time
+from .unitless import Dimensionless, Percentage
+from .ratios import Density, VolumeRatio, ProductivityIndex, PressureGradient
+from .rates import Rate, Speed, Velocity
+from .energy import Energy, Power
 
 from numpy import ndarray
 from numbers import Number
 
-arraylike = [ndarray]
+array_like = [ndarray]
 try:
     from pandas import Series, DataFrame
-    arraylike += [Series, DataFrame]
+
+    array_like += [Series, DataFrame]
 except:
     pass
-arraylike = tuple(arraylike)
+array_like = tuple(array_like)
+
+from typing import Union
+
+numeric = Union[int, float, complex] + array_like
 
 
-def units(value, units=None):
+def units(value, unit=None):
     """
     return an instance of units with the provided value and units.
 
@@ -42,7 +46,7 @@ def units(value, units=None):
     ----------
     value : int, float, numeric array, Series or DataFrame
         the value to assign the units.
-    units : str, optional
+    unit : str, optional
         the units to assign the value. The default is None.
 
     Raises
@@ -56,22 +60,23 @@ def units(value, units=None):
         instance of units.
 
     """
-    if units is None and '.units.' in str(type(value)):
-        value, units = value.value, value.units
-    if units is None:
-        units = 'dimensionless'
-    if type(units) is not str:
+    if unit is None and '.units.' in str(type(value)):
+        value, unit = value.value, value.units
+    if unit is None:
+        unit = 'Dimensionless'
+    if type(unit) is not str:
         raise TypeError("'units' must be a string.")
-    units = units.strip()
+
+    unit = unit.strip()
     for kind in dictionary:
-        if units in dictionary[kind]:
+        if unit in dictionary[kind]:
             if isinstance(value, Number):
-                return eval(kind + "(" + str(value) + ",'" + units + "')")
-            elif isinstance(value, arraylike):
-                u = eval(kind + "(" + str(0) + ",'" + units + "')")
+                return eval(kind + "(" + str(value) + ",'" + unit + "')")
+            elif isinstance(value, array_like):
+                u = eval(kind + "(" + str(0) + ",'" + unit + "')")
                 u.value = value
                 return u
             else:
                 raise TypeError("'value' parameter must be numeric.")
 
-    return userUnits(value, units)
+    return UserUnits(value, unit)

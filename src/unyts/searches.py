@@ -6,46 +6,45 @@ Created on Sat Oct 24 17:52:34 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20220920
-__all__ = ['BFS']
+__version__ = '0.4.5'
+__release__ = 20221226
+__all__ = ['BFS', 'print_path']
 
 
-def BFS(graph, start, end, toPrint=False):
+def BFS(graph, start, end, to_print=False) -> None:
     """Assumes graph is a Digraph; start and end are nodes
         Returns a shortest path from start to end in graph"""
-    initPath = [start]
-    pathQueue = [initPath]
+    init_path = [start]
+    path_queue = [init_path]
     visited = []
-    while len(pathQueue) != 0:
-        #Get and remove oldest element in pathQueue
-        tmpPath = pathQueue.pop(0)
-        if tmpPath in visited :
-            if toPrint:
-                print('<UnitsConv> ' + str(len(pathQueue)) + ' paths in queue. ' + 'Already visited BFS path:\n', printPath(tmpPath))
-        else :
-            if toPrint:
-                print('<UnitsConv> ' + str(len(pathQueue)) + ' paths in queue. ' + 'Current BFS path:\n', printPath(tmpPath))
-            lastNode = tmpPath[-1]
-            if lastNode == end:
-                return tmpPath
-            for nextNode in graph.childrenOf(lastNode):
-                if nextNode not in tmpPath:
-                    newPath = tmpPath + [nextNode]
-                    pathQueue.append(newPath)
-            visited.append(tmpPath)
-    return None
+    while len(path_queue) != 0:
+        # get and remove oldest element in path_queue
+        tmp_path = path_queue.pop(0)
+        if tmp_path in visited:
+            if to_print:
+                print('<UnitsConv> ' + str(len(path_queue)) + ' paths in queue. ' + 'Already visited BFS path:\n', print_path(tmp_path))
+        else:
+            if to_print:
+                print('<UnitsConv> ' + str(len(path_queue)) + ' paths in queue. ' + 'Current BFS path:\n', print_path(tmp_path))
+            last_node = tmp_path[-1]
+            if last_node == end:
+                return tmp_path
+            for nextNode in graph.children_of(last_node):
+                if nextNode not in tmp_path:
+                    new_path = tmp_path + [nextNode]
+                    path_queue.append(new_path)
+            visited.append(tmp_path)
 
 
-def printPath(path):
+def print_path(path) -> str:
     """Assumes path is a list of nodes"""
     result = '  '
-    if len(path) == 1 :
+    if len(path) == 1:
         result = result + str(path[0]) + ' = ' + str(path[0])
-    else :
+    else:
         for i in range(len(path)):
-            if type(path[i]) == str :
-                result = result + ' ' +  path[i] + ' '
+            if type(path[i]) is str:
+                result = result + ' ' + path[i] + ' '
             else:
                 result = result + str(path[i])
                 if i != len(path) - 1:

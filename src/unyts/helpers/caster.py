@@ -5,8 +5,8 @@ Created on Wed Aug  3 21:14:44 2022
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20220920
+__version__ = '0.4.5'
+__release__ = 20221226
 __all__ = ['caster', 'to_number']
 
 
@@ -42,7 +42,7 @@ def caster(string):
     return value
 
 
-def to_number(string, decimalsign='auto', thousandseparator='auto', parethesismeansnegative=True):
+def to_number(string, decimal_sign='auto', thousand_separator='auto', parenthesis_means_negative=True):
     """
     Cast a string the appropiate numeric type.
     Valid numbers are:
@@ -56,10 +56,12 @@ def to_number(string, decimalsign='auto', thousandseparator='auto', parethesisme
     ----------
     string : str
         the string to convert to number
-    decimalsign : str
+    decimal_sign : str
         The string used as decimal symbol.
-    thousandseparator : str
+    thousand_separator : str
         The string used as thousands separator.
+    parenthesis_means_negative : bool
+        True to cast numbers between parenthesis as negative, i.e. (15) = -15
 
     Returns
     -------
@@ -69,7 +71,7 @@ def to_number(string, decimalsign='auto', thousandseparator='auto', parethesisme
 
     def cleaner(string):
         """
-        Helper function to clean the string before attemting to cast
+        Helper function to clean the string before attempting to cast
 
         Parameters
         ----------
@@ -105,6 +107,7 @@ def to_number(string, decimalsign='auto', thousandseparator='auto', parethesisme
                 if string format is valid.
 
             """
+
             def check(string):
                 """
                 count the number of decimal signs and thousand separators
@@ -127,67 +130,66 @@ def to_number(string, decimalsign='auto', thousandseparator='auto', parethesisme
                 return True
 
             if 'j' in string:
-                for s in ('+','-'):
+                for s in ('+', '-'):
                     if s in string.strip('+-'):
                         return check(string.strip('+-').split(s)[0]) and check(string.strip('+-').split(s)[1])
             else:
                 return check(string)
 
         string = string.strip().lower()
-        newstring = string
+        new_string = string
 
         # check parenthesis means negative
-        if parethesismeansnegative:
-            if '(' in newstring:
-                if ')' not in newstring:
+        if parenthesis_means_negative:
+            if '(' in new_string:
+                if ')' not in new_string:
                     raise ValueError('the string format is incorrect: ' + string)
-                elif 'j' in newstring:
+                elif 'j' in new_string:
                     pass
                 else:
-                    if newstring.count('(') == 1 and newstring.count(')') == 1:
-                        if newstring[0] == '(' and newstring[-1] == ')':
-                            if '-' not in newstring:
-                                newstring = '-' + newstring.replace('(','').replace(')','')
+                    if new_string.count('(') == 1 and new_string.count(')') == 1:
+                        if new_string[0] == '(' and new_string[-1] == ')':
+                            if '-' not in new_string:
+                                new_string = '-' + new_string.replace('(', '').replace(')', '')
                             else:
                                 raise ValueError('the string format is incorrect: ' + string)
-            elif ')' in newstring:
+            elif ')' in new_string:
                 raise ValueError('the string format is incorrect: ' + string)
             else:
                 pass
 
-
         # check thousands separator
-        if thousandseparator in ('auto','.') and decimalsign in ('auto',','):
-            if ',' in newstring and '.' in newstring:
+        if thousand_separator in ('auto', '.') and decimal_sign in ('auto', ','):
+            if ',' in new_string and '.' in new_string:
                 if validate(string,ds=',',ts='.'):
-                    newstring = newstring.replace('.','').replace(',','.')
-                return newstring
+                    new_string = new_string.replace('.', '').replace(',', '.')
+                return new_string
 
-        if thousandseparator.strip() == 'auto':
+        if thousand_separator.strip() == 'auto':
             for ts in ("'","`","´"," ",None):
                 if ts is not None and ts in string:
-                    newstring = newstring.replace(ts,'')
+                    new_string = new_string.replace(ts, '')
                     break
         else:
-            newstring = newstring.replace(thousandseparator,'')
-            ts = thousandseparator
+            new_string = new_string.replace(thousand_separator, '')
+            ts = thousand_separator
 
         # check decimal symbol
-        if decimalsign.strip() == 'auto':
+        if decimal_sign.strip() == 'auto':
             for ds in (",","p","."):
-                if ds in newstring:
-                    if newstring.count(ds) > 1 and 'j' not in newstring:
+                if ds in new_string:
+                    if new_string.count(ds) > 1 and 'j' not in new_string:
                         raise ValueError('the string format is incorrect: ' + string)
-                    newstring = newstring.replace(ds,'.')
+                    new_string = new_string.replace(ds, '.')
                     break
         else:
-            if string.count(decimalsign) > 1:
+            if string.count(decimal_sign) > 1:
                 raise ValueError('the string format is incorrect: ' + string)
-            newstring = newstring.replace(decimalsign,'.')
-            ds = decimalsign
+            new_string = new_string.replace(decimal_sign, '.')
+            ds = decimal_sign
 
-        if validate(string,ds=ds,ts=ts):
-            return newstring
+        if validate(string, ds=ds, ts=ts):
+            return new_string
 
     if type(string) is str:
         # first, clean the string if is type str
@@ -204,7 +206,7 @@ def to_number(string, decimalsign='auto', thousandseparator='auto', parethesisme
 
         return value
 
-    elif type(string) in (int,float,complex):
+    elif type(string) in (int, float, complex):
         return string
 
     else:

@@ -7,8 +7,8 @@ Created on Sun May 23 11:18:15 2021
 helper functions for units modules
 """
 
-__version__ = '0.4.0'
-__release__ = 20220920
+__version__ = '0.4.5'
+__release__ = 20221226
 __all__ = ['is_number']
 
 

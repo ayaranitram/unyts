@@ -6,44 +6,49 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20220920
-__all__ = ['density', 'volumeRatio', 'productivityIndex', 'pressureGradient']
+__version__ = '0.4.5'
+__release__ = 20221226
+__all__ = ['Density', 'VolumeRatio', 'ProductivityIndex', 'PressureGradient']
 
 from ..dictionaries import dictionary
-from ..unit_class import unit
+from ..unit_class import Unit
 
 
-class density(unit):
-    classUnits = dictionary['density']
+class Density(Unit):
+    classUnits = dictionary['Density']
+
     def __init__(self, value, units):
-        self.name = 'density'
-        self.kind = density
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+        self.name = 'Density'
+        self.kind = Density
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)
 
 
-class volumeRatio(unit):
-    classUnits = dictionary['volumeRatio']
+class VolumeRatio(Unit):
+    classUnits = dictionary['VolumeRatio']
+
     def __init__(self, value, units):
-        self.name = 'volumeRatio'
-        self.kid = volumeRatio
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+        self.name = 'VolumeRatio'
+        self.kid = VolumeRatio
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)
 
 
-class productivityIndex(unit):
-    classUnits = dictionary['productivityIndex']
-    def __init__(self, value, units) :
-        self.name = 'productivityIndex'
-        self.kind = productivityIndex
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+class ProductivityIndex(Unit):
+    classUnits = dictionary['ProductivityIndex']
 
-class pressureGradient(unit):
-    classUnits = dictionary['pressureGradient']
-    def __init__(self, value, units) :
-        self.name = 'pressureGradient'
-        self.kind = pressureGradient
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+    def __init__(self, value, units):
+        self.name = 'ProductivityIndex'
+        self.kind = ProductivityIndex
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)
+
+
+class PressureGradient(Unit):
+    classUnits = dictionary['PressureGradient']
+
+    def __init__(self, value, units):
+        self.name = 'PressureGradient'
+        self.kind = PressureGradient
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)

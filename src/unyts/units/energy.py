@@ -6,27 +6,29 @@ Created on Fri Aug 26 21:17:35 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20220920
-__all__ = ['energy', 'power']
+__version__ = '0.4.5'
+__release__ = 20221226
+__all__ = ['Energy', 'Power']
 
 from ..dictionaries import dictionary
-from ..unit_class import unit
+from ..unit_class import Unit
 
 
-class energy(unit):
-    classUnits = dictionary['energy']
-    def __init__(self, value, units):
-        self.name = 'energy'
-        self.kind = energy
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+class Energy(Unit):
+    classUnits = dictionary['Energy']
+
+    def __init__(self, value, unit):
+        self.name = 'Energy'
+        self.kind = Energy
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(unit)
 
 
-class power(unit):
-    classUnits = dictionary['power']
-    def __init__(self, value, units):
-        self.name = 'power'
-        self.kind = power
-        self.value = self.checkValue(value)
-        self.unit = self.checkUnit(units)
+class Power(Unit):
+    classUnits = dictionary['Power']
+
+    def __init__(self, value, unit):
+        self.name = 'Power'
+        self.kind = Power
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(unit)
