@@ -74,9 +74,9 @@ class Unit(object):
         return self.kind(self.value * -1, self.unit)
 
     def __bool__(self):
-        from .units.custom import UserUnits
-        from .units.unitless import Dimensionless, Percentage
-        if self.kind in (Dimensionless, Percentage, UserUnits):
+        from .units.custom import userUnits
+        from .units.unitless import dimensionless, percentage
+        if self.kind in (dimensionless, percentage, userUnits):
             return False
         return True
 
@@ -84,7 +84,7 @@ class Unit(object):
         return self.kind(abs(self.value), self.unit)
 
     def __add__(self, other):
-        from .units.unitless import Dimensionless, Percentage
+        from .units.unitless import dimensionless, percentage
         if '.units.' in str(type(other)):
             if other.kind is self.kind:
                 if self.unit == other.Unit:
@@ -95,11 +95,11 @@ class Unit(object):
                     return self.kind(other.value + converter(self.value, self.unit, other.Unit), other.Unit)
                 else:
                     raise NoConversionFoundError("from '" + self.unit + "' to '" + other.Unit + "'")
-            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
                 return self.kind(self.value + other.value, other.Unit)
-            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
+            elif self.kind is percentage and other.kind in (dimensionless, percentage):
                 return self.kind((self.value + other.value) * 100, self.unit)
-            elif other.kind in (Dimensionless, Percentage):
+            elif other.kind in (dimensionless, percentage):
                 return self.kind(self.value + other.value, self.unit)
             else:  # add different units
                 return self, other
@@ -112,7 +112,7 @@ class Unit(object):
                 else:
                     result += each
             return tuple(result) if flag else other + (self,)
-        elif self.kind is Percentage:
+        elif self.kind is percentage:
             return self.kind((self.value + other) * 100, self.unit)
         else:
             return self.kind(self.value + other, self.unit)
@@ -121,14 +121,14 @@ class Unit(object):
         return self.__add__(other)
 
     def __mul__(self, other):
-        from .units.unitless import Dimensionless, Percentage
+        from .units.unitless import dimensionless, percentage
         from .units.define import units
         if '.units.' in str(type(other)):
-            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
                 return other.kind(self.value * other.value, other.Unit)
-            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
+            elif self.kind is percentage and other.kind in (dimensionless, percentage):
                 return self.kind((self.value * other.value) * 100, self.unit)
-            elif other.kind in (Dimensionless, Percentage):
+            elif other.kind in (dimensionless, percentage):
                 return self.kind(self.value * other.value, self.unit)
             elif self.unit == other.Unit:
                 return units(self.value * other.value, unit_product(self.unit, other.Unit))
@@ -148,7 +148,7 @@ class Unit(object):
             for each in other:
                 result += [self * each]
             return tuple(result)
-        elif self.kind is Percentage:
+        elif self.kind is percentage:
             return self.kind(self.value * other * 100, self.unit)
         else:
             return self.kind(self.value * other, self.unit)
@@ -157,14 +157,14 @@ class Unit(object):
         return self.__mul__(other)
 
     def __pow__(self, other):
-        from .units.unitless import Dimensionless, Percentage
+        from .units.unitless import dimensionless, percentage
         from .units.define import units
         if '.units.' in str(type(other)):
-            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
                 return other.kind(self.value ** other.value, other.Unit)
-            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
+            elif self.kind is percentage and other.kind in (dimensionless, percentage):
                 return self.kind((self.value ** other.value) * 100, self.unit)
-            elif other.kind in (Dimensionless, Percentage):
+            elif other.kind in (dimensionless, percentage):
                 return self.kind(self.value ** other.value, self.unit)
             elif self.unit == other.Unit:
                 return units(self.value ** other.value, self.unit + '^' + other.Unit)
@@ -181,12 +181,12 @@ class Unit(object):
                 result += [self ** each]
             return tuple(result)
         else:
-            if self.kind is Percentage:
+            if self.kind is percentage:
                 return self.kind((self.value ** other) * 100, self.unit)
             else:
                 pow_units = unit_base_power(self.unit)[1] * other
                 if pow_units == 0:
-                    pow_units = 'Dimensionless'
+                    pow_units = 'dimensionless'
                 elif pow_units == 1:
                     pow_units = unit_base_power(self.unit)[0]
                 else:
@@ -194,18 +194,18 @@ class Unit(object):
                 return units(self.value ** other, pow_units)
 
     def __rpow__(self, other):
-        from .units.unitless import Dimensionless, Percentage
+        from .units.unitless import dimensionless, percentage
         from .units.define import units
-        if self.kind is Percentage:
-            return units((other ** self.value), 'Dimensionless')
-        elif self.kind is Dimensionless:
+        if self.kind is percentage:
+            return units((other ** self.value), 'dimensionless')
+        elif self.kind is dimensionless:
             return units(other ** self.value, self.unit)
         else:
             raise TypeError("unsupported operand type(s) for ** or pow(): '" + str(type(other)) + "' and '" + self.name)
 
     def __sub__(self, other):
         # return self.__add__(other * -1)
-        from .units.unitless import Dimensionless, Percentage
+        from .units.unitless import dimensionless, percentage
         if '.units.' in str(type(other)):
             if other.kind is self.kind:
                 if self.unit == other.Unit:
@@ -216,11 +216,11 @@ class Unit(object):
                     return self.kind(other.value - converter(self.value, self.unit, other.Unit), other.Unit)
                 else:
                     raise NoConversionFoundError("from '" + self.unit + "' to '" + other.Unit + "'")
-            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
                 return self.kind(self.value - other.value, other.Unit)
-            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
+            elif self.kind is percentage and other.kind in (dimensionless, percentage):
                 return self.kind((self.value - other.value) * 100, self.unit)
-            elif other.kind in (Dimensionless, Percentage):
+            elif other.kind in (dimensionless, percentage):
                 return self.kind(self.value - other.value, self.unit)
             else:  # add different units
                 return self, other
@@ -233,7 +233,7 @@ class Unit(object):
                 else:
                     result += each
             return tuple(result) if flag else other + (self,)
-        elif self.kind is Percentage:
+        elif self.kind is percentage:
             return self.kind((self.value - other) * 100, self.unit)
         else:
             return self.kind(self.value - other, self.unit)
@@ -242,14 +242,14 @@ class Unit(object):
         return -self + other
 
     def __truediv__(self, other):
-        from .units.unitless import Dimensionless, Percentage
+        from .units.unitless import dimensionless, percentage
         from .units.define import units
         if '.units.' in str(type(other)):
-            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
                 return other.kind(self.value / other.value, '1/' + other.Unit)
-            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
+            elif self.kind is percentage and other.kind in (dimensionless, percentage):
                 return self.kind((self.value / other.value) * 100, self.unit)
-            elif other.kind in (Dimensionless, Percentage):
+            elif other.kind in (dimensionless, percentage):
                 return self.kind(self.value / other.value, self.unit)
             elif self.unit == other.Unit:
                 return units(self.value / other.value, unit_division(self.unit, other.Unit))
@@ -266,30 +266,30 @@ class Unit(object):
             for each in other:
                 result += [self / each]
             return tuple(result)
-        elif self.kind is Percentage:
+        elif self.kind is percentage:
             return self.kind(self.value / other * 100, self.unit)
         else:
             return units(self.value / other, self.unit)
 
     def __rtruediv__(self, other):
         from .units.define import units
-        from .units.unitless import Dimensionless, Percentage
-        if self.kind is Percentage:
+        from .units.unitless import dimensionless, percentage
+        if self.kind is percentage:
             return units(other / self.value * 100, self.unit)
-        elif self.kind is Dimensionless:
+        elif self.kind is dimensionless:
             return units(other / self.value, self.unit)
         else:
             return units(other / self.value, self.unit + '-1')
 
     def __floordiv__(self, other):
-        from .units.unitless import Dimensionless, Percentage
+        from .units.unitless import dimensionless, percentage
         from .units.define import units
         if '.units.' in str(type(other)):
-            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
                 return other.kind(self.value // other.value, '1/' + other.Unit)
-            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
+            elif self.kind is percentage and other.kind in (dimensionless, percentage):
                 return self.kind((self.value // other.value) * 100, self.unit)
-            elif other.kind in (Dimensionless, Percentage):
+            elif other.kind in (dimensionless, percentage):
                 return self.kind(self.value // other.value, self.unit)
             elif self.unit == other.Unit:
                 return units(self.value // other.value, unit_division(self.unit, other.Unit))
@@ -306,30 +306,30 @@ class Unit(object):
             for each in other:
                 result += [self // each]
             return tuple(result)
-        elif self.kind is Percentage:
+        elif self.kind is percentage:
             return self.kind(self.value // other * 100, self.unit)
         else:
             return self.kind(self.value // other, self.unit)
 
     def __rfloordiv__(self, other):
         from .units.define import units
-        from .units.unitless import Dimensionless, Percentage
-        if self.kind is Percentage:
+        from .units.unitless import dimensionless, percentage
+        if self.kind is percentage:
             return units(other // self.value * 100, self.unit)
-        elif self.kind is Dimensionless:
+        elif self.kind is dimensionless:
             return units(other // self.value, self.unit)
         else:
             return units(other // self.value, self.unit + '-1')
 
     def __mod__(self, other):
-        from .units.unitless import Dimensionless, Percentage
+        from .units.unitless import dimensionless, percentage
         from .units.define import units
         if '.units.' in str(type(other)):
-            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+            if self.kind in (dimensionless, percentage) and other.kind not in (dimensionless, percentage):
                 return other.kind(self.value % other.value, self.unit)
-            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
+            elif self.kind is percentage and other.kind in (dimensionless, percentage):
                 return self.kind((self.value % other.value) * 100, self.unit)
-            elif other.kind in (Dimensionless, Percentage):
+            elif other.kind in (dimensionless, percentage):
                 return self.kind(self.value % other.value, self.unit)
             elif self.unit == other.Unit:
                 return units(self.value % other.value, self.unit)
@@ -345,7 +345,7 @@ class Unit(object):
             for each in other:
                 result += [self % each]
             return tuple(result)
-        elif self.kind is Percentage:
+        elif self.kind is percentage:
             return self.kind(self.value % other * 100, self.unit)
         else:
             return self.kind(self.value % other, self.unit)
@@ -446,8 +446,8 @@ class Unit(object):
                 raise IndexError
         else:
             raise ValueError
-        from .units.unitless import Percentage
-        if self.kind is Percentage:
+        from .units.unitless import percentage
+        if self.kind is percentage:
             return self.kind(self.value[item] * 100, self.unit)
         else:
             return self.kind(self.value[item], self.unit)

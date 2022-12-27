@@ -14,21 +14,16 @@ from .database import unitsNetwork
 from .dictionaries import dictionary, temperatureRatioConversions
 from .searches import BFS, print_path
 from .errors import NoConversionFoundError
+from .parameters import unyts_parameters_
 import numpy as np
 from functools import reduce
 
 
-def _clean_print_conversion_path(print_conversion_path):
+def _clean_print_conversion_path(print_conversion_path) -> bool:
     if print_conversion_path is None:
-        print_conversion_path = unitsNetwork.print
-    elif type(print_conversion_path) is not bool:
-        if type(print_conversion_path) in [int, float]:
-            if print_conversion_path == 1:
-                print_conversion_path = True
-            else:
-                print_conversion_path = False
-        else:
-            print_conversion_path = True
+        print_conversion_path = unyts_parameters_.print_path_
+    else:
+        print_conversion_path = bool(print_conversion_path)
     return print_conversion_path
 
 
@@ -40,7 +35,7 @@ def convertible(from_unit, to_unit) -> bool:
         return False
 
 
-def convert_unit(value, from_unit, to_unit, print_conversion_path=False):
+def convert_unit(value, from_unit, to_unit, print_conversion_path=None):
     """
     returns the received value (integer, float, array, Series, DataFrame, etc)
     transformed from the units 'fromUnit' to the units 'toUnits.
@@ -85,7 +80,7 @@ def convertUnit_for_SimPandas(value, from_unit, to_unit, print_conversion_path=F
         return value
 
 
-def _apply_conversion(value, conversion_path, print_conversion_path=False):
+def _apply_conversion(value, conversion_path, print_conversion_path=None):
     if print_conversion_path:
         print("\n converting from '" + str(conversion_path[0]) + "' to '" + str(conversion_path[-1]) + "'\n  " +
               print_path(conversion_path))
@@ -94,7 +89,7 @@ def _apply_conversion(value, conversion_path, print_conversion_path=False):
     return value
 
 
-def _lambda_conversion(conversion_path, print_conversion_path=False):
+def _lambda_conversion(conversion_path, print_conversion_path=None):
     if print_conversion_path:
         print("\n converting from '" + str(conversion_path[0]) + "' to '" + str(conversion_path[-1]) + "'\n  " +
               print_path(conversion_path))
@@ -223,7 +218,7 @@ def _get_conversion(value, from_unit, to_unit, print_conversion_path=None, get_p
 
     # return Conversion if found in network
     if conversion_path is not None:
-        unitsNetwork.memory[(from_unit, to_unit)] = _lambda_conversion(conversion_path, print_conversion_path=False)
+        unitsNetwork.memory[(from_unit, to_unit)] = _lambda_conversion(conversion_path, print_conversion_path=print_conversion_path)
         if get_path:
             return conversion_path
         return _apply_conversion(value, conversion_path, print_conversion_path) if value is not None else \
