@@ -6,9 +6,9 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.5'
-__release__ = 20221226
-__all__ = ['converter', 'convertible', 'convert_unit']
+__version__ = '0.4.6'
+__release__ = 20221228
+__all__ = ['converter', 'convertible', 'convert']
 
 from .database import unitsNetwork
 from .dictionaries import dictionary, temperatureRatioConversions
@@ -35,7 +35,7 @@ def convertible(from_unit, to_unit) -> bool:
         return False
 
 
-def convert_unit(value, from_unit, to_unit, print_conversion_path=None):
+def convert(value, from_unit, to_unit, print_conversion_path=None):
     """
     returns the received value (integer, float, array, Series, DataFrame, etc)
     transformed from the units 'fromUnit' to the units 'toUnits.
@@ -67,7 +67,7 @@ def convert_unit(value, from_unit, to_unit, print_conversion_path=None):
         return None
 
 
-def convertUnit_for_SimPandas(value, from_unit, to_unit, print_conversion_path=False):
+def convert_for_SimPandas(value, from_unit, to_unit, print_conversion_path=False):
     print_conversion_path = _clean_print_conversion_path(print_conversion_path)
 
     try:
@@ -236,7 +236,7 @@ def converter(value, from_unit, to_unit, print_conversion_path=None):
     print_conversion_path = _clean_print_conversion_path(print_conversion_path)
 
     # cleaning inputs
-    ## strip off the parentesis, the string o
+    # strip off the parentesis, the string o
     if type(from_unit) is str and from_unit not in ('"', "'"):
         from_unit = from_unit.strip("( ')").strip('( ")').strip("'")
     else:
@@ -317,4 +317,5 @@ def converter(value, from_unit, to_unit, print_conversion_path=None):
                 return value * conversion_factor if value is not None else unitsNetwork.memory[(from_unit, to_unit)]
 
     # no Conversion found
-    raise NoConversionFoundError("from '" + str(from_unit) + "' to '" + str(to_unit) + "'")
+    if unyts_parameters_.raise_error_:
+        raise NoConversionFoundError("from '" + str(from_unit) + "' to '" + str(to_unit) + "'")

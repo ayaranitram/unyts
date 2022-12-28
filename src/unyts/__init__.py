@@ -6,11 +6,13 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.5'
-__release__ = 20221226
+__version__ = '0.4.6'
+__release__ = 20221228
 __all__ = ['units', 'convert']
 
-from .parameters import print_path, reload
+from .parameters import print_path, reload, raise_error
 from .units.define import units
-from .convert import convert_unit as convert
+from .converter import convert
 from .unit_class import Unit
+
+print("loaded unyts version", __version__)

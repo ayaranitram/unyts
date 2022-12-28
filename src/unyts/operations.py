@@ -11,7 +11,7 @@ __release__ = 20221226
 __all__ = ['unit_product', 'unit_division']
 
 from .dictionaries import dictionary
-from .convert import convertible
+from .converter import convertible
 from .helpers.is_number import is_number
 from .helpers.multisplit import multisplit
 

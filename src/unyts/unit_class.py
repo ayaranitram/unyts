@@ -12,7 +12,7 @@ __all__ = ['Unit']
 
 from .errors import WrongUnitsError, WrongValueError, NoConversionFoundError
 from .operations import unit_product, unit_division, unit_base_power
-from .convert import converter, convertible
+from .converter import converter, convertible
 
 import numpy as np
 from pandas import Series, DataFrame
