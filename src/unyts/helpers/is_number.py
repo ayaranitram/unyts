@@ -7,12 +7,12 @@ Created on Sun May 23 11:18:15 2021
 helper functions for units modules
 """
 
-__version__ = '0.4.5'
-__release__ = 20221226
+__version__ = '0.4.7'
+__release__ = 20221229
 __all__ = ['is_number']
 
 
-def is_number(string):
+def is_number(string: str) -> bool:
     """
     Checks if a string represents a number.
     Valid numbers are:
@@ -34,5 +34,5 @@ def is_number(string):
     try:
         complex(string)
         return True
-    except:
+    except ValueError:
         return False

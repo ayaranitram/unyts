@@ -6,9 +6,9 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.5'
-__release__ = 20221226
-__all__ = ['units']
+__version__ = '0.4.7'
+__release__ = 20221229
+__all__ = ['units', 'numeric', 'array_like']
 
 from ..dictionaries import dictionary
 from .custom import userUnits, otherUnits
@@ -20,25 +20,11 @@ from .unitless import dimensionless, percentage
 from .ratios import density, volumeRatio, productivityIndex, pressureGradient
 from .rates import rate, speed, velocity
 from .energy import energy, power
-
-from numpy import ndarray
-from numbers import Number
-from typing import Union
-
-array_like = [ndarray]
-try:
-    from pandas import Series, DataFrame
-
-    array_like += [Series, DataFrame]
-except ModuleNotFoundError:
-    pass
-except ImportError:
-    pass
-numeric = Union[int, float, complex, ndarray]
-array_like = tuple(array_like)
+from ..unit_class import Unit
+from ..helpers.common_classes import unit_or_str, array_like, number, numeric
 
 
-def units(value, unit=None):
+def units(value: numeric, unit: unit_or_str = None) -> Unit:
     """
     return an instance of units with the provided value and units.
 
@@ -70,7 +56,7 @@ def units(value, unit=None):
     unit = unit.strip()
     for kind in dictionary:
         if unit in dictionary[kind]:
-            if isinstance(value, Number):
+            if isinstance(value, number):
                 return eval(kind + "(" + str(value) + ",'" + unit + "')")
             elif isinstance(value, array_like):
                 u = eval(kind + "(" + str(0) + ",'" + unit + "')")
@@ -79,4 +65,4 @@ def units(value, unit=None):
             else:
                 raise TypeError("'value' parameter must be numeric.")
 
-    return UserUnits(value, unit)
+    return userUnits(value, unit)

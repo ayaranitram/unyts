@@ -5,12 +5,12 @@ Created on Wed Aug  3 21:14:44 2022
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.5'
-__release__ = 20221226
+__version__ = '0.4.7'
+__release__ = 20221229
 __all__ = ['caster', 'to_number']
 
 
-def caster(string):
+def caster(string: str):
     """
     Helper function to try to cast the string to number
 
@@ -26,7 +26,7 @@ def caster(string):
     Returns
     -------
     value : int, float or complex
-        the casted number
+        the cast number
 
     """
     try:
@@ -42,9 +42,9 @@ def caster(string):
     return value
 
 
-def to_number(string, decimal_sign='auto', thousand_separator='auto', parenthesis_means_negative=True):
+def to_number(string: str, decimal_sign='auto', thousand_separator='auto', parenthesis_means_negative=True):
     """
-    Cast a string the appropiate numeric type.
+    Cast a string the appropriate numeric type.
     Valid numbers are:
         integers
         real numbers
@@ -69,7 +69,7 @@ def to_number(string, decimal_sign='auto', thousand_separator='auto', parenthesi
 
     """
 
-    def cleaner(string):
+    def cleaner(string: str):
         """
         Helper function to clean the string before attempting to cast
 
@@ -83,7 +83,7 @@ def to_number(string, decimal_sign='auto', thousand_separator='auto', parenthesi
 
         """
 
-        def validate(string, ds, ts):
+        def validate(string: str, ds, ts):
             """
             Helper function to validate the string format
 
@@ -108,7 +108,7 @@ def to_number(string, decimal_sign='auto', thousand_separator='auto', parenthesi
 
             """
 
-            def check(string):
+            def check(string: str):
                 """
                 count the number of decimal signs and thousand separators
                 """

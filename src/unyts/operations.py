@@ -13,11 +13,11 @@ __all__ = ['unit_product', 'unit_division']
 from .dictionaries import dictionary
 from .converter import convertible
 from .helpers.is_number import is_number
-from .helpers.multisplit import multisplit
+from .helpers.multi_split import multi_split
 
 
 def unit_split(unit_string) -> str:
-    us = multisplit(unit_string)
+    us = multi_split(unit_string)
     return us
 
 

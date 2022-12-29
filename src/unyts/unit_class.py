@@ -6,29 +6,21 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20220920
+__version__ = '0.4.7'
+__release__ = 20221229
 __all__ = ['Unit']
 
 from .errors import WrongUnitsError, WrongValueError, NoConversionFoundError
 from .operations import unit_product, unit_division, unit_base_power
 from .converter import converter, convertible
-
 import numpy as np
-from pandas import Series, DataFrame
 from numbers import Number
+from numpy import ndarray
 from typing import Union
+from pandas import Series, DataFrame
 
-array_like = [np.ndarray]
-try:
-    from pandas import Series, DataFrame
-    array_like += [Series, DataFrame]
-except ModuleNotFoundError:
-    pass
-except ImportError:
-    pass
-numeric = Union[int, float, complex, np.ndarray]
-array_like = tuple(array_like)
+array_like = tuple([ndarray, Series, DataFrame])
+numeric = Union[int, float, complex, ndarray, Series, DataFrame]
 
 
 class Unit(object):
@@ -239,7 +231,7 @@ class Unit(object):
             return self.kind(self.value - other, self.unit)
 
     def __rsub__(self, other):
-        return -self + other
+        return self.__neg__() + other
 
     def __truediv__(self, other):
         from .units.unitless import dimensionless, percentage

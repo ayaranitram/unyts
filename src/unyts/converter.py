@@ -10,11 +10,12 @@ __version__ = '0.4.6'
 __release__ = 20221228
 __all__ = ['converter', 'convertible', 'convert']
 
-from .database import unitsNetwork
-from .dictionaries import dictionary, temperatureRatioConversions
-from .searches import BFS, print_path
-from .errors import NoConversionFoundError
-from .parameters import unyts_parameters_
+from unyts.database import unitsNetwork
+from unyts.dictionaries import dictionary, temperatureRatioConversions
+from unyts.searches import BFS, print_path
+from unyts.errors import NoConversionFoundError
+from unyts.parameters import unyts_parameters_
+from unyts.helpers.multi_split import multi_split
 import numpy as np
 from functools import reduce
 
@@ -25,59 +26,6 @@ def _clean_print_conversion_path(print_conversion_path) -> bool:
     else:
         print_conversion_path = bool(print_conversion_path)
     return print_conversion_path
-
-
-def convertible(from_unit, to_unit) -> bool:
-    try:
-        converter(1, from_unit, to_unit, False)
-        return True
-    except NoConversionFoundError:
-        return False
-
-
-def convert(value, from_unit, to_unit, print_conversion_path=None):
-    """
-    returns the received value (integer, float, array, Series, DataFrame, etc)
-    transformed from the units 'fromUnit' to the units 'toUnits.
-
-    Parameters
-    ----------
-    value : int, float, array, Series, DataFrame, etc
-        the value to be converted.
-    from_unit : str
-        the units of the provided value.
-    to_unit : str
-        the units to convert the value.
-    print_conversion_path : bool, optional
-        Set to True to show the path used for Conversion. The default is False.
-
-    Returns
-    -------
-    converted_value : int, float, array, Series, DataFrame ...
-        the converted value
-
-    """
-    print_conversion_path = _clean_print_conversion_path(print_conversion_path)
-
-    try:
-        conv = converter(value, from_unit, to_unit, print_conversion_path)
-        if conv is not None:
-            return conv
-    except NoConversionFoundError:
-        return None
-
-
-def convert_for_SimPandas(value, from_unit, to_unit, print_conversion_path=False):
-    print_conversion_path = _clean_print_conversion_path(print_conversion_path)
-
-    try:
-        conv = converter(value, from_unit, to_unit, print_conversion_path)
-        if conv is not None:
-            return conv
-        else:
-            return value
-    except NoConversionFoundError:
-        return value
 
 
 def _apply_conversion(value, conversion_path, print_conversion_path=None):
@@ -91,8 +39,8 @@ def _apply_conversion(value, conversion_path, print_conversion_path=None):
 
 def _lambda_conversion(conversion_path, print_conversion_path=None):
     if print_conversion_path:
-        print("\n converting from '" + str(conversion_path[0]) + "' to '" + str(conversion_path[-1]) + "'\n  " +
-              print_path(conversion_path))
+        print("converting from '" + str(conversion_path[0]) + "' to '" + str(conversion_path[-1]),
+              print_path(conversion_path), sep='\n')
     big_lambda = []
     for i in range(len(conversion_path) - 1):
         big_lambda += [unitsNetwork.conversion(conversion_path[i], conversion_path[i + 1])]
@@ -100,36 +48,57 @@ def _lambda_conversion(conversion_path, print_conversion_path=None):
 
 
 def _lambda_loop(x, lambda_list):
-    for L in lambda_list:
-        x = L(x)
+    for l in lambda_list:
+        x = l(x)
     return x
 
 
-def _split_ratio(unit):
-    unit_up, unit_down = unit.split('/')
-    return unit_up.strip(), unit_down.strip()
+def _split_ratio(unit: str) -> tuple[str]:
+    return tuple(map(str.strip, unit.split('/')))
 
 
-def _split_product(unit):
-    unit_a, unit_b = unit.split('*')
-    return unit_a.strip(), unit_b.strip()
+def _split_product(unit: str) -> tuple[str]:
+    return tuple(map(str.strip, unit.split('*')))
 
 
-def _split_unit(unit):
-    result = None
-    for c in unit:
-        if c in '*/':
-            result.append(c)
-        elif result is None:
-            result = [c]
-        elif result[-1] in '*/':
-            result.append(c)
-        else:
-            result[-1] = result[-1] + c
-    return result
+def _reduce_parentheses(unit: str) -> str:
+    if '(' not in unit and ')' not in unit:
+        return unit
+    elif unit.count('(') > unit.count(')'):
+        raise ValueError("closing parenthesis without opening parenthesis")
+    elif unit.count('(') < unit.count(')'):
+        raise ValueError("opening parenthesis without closing parenthesis")
+    for o in ['^', '**', '+', '-']:
+        if o in unit:
+            print("not implemented to remove parenthesis when ' + o + ' is in the unit string")
+            return unit
+
+    unitsplit = multi_split(unit,
+                            sep=('+', '-', '*', '/', '**', '(', ')'),
+                            remove=' ')
+    result, inv, inp, ii, pa = [], False, False, 0, 0
+    while ii < len(unitsplit):
+        if unitsplit[ii] in '*/' and inp and inv:
+            result.append('*' if unitsplit[ii] == '/' else '/')
+        elif unitsplit[ii] not in '()':
+            result.append(unitsplit[ii])
+        if unitsplit[ii] == '/' and unitsplit[ii + 1] == '(':
+            inv = not inv
+        elif unitsplit[ii] == '(':
+            inp, pa = True, pa + 1
+        elif unitsplit[ii] == ')':
+            inp, pa = False, pa - 1
+        ii += 1
+    return ''.join(result)
 
 
-def _get_pair_child(unit):
+def _split_unit(unit: str) -> tuple[str]:
+    return multi_split(unit,
+                       sep=('*', '/',),
+                       remove=None)
+
+
+def _get_pair_child(unit: str):
     # get the Unit node if the name received
     unit = unitsNetwork.get_node(unit) if type(unit) is str else unit
 
@@ -218,7 +187,8 @@ def _get_conversion(value, from_unit, to_unit, print_conversion_path=None, get_p
 
     # return Conversion if found in network
     if conversion_path is not None:
-        unitsNetwork.memory[(from_unit, to_unit)] = _lambda_conversion(conversion_path, print_conversion_path=print_conversion_path)
+        unitsNetwork.memory[(from_unit, to_unit)] = _lambda_conversion(conversion_path,
+                                                                       print_conversion_path=print_conversion_path)
         if get_path:
             return conversion_path
         return _apply_conversion(value, conversion_path, print_conversion_path) if value is not None else \
@@ -316,6 +286,61 @@ def converter(value, from_unit, to_unit, print_conversion_path=None):
                 unitsNetwork.memory[(from_unit, to_unit)] = lambda x: x * conversion_factor
                 return value * conversion_factor if value is not None else unitsNetwork.memory[(from_unit, to_unit)]
 
-    # no Conversion found
-    if unyts_parameters_.raise_error_:
+
+def convert(value, from_unit, to_unit, print_conversion_path=None):
+    """
+    returns the received value (integer, float, array, Series, DataFrame, etc)
+    transformed from the units 'from_unit' to the units 'toUnits.
+
+    Parameters
+    ----------
+    value : int, float, array, Series, DataFrame, etc
+        the value to be converted.
+    from_unit : str
+        the units of the provided value.
+    to_unit : str
+        the units to convert the value.
+    print_conversion_path : bool, optional
+        Set to True to show the path used for Conversion. The default is False.
+
+    Returns
+    -------
+    converted_value : int, float, array, Series, DataFrame ...
+        the converted value
+    """
+    print_conversion_path = _clean_print_conversion_path(print_conversion_path)
+    conv = converter(value=value,
+                     from_unit=from_unit,
+                     to_unit=to_unit,
+                     print_conversion_path=print_conversion_path)
+    if conv is None and unyts_parameters_.raise_error_:
         raise NoConversionFoundError("from '" + str(from_unit) + "' to '" + str(to_unit) + "'")
+    else:
+        return conv
+
+
+def convertible(from_unit, to_unit) -> bool:
+    try:
+        converter(1, from_unit, to_unit, False)
+        return True
+    except NoConversionFoundError:
+        return False
+
+
+def convert_for_SimPandas(value, from_unit, to_unit, print_conversion_path=False):
+    print_conversion_path = _clean_print_conversion_path(print_conversion_path)
+
+    try:
+        conv = converter(value, from_unit, to_unit, print_conversion_path)
+        if conv is not None:
+            return conv
+        else:
+            return value
+    except NoConversionFoundError:
+        return value
+
+
+# for debugging
+if __name__ == '__main__':
+    converter(1, 'm', 'ft')
+    converter(60, 'mi/h', 'km/day')

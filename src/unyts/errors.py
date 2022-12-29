@@ -6,21 +6,21 @@ Created on Sat Oct 24 12:10:14 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.5'
-__release__ = 20221226
+__version__ = '0.4.7'
+__release__ = 20221229
 __all__ = ['WrongUnitsError', 'WrongValueError', 'NoConversionFoundError']
 
 
 class WrongUnitsError(Exception):
-    def __init__(self, message='Unit not listed in library, Unit must be a string.'):
+    def __init__(self, message='unit not listed in library. Unit must be a valid string, Unit instance or Unit class.'):
         self.message = 'ERROR: Wrong Units, ' + message
 
 
 class WrongValueError(Exception):
-    def __init__(self, message='value Unit must be a float or integer.'):
+    def __init__(self, message='value must be a float, integer, complex or numeric array.'):
         self.message = 'ERROR: Wrong Value, ' + message
 
 
 class NoConversionFoundError(Exception):
     def __init__(self, message='for the provided units.'):
-        self.message = 'ERROR: Conversion path not found, ' + message
+        self.message = 'ERROR: Conversion path not found ' + message

@@ -7,11 +7,11 @@ Created on Sat Oct 24 17:52:34 2020
 """
 
 __version__ = '0.4.5'
-__release__ = 20221226
+__release__ = 20221229
 __all__ = ['BFS', 'print_path']
 
 
-def BFS(graph, start, end, to_print=False) -> None:
+def BFS(graph, start, end, to_print=False) -> list:
     """Assumes graph is a Digraph; start and end are nodes
         Returns a shortest path from start to end in graph"""
     init_path = [start]
@@ -48,5 +48,5 @@ def print_path(path) -> str:
             else:
                 result = result + str(path[i])
                 if i != len(path) - 1:
-                    result = result + ' ' + chr(11157) + ' '
+                    result = result + ' > '
     return result

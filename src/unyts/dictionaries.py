@@ -104,22 +104,22 @@ def _load_dictionary() -> (dict, dict):
     # volume
     dictionary['volume'] = []
     dictionary['volume_SI_UPPER_REVERSE'] = (
-        'm3', 'sm3', 'stm3', 'rm3',)  # 'l' # litre is volumen but the Conversion of SI prefixes is linear
+        'm3', 'sm3', 'stm3', 'rm3',)  # 'l' # litre is volume but the Conversion of SI prefixes is linear
     dictionary['volume_UK_NAMES_UPPER_REVERSE_PLURALwS'] = {
-        'fuild ounce': ('fl oz', 'oz', 'ounce', 'ozUS', 'ounce'),
+        'fluid ounce': ('fl oz', 'oz', 'ounce', 'ozUS', 'ounce'),
         'gill': ('gi', 'gillUS', 'giUS'),
         'pint': ('pt', 'pintUS', 'ptUS'),
         'quart': ('qt', 'quartUS', 'qtUS'),
         'gallonUS': ('gal', 'galUS', 'USgal', 'USgallon', 'gallon'),
         'gallonUK': ('imperial gallon', 'galUK', 'UKgal', 'UKgallon'),  # 'gal', 'gallon'
-        'fuild ounce UK': ('fl oz UK', 'ozUK', 'ounceUK'),
+        'fluid ounce UK': ('fl oz UK', 'ozUK', 'ounceUK'),
         'gillUK': ('giUK',),
         'pintUK': ('ptUK',),
         'quartUK': ('qtUK',),
     }
     dictionary['volume_NAMES_UPPER_REVERSE_PLURALwS_SPACES'] = {
         'litre': ('l', 'liter', 'litro'),
-        'mililitre': ('ml', 'mililiter', 'cubic centimeter'),
+        'millilitre': ('ml', 'milliliter', 'cubic centimeter'),
         'centilitre': ('cl', 'centiliter'),
         'decilitre': ('dl', 'deciliter'),
         'cubic meter': ('CM', 'm3'),
