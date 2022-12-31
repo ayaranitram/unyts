@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.7'
-__release__ = 20221229
+__version__ = '0.4.8'
+__release__ = 20221231
 __all__ = ['Unit']
 
 from .errors import WrongUnitsError, WrongValueError, NoConversionFoundError
@@ -17,10 +17,15 @@ import numpy as np
 from numbers import Number
 from numpy import ndarray
 from typing import Union
-from pandas import Series, DataFrame
 
-array_like = tuple([ndarray, Series, DataFrame])
-numeric = Union[int, float, complex, ndarray, Series, DataFrame]
+try:
+    from pandas import Series, DataFrame
+    array_like = tuple([ndarray, Series, DataFrame])
+    numeric = Union[int, float, complex, ndarray, Series, DataFrame]
+except ModuleNotFoundError:
+    array_like = tuple([ndarray])
+    numeric = Union[int, float, complex, ndarray]
+number = Union[int, float, complex]
 
 
 class Unit(object):
@@ -55,7 +60,7 @@ class Unit(object):
         if type(new_unit) is not str:
             try:
                 new_unit = new_unit.unit
-            except:
+            except AttributeError:
                 raise WrongUnitsError("'" + str(new_unit) + "' for '" + str(self.name) + "'")
         return self.kind(convert(self.value, self.unit, new_unit), new_unit)
 
@@ -429,7 +434,7 @@ class Unit(object):
     def __len__(self):
         try:
             return len(self.value)
-        except:
+        except TypeError:
             return 1
 
     def __getitem__(self, item):
@@ -460,7 +465,7 @@ class Unit(object):
         if type(value) in (list, tuple):
             try:
                 return np.array(value)
-            except:
+            except TypeError:
                 raise WrongValueError(str(value))
         elif isinstance(value, Number):
             return value
@@ -473,7 +478,7 @@ class Unit(object):
         if type(units) is not str:
             try:
                 units = units.unit
-            except:
+            except AttributeError:
                 raise WrongUnitsError("'" + str(units) + "' for '" + str(self.name) + "'")
         if units in self.kind.classUnits:
             return units

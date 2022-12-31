@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.7'
-__release__ = 20221229
+__version__ = '0.4.8'
+__release__ = 20221231
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error']
 
 import os.path
@@ -28,11 +28,12 @@ class UnytsParameters(object):
     def __init__(self, reload=None) -> None:
         self.print_path_ = False
         self.cache_ = True
-        self.load_params()
-        self.reload_ = self.reload_ if reload is None else bool(reload)
         self.raise_error_ = True
         self.verbose_ = False
         self.reduce_parentheses_ = True
+        self.show_version_ = True
+        self.load_params()
+        self.reload_ = self.reload_ if reload is None else bool(reload)
 
     def load_params(self) -> None:
         if isfile(ini_path):
@@ -44,7 +45,8 @@ class UnytsParameters(object):
                       'reload_': True,
                       'raise_error_': True,
                       'verbose_': False,
-                      'reduce_parentheses_': True}
+                      'reduce_parentheses_': True,
+                      'show_version_': False}
             with open(ini_path, 'w') as f:
                 dump(params, f)
         self.print_path_ = params['print_path_']
@@ -53,6 +55,7 @@ class UnytsParameters(object):
         self.raise_error_ = params['raise_error_']
         self.verbose_ = params['verbose_']
         self.reduce_parentheses_ = params['reduce_parentheses_']
+        self.show_version_ = params['show_version_']
 
     def save_params(self) -> None:
         params = {'print_path_': self.print_path_,
@@ -60,7 +63,8 @@ class UnytsParameters(object):
                   'reload_': self.reload_,
                   'raise_error_': self.raise_error_,
                   'verbose_': self.verbose_,
-                  'reduce_parentheses_': True}
+                  'reduce_parentheses_': self.verbose_,
+                  'show_version_': self.show_version_}
         with open(ini_path, 'w') as f:
             dump(params, f)
 
