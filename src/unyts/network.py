@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.5'
-__release__ = 20221228
+__version__ = '0.4.7'
+__release__ = 20221230
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -59,10 +59,11 @@ class UDigraph(object):
             return node in self.edges
 
     def get_node(self, name):
-        for n in self.edges:
-            if n.get_name() == name:
-                return n
-        raise NameError(name)
+        result = [n for n in self.edges if n.get_name() == name]
+        if len(result) == 0:
+            raise NameError(name)
+        else:
+            return result[0]
 
     def list_nodes(self):
         return list(set([N.get_name() for N in self.edge.keys()]))
@@ -148,7 +149,7 @@ class Conversion(object):
 
     def get_convert(self):
         if self.rev and self.conv is not None:
-            return lambda X: X / self.conv(1)
+            return lambda x: x / self.conv(1)
         else:
             return self.conv
 

@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:38:58 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.5'
-__release__ = 20221226
+__version__ = '0.4.7'
+__release__ = 20221229
 __all__ = ['unit_product', 'unit_division']
 
 from .dictionaries import dictionary
@@ -16,12 +16,12 @@ from .helpers.is_number import is_number
 from .helpers.multi_split import multi_split
 
 
-def unit_split(unit_string) -> str:
+def unit_split(unit_string: str) -> str:
     us = multi_split(unit_string)
     return us
 
 
-def unit_base_power(unit_string) -> (str, str):
+def unit_base_power(unit_string: str) -> tuple[str, int]:
     u_bas, u_pow = '', ''
     oth = ''
     inv = False
@@ -35,7 +35,7 @@ def unit_base_power(unit_string) -> (str, str):
             oth = ''
         elif c in ['-', '+', '.']:
             oth += c
-        else :
+        else:
             u_bas += oth + c
             oth = ''
     u_pow = 1 if u_pow == '' else float(u_pow) if '.' in u_pow else int(u_pow)
@@ -44,11 +44,11 @@ def unit_base_power(unit_string) -> (str, str):
     return u_bas, u_pow
 
 
-def unit_base(unit_string) -> str:
+def unit_base(unit_string: str) -> str:
     return unit_base_power(unit_string)[0]
 
 
-def unit_product(unit_string1, unit_string2) -> str:
+def unit_product(unit_string1: str, unit_string2: str) -> str:
     if unit_string1 is None:
         unit_string1 = 'Dimensionless'
     if unit_string2 is None:
@@ -105,7 +105,7 @@ def unit_product(unit_string1, unit_string2) -> str:
     return result
 
 
-def unit_division(unit_string1, unit_string2) -> str:
+def unit_division(unit_string1: str, unit_string2: str) -> str:
     if unit_string1 is None:
         unit_string1 = 'dimensionless'
     if unit_string2 is None:
@@ -137,19 +137,19 @@ def unit_division(unit_string1, unit_string2) -> str:
     u2bas, u2pow = unit_base_power(unit_string2)
 
     if convertible(u1bas, u2bas):
-        Upow = u1pow - u2pow
-        if Upow == -1:
+        u_pow = u1pow - u2pow
+        if u_pow == -1:
             result = u1bas + '-1'
-        elif Upow == 1:
+        elif u_pow == 1:
             result = u1bas
-        elif Upow == 0:
+        elif u_pow == 0:
             result = u1bas + '/' + u1bas
         else:
             for c in ['+','-','^']:  # '*','/'
                 if c in u1bas:
                     u1bas = '('+u1bas+')'
                     break
-            result = u1bas + str(Upow)
+            result = u1bas + str(u_pow)
 
     elif ('+' not in unit_string1 and '-' not in unit_string1 and '^' not in unit_string1) and (
             '+' not in unit_string2 and '-' not in unit_string2 and '^' not in unit_string2) and (
@@ -175,14 +175,14 @@ def unit_division(unit_string1, unit_string2) -> str:
     return result
 
 
-def unit_power(unit_string, power) -> str:
+def unit_power(unit_string: str, power: int or str) -> str:
     if unit_string is None:
-        unit_string = 'Dimensionless'
+        unit_string = 'dimensionless'
     if power is None:
         power = 1
 
     if type(unit_string) is str and len(unit_string.strip(' ()')) == 0:
-        unit_string = 'Dimensionless'
+        unit_string = 'dimensionless'
     if type(power) is str and len(power.strip(' ()')) == 0:
         power = 1
 
@@ -191,7 +191,7 @@ def unit_power(unit_string, power) -> str:
     if type(power) in (int, float):
         u_pow = u1pow * power
         if u_pow == 0:
-            return 'Dimensionless'
+            return 'dimensionless'
         elif u_pow == 1:
             return u1bas
         else:
@@ -200,7 +200,7 @@ def unit_power(unit_string, power) -> str:
         u2bas, u2pow = unit_base_power(power)
         u_pow = u1pow * u2pow
         if u_pow == 0:
-            return 'Dimensionless'
+            return 'dimensionless'
         elif u_pow == 1:
             return u1bas + '^' + u2bas
         else:

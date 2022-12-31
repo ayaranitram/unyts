@@ -33,12 +33,12 @@ def test_unit_division():
 
 def test_unit_power():
     assert unit_power('m', -1) == 'm-1'
-    assert unit_power('m', 0) == 'Dimensionless'
+    assert unit_power('m', 0) == 'dimensionless'
     assert unit_power('m', 1) == 'm'
     assert unit_power('m', 2) == 'm2'
     assert unit_power('m', 3) == 'm3'
     assert unit_power('ft2', -1) == 'ft-2'
-    assert unit_power('ft2', 0) == 'Dimensionless'
+    assert unit_power('ft2', 0) == 'dimensionless'
     assert unit_power('ft2', 1) == 'ft2'
     assert unit_power('ft2', 2) == 'ft4'
     assert unit_power('ft2', 3) == 'ft6'

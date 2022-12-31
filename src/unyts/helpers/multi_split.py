@@ -11,13 +11,11 @@ __version__ = '0.4.7'
 __release__ = 20221229
 __all__ = ['multi_split']
 
-from typing import Any
-
 
 def multi_split(string: str,
                 sep: str or tuple or list = ('*', '/'),
                 remove: str or tuple or list = (' ',)
-                ) -> tuple[Any]:
+                ) -> tuple[str]:
     """
     receives a string and returns a list with string split by all the separators in sep.
     the default separator is the blank space ' '.
@@ -67,11 +65,3 @@ def multi_split(string: str,
     # clean the output
     new_list = [part for part in string_list if part not in (remove + [''])]
     return tuple(new_list)
-
-
-# for debugging
-if __name__ == '__main__':
-    multi_split('m2')
-    multi_split('km/h')
-    multi_split('mD*ft')
-    multi_split('stb/day/psia')

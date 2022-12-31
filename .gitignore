@@ -2,6 +2,13 @@ __pycache__
 *.bak
 *.pypirc
 .ipynb_checkpoints
+.pytest_cache
 dist
+dist/*.whl
+dist/*.tar.gz
+build
 src/unyts.egg-info
 .DS_Store
+src/unyts/units/unitsNetwork.cache
+src/unyts/units/unitsDictionary.cache
+src/unyts/units/temperatureRatioConversions.cache

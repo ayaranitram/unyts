@@ -7,7 +7,7 @@ Created on Sat Oct 24 12:36:48 2020
 """
 
 __version__ = '0.4.7'
-__release__ = 20221229
+__release__ = 20221230
 __all__ = ['unitsNetwork']
 
 from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
@@ -357,10 +357,16 @@ def _load_network():
         Conversion(network.get_node('absolute bar'), network.get_node('absolute psi'), lambda p: p * 14.50377377322))
     network.add_edge(
         Conversion(network.get_node('bar gauge'), network.get_node('psi gauge'), lambda p: p * 14.50377377322))
+    network.add_edge(Conversion(network.get_node('bar'), network.get_node('psi'), lambda p: p * 14.50377377322))
+    network.add_edge(Conversion(network.get_node('psi'), network.get_node('bar'), lambda p: p / 14.50377377322))
     network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('Pascal'), lambda p: p * 100000))
     # network.addEdge(Conversion(network.getNode('atmosphere'), network.getNode('absolute bar'), lambda p: p*1.01325))
     network.add_edge(Conversion(network.get_node('atmosphere'), network.get_node('Pascal'), lambda p: p * 101325))
     network.add_edge(Conversion(network.get_node('atmosphere'), network.get_node('Torr'), lambda p: p * 760))
+    network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('bar'), lambda p: p))
+    network.add_edge(Conversion(network.get_node('absolute psi'), network.get_node('psi'), lambda p: p))
+    network.add_edge(Conversion(network.get_node('bar gauge'), network.get_node('bar'), lambda p: p))
+    network.add_edge(Conversion(network.get_node('psi gauge'), network.get_node('psi'), lambda p: p))
 
     # mass Conversion
     network.add_edge(Conversion(network.get_node('grain'), network.get_node('milligrams'), lambda w: w * 64.7989))
@@ -396,7 +402,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('Kilojoule'), network.get_node('Joule'), lambda e: e * 1000))
     network.add_edge(Conversion(network.get_node('Kilojoule'), network.get_node('kilowatt hour'), lambda e: e / 3600))
     network.add_edge(
-        Conversion(network.get_node('Kilojoule'), network.get_node('British thermal Unit'), lambda e: e / 1.055))
+        Conversion(network.get_node('Kilojoule'), network.get_node('British thermal unit'), lambda e: e / 1.055))
 
     # power Conversion
     network.add_edge(Conversion(network.get_node('Horsepower'), network.get_node('Watt'), lambda e: e * 745.699872))

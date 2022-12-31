@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.5'
-__release__ = 20221226
+__version__ = '0.4.7'
+__release__ = 20221230
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity']
 
 from json import load as jload
@@ -43,7 +43,7 @@ SI = {
     'y': (lambda X: X * 1E-24, lambda X: X * 1E-48, lambda X: X * 1E-72),  # yocto
 }
 
-SI_order = (('length', 'lressure', 'weight', 'mass', 'time',), ('area',), ('rate', 'volume',),)
+SI_order = (('length', 'pressure', 'weight', 'mass', 'time',), ('area',), ('rate', 'volume',),)
 
 DATA = {
     'Y': (lambda X: X * 1E+24, lambda X: X * 2 ** 80),  # yotta
@@ -136,7 +136,7 @@ def _load_dictionary() -> (dict, dict):
         'standard barrel': ('stb', 'stbo', 'stbw', 'stbl', 'oil barrel'),
     }
     dictionary['volume_UPPER_REVERSE'] = ('kstm3', 'Mstm3')
-    dictionary['volume_PLURALwS'] = ('liter', 'mililiter', 'centiliter', 'deciliter', 'barrel', 'oil barrel', 'gals',
+    dictionary['volume_PLURALwS'] = ('liter', 'milliliter', 'centiliter', 'deciliter', 'barrel', 'oil barrel', 'gals',
                                      'UKgallons', 'USgallons', 'oil gallon')
     dictionary['volume_OGF'] = ('scf', 'cf', 'ft3', 'stb', 'bbl', 'rb', 'stbo', 'stbw', 'stbl')
     # dictionary['volume_oilgas_NAMES'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl')
@@ -200,7 +200,7 @@ def _load_dictionary() -> (dict, dict):
         'psi gauge': ('psi', 'pound/square inch', 'psig', 'gauge psi'),
         'bar gauge': ('bar', 'barg', 'gauge bar', 'bars'),
     }
-    dictionary['pressure_SI'] = ('Pa', 'bara', 'bar')
+    dictionary['pressure_SI'] = ('Pa', 'bara', 'barsa', 'bar', 'barg')
 
     dictionary['pressureGradient'] = []
     dictionary['pressureGradient'] = ('psi/ft', 'psia/ft', 'psig/ft', 'psi/m', 'psia/m', 'psig/m', 'bar/m', 'bars/m',
@@ -320,7 +320,7 @@ def _load_dictionary() -> (dict, dict):
         'Joule': ('J', 'Watt second', 'N*m', 'kg*m2/s2', 'Joules'),
         'Kilojoule': ('kJ',),
         'kilowatt hour': ('kWh', 'kW*h', 'kilovatio hora'),
-        'British thermal Unit': ('BTU',),
+        'British thermal unit': ('BTU', 'british thermal unit'),
         'Watt second': ('Watt*second', 'W*s', 'Ws'),
         'Watt hour': ('Wh', 'W*h',),
         'gram calorie': ('cal', 'calorie', 'Calorie'),
@@ -354,10 +354,10 @@ def _load_dictionary() -> (dict, dict):
 
     # Dimensionless
     dictionary['dimensionless'] = []
-    dictionary['dimensionless_fractions_UPPER_NAMES'] = {'fraction': ('ratio', 'Dimensionless', 'unitless', 'None', '')}
+    dictionary['dimensionless_fractions_UPPER_NAMES'] = {'fraction': ('ratio', 'dimensionless', 'unitless', 'None', '')}
 
     dictionary['percentage'] = []
-    dictionary['percentage_NAMES_REVERSE'] = {'percentage': ('%', 'perc'), }
+    dictionary['percentage_NAMES_REVERSE'] = {'percentage': ('%', 'perc', 'percent', '/100'), }
 
     # dates
     dictionary['date'] = []

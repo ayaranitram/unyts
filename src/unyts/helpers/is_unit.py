@@ -12,14 +12,16 @@ __all__ = ['is_unit']
 from ..dictionaries import dictionary
 
 
-def is_unit(unit) -> bool:
+def is_unit(unit: str) -> bool:
     if type(unit) is str:
         unit = unit.strip()
+    else:
+        raise TypeError("unit must be a string.")
 
     for each in list(dictionary.keys()):
         if '_' not in each:
-            isU = unit in list(dictionary[each])
-            if isU:
+            is_u = unit in list(dictionary[each])
+            if is_u:
                 return True
 
     if '/' in unit or '*' in unit:
@@ -28,11 +30,12 @@ def is_unit(unit) -> bool:
             unit_split += each.split('*')
         ret = [False] * len(unit_split)
         for each in list(dictionary.keys()):
-            if '_' not in each :
-                for subU in range(len(unit_split)):
-                    if unit_split[subU] in list(dictionary[each]):
-                        ret[subU] = True
+            if '_' not in each:
+                for sub_u in range(len(unit_split)):
+                    if unit_split[sub_u] in list(dictionary[each]):
+                        ret[sub_u] = True
         for each in ret:
             if not each:
                 return False
-    return True
+        return True
+    return False

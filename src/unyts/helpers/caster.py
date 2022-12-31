@@ -10,7 +10,10 @@ __release__ = 20221229
 __all__ = ['caster', 'to_number']
 
 
-def caster(string: str):
+from .common_classes import number
+
+
+def caster(string: str) -> number:
     """
     Helper function to try to cast the string to number
 
@@ -42,7 +45,7 @@ def caster(string: str):
     return value
 
 
-def to_number(string: str, decimal_sign='auto', thousand_separator='auto', parenthesis_means_negative=True):
+def to_number(string: str, decimal_sign='auto', thousand_separator='auto', parenthesis_means_negative=True) -> number:
     """
     Cast a string the appropriate numeric type.
     Valid numbers are:

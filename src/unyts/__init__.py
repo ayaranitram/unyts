@@ -7,7 +7,7 @@ Created on Sat Oct 24 18:24:20 2020
 """
 
 __version__ = '0.4.7'
-__release__ = 20221229
+__release__ = 20221230
 __all__ = ['units', 'convert']
 
 from .parameters import print_path, reload, raise_error
