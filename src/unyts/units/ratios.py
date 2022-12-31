@@ -19,7 +19,7 @@ class Density(Unit):
     classUnits = dictionary['Density']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'Density'
+        self.name = 'density'
         self.kind = Density
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -29,7 +29,7 @@ class VolumeRatio(Unit):
     classUnits = dictionary['VolumeRatio']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'VolumeRatio'
+        self.name = 'volumeRatio'
         self.kid = VolumeRatio
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -39,7 +39,7 @@ class ProductivityIndex(Unit):
     classUnits = dictionary['ProductivityIndex']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'ProductivityIndex'
+        self.name = 'productivityIndex'
         self.kind = ProductivityIndex
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -49,7 +49,7 @@ class PressureGradient(Unit):
     classUnits = dictionary['PressureGradient']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'PressureGradient'
+        self.name = 'pressureGradient'
         self.kind = PressureGradient
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

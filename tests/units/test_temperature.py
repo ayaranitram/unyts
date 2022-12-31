@@ -9,14 +9,14 @@ from unyts.units.temperature import Temperature, TemperatureGradient
 
 t = Temperature(35, 'C')
 assert type(t) is Temperature
-assert t.name == 'Temperature'
+assert t.name == 'temperature'
 assert t.kind is Temperature
 assert t.value == 35
 assert t.unit == 'C'
 
 t = TemperatureGradient(0.01, 'F/ft')
 assert type(t) is TemperatureGradient
-assert t.name == 'TemperatureGradient'
+assert t.name == 'temperatureGradient'
 assert t.kind is TemperatureGradient
 assert t.value == 0.01
 assert t.unit == 'F/ft'

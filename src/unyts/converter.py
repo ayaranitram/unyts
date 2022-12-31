@@ -6,7 +6,7 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.9'
+__version__ = '0.5.0'
 __release__ = 20221231
 __all__ = ['convert', 'convertible']
 
@@ -125,7 +125,7 @@ def _get_conversion(value, from_unit, to_unit):
             return value, [unitsNetwork.get_node(from_unit) if unitsNetwork.has_node(from_unit) else from_unit]
 
     # no conversion required if 'from' and 'to' units are dates
-    if from_unit in dictionary['date'] and to_unit in dictionary['date']:
+    if from_unit in dictionary['Date'] and to_unit in dictionary['Date']:
         if value is None:
             return lambda x: x, [unitsNetwork.get_node(from_unit) if unitsNetwork.has_node(from_unit) else from_unit,
                                  unitsNetwork.get_node(to_unit) if unitsNetwork.has_node(to_unit) else to_unit]
@@ -137,14 +137,14 @@ def _get_conversion(value, from_unit, to_unit):
     if from_unit is None or to_unit is None:
         return (lambda x: x, []) if value is None else (value, [])
 
-    # from dimensionless to percentage or viceversa
-    if (from_unit.lower() in dictionary['dimensionless']) and to_unit.lower() in dictionary['percentage']:
+    # from Dimensionless to Percentage or viceversa
+    if (from_unit.lower() in dictionary['Dimensionless']) and to_unit.lower() in dictionary['Percentage']:
         return (lambda x: x * 100, ['*', 100]) if value is None else (value * 100, ['*', 100])
-    if from_unit.lower() in dictionary['percentage'] and to_unit.lower() in dictionary['dimensionless']:
+    if from_unit.lower() in dictionary['Percentage'] and to_unit.lower() in dictionary['Dimensionless']:
         return (lambda x: x / 100, ['/', 100]) if value is None else (value / 100, ['/', 100])
 
-    # from dimensionless to some units (not ratios), to allow assign units to dimensionless numbers
-    if from_unit.lower() in dictionary['dimensionless'] and '/' not in to_unit:
+    # from Dimensionless to some units (not ratios), to allow assign units to Dimensionless numbers
+    if from_unit.lower() in dictionary['Dimensionless'] and '/' not in to_unit:
         return (lambda x: x, []) if value is None else (value, [])
 
     # special case for Temperature ratios
@@ -165,13 +165,13 @@ def _get_conversion(value, from_unit, to_unit):
         else:
             return value * num / den, ['*', num, '/'] + den_path
 
-    # from dimensionless to ratio of same units
-    if from_unit.lower() in dictionary['dimensionless'] and '/' in to_unit and len(to_unit.split('/')) == 2 and \
+    # from Dimensionless to ratio of same units
+    if from_unit.lower() in dictionary['Dimensionless'] and '/' in to_unit and len(to_unit.split('/')) == 2 and \
             to_unit.lower().split('/')[0].strip(' ()') == to_unit.lower().split('/')[1].strip(' ()'):
         return (lambda x: x, []) if value is None else (value, [])
 
-    # from ratio of same units to dimensionless
-    if to_unit.lower() in dictionary['dimensionless'] and '/' in from_unit and len(from_unit.split('/')) == 2 and \
+    # from ratio of same units to Dimensionless
+    if to_unit.lower() in dictionary['Dimensionless'] and '/' in from_unit and len(from_unit.split('/')) == 2 and \
             from_unit.lower().split('/')[0].strip(' ()') == from_unit.lower().split('/')[1].strip(' ()'):
         return (lambda x: x, []) if value is None else (value, [])
 
@@ -202,7 +202,7 @@ def _get_conversion(value, from_unit, to_unit):
     if conversion_path is not None:
         unitsNetwork.memory[(from_unit, to_unit)] = (_lambda_conversion(conversion_path), conversion_path)
         if value is None:
-            return unitsNetwork.memory[(from_unit, to_unit)][0], conversion_path
+            return unitsNetwork.memory[(from_unit, to_unit)]
         else:
             return _apply_conversion(value, conversion_path), conversion_path
     else:
@@ -263,7 +263,7 @@ def _converter(value, from_unit, to_unit):
         conversion_path = [node for path in list_conversion_path for node in path]
         unitsNetwork.memory[(from_unit, to_unit)] = lambda x: x * conversion_factor, conversion_path
         if value is None:
-            return unitsNetwork.memory[(from_unit, to_unit)], conversion_path
+            return unitsNetwork.memory[(from_unit, to_unit)]
         else:
             return value * conversion_factor, conversion_path
 
@@ -271,47 +271,31 @@ def _converter(value, from_unit, to_unit):
     if ('/' in to_unit or '*' in to_unit) and ('/' not in from_unit and '*' not in from_unit):
         from_unit_child = _get_pair_child(from_unit)
         if from_unit_child is not None:
-            base_conversion, base_conversion_path = _get_conversion(1, from_unit, from_unit_child)
-            sep = '/' if '/' in from_unit_child else '*'
-            from_num, from_den = from_unit_child.split(sep)
-            sep = '/' if '/' in to_unit else '*'
-            if len(to_unit.split(sep)) == 2:
-                to_num, to_den = to_unit.split(sep)
-            else:
-                raise NotImplementedError("Conversion from single to triple or more not implemented.")
-            numerator, numerator_path = _get_conversion(1, from_num, to_num)
-            denominator, denominator_path = _get_conversion(1, from_den, to_den)
-            if numerator is not None and denominator is not None:
-                conversion_factor = base_conversion * numerator / denominator
-                conversion_path = base_conversion_path + ['*'] + [1] + numerator_path + ['/'] + [1] + denominator_path
-                unitsNetwork.memory[(from_unit, to_unit)] = lambda x: x * conversion_factor, conversion_path
+            base_conversion, base_conversion_path = _get_conversion(None, from_unit, from_unit_child)
+            pair_conversion, pair_conversion_path = _converter(None, from_unit_child, to_unit)
+            if pair_conversion is not None and base_conversion is not None:
+                conversion_path = base_conversion_path + pair_conversion_path
+                conversion = lambda x: pair_conversion(base_conversion(x))
+                unitsNetwork.memory[(from_unit, to_unit)] = conversion, conversion_path
                 if value is None:
-                    return unitsNetwork.memory[(from_unit, to_unit)], conversion_path
+                    return unitsNetwork.memory[(from_unit, to_unit)]
                 else:
-                    return value * conversion_factor, conversion_path
+                    return conversion(value), conversion_path
 
     # look for pair to one conversion path
     elif ('/' in from_unit or '*' in from_unit) and ('/' not in to_unit or '*' not in to_unit):
         to_unit_child = _get_pair_child(to_unit)
         if to_unit_child is not None:
-            base_conversion, base_conversion_path = _get_conversion(1, to_unit, to_unit_child)
-            sep = '/' if '/' in to_unit_child else '*'
-            to_num, to_den = to_unit_child.split(sep)
-            sep = '/' if '/' in from_unit else '*'
-            if len(from_unit.split(sep)) == 2:
-                from_num, from_den = from_unit.split(sep)
-            else:
-                raise NotImplementedError("Conversion from triple or more to sigle not implemented.")
-            numerator, numerator_path = _get_conversion(1, from_num, to_num)
-            denominator, denominator_path = _get_conversion(1, from_den, to_den)
-            if numerator is not None and denominator is not None:
-                conversion_factor = base_conversion * numerator / denominator
-                conversion_path = base_conversion_path + ['*'] + [1] + numerator_path + ['/'] + [1] + denominator_path
-                unitsNetwork.memory[(from_unit, to_unit)] = lambda x: x * conversion_factor, conversion_path
+            final_conversion, final_conversion_path = _get_conversion(None, to_unit_child, to_unit)
+            pair_conversion, pair_conversion_path = _converter(None, from_unit, to_unit_child)
+            if pair_conversion is not None and final_conversion is not None:
+                conversion_path = pair_conversion_path + final_conversion_path
+                conversion = lambda x: final_conversion(pair_conversion(x))
+                unitsNetwork.memory[(from_unit, to_unit)] = conversion, conversion_path
                 if value is None:
-                    return unitsNetwork.memory[(from_unit, to_unit)], conversion_path
+                    return unitsNetwork.memory[(from_unit, to_unit)]
                 else:
-                    return value * conversion_factor, conversion_path
+                    return conversion(value), conversion_path
 
     return None, None
 
@@ -364,7 +348,7 @@ def convert(value: numeric, from_unit: str, to_unit: str, print_conversion_path:
     # cleaning inputs
     if hasattr(value, '__iter__') and type(value) is not np.array:
         value = np.array(value)
-    if not isinstance(value, numeric):
+    if value is not None and not isinstance(value, numeric):
         raise ValueError("value must be numeric.")
 
     print_conversion_path = _clean_print_conversion_path(print_conversion_path)

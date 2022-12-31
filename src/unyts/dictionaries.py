@@ -43,7 +43,7 @@ SI = {
     'y': (lambda X: X * 1E-24, lambda X: X * 1E-48, lambda X: X * 1E-72),  # yocto
 }
 
-SI_order = (('Length', 'Pressure', 'Weight', 'mass', 'Time',), ('Area',), ('rate', 'Volume',),)
+SI_order = (('Length', 'Pressure', 'Weight', 'mass', 'Time',), ('Area',), ('Rate', 'Volume',),)
 
 DATA = {
     'Y': (lambda X: X * 1E+24, lambda X: X * 2 ** 80),  # yotta
@@ -65,7 +65,7 @@ OGF = {'M': (None, None, lambda X: X * 1E+03),
        'B': (None, None, lambda X: X * 1E+09),
        'T': (None, None, lambda X: X * 1E+12),
        }
-OGF_order = (tuple(), tuple, ('Volume', 'rate',))
+OGF_order = (tuple(), tuple, ('Volume', 'Rate',))
 
 
 def _load_dictionary() -> (dict, dict):
@@ -234,7 +234,7 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Weight_SI'] = ('g', 'g-mol')
 
     # mass
-    dictionary['mass'] = ['kilogram mass']
+    dictionary['Mass'] = ['kilogram mass']
 
     # Density
     dictionary['Density'] = []
@@ -264,9 +264,9 @@ def _load_dictionary() -> (dict, dict):
         '1/bar': ('1/bara', '1/barg')
     }
 
-    # rate
-    dictionary['rate'] = []
-    dictionary['rate_NAMES_UPPER_SPACES_REVERSE'] = {
+    # Rate
+    dictionary['Rate'] = []
+    dictionary['Rate_NAMES_UPPER_SPACES_REVERSE'] = {
         'standard barrel per day': ('stb/day',),
         'standard cubic foot per day': ('scf/day', 'cf/day', 'scfd'),
         'standard cubic meter per day': ('sm3/day',),
@@ -276,7 +276,7 @@ def _load_dictionary() -> (dict, dict):
         'reservoir barrel per day': ('rb/day',),
         'reservoir cubic meter per day': ('rm3/day',),
     }
-    dictionary['rate_NAMES_UPPER_SPACES_REVERSE'] = {
+    dictionary['Rate_NAMES_UPPER_SPACES_REVERSE'] = {
         'stb/day': ('stbd',),
         'scf/day': ('scfd', 'cf/day',),
         'sm3/day': ('sm3d', 'stm3d', 'stm3/day'),
@@ -294,20 +294,20 @@ def _load_dictionary() -> (dict, dict):
     dictionary['dataBIT_DATA_REVERSE'] = ('b',)
 
     # viscosity
-    dictionary['viscosity'] = []
-    dictionary['viscosity_UPPER_NAMES_REVERSE'] = {
+    dictionary['Viscosity'] = []
+    dictionary['Viscosity_UPPER_NAMES_REVERSE'] = {
         'centipoise': ('cP',),
         'Poise': ('dyne*s/cm2', 'g/cm/s'),
         'Pa*s': ('N*s/m2', 'kg/m/s')
     }
 
     # permeability
-    dictionary['permeability'] = []
-    dictionary['permeability_UPPER_REVERSE'] = ('mD', 'Darcy',)
+    dictionary['Permeability'] = []
+    dictionary['Permeability_UPPER_REVERSE'] = ('mD', 'Darcy',)
 
     # force
-    dictionary['force'] = []
-    dictionary['force_NAMES_SPACES_RECURSIVE_UPPER_REVERSE'] = {
+    dictionary['Force'] = []
+    dictionary['Force_NAMES_SPACES_RECURSIVE_UPPER_REVERSE'] = {
         'Newton': ('N', 'newton', 'kg*m/s2'),
         'kilogram force': ('kgf', 'kilopondio',),  # 'kilogram'
         'kilopondio': ('kp',),
@@ -350,18 +350,18 @@ def _load_dictionary() -> (dict, dict):
     }
 
     # acceleration
-    dictionary['acceleration'] = ('m/s2', 'ft/s2',)
+    dictionary['Acceleration'] = ('m/s2', 'ft/s2',)
 
     # Dimensionless
-    dictionary['dimensionless'] = []
-    dictionary['dimensionless_fractions_UPPER_NAMES'] = {'fraction': ('ratio', 'dimensionless', 'unitless', 'None', '')}
+    dictionary['Dimensionless'] = []
+    dictionary['Dimensionless_fractions_UPPER_NAMES'] = {'fraction': ('ratio', 'dimensionless', 'unitless', 'None', '')}
 
-    dictionary['percentage'] = []
-    dictionary['percentage_NAMES_REVERSE'] = {'percentage': ('%', 'perc', 'percent', '/100'), }
+    dictionary['Percentage'] = []
+    dictionary['Percentage_NAMES_REVERSE'] = {'percentage': ('%', 'perc', 'percent', '/100'), }
 
-    # dates
-    dictionary['date'] = []
-    dictionary['date_UPPER_PLURALwS'] = ['date']
+    # Dates
+    dictionary['Date'] = []
+    dictionary['Date_UPPER_PLURALwS'] = ['date']
 
     dictionary['UserUnits'] = []
 
@@ -384,7 +384,7 @@ def _load_dictionary() -> (dict, dict):
                 for t2a in ((t2,) + dictionary['Temperature_NAMES'][t2]):
                     temperatureRatioConversions[(t1a, t2a)] = c1 / c2
     if unyts_parameters_.cache_:
-        with open(dir_path + 'units/temperatureRatioConversions.cache', 'wb') as f:
+        with open(dir_path + 'units/TemperatureRatioConversions.cache', 'wb') as f:
             dump(temperatureRatioConversions, f)
 
     return dictionary, temperatureRatioConversions
@@ -393,11 +393,11 @@ def _load_dictionary() -> (dict, dict):
 if not unyts_parameters_.reload_ and \
         isfile(dir_path + 'units/UnitsDictionary.cache') and \
         isfile(dir_path + 'units/UnitsNetwork.cache') and \
-        isfile(dir_path + 'units/temperatureRatioConversions.cache'):
+        isfile(dir_path + 'units/TemperatureRatioConversions.cache'):
     try:
         with open(dir_path + 'units/UnitsDictionary.cache', 'r') as f:
             dictionary = jload(f)
-        with open(dir_path + 'units/temperatureRatioConversions.cache', 'rb') as f:
+        with open(dir_path + 'units/TemperatureRatioConversions.cache', 'rb') as f:
             temperatureRatioConversions = load(f)
         print('units dictionary loaded from cache...')
     except:

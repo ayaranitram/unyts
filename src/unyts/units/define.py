@@ -16,9 +16,9 @@ from unyts.units.force import Pressure, Weight, Compressibility
 from unyts.units.geometry import Length, Area, Volume
 from unyts.units.temperature import Temperature, TemperatureGradient
 from unyts.units.time import Time
-from unyts.units.unitless import dimensionless, percentage
+from unyts.units.unitless import Dimensionless, Percentage
 from unyts.units.ratios import Density, VolumeRatio, ProductivityIndex, PressureGradient
-from unyts.units.rates import rate, speed, velocity
+from unyts.units.rates import Rate, Speed, Velocity
 from unyts.units.energy import Energy, Power
 from unyts.unit_class import Unit
 from unyts.helpers.common_classes import unit_or_str, array_like, number, numeric
@@ -49,7 +49,7 @@ def units(value: numeric, unit: unit_or_str = None) -> Unit:
     if unit is None and '.units.' in str(type(value)):
         value, unit = value.value, value.units
     if unit is None:
-        unit = 'dimensionless'
+        unit = 'Dimensionless'
     if type(unit) is not str:
         raise TypeError("'units' must be a string.")
 

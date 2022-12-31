@@ -59,17 +59,19 @@ def unit_product(unit_string1: str, unit_string2: str) -> str:
     if type(unit_string2) is str and len(unit_string2.strip(' ()')) == 0:
         unit_string2 = 'dimensionless'
 
-    if type(unit_string1) is str and len(unit_string1.split('/')) == 2 and unit_string1.split('/')[0] == unit_string1.split('/')[1]:
+    if type(unit_string1) is str and len(unit_string1.split('/')) == 2 and unit_string1.split('/')[0] == \
+            unit_string1.split('/')[1]:
         unit_string1 = 'dimensionless'
-    if type(unit_string2) is str and len(unit_string2.split('/')) == 2 and unit_string2.split('/')[0] == unit_string2.split('/')[1]:
+    if type(unit_string2) is str and len(unit_string2.split('/')) == 2 and unit_string2.split('/')[0] == \
+            unit_string2.split('/')[1]:
         unit_string2 = 'dimensionless'
 
-    if unit_string2.lower().strip(' ()') in dictionary['dimensionless']:
+    if unit_string2.lower().strip(' ()') in dictionary['Dimensionless']:
         return unit_string1
-    if unit_string1.lower().strip(' ()') in dictionary['dimensionless']:
-        if unit_string2.lower().strip(' ()') not in dictionary['dimensionless']:
+    if unit_string1.lower().strip(' ()') in dictionary['Dimensionless']:
+        if unit_string2.lower().strip(' ()') not in dictionary['Dimensionless']:
             return unit_string2
-        else :
+        else:
             return unit_string1
 
     if unit_string1 != unit_string2 and convertible(unit_string1, unit_string2):
@@ -79,27 +81,27 @@ def unit_product(unit_string1: str, unit_string2: str) -> str:
     u2bas, u2pow = unit_base_power(unit_string2)
 
     if convertible(u1bas, u2bas):
-        u_pow = u1pow+u2pow
+        u_pow = u1pow + u2pow
         if u_pow == -1:
-            result = u1bas+'-1'
+            result = u1bas + '-1'
         elif u_pow == 1:
             result = u1bas
         elif u_pow == 0:
             result = u1bas + '/' + u1bas
-        else :
+        else:
             for c in ['+', '-', '^']:  # '*','/'
                 if c in u1bas:
-                    u1bas = '('+u1bas+')'
+                    u1bas = '(' + u1bas + ')'
                     break
             result = u1bas + str(u_pow)
     else:
         for c in ['+', '-', '^']:  # '*','/'
             if c in unit_string1:
-                unit_string1 = '('+unit_string1+')'
+                unit_string1 = '(' + unit_string1 + ')'
                 break
         for c in ['+', '-', '^']:  # '*','/'
             if c in unit_string2:
-                unit_string2 = '('+unit_string2+')'
+                unit_string2 = '(' + unit_string2 + ')'
                 break
         result = unit_string1 + '*' + unit_string2
     return result
@@ -116,17 +118,19 @@ def unit_division(unit_string1: str, unit_string2: str) -> str:
     if type(unit_string2) is str and len(unit_string2.strip(' ()')) == 0:
         unit_string2 = 'dimensionless'
 
-    if type(unit_string1) is str and len(unit_string1.split('/')) == 2 and unit_string1.split('/')[0] == unit_string1.split('/')[1]:
+    if type(unit_string1) is str and len(unit_string1.split('/')) == 2 and unit_string1.split('/')[0] == \
+            unit_string1.split('/')[1]:
         unit_string1 = 'dimensionless'
-    if type(unit_string2) is str and len(unit_string2.split('/')) == 2 and unit_string2.split('/')[0] == unit_string2.split('/')[1]:
+    if type(unit_string2) is str and len(unit_string2.split('/')) == 2 and unit_string2.split('/')[0] == \
+            unit_string2.split('/')[1]:
         unit_string2 = 'dimensionless'
 
-    if unit_string2.lower().strip(' ()') in dictionary['dimensionless']:
+    if unit_string2.lower().strip(' ()') in dictionary['Dimensionless']:
         return unit_string1
-    if unit_string1.lower().strip(' ()') in dictionary['dimensionless']:
-        if unit_string2.lower().strip(' ()') not in dictionary['dimensionless']:
+    if unit_string1.lower().strip(' ()') in dictionary['Dimensionless']:
+        if unit_string2.lower().strip(' ()') not in dictionary['Dimensionless']:
             u_bas, u_pow = unit_base_power('1/' + unit_string2)
-            return u_bas+str(u_pow)
+            return u_bas + str(u_pow)
         else:
             return unit_string1
 
@@ -145,31 +149,31 @@ def unit_division(unit_string1: str, unit_string2: str) -> str:
         elif u_pow == 0:
             result = u1bas + '/' + u1bas
         else:
-            for c in ['+','-','^']:  # '*','/'
+            for c in ['+', '-', '^']:  # '*','/'
                 if c in u1bas:
-                    u1bas = '('+u1bas+')'
+                    u1bas = '(' + u1bas + ')'
                     break
             result = u1bas + str(u_pow)
 
     elif ('+' not in unit_string1 and '-' not in unit_string1 and '^' not in unit_string1) and (
             '+' not in unit_string2 and '-' not in unit_string2 and '^' not in unit_string2) and (
-                '*' in unit_string1 and unit_base(unit_string2) in map(unit_base, unit_string1.split('*'))):
-            result = ''
-            for u in unit_string1.split('*'):
-                if unit_string2 == u:
-                    return '*'.join([u for u in unit_string1.split('*') if u != unit_string2])
-                elif unit_base(unit_string2) == unit_base(u):
-                    result = (result + '*' + unit_division(u, unit_string2).strip('*')).strip('*')
-                else:
-                    result = (result + '*' + u).strip('*')
+            '*' in unit_string1 and unit_base(unit_string2) in map(unit_base, unit_string1.split('*'))):
+        result = ''
+        for u in unit_string1.split('*'):
+            if unit_string2 == u:
+                return '*'.join([u for u in unit_string1.split('*') if u != unit_string2])
+            elif unit_base(unit_string2) == unit_base(u):
+                result = (result + '*' + unit_division(u, unit_string2).strip('*')).strip('*')
+            else:
+                result = (result + '*' + u).strip('*')
     else:
         for c in ['+', '-', '^']:  # '*','/'
             if c in unit_string1:
-                unit_string1 = '('+unit_string1+')'
+                unit_string1 = '(' + unit_string1 + ')'
                 break
         for c in ['+', '-', '^']:  # '*','/'
             if c in unit_string2:
-                unit_string2 = '('+unit_string2+')'
+                unit_string2 = '(' + unit_string2 + ')'
                 break
         result = unit_string1 + '/' + unit_string2
     return result
@@ -206,4 +210,4 @@ def unit_power(unit_string: str, power: int or str) -> str:
         else:
             return u1bas + '^' + str(u_pow) + u2bas
     else:
-        raise TypeError('Power must be units string or numeric')
+        raise TypeError('Power must be units string or numeric.')

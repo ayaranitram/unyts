@@ -19,7 +19,7 @@ class Energy(Unit):
     classUnits = dictionary['Energy']
 
     def __init__(self, value: numeric, unit: unit_or_str) -> Unit:
-        self.name = 'Energy'
+        self.name = 'energy'
         self.kind = Energy
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)
@@ -29,7 +29,7 @@ class Power(Unit):
     classUnits = dictionary['Power']
 
     def __init__(self, value: numeric, unit: unit_or_str) -> Unit:
-        self.name = 'Power'
+        self.name = 'power'
         self.kind = Power
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)

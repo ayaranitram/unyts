@@ -11,7 +11,7 @@ from unyts import units
 t = Time(60, 's')
 
 assert type(t) is Time
-assert t.name == 'Time'
+assert t.name == 'time'
 assert t.kind is Time
 assert t.value == 60
 assert t.unit == 's'

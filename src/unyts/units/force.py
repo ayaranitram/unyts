@@ -19,7 +19,7 @@ class Pressure(Unit):
     classUnits = dictionary['Pressure']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'Pressure'
+        self.name = 'pressure'
         self.kind = Pressure
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -29,7 +29,7 @@ class Weight(Unit):
     classUnits = dictionary['Weight']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'Weight'
+        self.name = 'weight'
         self.kind = Weight
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -39,7 +39,7 @@ class Compressibility(Unit):
     classUnits = dictionary['Compressibility']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'Compressibility'
+        self.name = 'compressibility'
         self.kind = Compressibility
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

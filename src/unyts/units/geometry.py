@@ -19,7 +19,7 @@ class Length(Unit):
     classUnits = dictionary['Length']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'Length'
+        self.name = 'length'
         self.kind = Length
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -29,7 +29,7 @@ class Area(Unit):
     classUnits = dictionary['Area']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'Area'
+        self.name = 'area'
         self.kind = Area
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -39,7 +39,7 @@ class Volume(Unit):
     classUnits = dictionary['Volume']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'Volume'
+        self.name = 'volume'
         self.kind = Volume
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

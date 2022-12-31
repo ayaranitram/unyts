@@ -7,7 +7,7 @@ Created on Fri Aug 26 21:34:21 2022
 
 from unyts import units, convert
 from unyts.dictionaries import dictionary
-from unyts.units.unitless import dimensionless, percentage
+from unyts.units.unitless import Dimensionless, Percentage
 from unyts.operations import unit_product, unit_division
 import numpy as np
 import pandas as pd
@@ -24,7 +24,7 @@ for kind in [k for k in dictionary if k in ['Length']]:
 
         assert str(u1) == (str(u1.value) + '_' + str(u1.unit))
         assert -u1 == (u1 * -1)
-        assert bool(u1) is False if u1.kind in (dimensionless, percentage) else True
+        assert bool(u1) is False if u1.kind in (Dimensionless, Percentage) else True
         assert abs(u1) == u1.kind(abs(u1.value), u1.unit)
 
         for op in ('+', '-', '*', '/', '%'):

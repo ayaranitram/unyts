@@ -19,7 +19,7 @@ class Time(Unit):
     classUnits = dictionary['Time']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'Time'
+        self.name = 'time'
         self.kind = Time
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

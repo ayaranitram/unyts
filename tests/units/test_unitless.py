@@ -5,42 +5,42 @@ Created on Thu Sep  8 18:28:23 2022
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-from unyts.units.unitless import dimensionless, percentage
+from unyts.units.unitless import Dimensionless, Percentage
 from unyts.dictionaries import dictionary
 from unyts import units, convert
 
-for p in dictionary['percentage']:
-    for d in dictionary['dimensionless']:
+for p in dictionary['Percentage']:
+    for d in dictionary['Dimensionless']:
         print(p, 'to', d)
         assert convert(75.0, p, d) == 0.75
         print(d, 'to', p)
         assert convert(0.50, d, p) == 50.0
-    for q in dictionary['percentage']:
+    for q in dictionary['Percentage']:
         print(p, 'to', q)
         assert convert(25.0, p, q) == 25.0
-for d in dictionary['dimensionless']:
-    for b in dictionary['dimensionless']:
+for d in dictionary['Dimensionless']:
+    for b in dictionary['Dimensionless']:
         print(d, 'to', b)
         assert convert(0.33, d, b) == 0.33
 
-p = percentage(50, '%')
-assert type(p) is percentage
+p = Percentage(50, '%')
+assert type(p) is Percentage
 assert p.name == 'percentage'
-assert p.kind is percentage
+assert p.kind is Percentage
 assert p.value == 0.5
 assert p.unit == '%'
 
-f = dimensionless(0.25, 'fraction')
-assert type(f) is dimensionless
+f = Dimensionless(0.25, 'fraction')
+assert type(f) is Dimensionless
 assert f.name == 'dimensionless'
-assert f.kind is dimensionless
+assert f.kind is Dimensionless
 assert f.value == 0.25
 assert f.unit == 'fraction'
 
-d = dimensionless(0.3)
-assert type(d) is dimensionless
+d = Dimensionless(0.3)
+assert type(d) is Dimensionless
 assert d.name == 'dimensionless'
-assert d.kind is dimensionless
+assert d.kind is Dimensionless
 assert d.value == 0.3
 assert d.unit == 'dimensionless'
 

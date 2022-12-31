@@ -1,4 +1,5 @@
 # unyts
+
 After culminating a project for a class from MITx courses, I saw the opportunity to use a *digraph network* to build a Unit converter able to convert from any units to any units without the need to populate a huge but finite table of possible conversions. Powered by the _Breadth First Search_, or _BFS_, algorithm to search through the network, this converter can find conversions from a particular Unit (or ratio of units) to any other Unit (or ratio) as long as a path connecting them exists.
 
 This package is under development and is regularly updated. Back compatibility is intended to be maintained when possible.
@@ -9,26 +10,26 @@ This package is under development and is regularly updated. Back compatibility i
 - It provides classes of _unit_ useful powered with arithmetic and logic operations to intrinsically consider Unit conversions when making calculations.
 
 ## How To Use It
-To install it from the PyPI repository:  
-**pip install unyts**
+To install it from the <a href="https://pypi.org/search/?q=unyts">pypi.org</a> repository:  
+`**pip install unyts**`
 
 ### To use the _converter_:
-from **unyts** import **convert**  
-**convert**(_value_, _sourceUnits_, _unitsToConvertTo_)
+`from **unyts** import **convert**`  
+**convert**(_value_, *from_units*, *to_units*)
 where:
 - _value_ is a number (int, float, numpy.array, etc)
-- _sourceUnits_ is a string defining the units of _value_ (i.e.: 'ft')
-- _unitsToConvertTo_ is a string representing the units to convert _value_ (i.e.: 'km')
+- *from_units* is a string defining the units of _value_ (i.e.: 'ft')
+- *to_units* is a string representing the units to convert _value_ (i.e.: 'km')
 
 ### To refer to the _unit_ class:
-from **unyts** import **Unit**
-- refering to **Unit** class is not intended to be used to create **Unit _instances_**, but to allow checking if other objects are instances of **Unit**: i.e.: isinstance(variable, **Unit**)
+`from **unyts** import **Unit**`  
+- refering to **Unit** class is not intended to be used to create **Unit _instances_**, but to allow checking if other objects are instances of **Unit**: i.e.: `isinstance(variable, **Unit**)`
 - in order to create instances of **Unit** it is convenient to use the **units** function as it will return the appropriate **Unit _subclass_**.
 
 ### To create instances of the _unit_ class using the _units_ function:
-from **unyts** import **units**  
-variable = **units**(_value_, _units_)  
-- _value_ is a number (int, float, numpy.array, etc)
+`from **unyts** import **units**`  
+`variable = **units**(_value_, _units_)`  
+- _value_ is a number (`int`, `float`, `numpy.array`, etc)
 - _units_ is a string defining the units of _value_ (i.e.: 'ft')
 
 Then simply operate with the **Unit** instances or the variables related to them:  
@@ -36,10 +37,12 @@ Then simply operate with the **Unit** instances or the variables related to them
 Out: 18_in  
 
 #### For further examples:
-The Jupyter notebook **unyts_demo** intends to be a guide on how to use this converter and units classes.
+The Jupyter notebook <a href="https://github.com/ayaranitram/unyts/blob/master/unyts_demo.ipynb">**unyts_demo**</a> intends to be a guide on how to use this converter and units classes.
 
 ## Requisites
 - NumPy
 
 ## To install this package:
-pip install unyts
+`pip install unyts`
+or upgrade to the latest version:
+`pip install --upgrade unyts`

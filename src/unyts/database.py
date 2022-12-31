@@ -249,7 +249,7 @@ def _load_network():
         if '_INVERSE' in unit_kind:
             pass
 
-    # percentage & fraction :
+    # Percentage & fraction :
     network.add_edge(Conversion(network.get_node('fraction'), network.get_node('percentage'), lambda x: x * 100))
     network.add_edge(Conversion(network.get_node('percentage'), network.get_node('fraction'), lambda p: p / 100))
 
@@ -410,6 +410,8 @@ def _load_network():
     # Density Conversion
     network.add_edge(Conversion(network.get_node('API'), network.get_node('SgO'), lambda d: 141.5 / (131.5 + d)))
     network.add_edge(Conversion(network.get_node('SgO'), network.get_node('API'), lambda d: 141.5 / d - 131.5))
+    network.add_edge(Conversion(network.get_node('API'), network.get_node('g/cc'), lambda d: 141.5 / (131.5 + d)))
+    network.add_edge(Conversion(network.get_node('g/cc'), network.get_node('API'), lambda d: 141.5 / d - 131.5))
     network.add_edge(Conversion(network.get_node('SgO'), network.get_node('g/cc'), lambda d: d))
     network.add_edge(Conversion(network.get_node('SgW'), network.get_node('g/cc'), lambda d: d))
     network.add_edge(Conversion(network.get_node('SgG'), network.get_node('g/cc'), lambda d: d * StandardAirDensity))
@@ -480,17 +482,17 @@ def _load_network():
     return network
 
 
-def _create_rates() -> None:
+def _create_Rates() -> None:
     # volumes / Time
-    rates = list(dictionary['rate']) if 'rate' in dictionary else []
+    rates = list(dictionary['Rate']) if 'Rate' in dictionary else []
     rates += [volume + '/' + time for volume in dictionary['Volume'] for time in dictionary['Time']]
     rates += [weight + '/' + time for weight in dictionary['Weight'] for time in dictionary['Time']]
     rates += [data + '/' + time for data in dictionary['dataBYTE'] for time in dictionary['Time']]
     rates += [data + '/' + time for data in dictionary['dataBIT'] for time in dictionary['Time']]
-    dictionary['rate'] = tuple(set(rates))
+    dictionary['Rate'] = tuple(set(rates))
 
 
-def _create_volumeRatio() -> None:
+def _create_VolumeRatio() -> None:
     # Volume / Volume
     ratio = list(dictionary['VolumeRatio']) if 'VolumeRatio' in dictionary else []
     ratio += [numerator + '/' + denominator for numerator in dictionary['Volume'] for denominator in
@@ -498,28 +500,28 @@ def _create_volumeRatio() -> None:
     dictionary['VolumeRatio'] = tuple(set(ratio))
 
 
-def _create_density() -> None:
+def _create_Density() -> None:
     # mass / Volume
     density = list(dictionary['Density']) if 'Density' in dictionary else []
-    density += [mass + '/' + volume for mass in dictionary['mass'] for volume in dictionary['Volume']]
+    density += [mass + '/' + volume for mass in dictionary['Mass'] for volume in dictionary['Volume']]
     dictionary['Density'] = tuple(set(density))
 
 
-def _create_speed() -> None:
+def _create_Speed() -> None:
     # Length / Time
-    speed = list(dictionary['speed']) if 'speed' in dictionary else []
+    speed = list(dictionary['Speed']) if 'Speed' in dictionary else []
     speed += [length + '/' + time for length in dictionary['Length'] for time in dictionary['Time']]
-    dictionary['speed'] = tuple(set(speed))
+    dictionary['Speed'] = tuple(set(speed))
 
 
-def _create_power() -> None:
+def _create_Power() -> None:
     # Length / Time
     power = list(dictionary['Power']) if 'Power' in dictionary else []
     power += [energy + '/' + time for energy in dictionary['Energy'] for time in dictionary['Time']]
     dictionary['Power'] = tuple(set(power))
 
 
-def _create_productivityIndex() -> None:
+def _create_ProductivityIndex() -> None:
     # Volume / Time / Pressure
     productivityIndex = list(dictionary['ProductivityIndex']) if 'ProductivityIndex' in dictionary else []
     productivityIndex += [volume + '/' + time + '/' + pressure
@@ -529,7 +531,7 @@ def _create_productivityIndex() -> None:
     dictionary['ProductivityIndex'] = tuple(set(productivityIndex))
 
 
-def _create_pressureGradient() -> None:
+def _create_PressureGradient() -> None:
     # Pressure / Length
     pressureGradient = list(dictionary['PressureGradient']) if 'PressureGradient' in dictionary else []
     pressureGradient += [pressure + '/' + length for pressure in dictionary['Pressure'] for length in
@@ -537,7 +539,7 @@ def _create_pressureGradient() -> None:
     dictionary['PressureGradient'] = tuple(set(pressureGradient))
 
 
-def _create_temperatureGradient() -> None:
+def _create_TemperatureGradient() -> None:
     # Pressure / Length
     temperatureGradient = list(dictionary['TemperatureGradient']) if 'TemperatureGradient' in dictionary else []
     temperatureGradient += [temperature + '/' + length for temperature in dictionary['Temperature'] for length in
@@ -545,14 +547,14 @@ def _create_temperatureGradient() -> None:
     dictionary['TemperatureGradient'] = tuple(set(temperatureGradient))
 
 
-def _create_acceleration() -> None:
+def _create_Acceleration() -> None:
     # Length / Time / Time
-    acceleration = list(dictionary['acceleration']) if 'acceleration' in dictionary else []
+    acceleration = list(dictionary['Acceleration']) if 'Acceleration' in dictionary else []
     acceleration += [(length + '/' + time1 + '2') if time1 == time2 else (length + '/' + time1 + '/' + time2)
                      for length in dictionary['Length']
                      for time1 in dictionary['Time']
                      for time2 in dictionary['Time']]
-    dictionary['acceleration'] = tuple(set(acceleration))
+    dictionary['Acceleration'] = tuple(set(acceleration))
 
 
 def rebuild_units():
@@ -579,7 +581,7 @@ def network2frame() -> DataFrame:
 if not unyts_parameters_.reload_ and \
         isfile(dir_path + 'units/UnitsNetwork.cache') and \
         isfile(dir_path + 'units/UnitsDictionary.cache') and \
-        isfile(dir_path + 'units/temperatureRatioConversions.cache'):
+        isfile(dir_path + 'units/TemperatureRatioConversions.cache'):
     try:
         with open(dir_path + 'units/UnitsNetwork.cache', 'rb') as f:
             unitsNetwork = load(f)
@@ -592,14 +594,14 @@ else:
     try:
         unitsNetwork = _load_network()
         # load the dictionary with ratio unis
-        _create_rates()
-        _create_volumeRatio()
-        _create_density()
-        _create_speed()
-        _create_productivityIndex()
-        _create_pressureGradient()
-        _create_temperatureGradient()
-        _create_power()
+        _create_Rates()
+        _create_VolumeRatio()
+        _create_Density()
+        _create_Speed()
+        _create_ProductivityIndex()
+        _create_PressureGradient()
+        _create_TemperatureGradient()
+        _create_Power()
         unyts_parameters_.reload_ = False
         unyts_parameters_.save_params()
     except:
