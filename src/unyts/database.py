@@ -253,7 +253,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('fraction'), network.get_node('percentage'), lambda x: x * 100))
     network.add_edge(Conversion(network.get_node('percentage'), network.get_node('fraction'), lambda p: p / 100))
 
-    # time conversions
+    # Time conversions
     # network.addEdge(Conversion(network.getNode('second'), network.getNode('millisecond'), lambda t: t*1000))
     network.add_edge(Conversion(network.get_node('minute'), network.get_node('second'), lambda t: t * 60))
     network.add_edge(Conversion(network.get_node('hour'), network.get_node('minute'), lambda t: t * 60))
@@ -266,7 +266,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('decade'), network.get_node('year'), lambda t: t * 10))
     network.add_edge(Conversion(network.get_node('century'), network.get_node('year'), lambda t: t * 100))
 
-    # temperature conversions
+    # Temperature conversions
     network.add_edge(Conversion(network.get_node('Celsius'), network.get_node('Kelvin'), lambda t: t + 273.15))
     network.add_edge(Conversion(network.get_node('Kelvin'), network.get_node('Celsius'), lambda t: t - 273.15))
     network.add_edge(Conversion(network.get_node('Celsius'), network.get_node('Fahrenheit'), lambda t: t * 9 / 5 + 32))
@@ -277,7 +277,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('Rankine'), network.get_node('Kelvin'), lambda t: t * 5 / 9))
     network.add_edge(Conversion(network.get_node('Kelvin'), network.get_node('Rankine'), lambda t: t * 9 / 5))
 
-    # length conversions
+    # Length conversions
     network.add_edge(Conversion(network.get_node('yard'), network.get_node('meter'), lambda d: d * 9144 / 10000))
     # network.addEdge(Conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048))
     network.add_edge(Conversion(network.get_node('inch'), network.get_node('thou'), lambda d: d * 1000))
@@ -292,7 +292,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('nautical mile'), network.get_node('meter'), lambda d: d * 1852))
     network.add_edge(Conversion(network.get_node('rod'), network.get_node('yard'), lambda d: d * 55 / 10))
 
-    # area conversions
+    # Area conversions
     network.add_edge(Conversion(network.get_node('square mile'), network.get_node('acre'), lambda d: d * 640))
     network.add_edge(Conversion(network.get_node('acre'), network.get_node('square yard'), lambda d: d * 4840))
     network.add_edge(
@@ -314,7 +314,7 @@ def _load_network():
     # network.addEdge(Conversion(network.getNode('in*in'), network.getNode('in'), lambda d: d**0.5))
     # network.addEdge(Conversion(network.getNode('in'), network.getNode('in*in'), lambda d: d**2))
 
-    # volume conversions
+    # Volume conversions
     network.add_edge(Conversion(network.get_node('gill'), network.get_node('fluid ounce'), lambda v: v * 4))
     network.add_edge(Conversion(network.get_node('pint'), network.get_node('gill'), lambda v: v * 4))
     network.add_edge(Conversion(network.get_node('quart'), network.get_node('pint'), lambda v: v * 2))
@@ -347,7 +347,7 @@ def _load_network():
                                 lambda v: v / network.get_fvf()))
     # network.addEdge(Conversion(network.getNode('standard cubic meter'), network.getNode('standard cubic foot'), lambda v: v/5.614584))
 
-    # pressure conversions
+    # Pressure conversions
     network.add_edge(Conversion(network.get_node('psi gauge'), network.get_node('absolute psi'), lambda p: p + 14.6959))
     network.add_edge(Conversion(network.get_node('absolute psi'), network.get_node('psi gauge'), lambda p: p - 14.6959))
     network.add_edge(Conversion(network.get_node('bar gauge'), network.get_node('absolute bar'), lambda p: p + 1.01325))
@@ -397,17 +397,17 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('Dyne'), network.get_node('Newton'), lambda f: f * 1E-5))
     network.add_edge(Conversion(network.get_node('Newton'), network.get_node('Dyne'), lambda f: f * 1E5))
 
-    # energy Conversion
+    # Energy Conversion
     network.add_edge(Conversion(network.get_node('Joule'), network.get_node('gram calorie'), lambda e: e / 4.184))
     network.add_edge(Conversion(network.get_node('Kilojoule'), network.get_node('Joule'), lambda e: e * 1000))
     network.add_edge(Conversion(network.get_node('Kilojoule'), network.get_node('kilowatt hour'), lambda e: e / 3600))
     network.add_edge(
         Conversion(network.get_node('Kilojoule'), network.get_node('British thermal unit'), lambda e: e / 1.055))
 
-    # power Conversion
+    # Power Conversion
     network.add_edge(Conversion(network.get_node('Horsepower'), network.get_node('Watt'), lambda e: e * 745.699872))
 
-    # density Conversion
+    # Density Conversion
     network.add_edge(Conversion(network.get_node('API'), network.get_node('SgO'), lambda d: 141.5 / (131.5 + d)))
     network.add_edge(Conversion(network.get_node('SgO'), network.get_node('API'), lambda d: 141.5 / d - 131.5))
     network.add_edge(Conversion(network.get_node('SgO'), network.get_node('g/cc'), lambda d: d))
@@ -472,7 +472,7 @@ def _load_network():
             to_remove.append(unit_kind)
         else:  # if '_' not in unit_kind :
             dictionary[unit_kind] = tuple(dictionary[unit_kind])
-    dictionary['userUnits'] = []
+    dictionary['UserUnits'] = []
 
     for unit_kind in to_remove:
         dictionary.pop(unit_kind)
@@ -481,87 +481,87 @@ def _load_network():
 
 
 def _create_rates() -> None:
-    # volumes / time
+    # volumes / Time
     rates = list(dictionary['rate']) if 'rate' in dictionary else []
-    rates += [volume + '/' + time for volume in dictionary['volume'] for time in dictionary['time']]
-    rates += [weight + '/' + time for weight in dictionary['weight'] for time in dictionary['time']]
-    rates += [data + '/' + time for data in dictionary['dataBYTE'] for time in dictionary['time']]
-    rates += [data + '/' + time for data in dictionary['dataBIT'] for time in dictionary['time']]
+    rates += [volume + '/' + time for volume in dictionary['Volume'] for time in dictionary['Time']]
+    rates += [weight + '/' + time for weight in dictionary['Weight'] for time in dictionary['Time']]
+    rates += [data + '/' + time for data in dictionary['dataBYTE'] for time in dictionary['Time']]
+    rates += [data + '/' + time for data in dictionary['dataBIT'] for time in dictionary['Time']]
     dictionary['rate'] = tuple(set(rates))
 
 
 def _create_volumeRatio() -> None:
-    # volume / volume
-    ratio = list(dictionary['volumeRatio']) if 'volumeRatio' in dictionary else []
-    ratio += [numerator + '/' + denominator for numerator in dictionary['volume'] for denominator in
-              dictionary['volume']]
-    dictionary['volumeRatio'] = tuple(set(ratio))
+    # Volume / Volume
+    ratio = list(dictionary['VolumeRatio']) if 'VolumeRatio' in dictionary else []
+    ratio += [numerator + '/' + denominator for numerator in dictionary['Volume'] for denominator in
+              dictionary['Volume']]
+    dictionary['VolumeRatio'] = tuple(set(ratio))
 
 
 def _create_density() -> None:
-    # mass / volume
-    density = list(dictionary['density']) if 'density' in dictionary else []
-    density += [mass + '/' + volume for mass in dictionary['mass'] for volume in dictionary['volume']]
-    dictionary['density'] = tuple(set(density))
+    # mass / Volume
+    density = list(dictionary['Density']) if 'Density' in dictionary else []
+    density += [mass + '/' + volume for mass in dictionary['mass'] for volume in dictionary['Volume']]
+    dictionary['Density'] = tuple(set(density))
 
 
 def _create_speed() -> None:
-    # length / time
+    # Length / Time
     speed = list(dictionary['speed']) if 'speed' in dictionary else []
-    speed += [length + '/' + time for length in dictionary['length'] for time in dictionary['time']]
+    speed += [length + '/' + time for length in dictionary['Length'] for time in dictionary['Time']]
     dictionary['speed'] = tuple(set(speed))
 
 
 def _create_power() -> None:
-    # length / time
-    power = list(dictionary['power']) if 'power' in dictionary else []
-    power += [energy + '/' + time for energy in dictionary['energy'] for time in dictionary['time']]
-    dictionary['power'] = tuple(set(power))
+    # Length / Time
+    power = list(dictionary['Power']) if 'Power' in dictionary else []
+    power += [energy + '/' + time for energy in dictionary['Energy'] for time in dictionary['Time']]
+    dictionary['Power'] = tuple(set(power))
 
 
 def _create_productivityIndex() -> None:
-    # volume / time / pressure
-    productivityIndex = list(dictionary['productivityIndex']) if 'productivityIndex' in dictionary else []
+    # Volume / Time / Pressure
+    productivityIndex = list(dictionary['ProductivityIndex']) if 'ProductivityIndex' in dictionary else []
     productivityIndex += [volume + '/' + time + '/' + pressure
-                          for volume in dictionary['volume']
-                          for time in dictionary['time']
-                          for pressure in dictionary['pressure']]
-    dictionary['productivityIndex'] = tuple(set(productivityIndex))
+                          for volume in dictionary['Volume']
+                          for time in dictionary['Time']
+                          for pressure in dictionary['Pressure']]
+    dictionary['ProductivityIndex'] = tuple(set(productivityIndex))
 
 
 def _create_pressureGradient() -> None:
-    # pressure / length
-    pressureGradient = list(dictionary['pressureGradient']) if 'pressureGradient' in dictionary else []
-    pressureGradient += [pressure + '/' + length for pressure in dictionary['pressure'] for length in
-                         dictionary['length']]
-    dictionary['pressureGradient'] = tuple(set(pressureGradient))
+    # Pressure / Length
+    pressureGradient = list(dictionary['PressureGradient']) if 'PressureGradient' in dictionary else []
+    pressureGradient += [pressure + '/' + length for pressure in dictionary['Pressure'] for length in
+                         dictionary['Length']]
+    dictionary['PressureGradient'] = tuple(set(pressureGradient))
 
 
 def _create_temperatureGradient() -> None:
-    # pressure / length
-    temperatureGradient = list(dictionary['temperatureGradient']) if 'temperatureGradient' in dictionary else []
-    temperatureGradient += [temperature + '/' + length for temperature in dictionary['temperature'] for length in
-                            dictionary['length']]
-    dictionary['temperatureGradient'] = tuple(set(temperatureGradient))
+    # Pressure / Length
+    temperatureGradient = list(dictionary['TemperatureGradient']) if 'TemperatureGradient' in dictionary else []
+    temperatureGradient += [temperature + '/' + length for temperature in dictionary['Temperature'] for length in
+                            dictionary['Length']]
+    dictionary['TemperatureGradient'] = tuple(set(temperatureGradient))
 
 
 def _create_acceleration() -> None:
-    # length / time / time
+    # Length / Time / Time
     acceleration = list(dictionary['acceleration']) if 'acceleration' in dictionary else []
     acceleration += [(length + '/' + time1 + '2') if time1 == time2 else (length + '/' + time1 + '/' + time2)
-                     for length in dictionary['length']
-                     for time1 in dictionary['time']
-                     for time2 in dictionary['time']]
+                     for length in dictionary['Length']
+                     for time1 in dictionary['Time']
+                     for time2 in dictionary['Time']]
     dictionary['acceleration'] = tuple(set(acceleration))
 
 
 def rebuild_units():
     from .dictionaries import _load_dictionary
     dictionary, temperatureRatioConversions = _load_dictionary()
-    unitsNetwork = _load_network()
+    units_network = _load_network()
     unyts_parameters_.reload_ = True
     unyts_parameters_.save_params()
-    return unitsNetwork, dictionary, temperatureRatioConversions
+    return units_network, dictionary, temperatureRatioConversions
 
 
 def network2frame() -> DataFrame:
@@ -577,11 +577,11 @@ def network2frame() -> DataFrame:
 
 # load the network into an instance of the graph database
 if not unyts_parameters_.reload_ and \
-        isfile(dir_path + 'units/unitsNetwork.cache') and \
-        isfile(dir_path + 'units/unitsDictionary.cache') and \
+        isfile(dir_path + 'units/UnitsNetwork.cache') and \
+        isfile(dir_path + 'units/UnitsDictionary.cache') and \
         isfile(dir_path + 'units/temperatureRatioConversions.cache'):
     try:
-        with open(dir_path + 'units/unitsNetwork.cache', 'rb') as f:
+        with open(dir_path + 'units/UnitsNetwork.cache', 'rb') as f:
             unitsNetwork = load(f)
         print('units network loaded from cache...')
         unyts_parameters_.reload_ = False
@@ -606,7 +606,7 @@ else:
         unitsNetwork, dictionary, temperatureRatioConversions = rebuild_units()
     if unyts_parameters_.cache_:
         print('saving units network and dictionary to cache...')
-        with open(dir_path + 'units/unitsNetwork.cache', 'wb') as f:
+        with open(dir_path + 'units/UnitsNetwork.cache', 'wb') as f:
             dump(unitsNetwork, f)
-        with open(dir_path + 'units/unitsDictionary.cache', 'w') as f:
+        with open(dir_path + 'units/UnitsDictionary.cache', 'w') as f:
             jdump(dictionary, f)

@@ -147,9 +147,9 @@ def _get_conversion(value, from_unit, to_unit):
     if from_unit.lower() in dictionary['dimensionless'] and '/' not in to_unit:
         return (lambda x: x, []) if value is None else (value, [])
 
-    # special case for temperature ratios
-    if '/' in from_unit and len(from_unit.split('/')) == 2 and from_unit.split('/')[0] in dictionary['temperature'] \
-            and '/' in to_unit and len(to_unit.split('/')) == 2 and to_unit.split('/')[0] in dictionary['temperature']:
+    # special case for Temperature ratios
+    if '/' in from_unit and len(from_unit.split('/')) == 2 and from_unit.split('/')[0] in dictionary['Temperature'] \
+            and '/' in to_unit and len(to_unit.split('/')) == 2 and to_unit.split('/')[0] in dictionary['Temperature']:
         t1, d1 = from_unit.split('/')
         t2, d2 = to_unit.split('/')
         num = temperatureRatioConversions[(t1, t2)]

@@ -8,28 +8,28 @@ Created on Fri Aug 26 21:17:35 2020
 
 __version__ = '0.4.9'
 __release__ = 20221231
-__all__ = ['energy', 'power']
+__all__ = ['Energy', 'Power']
 
 from unyts.dictionaries import dictionary
 from unyts.unit_class import Unit
 from unyts.helpers.common_classes import unit_or_str, numeric
 
 
-class energy(Unit):
-    classUnits = dictionary['energy']
+class Energy(Unit):
+    classUnits = dictionary['Energy']
 
     def __init__(self, value: numeric, unit: unit_or_str) -> Unit:
-        self.name = 'energy'
-        self.kind = energy
+        self.name = 'Energy'
+        self.kind = Energy
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)
 
 
-class power(Unit):
-    classUnits = dictionary['power']
+class Power(Unit):
+    classUnits = dictionary['Power']
 
     def __init__(self, value: numeric, unit: unit_or_str) -> Unit:
-        self.name = 'power'
-        self.kind = power
+        self.name = 'Power'
+        self.kind = Power
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)

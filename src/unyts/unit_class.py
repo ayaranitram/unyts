@@ -71,9 +71,9 @@ class Unit(object):
         return self.kind(self.value * -1, self.unit)
 
     def __bool__(self):
-        from .units.custom import userUnits
+        from .units.custom import UserUnits
         from .units.unitless import dimensionless, percentage
-        if self.kind in (dimensionless, percentage, userUnits):
+        if self.kind in (dimensionless, percentage, UserUnits):
             return False
         return True
 

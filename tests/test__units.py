@@ -17,7 +17,7 @@ array = np.array([1, 2, 3, 4, 5])
 limit_dict_units = 3
 
 
-for kind in [k for k in dictionary if k in ['length']]:
+for kind in [k for k in dictionary if k in ['Length']]:
     for unit1 in range(len(dictionary[kind][:limit_dict_units])-1):
         print(dictionary[kind][unit1])
         u1 = units(3.0, dictionary[kind][unit1])
@@ -71,7 +71,7 @@ for kind in [k for k in dictionary if k in ['length']]:
             assert (u2 > u1) is (u2.value > convert(u1.value, u1.unit, u2.unit))
 
 
-for kind in [k for k in dictionary if k in ['length']]:  # [k for k in dictionary if k not in ['Dimensionless', 'Percentage']]:
+for kind in [k for k in dictionary if k in ['Length']]:  # [k for k in dictionary if k not in ['Dimensionless', 'Percentage']]:
     for unit1 in range(len(dictionary[kind][:limit_dict_units])-1):
         print(dictionary[kind][unit1])
         u1 = units(array, dictionary[kind][unit1])

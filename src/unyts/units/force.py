@@ -8,38 +8,38 @@ Created on Sat Oct 24 14:34:59 2020
 
 __version__ = '0.4.9'
 __release__ = 20221231
-__all__ = ['pressure', 'weight', 'compressibility']
+__all__ = ['Pressure', 'Weight', 'Compressibility']
 
 from unyts.dictionaries import dictionary
 from unyts.unit_class import Unit
 from unyts.helpers.common_classes import unit_or_str, numeric
 
 
-class pressure(Unit):
-    classUnits = dictionary['pressure']
+class Pressure(Unit):
+    classUnits = dictionary['Pressure']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'pressure'
-        self.kind = pressure
+        self.name = 'Pressure'
+        self.kind = Pressure
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
 
 
-class weight(Unit):
-    classUnits = dictionary['weight']
+class Weight(Unit):
+    classUnits = dictionary['Weight']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'weight'
-        self.kind = weight
+        self.name = 'Weight'
+        self.kind = Weight
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
 
 
-class compressibility(Unit):
-    classUnits = dictionary['compressibility']
+class Compressibility(Unit):
+    classUnits = dictionary['Compressibility']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'compressibility'
-        self.kind = compressibility
+        self.name = 'Compressibility'
+        self.kind = Compressibility
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

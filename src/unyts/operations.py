@@ -206,4 +206,4 @@ def unit_power(unit_string: str, power: int or str) -> str:
         else:
             return u1bas + '^' + str(u_pow) + u2bas
     else:
-        raise TypeError('power must be units string or numeric')
+        raise TypeError('Power must be units string or numeric')

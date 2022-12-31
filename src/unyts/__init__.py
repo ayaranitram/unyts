@@ -11,7 +11,7 @@ __release__ = 20221231
 __all__ = ['units', 'convert']
 
 import unyts.parameters
-from .parameters import print_path, reload, raise_error
+from .parameters import print_path, reload, raise_error, cache
 from .units.define import units
 from .converter import convert
 from .unit_class import Unit

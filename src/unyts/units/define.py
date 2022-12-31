@@ -11,15 +11,15 @@ __release__ = 20221231
 __all__ = ['units', 'numeric', 'array_like']
 
 from unyts.dictionaries import dictionary
-from unyts.units.custom import userUnits, otherUnits
-from unyts.units.force import pressure, weight, compressibility
-from unyts.units.geometry import length, area, volume
-from unyts.units.temperature import temperature, temperatureGradient
-from unyts.units.time import time
+from unyts.units.custom import UserUnits, OtherUnits
+from unyts.units.force import Pressure, Weight, Compressibility
+from unyts.units.geometry import Length, Area, Volume
+from unyts.units.temperature import Temperature, TemperatureGradient
+from unyts.units.time import Time
 from unyts.units.unitless import dimensionless, percentage
-from unyts.units.ratios import density, volumeRatio, productivityIndex, pressureGradient
+from unyts.units.ratios import Density, VolumeRatio, ProductivityIndex, PressureGradient
 from unyts.units.rates import rate, speed, velocity
-from unyts.units.energy import energy, power
+from unyts.units.energy import Energy, Power
 from unyts.unit_class import Unit
 from unyts.helpers.common_classes import unit_or_str, array_like, number, numeric
 
@@ -65,4 +65,4 @@ def units(value: numeric, unit: unit_or_str = None) -> Unit:
             else:
                 raise TypeError("'value' parameter must be numeric.")
 
-    return userUnits(value, unit)
+    return UserUnits(value, unit)

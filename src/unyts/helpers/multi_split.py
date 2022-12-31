@@ -37,7 +37,7 @@ def multi_split(string: str,
     # eliminate duplicated strings to remove
     remove = list(set(remove))
 
-    # sort sep by length
+    # sort sep by Length
     s = len(sep)
     for i in range(s - 1):
         for j in range(s - i - 1):

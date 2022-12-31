@@ -8,29 +8,29 @@ Created on Sat Oct 24 14:34:59 2020
 
 __version__ = '0.4.9'
 __release__ = 20221231
-__all__ = ['customUnits', 'userUnits', 'otherUnits']
+__all__ = ['CustomUnits', 'UserUnits', 'OtherUnits']
 
 from unyts.dictionaries import dictionary
 from unyts.unit_class import Unit
 from unyts.helpers.common_classes import unit_or_str, numeric
 
 
-def customUnits(value: numeric, units: unit_or_str) -> Unit:
-    return userUnits(value, units)
+def CustomUnits(value: numeric, units: unit_or_str) -> Unit:
+    return UserUnits(value, units)
 
 
-def otherUnits(value: numeric, units: unit_or_str) -> Unit:
-    return userUnits(value, units)
+def OtherUnits(value: numeric, units: unit_or_str) -> Unit:
+    return UserUnits(value, units)
 
 
-class userUnits(Unit):
-    classUnits = dictionary['userUnits']
+class UserUnits(Unit):
+    classUnits = dictionary['UserUnits']
 
     def __init__(self, value: numeric, units: unit_or_str) -> Unit:
-        self.name = 'userUnits'
-        self.kind = userUnits
+        self.name = 'UserUnits'
+        self.kind = UserUnits
         units = units.strip()
-        if units not in dictionary['userUnits']:
-            dictionary['userUnits'].append(units)
+        if units not in dictionary['UserUnits']:
+            dictionary['UserUnits'].append(units)
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

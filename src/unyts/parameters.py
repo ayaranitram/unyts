@@ -8,7 +8,7 @@ Created on Sat Oct 24 18:24:20 2020
 
 __version__ = '0.4.9'
 __release__ = 20221231
-__all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error']
+__all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache']
 
 import os.path
 from json import load, dump
@@ -80,6 +80,18 @@ class UnytsParameters(object):
             self.print_path_ = bool(switch)
         print("print_path", "ON" if self.print_path_ else "OFF")
 
+    def cache(self, switch=None) -> None:
+        if switch is None:
+            self.cache_ = not self.cache_
+        elif type(switch) is str:
+            if switch.lower().strip() in off_switches:
+                self.cache_ = False
+            else:
+                self.cache_ = True
+        else:
+            self.cache_ = bool(switch)
+        print("cache", "ON" if self.cache_ else "OFF")
+
     def raise_error(self, switch=None) -> None:
         if switch is None:
             self.raise_error_ = not self.raise_error_
@@ -118,6 +130,10 @@ def raise_error(switch=None) -> None:
 
 def verbose(switch=None) -> None:
     unyts_parameters_.verbose(switch)
+
+
+def cache(switch=None) -> None:
+    unyts_parameters_.cache(switch)
 
 
 def reload() -> None:

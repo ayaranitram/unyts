@@ -117,7 +117,7 @@ class UDigraph(object):
             return False
 
         if self.fvf is None:
-            print('Please enter formation volume factor (FVF) in reservoir_volume/standard_volume:')
+            print('Please enter formation Volume factor (FVF) in reservoir_volume/standard_volume:')
             while self.fvf is None:
                 self.fvf = input(' FVF (rV/stV) = ')
                 if not self.valid_fvf(self.fvf):
