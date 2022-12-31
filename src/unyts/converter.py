@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.7'
-__release__ = 20221229
+__version__ = '0.4.9'
+__release__ = 20221231
 __all__ = ['convert', 'convertible']
 
 from unyts.database import unitsNetwork
@@ -25,12 +25,6 @@ from pandas import Series, DataFrame
 numeric = Union[int, float, complex, ndarray, Series, DataFrame]
 
 
-def _apply_conversion0(value, conversion_path):
-    for conversion in range(len(conversion_path) - 1):
-        value = unitsNetwork.convert(value, conversion_path[conversion], conversion_path[conversion + 1])
-    return value
-
-
 def _str2lambda(string: str):
     if string == '/':
         return lambda x, y: x / y
@@ -42,7 +36,6 @@ def _apply_conversion(value, conversion_path):
     if len(conversion_path) == 1 and conversion_path[0] == '1/':
         return 1 / value
     i = 0
-    eval_unit = None
     while i < len(conversion_path)-1:
         this_step, next_step = conversion_path[i], conversion_path[i+1]
         if type(this_step) is str:
@@ -87,9 +80,6 @@ def _apply_conversion(value, conversion_path):
 
 
 def _lambda_conversion(conversion_path):
-    #big_lambda = []
-    #for i in range(len(conversion_path) - 1):
-    #    big_lambda += [unitsNetwork.conversion(conversion_path[i], conversion_path[i + 1])]
     big_lambda = [unitsNetwork.conversion(conversion_path[i], conversion_path[i+1])
                   for i in range(len(conversion_path)-1)]
     return lambda x: _lambda_loop(x, big_lambda[:])
@@ -277,7 +267,7 @@ def _converter(value, from_unit, to_unit):
         else:
             return value * conversion_factor, conversion_path
 
-    # look for one to pair Conversion
+    # look for one to pair conversion path
     if ('/' in to_unit or '*' in to_unit) and ('/' not in from_unit and '*' not in from_unit):
         from_unit_child = _get_pair_child(from_unit)
         if from_unit_child is not None:
@@ -293,7 +283,30 @@ def _converter(value, from_unit, to_unit):
             denominator, denominator_path = _get_conversion(1, from_den, to_den)
             if numerator is not None and denominator is not None:
                 conversion_factor = base_conversion * numerator / denominator
-                conversion_path = base_conversion_path + ['*'] + [1] + [numerator_path] + ['/'] + [1] + denominator_path
+                conversion_path = base_conversion_path + ['*'] + [1] + numerator_path + ['/'] + [1] + denominator_path
+                unitsNetwork.memory[(from_unit, to_unit)] = lambda x: x * conversion_factor, conversion_path
+                if value is None:
+                    return unitsNetwork.memory[(from_unit, to_unit)], conversion_path
+                else:
+                    return value * conversion_factor, conversion_path
+
+    # look for pair to one conversion path
+    elif ('/' in from_unit or '*' in from_unit) and ('/' not in to_unit or '*' not in to_unit):
+        to_unit_child = _get_pair_child(to_unit)
+        if to_unit_child is not None:
+            base_conversion, base_conversion_path = _get_conversion(1, to_unit, to_unit_child)
+            sep = '/' if '/' in to_unit_child else '*'
+            to_num, to_den = to_unit_child.split(sep)
+            sep = '/' if '/' in from_unit else '*'
+            if len(from_unit.split(sep)) == 2:
+                from_num, from_den = from_unit.split(sep)
+            else:
+                raise NotImplementedError("Conversion from triple or more to sigle not implemented.")
+            numerator, numerator_path = _get_conversion(1, from_num, to_num)
+            denominator, denominator_path = _get_conversion(1, from_den, to_den)
+            if numerator is not None and denominator is not None:
+                conversion_factor = base_conversion * numerator / denominator
+                conversion_path = base_conversion_path + ['*'] + [1] + numerator_path + ['/'] + [1] + denominator_path
                 unitsNetwork.memory[(from_unit, to_unit)] = lambda x: x * conversion_factor, conversion_path
                 if value is None:
                     return unitsNetwork.memory[(from_unit, to_unit)], conversion_path
@@ -392,7 +405,3 @@ def convert_for_SimPandas(value, from_unit, to_unit):
     if convertible(from_unit, to_unit):
         conv, conv_path = _converter(value, from_unit, to_unit)
     return value if conv is None else conv
-
-
-conv, conv_path = _get_conversion(10, 'scf/stb', 'stb/scf')
-_apply_conversion(10, conv_path)
