@@ -6,22 +6,22 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.7'
-__release__ = 20221229
+__version__ = '0.4.9'
+__release__ = 20221231
 __all__ = ['units', 'numeric', 'array_like']
 
-from ..dictionaries import dictionary
-from .custom import userUnits, otherUnits
-from .force import pressure, weight, compressibility
-from .geometry import length, area, volume
-from .temperature import temperature, temperatureGradient
-from .time import time
-from .unitless import dimensionless, percentage
-from .ratios import density, volumeRatio, productivityIndex, pressureGradient
-from .rates import rate, speed, velocity
-from .energy import energy, power
-from ..unit_class import Unit
-from ..helpers.common_classes import unit_or_str, array_like, number, numeric
+from unyts.dictionaries import dictionary
+from unyts.units.custom import userUnits, otherUnits
+from unyts.units.force import pressure, weight, compressibility
+from unyts.units.geometry import length, area, volume
+from unyts.units.temperature import temperature, temperatureGradient
+from unyts.units.time import time
+from unyts.units.unitless import dimensionless, percentage
+from unyts.units.ratios import density, volumeRatio, productivityIndex, pressureGradient
+from unyts.units.rates import rate, speed, velocity
+from unyts.units.energy import energy, power
+from unyts.unit_class import Unit
+from unyts.helpers.common_classes import unit_or_str, array_like, number, numeric
 
 
 def units(value: numeric, unit: unit_or_str = None) -> Unit:

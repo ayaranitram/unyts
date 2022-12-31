@@ -5,11 +5,11 @@ Created on Sat Oct 24 14:46:04 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.7'
-__release__ = 20221229
+__version__ = '0.4.9'
+__release__ = 20221231
 __all__ = ['is_unit']
 
-from ..dictionaries import dictionary
+from unyts.dictionaries import dictionary
 
 
 def is_unit(unit: str) -> bool:

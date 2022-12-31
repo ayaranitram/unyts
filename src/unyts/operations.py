@@ -6,14 +6,14 @@ Created on Sat Oct 24 14:38:58 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.7'
-__release__ = 20221229
+__version__ = '0.4.9'
+__release__ = 20221231
 __all__ = ['unit_product', 'unit_division']
 
-from .dictionaries import dictionary
-from .converter import convertible
-from .helpers.is_number import is_number
-from .helpers.multi_split import multi_split
+from unyts.dictionaries import dictionary
+from unyts.converter import convertible
+from unyts.helpers.is_number import is_number
+from unyts.helpers.multi_split import multi_split
 
 
 def unit_split(unit_string: str) -> str:
@@ -50,19 +50,19 @@ def unit_base(unit_string: str) -> str:
 
 def unit_product(unit_string1: str, unit_string2: str) -> str:
     if unit_string1 is None:
-        unit_string1 = 'Dimensionless'
+        unit_string1 = 'dimensionless'
     if unit_string2 is None:
-        unit_string2 = 'Dimensionless'
+        unit_string2 = 'dimensionless'
 
     if type(unit_string1) is str and len(unit_string1.strip(' ()')) == 0:
-        unit_string1 = 'Dimensionless'
+        unit_string1 = 'dimensionless'
     if type(unit_string2) is str and len(unit_string2.strip(' ()')) == 0:
-        unit_string2 = 'Dimensionless'
+        unit_string2 = 'dimensionless'
 
     if type(unit_string1) is str and len(unit_string1.split('/')) == 2 and unit_string1.split('/')[0] == unit_string1.split('/')[1]:
-        unit_string1 = 'Dimensionless'
+        unit_string1 = 'dimensionless'
     if type(unit_string2) is str and len(unit_string2.split('/')) == 2 and unit_string2.split('/')[0] == unit_string2.split('/')[1]:
-        unit_string2 = 'Dimensionless'
+        unit_string2 = 'dimensionless'
 
     if unit_string2.lower().strip(' ()') in dictionary['dimensionless']:
         return unit_string1

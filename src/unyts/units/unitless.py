@@ -6,14 +6,14 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.7'
-__release__ = 20221229
+__version__ = '0.4.9'
+__release__ = 20221231
 __all__ = ['dimensionless', 'percentage']
 
-from ..dictionaries import dictionary
-from ..unit_class import Unit
-from ..errors import WrongUnitsError
-from ..helpers.common_classes import unit_or_str, numeric
+from unyts.dictionaries import dictionary
+from unyts.unit_class import Unit
+from unyts.errors import WrongUnitsError
+from unyts.helpers.common_classes import unit_or_str, numeric
 
 
 class dimensionless(Unit):

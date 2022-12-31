@@ -6,13 +6,13 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.8'
+__version__ = '0.4.9'
 __release__ = 20221231
 __all__ = ['Unit']
 
-from .errors import WrongUnitsError, WrongValueError, NoConversionFoundError
-from .operations import unit_product, unit_division, unit_base_power
-from .converter import convert, convertible
+from unyts.errors import WrongUnitsError, WrongValueError, NoConversionFoundError
+from unyts.operations import unit_product, unit_division, unit_base_power
+from unyts.converter import convert, convertible
 import numpy as np
 from numbers import Number
 from numpy import ndarray

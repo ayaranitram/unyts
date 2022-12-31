@@ -6,8 +6,8 @@ Created on Sat Oct 24 17:52:34 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.7'
-__release__ = 20221229
+__version__ = '0.4.8'
+__release__ = 20221231
 __all__ = ['BFS', 'print_path']
 
 

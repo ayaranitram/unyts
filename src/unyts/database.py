@@ -6,14 +6,14 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.7'
-__release__ = 20221230
+__version__ = '0.4.9'
+__release__ = 20221231
 __all__ = ['unitsNetwork']
 
-from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
+from unyts.dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
     StandardEarthGravity
-from .network import UDigraph, UNode, Conversion
-from .parameters import unyts_parameters_, dir_path
+from unyts.network import UDigraph, UNode, Conversion
+from unyts.parameters import unyts_parameters_, dir_path
 from cloudpickle import dump, load
 from os.path import isfile
 from json import dump as jdump
