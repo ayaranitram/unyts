@@ -1,4 +1,4 @@
-[![Run tests](https://github.com/ayaranitram/unyts/actions/workflows/test.yml/badge.svg)](https://github.com/ayaranitram/unyts/actions/workflows/test.yml)
+[![Run tests](https://github.com/ayaranitram/unyts/actions/workflows/test-package.yml/badge.svg)](https://github.com/ayaranitram/unyts/actions/workflows/test-package.yml)
 
 # `unyts`
 

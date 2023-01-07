@@ -98,4 +98,5 @@ def test_convert():
 
 def test_convert_for_SimPandas():
     array = np.random.rand(10)
-    assert convert_for_SimPandas(array, 'meter', 'litre') is None
+    assert (convert_for_SimPandas(array, 'meter', 'litre') == array).all()
+    assert (convert_for_SimPandas(array, 'm', 'yd') == convert(array, 'm', 'yd')).all()

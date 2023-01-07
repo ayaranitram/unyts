@@ -18,7 +18,6 @@ from unyts.parameters import unyts_parameters_
 from unyts.helpers.unit_string_tools import _split_unit, _reduce_parentheses
 from functools import reduce
 from warnings import warn
-from typing import Union
 
 try:
     import numpy as np
@@ -34,13 +33,13 @@ except ModuleNotFoundError:
     _pandas_ = False
 
 if _numpy_ and _pandas_:
-    numeric = Union[int, float, complex, ndarray, Series, DataFrame]
+    numeric = (int, float, complex, ndarray, Series, DataFrame)
 elif _numpy_:
-    numeric = Union[int, float, complex, ndarray]
+    numeric = (int, float, complex, ndarray)
 elif _pandas_:
-    numeric = Union[int, float, complex, Series, DataFrame]
+    numeric = (int, float, complex, Series, DataFrame)
 else:
-    numeric = Union[int, float, complex]
+    numeric = (int, float, complex)
 
 
 def _str2lambda(string: str):

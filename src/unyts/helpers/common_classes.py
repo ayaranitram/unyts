@@ -6,20 +6,37 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.9'
-__release__ = 20221231
+__version__ = '0.5.1'
+__release__ = 20230106
 __all__ = ['array_like', 'number', 'numeric', 'unit_or_str']
 
-from numpy import ndarray
 from typing import Union
 from unyts.unit_class import Unit
-
+try:
+    from numpy import ndarray
+    _numpy_ = True
+except ModuleNotFoundError:
+    _numpy_ = False
 try:
     from pandas import Series, DataFrame
-    array_like = tuple([ndarray, Series, DataFrame])
-    numeric = Union[int, float, complex, ndarray, Series, DataFrame]
+    _pandas_ = True
 except ModuleNotFoundError:
-    array_like = tuple([ndarray])
-    numeric = Union[int, float, complex, ndarray]
-number = Union[int, float, complex]
-unit_or_str = Union[Unit, str]
+    _pandas_ = False
+
+
+number = (int, float, complex)
+unit_or_str = (Unit, str)
+
+
+if _numpy_ and _pandas_:
+    numeric = (int, float, complex, ndarray, Series, DataFrame)
+    array_like = (ndarray, Series, DataFrame)
+elif _numpy_:
+    numeric = (int, float, complex, ndarray)
+    array_like = (ndarray,)
+elif _pandas_:
+    numeric = (int, float, complex, Series, DataFrame)
+    array_like = (Series, DataFrame)
+else:
+    numeric = (int, float, complex)
+    array_like = tuple()
