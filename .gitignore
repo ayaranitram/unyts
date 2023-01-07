@@ -1,13 +1,16 @@
 __pycache__
 *.bak
 *.pypirc
+*.zip
+*.rar
+*.7z
 .ipynb_checkpoints
 .pytest_cache
 dist
 dist/*.whl
 dist/*.tar.gz
 build
-src/unyts.egg-info
+src/*.egg-info
 .DS_Store
 src/unyts/units/unitsNetwork.cache
 src/unyts/units/unitsDictionary.cache
