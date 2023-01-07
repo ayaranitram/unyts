@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "unyts"
-version = "0.5.0"
+version = "0.5.1"
 authors = [
   { name="Martin Carlos Araya", email="martinaraya@gmail.com" },
 ]
@@ -18,9 +18,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    'numpy',
-    'cloudpickle',
-]
+    ]
 [project.urls]
 "Homepage" = "https://github.com/ayaranitram/unyts"
 "Bug Tracker" = "https://github.com/ayaranitram/unyts/issues"

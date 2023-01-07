@@ -9,13 +9,13 @@ from unyts import convert
 from pandas import read_excel
 from math import isnan
 from unyts.converter import _apply_conversion, _get_conversion, _converter, _clean_print_conversion_path, convert_for_SimPandas
-from unyts.database import unitsNetwork as un
+from unyts.database import unitsNetwork as UnNe
 import numpy as np
 
 
 def test__get_conversion():
-    assert _get_conversion(3, 'meter', 'meter') == (3, [un.get_node('meter')])
-    assert _get_conversion('16/06/1969', 'date', 'DATE') == ('16/06/1969', [un.get_node('date'), un.get_node('DATE')])
+    assert _get_conversion(3, 'meter', 'meter') == (3, [UnNe.get_node('meter')])
+    assert _get_conversion('16/06/1969', 'date', 'DATE') == ('16/06/1969', [UnNe.get_node('date'), UnNe.get_node('DATE')])
     assert _get_conversion(2, 'foot', None) == (2, [])
     assert _get_conversion(3, None, 'meter') == (3, [])
     assert _get_conversion(4, None, None) == (4, [None])
@@ -24,31 +24,31 @@ def test__get_conversion():
     assert _get_conversion(0.25, 'percent', 'fraction') == (0.0025, ['/', 100])
     assert _get_conversion(0.25, 'dimensionless', 'fraction') == (0.25, [])
     assert _get_conversion(0.01, 'F/ft', 'C/m') == (0.018226888305628464, ['*', 0.5555555555555556, '/', 1,
-                                                                           un.get_node('ft'),
-                                                                           un.get_node('foot'),
-                                                                           un.get_node('yard'),
-                                                                           un.get_node('meter'),
-                                                                           un.get_node('m')])
+                                                                           UnNe.get_node('ft'),
+                                                                           UnNe.get_node('foot'),
+                                                                           UnNe.get_node('yard'),
+                                                                           UnNe.get_node('meter'),
+                                                                           UnNe.get_node('m')])
     assert _get_conversion(0.33, 'fraction', 'ft/ft') == (0.33, [])
     assert _get_conversion(0.33, 'ft3/ft3', 'fraction') == (0.33, [])
     assert _get_conversion(10, 'scf/stb', 'stb/scf') == (1/10, ['1/'])
-    assert _get_conversion(1, 'm', 'cm') == (100, [un.get_node('m'), un.get_node('cm')])
+    assert _get_conversion(1, 'm', 'cm') == (100, [UnNe.get_node('m'), UnNe.get_node('cm')])
     assert _get_conversion(1, 'meter', 'inch') == (39.37007874015748,
-                                                   [un.get_node('meter'),
-                                                    un.get_node('yard'),
-                                                    un.get_node('foot'),
-                                                    un.get_node('inch')])
+                                                   [UnNe.get_node('meter'),
+                                                    UnNe.get_node('yard'),
+                                                    UnNe.get_node('foot'),
+                                                    UnNe.get_node('inch')])
 
 
 def test__converter():
-    assert _converter(0.433, 'psi/ft', 'bar/m') == (0.09794717545606699, [un.get_node('psi'),
-                                                                          un.get_node('bar'),
+    assert _converter(0.433, 'psi/ft', 'bar/m') == (0.09794717545606699, [UnNe.get_node('psi'),
+                                                                          UnNe.get_node('bar'),
                                                                           '/', 1,
-                                                                          un.get_node('ft'),
-                                                                          un.get_node('foot'),
-                                                                          un.get_node('yard'),
-                                                                          un.get_node('meter'),
-                                                                          un.get_node('m')])
+                                                                          UnNe.get_node('ft'),
+                                                                          UnNe.get_node('foot'),
+                                                                          UnNe.get_node('yard'),
+                                                                          UnNe.get_node('meter'),
+                                                                          UnNe.get_node('m')])
 
 
 def test__apply_conversion():
@@ -98,4 +98,4 @@ def test_convert():
 
 def test_convert_for_SimPandas():
     array = np.random.rand(10)
-    convert_for_SimPandas
+    assert convert_for_SimPandas(array, 'meter', 'litre') is None

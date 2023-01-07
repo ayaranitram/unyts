@@ -6,11 +6,11 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.9'
-__release__ = 20221231
+__version__ = '0.5.1'
+__release__ = 20230106
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity']
 
-from json import load as jload
+from json import load as json_load
 from pickle import load, dump
 from os.path import isfile
 from unyts.parameters import unyts_parameters_, dir_path
@@ -396,7 +396,7 @@ if not unyts_parameters_.reload_ and \
         isfile(dir_path + 'units/TemperatureRatioConversions.cache'):
     try:
         with open(dir_path + 'units/UnitsDictionary.cache', 'r') as f:
-            dictionary = jload(f)
+            dictionary = json_load(f)
         with open(dir_path + 'units/TemperatureRatioConversions.cache', 'rb') as f:
             temperatureRatioConversions = load(f)
         print('units dictionary loaded from cache...')

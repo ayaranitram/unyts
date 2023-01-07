@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.0'
-__release__ = 20221231
+__version__ = '0.5.1'
+__release__ = 20230106
 __all__ = ['convert', 'convertible']
 
 from unyts.database import unitsNetwork
@@ -16,13 +16,31 @@ from unyts.searches import BFS, print_path
 from unyts.errors import NoConversionFoundError
 from unyts.parameters import unyts_parameters_
 from unyts.helpers.unit_string_tools import _split_unit, _reduce_parentheses
-import numpy as np
 from functools import reduce
-
-from numpy import ndarray
+from warnings import warn
 from typing import Union
-from pandas import Series, DataFrame
-numeric = Union[int, float, complex, ndarray, Series, DataFrame]
+
+try:
+    import numpy as np
+    from numpy import ndarray
+    _numpy_ = True
+except ModuleNotFoundError:
+    _numpy_ = False
+    warn("Missing NumPy package, operations with `list` of values will fail.")
+try:
+    from pandas import Series, DataFrame
+    _pandas_ = True
+except ModuleNotFoundError:
+    _pandas_ = False
+
+if _numpy_ and _pandas_:
+    numeric = Union[int, float, complex, ndarray, Series, DataFrame]
+elif _numpy_:
+    numeric = Union[int, float, complex, ndarray]
+elif _pandas_:
+    numeric = Union[int, float, complex, Series, DataFrame]
+else:
+    numeric = Union[int, float, complex]
 
 
 def _str2lambda(string: str):
@@ -346,10 +364,12 @@ def convert(value: numeric, from_unit: str, to_unit: str, print_conversion_path:
         the converted value if input value is not None
     """
     # cleaning inputs
-    if hasattr(value, '__iter__') and type(value) is not np.array:
+    if _numpy_ and hasattr(value, '__iter__') and type(value) is not np.array:
         value = np.array(value)
     if value is not None and not isinstance(value, numeric):
         raise ValueError("value must be numeric.")
+    if type(value) in [list, tuple]:
+        raise TypeError("`value` can not be a list or tuple if NumPy is not installed.")
 
     print_conversion_path = _clean_print_conversion_path(print_conversion_path)
 

@@ -6,12 +6,12 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.9'
-__release__ = 20221231
+__version__ = '0.5.1'
+__release__ = 20230106
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache']
 
 import os.path
-from json import load, dump
+from json import load as json_load, dump as json_dump
 from os.path import isfile
 from pathlib import Path
 
@@ -38,7 +38,7 @@ class UnytsParameters(object):
     def load_params(self) -> None:
         if isfile(ini_path):
             with open(ini_path, 'r') as f:
-                params = load(f)
+                params = json_load(f)
         else:
             params = {'print_path_': False,
                       'cache_': True,
@@ -48,7 +48,7 @@ class UnytsParameters(object):
                       'reduce_parentheses_': True,
                       'show_version_': False}
             with open(ini_path, 'w') as f:
-                dump(params, f)
+                json_dump(params, f)
         self.print_path_ = params['print_path_']
         self.cache_ = params['cache_']
         self.reload_ = params['reload_']
@@ -66,7 +66,7 @@ class UnytsParameters(object):
                   'reduce_parentheses_': self.verbose_,
                   'show_version_': self.show_version_}
         with open(ini_path, 'w') as f:
-            dump(params, f)
+            json_dump(params, f)
 
     def print_path(self, switch=None) -> None:
         if switch is None:

@@ -1,4 +1,6 @@
-# unyts
+[![Run tests](https://github.com/ayaranitram/unyts/actions/workflows/test.yml/badge.svg)](https://github.com/ayaranitram/unyts/actions/workflows/test.yml)
+
+# `unyts`
 
 After culminating a project for a class from MITx courses, I saw the opportunity to use a *digraph network* to build a Unit converter able to convert from any units to any units without the need to populate a huge but finite table of possible conversions. Powered by the _Breadth First Search_, or _BFS_, algorithm to search through the network, this converter can find conversions from a particular Unit (or ratio of units) to any other Unit (or ratio) as long as a path connecting them exists.
 
@@ -23,7 +25,7 @@ where:
 
 ### To refer to the _unit_ class:
 `from **unyts** import **Unit**`  
-- refering to **Unit** class is not intended to be used to create **Unit _instances_**, but to allow checking if other objects are instances of **Unit**: i.e.: `isinstance(variable, **Unit**)`
+- referring to **Unit** class is not intended to be used to create **Unit _instances_**, but to allow checking if other objects are instances of **Unit**: i.e.: `isinstance(variable, **Unit**)`
 - in order to create instances of **Unit** it is convenient to use the **units** function as it will return the appropriate **Unit _subclass_**.
 
 ### To create instances of the _unit_ class using the _units_ function:
@@ -39,8 +41,11 @@ Out: 18_in
 #### For further examples:
 The Jupyter notebook <a href="https://github.com/ayaranitram/unyts/blob/master/unyts_demo.ipynb">**unyts_demo**</a> intends to be a guide on how to use this converter and units classes.
 
-## Requisites
-- NumPy
+## Optional requisites:
+- `NumPy` to be able to deal with iterables not of nparray type, like (list of values) 
+- `Pandas`
+- `cloudpickle` to be able to save to cache file, for faster loading
+- `openpyxl` if willing to export the units network to pandas DataFrame
 
 ## To install this package:
 `pip install unyts`

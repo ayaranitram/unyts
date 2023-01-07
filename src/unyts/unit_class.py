@@ -6,25 +6,41 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.9'
-__release__ = 20221231
+__version__ = '0.5.1'
+__release__ = 20230106
 __all__ = ['Unit']
 
 from unyts.errors import WrongUnitsError, WrongValueError, NoConversionFoundError
 from unyts.operations import unit_product, unit_division, unit_base_power
 from unyts.converter import convert, convertible
-import numpy as np
 from numbers import Number
-from numpy import ndarray
 from typing import Union
 
 try:
-    from pandas import Series, DataFrame
-    array_like = tuple([ndarray, Series, DataFrame])
-    numeric = Union[int, float, complex, ndarray, Series, DataFrame]
+    import numpy as np
+    from numpy import ndarray
+    _numpy_ = True
 except ModuleNotFoundError:
-    array_like = tuple([ndarray])
+    _numpy_ = False
+try:
+    from pandas import Series, DataFrame
+    _pandas_ = True
+except ModuleNotFoundError:
+    _pandas_ = False
+
+if _numpy_ and _pandas_:
+    numeric = Union[int, float, complex, ndarray, Series, DataFrame]
+    array_like = tuple([ndarray, Series, DataFrame])
+elif _numpy_:
     numeric = Union[int, float, complex, ndarray]
+    array_like = tuple([ndarray])
+elif _pandas_:
+    numeric = Union[int, float, complex, Series, DataFrame]
+    array_like = tuple([Series, DataFrame])
+else:
+    numeric = Union[int, float, complex]
+    array_like = tuple()
+
 number = Union[int, float, complex]
 
 

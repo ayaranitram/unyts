@@ -6,18 +6,25 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.9'
-__release__ = 20221231
+__version__ = '0.5.1'
+__release__ = 20230106
 __all__ = ['unitsNetwork']
 
 from unyts.dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
     StandardEarthGravity
 from unyts.network import UDigraph, UNode, Conversion
 from unyts.parameters import unyts_parameters_, dir_path
-from cloudpickle import dump, load
 from os.path import isfile
-from json import dump as jdump
-from pandas import DataFrame
+from json import dump as json_dump
+from warnings import warn
+
+try:
+    from cloudpickle import dump as cloudpickle_dump, load as cloudpickle_load
+    _cloudpickle_ = True
+except ModuleNotFoundError:
+    if unyts_parameters_.cache_:
+        warn("Missing `cloudpickle` package. Not able to cache network dictionary.")
+    _cloudpickle_ = False
 
 
 def _load_network():
@@ -566,7 +573,12 @@ def rebuild_units():
     return units_network, dictionary, temperatureRatioConversions
 
 
-def network2frame() -> DataFrame:
+def network2frame():
+    try:
+        from pandas import DataFrame
+    except ModuleNotFoundError:
+        raise ModuleNotFoundError("Required package `pandas` not found.\nTo install Pandas: `pip install pandas`")
+
     frame = DataFrame(data={}, columns=['source', 'target', 'lambda'])
     i = 0
     for node in unitsNetwork.edges:
@@ -580,15 +592,16 @@ def network2frame() -> DataFrame:
 # load the network into an instance of the graph database
 if not unyts_parameters_.reload_ and \
         isfile(dir_path + 'units/UnitsNetwork.cache') and \
-        isfile(dir_path + 'units/UnitsDictionary.cache') and \
+        (not _cloudpickle_ or (_cloudpickle_ and isfile(dir_path + 'units/UnitsDictionary.cache'))) and \
         isfile(dir_path + 'units/TemperatureRatioConversions.cache'):
     try:
         with open(dir_path + 'units/UnitsNetwork.cache', 'rb') as f:
-            unitsNetwork = load(f)
+            unitsNetwork = cloudpickle_load(f)
         print('units network loaded from cache...')
         unyts_parameters_.reload_ = False
         unyts_parameters_.save_params()
     except:
+        warn("Failed to load from cache. Creating new dictionaries and saving them to cache...")
         unitsNetwork, dictionary, temperatureRatioConversions = rebuild_units()
 else:
     try:
@@ -608,7 +621,8 @@ else:
         unitsNetwork, dictionary, temperatureRatioConversions = rebuild_units()
     if unyts_parameters_.cache_:
         print('saving units network and dictionary to cache...')
-        with open(dir_path + 'units/UnitsNetwork.cache', 'wb') as f:
-            dump(unitsNetwork, f)
+        if _cloudpickle_:
+            with open(dir_path + 'units/UnitsNetwork.cache', 'wb') as f:
+                cloudpickle_dump(unitsNetwork, f)
         with open(dir_path + 'units/UnitsDictionary.cache', 'w') as f:
-            jdump(dictionary, f)
+            json_dump(dictionary, f)

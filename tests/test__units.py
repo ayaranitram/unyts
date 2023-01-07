@@ -10,7 +10,6 @@ from unyts.dictionaries import dictionary
 from unyts.units.unitless import Dimensionless, Percentage
 from unyts.operations import unit_product, unit_division
 import numpy as np
-import pandas as pd
 
 num = 3
 array = np.array([1, 2, 3, 4, 5])
