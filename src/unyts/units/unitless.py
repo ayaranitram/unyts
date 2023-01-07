@@ -6,14 +6,21 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.9'
-__release__ = 20221231
+__version__ = '0.5.2'
+__release__ = 20230107
 __all__ = ['Dimensionless', 'Percentage']
 
 from unyts.dictionaries import dictionary
 from unyts.unit_class import Unit
 from unyts.errors import WrongUnitsError
 from unyts.helpers.common_classes import unit_or_str, numeric
+
+unitless_names = list(set(
+    list(dictionary['Dimensionless'].keys()) +
+    list(dictionary['Dimensionless'].values()) +
+    list(dictionary['Percentage'].keys()) +
+    list(dictionary['Percentage'].values())
+))
 
 
 class Dimensionless(Unit):

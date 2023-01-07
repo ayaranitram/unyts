@@ -6,9 +6,9 @@ Created on Sat Oct 24 14:38:58 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.1'
-__release__ = 20230106
-__all__ = ['unit_product', 'unit_division']
+__version__ = '0.5.2'
+__release__ = 20230107
+__all__ = ['unit_product', 'unit_division', 'unit_base_power']
 
 from unyts.dictionaries import dictionary
 from unyts.converter import convertible
