@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.9'
-__release__ = 20221231
+__version__ = '0.5.2'
+__release__ = 20230107
 __all__ = ['CustomUnits', 'UserUnits', 'OtherUnits']
 
 from unyts.dictionaries import dictionary
@@ -26,7 +26,7 @@ def OtherUnits(value: numeric, units: unit_or_str) -> Unit:
 class UserUnits(Unit):
     classUnits = dictionary['UserUnits']
 
-    def __init__(self, value: numeric, units: unit_or_str) -> Unit:
+    def __init__(self, value: numeric, units: unit_or_str):
         self.name = 'UserUnits'
         self.kind = UserUnits
         units = units.strip()

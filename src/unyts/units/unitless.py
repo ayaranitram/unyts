@@ -8,25 +8,19 @@ Created on Sat Oct 24 14:34:59 2020
 
 __version__ = '0.5.2'
 __release__ = 20230107
-__all__ = ['Dimensionless', 'Percentage']
+__all__ = ['Dimensionless', 'Percentage', 'unitless_names']
 
 from unyts.dictionaries import dictionary
 from unyts.unit_class import Unit
 from unyts.errors import WrongUnitsError
 from unyts.helpers.common_classes import unit_or_str, numeric
-
-unitless_names = list(set(
-    list(dictionary['Dimensionless'].keys()) +
-    list(dictionary['Dimensionless'].values()) +
-    list(dictionary['Percentage'].keys()) +
-    list(dictionary['Percentage'].values())
-))
+from unyts.dictionaries import unitless_names
 
 
 class Dimensionless(Unit):
     classUnits = dictionary['Dimensionless']
 
-    def __init__(self, value: numeric, units: unit_or_str = None) -> Unit:
+    def __init__(self, value: numeric, units: unit_or_str = None):
         self.name = 'dimensionless'
         self.kind = Dimensionless
         self.value = self.check_value(value)
@@ -57,7 +51,7 @@ class Dimensionless(Unit):
 class Percentage(Dimensionless):
     classUnits = dictionary['Percentage']
 
-    def __init__(self, value: numeric, units: unit_or_str = None) -> Unit:
+    def __init__(self, value: numeric, units: unit_or_str = None):
         self.name = 'percentage'
         self.kind = Percentage
         self.value = self.check_value(value) / 100
