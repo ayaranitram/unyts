@@ -7,15 +7,15 @@ Created on Fri Aug 26 13:12:52 2022
 helper functions for units modules
 """
 
-__version__ = '0.4.7'
-__release__ = 20221229
+__version__ = '0.5.1'
+__release__ = 20230106
 __all__ = ['multi_split']
 
 
 def multi_split(string: str,
                 sep: str or tuple or list = ('*', '/'),
                 remove: str or tuple or list = (' ',)
-                ) -> tuple[str]:
+                ) -> tuple:  # tuple[str]
     """
     receives a string and returns a list with string split by all the separators in sep.
     the default separator is the blank space ' '.

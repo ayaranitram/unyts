@@ -1,4 +1,7 @@
 [![Run tests](https://github.com/ayaranitram/unyts/actions/workflows/test-package.yml/badge.svg)](https://github.com/ayaranitram/unyts/actions/workflows/test-package.yml)
+[![PyPI version](https://img.shields.io/pypi/v/unyts.svg)](https://pypi.org/project/unyts/)
+[![PyPI versions](https://img.shields.io/pypi/pyversions/unyts.svg)](https://pypi.org/project/unyts//)
+[![PyPI license](https://img.shields.io/pypi/l/unyts.svg)](https://pypi.org/project/unyts/)
 
 # `unyts`
 

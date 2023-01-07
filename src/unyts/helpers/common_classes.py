@@ -10,7 +10,6 @@ __version__ = '0.5.1'
 __release__ = 20230106
 __all__ = ['array_like', 'number', 'numeric', 'unit_or_str']
 
-from typing import Union
 from unyts.unit_class import Unit
 try:
     from numpy import ndarray

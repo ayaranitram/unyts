@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:38:58 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.9'
-__release__ = 20221231
+__version__ = '0.5.1'
+__release__ = 20230106
 __all__ = ['unit_product', 'unit_division']
 
 from unyts.dictionaries import dictionary
@@ -21,7 +21,7 @@ def unit_split(unit_string: str) -> str:
     return us
 
 
-def unit_base_power(unit_string: str) -> tuple[str, int]:
+def unit_base_power(unit_string: str) -> tuple:  # tuple[str, int]
     u_bas, u_pow = '', ''
     oth = ''
     inv = False
