@@ -6,12 +6,12 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.1'
-__release__ = 20230106
-__all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity']
+__version__ = '0.5.7'
+__release__ = 20230107
+__all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'unitless_names']
 
 from json import load as json_load
-from pickle import load, dump
+from pickle import load as pickle_load, dump as pickle_dump
 from os.path import isfile
 from unyts.parameters import unyts_parameters_, dir_path
 
@@ -383,25 +383,40 @@ def _load_dictionary() -> (dict, dict):
             for t2, c2 in temperatureRatioFactors.items():
                 for t2a in ((t2,) + dictionary['Temperature_NAMES'][t2]):
                     temperatureRatioConversions[(t1a, t2a)] = c1 / c2
+
+    unitless_names = dictionary['Dimensionless'] + dictionary['Percentage']
+    for name in [names for names in dictionary if names.startswith('Dimensionless') or names.startswith('Percentage')]:
+        if type(dictionary[name]) in (tuple, list):
+            unitless_names += list(dictionary[name])
+        elif type(dictionary[name]) is dict:
+            for key in dictionary[name]:
+                unitless_names += [key] + list(dictionary[name][key])
+    unitless_names = set(unitless_names)
+
     if unyts_parameters_.cache_:
         with open(dir_path + 'units/TemperatureRatioConversions.cache', 'wb') as f:
-            dump(temperatureRatioConversions, f)
+            pickle_dump(temperatureRatioConversions, f)
+        with open(dir_path + 'units/UnitlessNames.cache', 'wb') as f:
+            pickle_dump(unitless_names, f)
 
-    return dictionary, temperatureRatioConversions
+    return dictionary, temperatureRatioConversions, unitless_names
 
 
 if not unyts_parameters_.reload_ and \
         isfile(dir_path + 'units/UnitsDictionary.cache') and \
         isfile(dir_path + 'units/UnitsNetwork.cache') and \
-        isfile(dir_path + 'units/TemperatureRatioConversions.cache'):
+        isfile(dir_path + 'units/TemperatureRatioConversions.cache') and \
+        isfile(dir_path + 'units/UnitlessNames.cache'):
     try:
         with open(dir_path + 'units/UnitsDictionary.cache', 'r') as f:
             dictionary = json_load(f)
         with open(dir_path + 'units/TemperatureRatioConversions.cache', 'rb') as f:
-            temperatureRatioConversions = load(f)
+            temperatureRatioConversions = pickle_load(f)
+        with open(dir_path + 'units/UnitlessNames.cache', 'rb') as f:
+            unitless_names = pickle_load(f)
         print('units dictionary loaded from cache...')
     except:
         unyts_parameters_.reload_ = True
-        dictionary, temperatureRatioConversions = _load_dictionary()
+        dictionary, temperatureRatioConversions, unitless_names = _load_dictionary()
 else:
-    dictionary, temperatureRatioConversions = _load_dictionary()
+    dictionary, temperatureRatioConversions, unitless_names = _load_dictionary()

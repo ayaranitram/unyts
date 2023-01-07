@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.1'
-__release__ = 20230106
+__version__ = '0.5.2'
+__release__ = 20230107
 __all__ = ['unitsNetwork']
 
 from unyts.dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
@@ -564,13 +564,13 @@ def _create_Acceleration() -> None:
     dictionary['Acceleration'] = tuple(set(acceleration))
 
 
-def rebuild_units():
+def _rebuild_units():
     from .dictionaries import _load_dictionary
-    dictionary, temperatureRatioConversions = _load_dictionary()
+    dictionary, temperatureRatioConversions, unitless_names = _load_dictionary()
     units_network = _load_network()
     unyts_parameters_.reload_ = True
     unyts_parameters_.save_params()
-    return units_network, dictionary, temperatureRatioConversions
+    return units_network, dictionary, temperatureRatioConversions, unitless_names
 
 
 def network2frame():
@@ -593,7 +593,8 @@ def network2frame():
 if not unyts_parameters_.reload_ and \
         isfile(dir_path + 'units/UnitsNetwork.cache') and \
         (not _cloudpickle_ or (_cloudpickle_ and isfile(dir_path + 'units/UnitsDictionary.cache'))) and \
-        isfile(dir_path + 'units/TemperatureRatioConversions.cache'):
+        isfile(dir_path + 'units/TemperatureRatioConversions.cache') and \
+        isfile(dir_path + 'units/UnitlessNames.cache'):
     try:
         with open(dir_path + 'units/UnitsNetwork.cache', 'rb') as f:
             unitsNetwork = cloudpickle_load(f)
@@ -602,7 +603,7 @@ if not unyts_parameters_.reload_ and \
         unyts_parameters_.save_params()
     except:
         warn("Failed to load from cache. Creating new dictionaries and saving them to cache...")
-        unitsNetwork, dictionary, temperatureRatioConversions = rebuild_units()
+        unitsNetwork, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
 else:
     try:
         unitsNetwork = _load_network()
@@ -618,7 +619,7 @@ else:
         unyts_parameters_.reload_ = False
         unyts_parameters_.save_params()
     except:
-        unitsNetwork, dictionary, temperatureRatioConversions = rebuild_units()
+        unitsNetwork, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
     if unyts_parameters_.cache_:
         print('saving units network and dictionary to cache...')
         if _cloudpickle_:
