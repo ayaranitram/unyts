@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.1'
-__release__ = 20230106
+__version__ = '0.5.3'
+__release__ = 20230108
 __all__ = ['convert', 'convertible']
 
 from unyts.database import unitsNetwork

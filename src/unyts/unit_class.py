@@ -6,9 +6,9 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.1'
-__release__ = 20230106
-__all__ = ['Unit']
+__version__ = '0.5.3'
+__release__ = 20230108
+__all__ = ['Unit', 'is_Unit']
 
 from unyts.errors import WrongUnitsError, WrongValueError, NoConversionFoundError
 from unyts.operations import unit_product, unit_division, unit_base_power
@@ -474,6 +474,13 @@ class Unit(object):
     def get_unit(self):
         return self.unit
 
+    def get_units(self):
+        return self.get_unit()
+
+    @property
+    def units(self):
+        return self.unit
+
     def get_value(self):
         return self.value
 
@@ -500,3 +507,7 @@ class Unit(object):
             return units
         else:
             raise WrongUnitsError("'" + str(units) + "' for '" + str(self.name) + "'")
+
+
+def is_Unit(obj) -> bool:
+    return isinstance(obj, Unit)
