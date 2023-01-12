@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.3'
-__release__ = 20230108
+__version__ = '0.5.4'
+__release__ = 20230112
 __all__ = ['Unit', 'is_Unit']
 
 from unyts.errors import WrongUnitsError, WrongValueError, NoConversionFoundError
@@ -482,6 +482,10 @@ class Unit(object):
         return self.unit
 
     def get_value(self):
+        return self.value
+
+    @property
+    def values(self):
         return self.value
 
     def check_value(self, value):
