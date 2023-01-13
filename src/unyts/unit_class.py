@@ -14,11 +14,11 @@ from unyts.errors import WrongUnitsError, WrongValueError, NoConversionFoundErro
 from unyts.operations import unit_product, unit_division, unit_base_power
 from unyts.converter import convert, convertible
 from numbers import Number
-from typing import Union
+
 
 try:
     import numpy as np
-    from numpy import ndarray
+    from numpy import ndarray, int64, float64, int32, float32
     _numpy_ = True
 except ModuleNotFoundError:
     _numpy_ = False
@@ -29,19 +29,21 @@ except ModuleNotFoundError:
     _pandas_ = False
 
 if _numpy_ and _pandas_:
-    numeric = Union[int, float, complex, ndarray, Series, DataFrame]
-    array_like = tuple([ndarray, Series, DataFrame])
+    number = (int, float, complex, int32, int64, float32, float64)
+    numeric = (int, float, complex, int32, int64, float32, float64, ndarray, Series, DataFrame)
+    array_like = (ndarray, Series, DataFrame)
 elif _numpy_:
-    numeric = Union[int, float, complex, ndarray]
-    array_like = tuple([ndarray])
+    number = (int, float, complex, int32, int64, float32, float64)
+    numeric = (int, float, complex, ndarray, int32, int64, float32, float64)
+    array_like = (ndarray,)
 elif _pandas_:
-    numeric = Union[int, float, complex, Series, DataFrame]
-    array_like = tuple([Series, DataFrame])
+    number = (int, float, complex)
+    numeric = (int, float, complex, Series, DataFrame)
+    array_like = (Series, DataFrame)
 else:
-    numeric = Union[int, float, complex]
+    number = (int, float, complex)
+    numeric = (int, float, complex)
     array_like = tuple()
-
-number = Union[int, float, complex]
 
 
 class Unit(object):
