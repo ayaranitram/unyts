@@ -52,7 +52,7 @@ or upgrade to the latest version:
 `pip install --upgrade unyts`
 
 ## Optional requisites:
-The main functionalities are purely Python powered and does not require any other package to work but, if presnet, some commonly known packages are used to improve the operability of `unyts`:
+The main functionalities are purely Python powered and does not require any other package to work but, if present, some commonly known packages are used to improve the operability of `unyts`:
 - `NumPy` to be able to deal with iterables not of nparray type, like (list of values) 
 - `Pandas` to be able to recognize Series and DataFrames
 - `cloudpickle` to be able to save internal dictionaries and network to cache file, for faster loading
