@@ -5,7 +5,7 @@
 
 # `unyts`
 
-After culminating a project for a class from MITx courses, I saw the opportunity to use a *digraph network* to build a Unit converter able to convert from any units to any units without the need to populate a huge but finite table of possible conversions. Powered by the _Breadth First Search_, or _BFS_, algorithm to search through the network, this converter can find conversions from a particular Unit (or ratio of units) to any other Unit (or ratio) as long as a path connecting them exists.
+After culminating a project for a class from MITx courses, I saw the opportunity to use a *digraph network* to build a units converter able to convert from any units to any units without the need to populate a huge but finite table of possible conversions. Powered by the _Breadth First Search_, or _BFS_, algorithm to search through the network, this converter can find conversions from a particular Unit (or ratio of units) to any other Unit (or ratio) as long as a path connecting them exists.
 
 This package is under development and is regularly updated. Back compatibility is intended to be maintained when possible.
 
@@ -52,7 +52,8 @@ or upgrade to the latest version:
 `pip install --upgrade unyts`
 
 ## Optional requisites:
+The main functionalities are purely Python powered and does not require any other package to work but, if present, some commonly known packages are used to improve the operability of `unyts`:
 - `NumPy` to be able to deal with iterables not of nparray type, like (list of values) 
-- `Pandas`
-- `cloudpickle` to be able to save to cache file, for faster loading
-- `openpyxl` if willing to export the units network to pandas DataFrame
+- `Pandas` to be able to recognize Series and DataFrames
+- `cloudpickle` to be able to save internal dictionaries and network to cache file, for faster loading
+- `openpyxl` if willing to export the units network to a pandas DataFrame
