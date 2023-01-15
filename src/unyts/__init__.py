@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.4'
-__release__ = 2023012
+__version__ = '0.5.5'
+__release__ = 2023015
 __all__ = ['units', 'convert', 'Unit', 'is_Unit']
 
 import unyts.parameters
