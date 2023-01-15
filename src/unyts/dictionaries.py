@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.7'
-__release__ = 20230107
+__version__ = '0.5.8'
+__release__ = 20230115
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'unitless_names']
 
 from json import load as json_load
@@ -158,6 +158,7 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Length_SI'] = ('m', 'l')  # litre is Volume but the Conversion of SI prefixes is linear
     dictionary['Length_UK_NAMES_UPPER_REVERSE'] = {
         'thou': ('th',),
+        'tenth': ('te', '0.1 in'),
         'inch': ('in', '"'),
         'foot': ('feet', 'ft', "'"),
         'yard': ('yd',),

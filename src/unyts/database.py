@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.2'
-__release__ = 20230107
+__version__ = '0.5.3'
+__release__ = 20230115
 __all__ = ['unitsNetwork']
 
 from unyts.dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
@@ -288,6 +288,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('yard'), network.get_node('meter'), lambda d: d * 9144 / 10000))
     # network.addEdge(Conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048))
     network.add_edge(Conversion(network.get_node('inch'), network.get_node('thou'), lambda d: d * 1000))
+    network.add_edge(Conversion(network.get_node('inch'), network.get_node('tenth'), lambda d: d * 10))
     network.add_edge(Conversion(network.get_node('foot'), network.get_node('inch'), lambda d: d * 12))
     network.add_edge(Conversion(network.get_node('yard'), network.get_node('foot'), lambda d: d * 3))
     network.add_edge(Conversion(network.get_node('chain'), network.get_node('yard'), lambda d: d * 22))
