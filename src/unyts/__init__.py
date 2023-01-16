@@ -7,7 +7,7 @@ Created on Sat Oct 24 18:24:20 2020
 """
 
 __version__ = '0.5.6'
-__release__ = 2023015
+__release__ = 2023016
 __all__ = ['units', 'convert', 'Unit', 'is_Unit']
 
 import unyts.parameters

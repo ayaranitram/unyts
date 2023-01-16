@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.4'
-__release__ = 20230112
+__version__ = '0.5.6'
+__release__ = 20230116
 __all__ = ['Unit', 'is_Unit']
 
 from unyts.errors import WrongUnitsError, WrongValueError, NoConversionFoundError
@@ -485,6 +485,9 @@ class Unit(object):
             return len(self.value)
         except TypeError:
             return 1
+
+    def __round__(self, n=None):
+        return self.kind(round(self.value, n), self.unit)
 
     def __getitem__(self, item):
         if type(item) is int:

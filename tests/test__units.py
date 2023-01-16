@@ -19,12 +19,14 @@ limit_dict_units = 3
 for kind in [k for k in dictionary if k in ['Length']]:
     for unit1 in range(len(dictionary[kind][:limit_dict_units])-1):
         print(dictionary[kind][unit1])
+        u0 = units(2.78, dictionary[kind][unit1])
         u1 = units(3.0, dictionary[kind][unit1])
 
         assert str(u1) == (str(u1.value) + '_' + str(u1.unit))
         assert -u1 == (u1 * -1)
         assert bool(u1) is False if u1.kind in (Dimensionless, Percentage) else True
         assert abs(u1) == u1.kind(abs(u1.value), u1.unit)
+        assert round(u0, 0) == u1
 
         for op in ('+', '-', '*', '/', '%'):
             assert eval('u1 ' + op + ' num') == units(eval('u1.value ' + op + ' num'), u1.unit)
