@@ -8,7 +8,7 @@ Created on Sat Oct 24 14:38:58 2020
 
 __version__ = '0.5.2'
 __release__ = 20230116
-__all__ = ['unit_product', 'unit_division', 'unit_base_power', 'unit_power', 'unit_addition']
+__all__ = ['unit_product', 'unit_division', 'unit_base_power', 'unit_power', 'unit_addition', 'unit_inverse']
 
 from unyts.dictionaries import dictionary, unitless_names
 from unyts.converter import convertible
@@ -26,18 +26,31 @@ def unit_base_power(unit_string: str) -> tuple:  # tuple[str, int]
     oth = ''
     inv = False
     if '/' in unit_string and len(unit_string.split('/')) == 2 and is_number(unit_string.split('/')[0]):
-        inv_pow, unit_string = unit_string.split('/')
+        inv_pow, u_bas = unit_string.split('/')
         inv = True
-
-    for c in unit_string:
-        if c.isdigit():
-            u_pow += oth + c
-            oth = ''
-        elif c in ['-', '+', '.']:
-            oth += c
-        else:
-            u_bas += oth + c
-            oth = ''
+    else:
+        for c in unit_string:
+            if c.isdigit():
+                u_pow += oth + c
+                oth = ''
+            elif c in ['-', '+', '.']:
+                oth += c
+            else:
+                if inv and len(u_pow) > 0:
+                    if u_pow[0] == '-':
+                        u_pow = u_pow[1:]
+                    else:
+                        u_pow = '-' + u_pow
+                if c in ['/']:
+                    inv = not inv
+                u_bas += oth + c
+                oth = ''
+        if inv and len(u_pow) > 0:
+            if u_pow[0] == '-':
+                u_pow = u_pow[1:]
+            else:
+                u_pow = '-' + u_pow
+        inv = False
     u_pow = 1 if u_pow == '' else float(u_pow) if '.' in u_pow else int(u_pow)
     if inv:
         u_pow = u_pow * -1 * (float(inv_pow) if '.' in inv_pow else int(inv_pow))
@@ -79,6 +92,11 @@ def unit_product(unit_string1: str, unit_string2: str) -> str:
 
     u1bas, u1pow = unit_base_power(unit_string1)
     u2bas, u2pow = unit_base_power(unit_string2)
+
+    if u1pow == -1 and u2pow != -1:
+        return unit_division(unit_string2, u1bas)
+    elif u1pow != -1 and u2pow == -1:
+        return unit_division(unit_string1, u2bas)
 
     if convertible(u1bas, u2bas):
         u_pow = u1pow + u2pow
@@ -139,6 +157,11 @@ def unit_division(unit_string1: str, unit_string2: str) -> str:
 
     u1bas, u1pow = unit_base_power(unit_string1)
     u2bas, u2pow = unit_base_power(unit_string2)
+
+    if u1pow == -1 and u2pow != -1:
+        return unit_product(u1bas, unit_string2)
+    elif u1pow != -1 and u2pow == -1:
+        return unit_product(unit_string1, u2bas)
 
     if convertible(u1bas, u2bas):
         u_pow = u1pow - u2pow
