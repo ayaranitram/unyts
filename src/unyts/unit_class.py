@@ -74,6 +74,20 @@ class Unit(object):
     def __str__(self) -> str:
         return str(self.value) + '_' + str(self.unit)
 
+    @property
+    def dtype(self):
+        if hasattr(self.values, 'dtype'):
+            return self.values.dtype
+        elif _numpy_:
+            if type(self.value) is int:
+                return np.dtype(int)
+            elif type(self.value) is float:
+                return np.dtype(float)
+            elif type(self.value) is complex:
+                return np.dtype(complex)
+        else:
+            raise NotImplementedError("dtype not implemented without NumPy.")
+
     def convert(self, new_unit):
         if type(new_unit) is not str:
             try:
