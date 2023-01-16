@@ -347,7 +347,7 @@ class Unit(object):
         elif type(other) in numeric:
             return self.kind(self.value // other, self.unit)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
-            return other.__rtruediv__(self)
+            return other.__rfloordiv__(self)
         else:
             raise NotImplementedError("Division of Unit by " + type(other) + " not implemented.")
 
@@ -392,7 +392,7 @@ class Unit(object):
         elif type(other) in numeric:
             return self.kind(self.value % other, self.unit)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
-            return other.__rtruediv__(self)
+            return other.__rmod__(self)
         else:
             raise NotImplementedError("Module of Unit when divided by " + type(other) + " not implemented.")
 
