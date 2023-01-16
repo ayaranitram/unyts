@@ -233,3 +233,31 @@ def unit_addition(unit_string1:str, unit_string2:str) -> str:
         return unit_string2
     else:
         return unit_string1 + '+' + unit_string2
+
+
+def unit_inverse(unit_string: str) -> str:
+    if unit_string is None:
+        unit_string = 'dimensionless'
+
+    if type(unit_string) is str and len(unit_string.strip(' ()')) == 0:
+        unit_string = 'dimensionless'
+
+    if unit_string.lower().strip(' ()') in unitless_names:  # dictionary['Dimensionless']:
+        return unit_string
+
+    ubas, upow = unit_base_power(unit_string)
+    if upow == -1:
+        return ubas
+    elif upow < -1:
+        return ubas + str(abs(upow))
+    elif upow > 1:
+        return ubas + str(-1 * upow)
+
+    if '/' not in unit_string:
+        return ubas + '-1'  # '1/' + ubas
+    elif len(unit_string.split('/')) == 2:
+        return unit_string.split('/')[1] + '/' + unit_string.split('/')[0]
+    elif len(unit_string.split('/')) == 3:
+        return unit_string.split('/')[2] + '*' + unit_string.split('/')[1] + '/' + unit_string.split('/')[0]
+    else:  # wtf?
+        return '/'.join(unit_string.split('/')[::-1])
