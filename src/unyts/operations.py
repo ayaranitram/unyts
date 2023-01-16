@@ -7,10 +7,10 @@ Created on Sat Oct 24 14:38:58 2020
 """
 
 __version__ = '0.5.2'
-__release__ = 20230107
-__all__ = ['unit_product', 'unit_division', 'unit_base_power']
+__release__ = 20230116
+__all__ = ['unit_product', 'unit_division', 'unit_base_power', 'unit_power', 'unit_addition']
 
-from unyts.dictionaries import dictionary
+from unyts.dictionaries import dictionary, unitless_names
 from unyts.converter import convertible
 from unyts.helpers.is_number import is_number
 from unyts.helpers.multi_split import multi_split
@@ -66,10 +66,10 @@ def unit_product(unit_string1: str, unit_string2: str) -> str:
             unit_string2.split('/')[1]:
         unit_string2 = 'dimensionless'
 
-    if unit_string2.lower().strip(' ()') in dictionary['Dimensionless']:
+    if unit_string2.lower().strip(' ()') in unitless_names:  # dictionary['Dimensionless']:
         return unit_string1
-    if unit_string1.lower().strip(' ()') in dictionary['Dimensionless']:
-        if unit_string2.lower().strip(' ()') not in dictionary['Dimensionless']:
+    if unit_string1.lower().strip(' ()') in unitless_names:  # dictionary['Dimensionless']:
+        if unit_string2.lower().strip(' ()') not in unitless_names:  # dictionary['Dimensionless']:
             return unit_string2
         else:
             return unit_string1
@@ -125,10 +125,10 @@ def unit_division(unit_string1: str, unit_string2: str) -> str:
             unit_string2.split('/')[1]:
         unit_string2 = 'dimensionless'
 
-    if unit_string2.lower().strip(' ()') in dictionary['Dimensionless']:
+    if unit_string2.lower().strip(' ()') in unitless_names:  # dictionary['Dimensionless']:
         return unit_string1
-    if unit_string1.lower().strip(' ()') in dictionary['Dimensionless']:
-        if unit_string2.lower().strip(' ()') not in dictionary['Dimensionless']:
+    if unit_string1.lower().strip(' ()') in unitless_names:  # dictionary['Dimensionless']:
+        if unit_string2.lower().strip(' ()') not in unitless_names:  # dictionary['Dimensionless']:
             u_bas, u_pow = unit_base_power('1/' + unit_string2)
             return u_bas + str(u_pow)
         else:
@@ -211,3 +211,25 @@ def unit_power(unit_string: str, power: int or str) -> str:
             return u1bas + '^' + str(u_pow) + u2bas
     else:
         raise TypeError('Power must be units string or numeric.')
+
+
+def unit_addition(unit_string1:str, unit_string2:str) -> str:
+    if unit_string1 is None:
+        unit_string1 = 'dimensionless'
+    if unit_string2 is None:
+        unit_string2 = 'dimensionless'
+
+    if unit_string2.lower().strip(' ()') in unitless_names:  # dictionary['Dimensionless']:
+        return unit_string1
+    if unit_string1.lower().strip(' ()') in unitless_names:  # dictionary['Dimensionless']:
+        if unit_string2.lower().strip(' ()') not in unitless_names:  # dictionary['Dimensionless']:
+            return unit_string2
+        else:
+            return unit_string1
+
+    if convertible(unit_string2, unit_string1):
+        return unit_string1
+    elif convertible(unit_string1, unit_string2):
+        return unit_string2
+    else:
+        return unit_string1 + '+' + unit_string2
