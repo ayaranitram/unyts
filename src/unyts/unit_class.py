@@ -131,10 +131,10 @@ class Unit(object):
             return self.kind((self.value + other) * 100, self.unit)
         elif type(other) in numeric:
             return self.kind(self.value + other, self.unit)
-        elif hasattr(other, '_identity_') and other._identity_ in ('SimSeries', 'SimDataFrame'):
+        elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__radd__(self)
         else:
-            raise NotImplementedError("Addition of Unit and " + type(other) + " not implemented.")
+            raise NotImplementedError("Addition of Unit and " + str(type(other)) + " not implemented.")
 
     def __radd__(self, other):
         return self.__add__(other)
@@ -171,7 +171,7 @@ class Unit(object):
             return self.kind(self.value * other * 100, self.unit)
         elif type(other) in numeric:
             return self.kind(self.value * other, self.unit)
-        elif hasattr(other, '_identity_') and other._identity_ in ('SimSeries', 'SimDataFrame'):
+        elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rmul__(self)
         else:
             raise NotImplementedError("Product of Unit and " + type(other) + " not implemented.")
@@ -214,7 +214,7 @@ class Unit(object):
             else:
                 pow_units = unit_base_power(self.unit)[0] + str(pow_units)
             return units(self.value ** other, pow_units)
-        elif hasattr(other, '_identity_') and other._identity_ in ('SimSeries', 'SimDataFrame'):
+        elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rpow__(self)
         else:
             raise NotImplementedError("Power of Unit to " + type(other) + " not implemented.")
@@ -263,7 +263,7 @@ class Unit(object):
             return self.kind((self.value - other) * 100, self.unit)
         elif type(other) in numeric:
             return self.kind(self.value - other, self.unit)
-        elif hasattr(other, '_identity_') and other._identity_ in ('SimSeries', 'SimDataFrame'):
+        elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rsub__(self)
         else:
             raise NotImplementedError("Subtraction of Unit and " + type(other) + " not implemented.")
@@ -300,7 +300,7 @@ class Unit(object):
             return self.kind(self.value / other * 100, self.unit)
         elif type(other) in numeric:
             return units(self.value / other, self.unit)
-        elif hasattr(other, '_identity_') and other._identity_ in ('SimSeries', 'SimDataFrame'):
+        elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rtruediv__(self)
         else:
             raise NotImplementedError("Division of Unit by " + type(other) + " not implemented.")
@@ -346,7 +346,7 @@ class Unit(object):
             return self.kind(self.value // other * 100, self.unit)
         elif type(other) in numeric:
             return self.kind(self.value // other, self.unit)
-        elif hasattr(other, '_identity_') and other._identity_ in ('SimSeries', 'SimDataFrame'):
+        elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rtruediv__(self)
         else:
             raise NotImplementedError("Division of Unit by " + type(other) + " not implemented.")
@@ -391,7 +391,7 @@ class Unit(object):
             return self.kind(self.value % other * 100, self.unit)
         elif type(other) in numeric:
             return self.kind(self.value % other, self.unit)
-        elif hasattr(other, '_identity_') and other._identity_ in ('SimSeries', 'SimDataFrame'):
+        elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rtruediv__(self)
         else:
             raise NotImplementedError("Module of Unit when divided by " + type(other) + " not implemented.")
