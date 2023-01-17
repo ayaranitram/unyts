@@ -106,3 +106,8 @@ for kind in [k for k in dictionary if k in ['Length']]:  # [k for k in dictionar
 
         #     assert (u1 // u2) == units(u1.value // convert(u2.value, u2.unit, u1.unit), unitDivision(u1.unit, u2.unit))
         #     assert (u2 // u1) == units(u2.value // convert(u1.value, u1.unit, u2.unit), unitDivision(u2.unit, u1.unit))
+
+assert units(6, 'ft') / units(12, 'in') == units(6, 'ft/ft')
+assert (units(6, 'ft') / units(12, 'in')).units == 'ft/ft'
+assert units(6, 'ft') @ units(12, 'in') == units(0.5, 'ft/in')
+assert (units(6, 'ft') @ units(12, 'in')).units == 'ft/in'
