@@ -378,6 +378,32 @@ class Unit(object):
         else:
             raise NotImplementedError("Division of Unit by " + type(other) + " not implemented.")
 
+    def __matmul__(self, other):
+        from .units.unitless import Dimensionless, Percentage
+        from .units.define import units
+        if '.units.' in str(type(other)):
+            if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
+                return other.kind(self.value / other.value, '1/' + other.unit)
+            elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
+                return self.kind((self.value / other.value) * 100, self.unit)
+            elif other.kind in (Dimensionless, Percentage):
+                return self.kind(self.value / other.value, self.unit)
+            else:
+                return units(self.value / other.value, _reduce_units(self.unit + '/' + other.unit))
+        elif type(other) is tuple:
+            result = []
+            for each in other:
+                result += [self / each]
+            return tuple(result)
+        elif self.kind is Percentage:
+            return self.kind(self.value / other * 100, self.unit)
+        elif type(other) in numeric:
+            return self.kind(self.value / other, self.unit)
+        elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
+            return other.__rmatmul__(self)
+        else:
+            raise NotImplementedError("Division of Unit by " + type(other) + " not implemented.")
+
     def __mod__(self, other):
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
