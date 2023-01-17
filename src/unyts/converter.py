@@ -7,7 +7,7 @@ Created on Sat Oct 24 15:57:27 2020
 """
 
 __version__ = '0.5.3'
-__release__ = 20230108
+__release__ = 20230117
 __all__ = ['convert', 'convertible']
 
 from unyts.database import unitsNetwork
@@ -15,7 +15,7 @@ from unyts.dictionaries import dictionary, temperatureRatioConversions
 from unyts.searches import BFS, print_path
 from unyts.errors import NoConversionFoundError
 from unyts.parameters import unyts_parameters_
-from unyts.helpers.unit_string_tools import _split_unit, _reduce_parentheses
+from unyts.helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
 from functools import reduce
 from warnings import warn
 

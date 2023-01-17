@@ -13,6 +13,7 @@ __all__ = ['unit_product', 'unit_division', 'unit_base_power', 'unit_power', 'un
 from unyts.dictionaries import dictionary, unitless_names
 from unyts.converter import convertible
 from unyts.helpers.is_number import is_number
+from unyts.helpers.unit_string_tools import reduce_units
 from unyts.helpers.multi_split import multi_split
 
 
@@ -122,7 +123,7 @@ def unit_product(unit_string1: str, unit_string2: str) -> str:
                 unit_string2 = '(' + unit_string2 + ')'
                 break
         result = unit_string1 + '*' + unit_string2
-    return result
+    return reduce_units(result, raise_error=False)
 
 
 def unit_division(unit_string1: str, unit_string2: str) -> str:
@@ -199,7 +200,7 @@ def unit_division(unit_string1: str, unit_string2: str) -> str:
                 unit_string2 = '(' + unit_string2 + ')'
                 break
         result = unit_string1 + '/' + unit_string2
-    return result
+    return reduce_units(result, raise_error=False)
 
 
 def unit_power(unit_string: str, power: int or str) -> str:

@@ -8,27 +8,26 @@ Created on Sat Oct 24 15:57:27 2020
 
 __version__ = '0.5.1'
 __release__ = 20230106
-__all__ = ['_split_ratio', '_split_product', '_split_unit', '_reduce_parentheses']
-
+__all__ = ['split_ratio', 'split_product', 'split_unit', 'reduce_parentheses', 'reduce_units']
 
 from unyts.helpers.multi_split import multi_split
 
 
-def _split_ratio(unit: str) -> tuple:  # tuple[str]
+def split_ratio(unit: str) -> tuple:  # tuple[str]
     return tuple(map(str.strip, unit.split('/')))
 
 
-def _split_product(unit: str) -> tuple:  # tuple[str]
+def split_product(unit: str) -> tuple:  # tuple[str]
     return tuple(map(str.strip, unit.split('*')))
 
 
-def _split_unit(unit: str) -> tuple:  # tuple[str]
+def split_unit(unit: str) -> tuple:  # tuple[str]
     return multi_split(unit,
                        sep=('*', '/',),
                        remove=None)
 
 
-def _reduce_parentheses(unit: str) -> str:
+def reduce_parentheses(unit: str) -> str:
     if '(' not in unit and ')' not in unit:
         return unit
     elif unit.count('(') > unit.count(')'):
@@ -41,7 +40,7 @@ def _reduce_parentheses(unit: str) -> str:
             return unit
 
     unit_split = multi_split(unit,
-                             sep=('+', '-', '*', '/', '**', '(', ')'),
+                             sep=('+', '-', '*', '/', '^', '**', '(', ')'),
                              remove=' ')
     result, inv, inp, ii, pa = [], False, False, 0, 0
     while ii < len(unit_split):

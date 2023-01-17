@@ -6,13 +6,14 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.6'
-__release__ = 20230116
+__version__ = '0.5.7'
+__release__ = 20230117
 __all__ = ['Unit', 'is_Unit']
 
 from unyts.errors import WrongUnitsError, WrongValueError, NoConversionFoundError
-from unyts.operations import unit_product, unit_division, unit_base_power
-from unyts.converter import convert, convertible
+from unyts.operations import unit_product as _unit_product, unit_division as _unit_division, unit_base_power as _unit_base_power
+from unyts.helpers.unit_string_tools import reduce_units as _reduce_units
+from unyts.converter import convert as _convert, convertible as _convertible
 from numbers import Number
 
 
@@ -94,7 +95,7 @@ class Unit(object):
                 new_unit = new_unit.unit
             except AttributeError:
                 raise WrongUnitsError("'" + str(new_unit) + "' for '" + str(self.name) + "'")
-        return self.kind(convert(self.value, self.unit, new_unit), new_unit)
+        return self.kind(_convert(self.value, self.unit, new_unit), new_unit)
 
     def to(self, new_unit):
         return self.convert(new_unit)
@@ -118,10 +119,10 @@ class Unit(object):
             if other.kind is self.kind:
                 if self.unit == other.unit:
                     return self.kind(self.value + other.value, self.unit)
-                elif convertible(other.unit, self.unit):
-                    return self.kind(self.value + convert(other.value, other.unit, self.unit), self.unit)
-                elif convertible(self.unit, other.unit):
-                    return self.kind(other.value + convert(self.value, self.unit, other.unit), other.unit)
+                elif _convertible(other.unit, self.unit):
+                    return self.kind(self.value + _convert(other.value, other.unit, self.unit), self.unit)
+                elif _convertible(self.unit, other.unit):
+                    return self.kind(other.value + _convert(self.value, self.unit, other.unit), other.unit)
                 else:
                     raise NoConversionFoundError("from '" + self.unit + "' to '" + other.unit + "'")
             if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
@@ -164,18 +165,18 @@ class Unit(object):
             elif other.kind in (Dimensionless, Percentage):
                 return self.kind(self.value * other.value, self.unit)
             elif self.unit == other.unit:
-                return units(self.value * other.value, unit_product(self.unit, other.unit))
-            elif convertible(other.unit, self.unit):
-                return units(self.value * convert(other.value, other.unit, self.unit),
-                             unit_product(self.unit, other.unit))
-            elif convertible(self.unit, other.unit):
-                return units(other.value * convert(self.value, self.unit, other.unit),
-                             unit_product(other.unit, self.unit))
-            elif convertible(unit_base_power(self.unit)[0], unit_base_power(other.unit)[0]):
-                factor = convert(1, unit_base_power(other.unit)[0], unit_base_power(self.unit)[0])
-                return units(self.value * other.value * factor, unit_product(self.unit, other.unit))
+                return units(self.value * other.value, _unit_product(self.unit, other.unit))
+            elif _convertible(other.unit, self.unit):
+                return units(self.value * _convert(other.value, other.unit, self.unit),
+                             _unit_product(self.unit, other.unit))
+            elif _convertible(self.unit, other.unit):
+                return units(other.value * _convert(self.value, self.unit, other.unit),
+                             _unit_product(other.unit, self.unit))
+            elif _convertible(_unit_base_power(self.unit)[0], _unit_base_power(other.unit)[0]):
+                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0])
+                return units(self.value * other.value * factor, _unit_product(self.unit, other.unit))
             else:
-                return units(self.value * other.value, unit_product(self.unit, other.unit))
+                return units(self.value * other.value, _unit_product(self.unit, other.unit))
         elif type(other) is tuple:
             result = []
             for each in other:
@@ -205,10 +206,10 @@ class Unit(object):
                 return self.kind(self.value ** other.value, self.unit)
             elif self.unit == other.unit:
                 return units(self.value ** other.value, self.unit + '^' + other.unit)
-            elif convertible(other.unit, self.unit):
-                return units(self.value ** convert(other.value, other.unit, self.unit), self.unit + '^' + self.unit)
-            elif convertible(unit_base_power(self.unit)[0], unit_base_power(other.unit)[0]):
-                factor = convert(1, unit_base_power(other.unit)[0], unit_base_power(self.unit)[0])
+            elif _convertible(other.unit, self.unit):
+                return units(self.value ** _convert(other.value, other.unit, self.unit), self.unit + '^' + self.unit)
+            elif _convertible(_unit_base_power(self.unit)[0], _unit_base_power(other.unit)[0]):
+                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0])
                 return units(self.value ** (other.value * factor), self.unit + '^' + other.unit)
             else:
                 return units(self.value ** other.value, self.unit + '^' + other.unit)
@@ -220,13 +221,13 @@ class Unit(object):
         elif self.kind is Percentage:
             return self.kind((self.value ** other) * 100, self.unit)
         elif type(other) in numeric:
-            pow_units = unit_base_power(self.unit)[1] * other
+            pow_units = _unit_base_power(self.unit)[1] * other
             if pow_units == 0:
                 pow_units = 'Dimensionless'
             elif pow_units == 1:
-                pow_units = unit_base_power(self.unit)[0]
+                pow_units = _unit_base_power(self.unit)[0]
             else:
-                pow_units = unit_base_power(self.unit)[0] + str(pow_units)
+                pow_units = _unit_base_power(self.unit)[0] + str(pow_units)
             return units(self.value ** other, pow_units)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rpow__(self)
@@ -250,10 +251,10 @@ class Unit(object):
             if other.kind is self.kind:
                 if self.unit == other.unit:
                     return self.kind(self.value - other.value, self.unit)
-                elif convertible(other.unit, self.unit):
-                    return self.kind(self.value - convert(other.value, other.unit, self.unit), self.unit)
-                elif convertible(self.unit, other.unit):
-                    return self.kind(other.value - convert(self.value, self.unit, other.unit), other.unit)
+                elif _convertible(other.unit, self.unit):
+                    return self.kind(self.value - _convert(other.value, other.unit, self.unit), self.unit)
+                elif _convertible(self.unit, other.unit):
+                    return self.kind(other.value - _convert(self.value, self.unit, other.unit), other.unit)
                 else:
                     raise NoConversionFoundError("from '" + self.unit + "' to '" + other.unit + "'")
             if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
@@ -296,15 +297,15 @@ class Unit(object):
             elif other.kind in (Dimensionless, Percentage):
                 return self.kind(self.value / other.value, self.unit)
             elif self.unit == other.unit:
-                return units(self.value / other.value, unit_division(self.unit, other.unit))
-            elif convertible(other.unit, self.unit):
-                return units(self.value / convert(other.value, other.unit, self.unit),
-                             unit_division(self.unit, other.unit))
-            elif convertible(unit_base_power(self.unit)[0], unit_base_power(other.unit)[0]):
-                factor = convert(1, unit_base_power(other.unit)[0], unit_base_power(self.unit)[0])
-                return units(self.value / (other.value * factor), unit_division(self.unit, other.unit))
+                return units(self.value / other.value, _unit_division(self.unit, other.unit))
+            elif _convertible(other.unit, self.unit):
+                return units(self.value / _convert(other.value, other.unit, self.unit),
+                             _unit_division(self.unit, other.unit))
+            elif _convertible(_unit_base_power(self.unit)[0], _unit_base_power(other.unit)[0]):
+                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0])
+                return units(self.value / (other.value * factor), _unit_division(self.unit, other.unit))
             else:
-                return units(self.value / other.value, unit_division(self.unit, other.unit))
+                return units(self.value / other.value, _unit_division(self.unit, other.unit))
         elif type(other) is tuple:
             result = []
             for each in other:
@@ -342,15 +343,15 @@ class Unit(object):
             elif other.kind in (Dimensionless, Percentage):
                 return self.kind(self.value // other.value, self.unit)
             elif self.unit == other.unit:
-                return units(self.value // other.value, unit_division(self.unit, other.unit))
-            elif convertible(other.unit, self.unit):
-                return units(self.value // convert(other.value, other.unit, self.unit),
-                             unit_division(self.unit, other.unit))
-            elif convertible(unit_base_power(self.unit)[0], unit_base_power(other.unit)[0]):
-                factor = convert(1, unit_base_power(other.unit)[0], unit_base_power(self.unit)[0])
-                return units(self.value // (other.value * factor), unit_division(self.unit, other.unit))
+                return units(self.value // other.value, _unit_division(self.unit, other.unit))
+            elif _convertible(other.unit, self.unit):
+                return units(self.value // _convert(other.value, other.unit, self.unit),
+                             _unit_division(self.unit, other.unit))
+            elif _convertible(_unit_base_power(self.unit)[0], _unit_base_power(other.unit)[0]):
+                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0])
+                return units(self.value // (other.value * factor), _unit_division(self.unit, other.unit))
             else:
-                return units(self.value // other.value, unit_division(self.unit, other.unit))
+                return units(self.value // other.value, _unit_division(self.unit, other.unit))
         elif type(other) is tuple:
             result = []
             for each in other:
@@ -389,10 +390,10 @@ class Unit(object):
                 return self.kind(self.value % other.value, self.unit)
             elif self.unit == other.unit:
                 return units(self.value % other.value, self.unit)
-            elif convertible(other.unit, self.unit):
-                return units(self.value % convert(other.value, other.unit, self.unit), self.unit)
-            elif convertible(unit_base_power(self.unit)[0], unit_base_power(other.unit)[0]):
-                factor = convert(1, unit_base_power(other.unit)[0], unit_base_power(self.unit)[0])
+            elif _convertible(other.unit, self.unit):
+                return units(self.value % _convert(other.value, other.unit, self.unit), self.unit)
+            elif _convertible(_unit_base_power(self.unit)[0], _unit_base_power(other.unit)[0]):
+                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0])
                 return units(self.value % (other.value * factor), self.unit)
             else:
                 return units(self.value % other.value, self.unit)
@@ -439,7 +440,7 @@ class Unit(object):
             raise TypeError(msg)
 
     def __eq__(self, other) -> bool:
-        if type(self) == type(other):
+        if type(self) is type(other):
             return self.value == other.convert(self.unit).value
         else:
             msg = "'==' not supported between instances of '" + \
@@ -453,7 +454,7 @@ class Unit(object):
             raise TypeError(msg)
 
     def __ne__(self, other):
-        if type(self) == type(other):
+        if type(self) is type(other):
             return self.value != other.convert(self.unit).value
         else:
             msg = "'!=' not supported between instances of '" + \
@@ -467,7 +468,7 @@ class Unit(object):
             raise TypeError(msg)
 
     def __ge__(self, other):
-        if type(self) == type(other):
+        if type(self) is type(other):
             return self.value >= other.convert(self.unit).value
         else:
             msg = "'>=' not supported between instances of '" + \
@@ -481,7 +482,7 @@ class Unit(object):
             raise TypeError(msg)
 
     def __gt__(self, other):
-        if type(self) == type(other):
+        if type(self) is type(other):
             return self.value > other.convert(self.unit).value
         else:
             msg = "'>' not supported between instances of '" + \
