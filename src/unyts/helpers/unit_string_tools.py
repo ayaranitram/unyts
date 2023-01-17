@@ -6,19 +6,19 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.1'
-__release__ = 20230106
+__version__ = '0.5.2'
+__release__ = 20230117
 __all__ = ['split_ratio', 'split_product', 'split_unit', 'reduce_parentheses', 'reduce_units']
 
 from unyts.helpers.multi_split import multi_split
 
 
 def split_ratio(unit: str) -> tuple:  # tuple[str]
-    return tuple(map(str.strip, unit.split('/')))
+    return list(map(str.strip, unit.split('/')))
 
 
 def split_product(unit: str) -> tuple:  # tuple[str]
-    return tuple(map(str.strip, unit.split('*')))
+    return list(map(str.strip, unit.split('*')))
 
 
 def split_unit(unit: str) -> tuple:  # tuple[str]
@@ -78,9 +78,7 @@ def reduce_units(unit: str, raise_error=False) -> str:
                                  sep=('+', '-', '*', '/', '^', '**', '(', ')'),
                                  remove=' ')
         unit_split = [(unit_split[i] + unit_split[i + 1]) for i in range(0, len(unit_split) - 1, 2)]
-        i = 0
-        simplified = []
-        ignore = []
+        i, simplified, ignore = 0, [], []
         while i < len(unit_split):
             if i in ignore:
                 pass
@@ -89,6 +87,9 @@ def reduce_units(unit: str, raise_error=False) -> str:
             else:
                 simplified.append(unit_split[i])
             i += 1
+
+        if len(simplified) == 0:
+            return unit
         result = ''.join(simplified).strip('*')
         if result.startswith('/'):
             result = '1' + result
