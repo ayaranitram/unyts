@@ -57,3 +57,42 @@ def _reduce_parentheses(unit: str) -> str:
             inp, pa = False, pa - 1
         ii += 1
     return ''.join(result)
+
+
+def reduce_units(unit: str, raise_error=False) -> str:
+    def change(unit_):
+        return ('/' + unit_[1:]) if unit_[0] == '*' else ('*' + unit_[1:])
+
+    if raise_error:
+        if unit is None:
+            raise ValueError("`unit_string` must be an str.")
+        if '+' in unit or '-' in unit:
+            raise NotImplementedError("`unit_reduce` for units with addition is not implemented.")
+    else:
+        if unit is None:
+            return None
+        if '+' in unit or '-' in unit:
+            return unit
+
+    if '/' in unit:
+        unit_split = multi_split('*' + unit,
+                                 sep=('+', '-', '*', '/', '^', '**', '(', ')'),
+                                 remove=' ')
+        unit_split = [(unit_split[i] + unit_split[i + 1]) for i in range(0, len(unit_split) - 1, 2)]
+        i = 0
+        simplified = []
+        ignore = []
+        while i < len(unit_split):
+            if i in ignore:
+                pass
+            elif change(unit_split[i]) in unit_split[i + 1:]:
+                ignore.append(unit_split[i + 1:].index(change(unit_split[i])) + i + 1)
+            else:
+                simplified.append(unit_split[i])
+            i += 1
+        result = ''.join(simplified).strip('*')
+        if result.startswith('/'):
+            result = '1' + result
+        return result
+    else:
+        return unit
