@@ -10,11 +10,11 @@ __version__ = '0.5.3'
 __release__ = 20230118
 __all__ = ['Dimensionless', 'Percentage', 'unitless_names']
 
-from unyts.dictionaries import dictionary as _dictionary
-from unyts.unit_class import Unit
-from unyts.errors import WrongUnitsError
-from unyts.helpers.common_classes import unit_or_str, numeric
-from unyts.dictionaries import unitless_names
+from ..dictionaries import dictionary as _dictionary
+from ..unit_class import Unit
+from ..errors import WrongUnitsError
+from ..helpers.common_classes import unit_or_str, numeric
+from ..dictionaries import unitless_names
 
 
 class Dimensionless(Unit):

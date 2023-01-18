@@ -10,18 +10,18 @@ __version__ = '0.5.0'
 __release__ = 20230118
 __all__ = ['units']
 
-from unyts.dictionaries import dictionary as _dictionary
-from unyts.units.custom import UserUnits, OtherUnits
-from unyts.units.force import Pressure, Weight, Compressibility
-from unyts.units.geometry import Length, Area, Volume
-from unyts.units.temperature import Temperature, TemperatureGradient
-from unyts.units.time import Time
-from unyts.units.unitless import Dimensionless, Percentage
-from unyts.units.ratios import Density, VolumeRatio, ProductivityIndex, PressureGradient
-from unyts.units.rates import Rate, Speed, Velocity
-from unyts.units.energy import Energy, Power
-from unyts.unit_class import Unit
-from unyts.helpers.common_classes import unit_or_str as unit_or_str, numeric as numeric
+from ..dictionaries import dictionary as _dictionary
+from .custom import UserUnits, OtherUnits
+from .force import Pressure, Weight, Compressibility
+from .geometry import Length, Area, Volume
+from .temperature import Temperature, TemperatureGradient
+from .time import Time
+from .unitless import Dimensionless, Percentage
+from .ratios import Density, VolumeRatio, ProductivityIndex, PressureGradient
+from .rates import Rate, Speed, Velocity
+from .energy import Energy, Power
+from ..unit_class import Unit
+from ..helpers.common_classes import unit_or_str as unit_or_str, numeric as numeric
 
 
 def units(value: numeric, unit: unit_or_str = None) -> Unit:

@@ -10,10 +10,11 @@ __version__ = '0.5.7'
 __release__ = 20230117
 __all__ = ['Unit', 'is_Unit']
 
-from unyts.errors import WrongUnitsError, WrongValueError, NoConversionFoundError
-from unyts.operations import unit_product as _unit_product, unit_division as _unit_division, unit_base_power as _unit_base_power
-from unyts.helpers.unit_string_tools import reduce_units as _reduce_units
-from unyts.converter import convert as _convert, convertible as _convertible
+from .errors import WrongUnitsError, WrongValueError, NoConversionFoundError
+from .operations import unit_product as _unit_product, unit_division as _unit_division, \
+    unit_base_power as _unit_base_power
+from .helpers.unit_string_tools import reduce_units as _reduce_units
+from .converter import convert as _convert, convertible as _convertible
 from numbers import Number
 
 

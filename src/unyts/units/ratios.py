@@ -10,9 +10,9 @@ __version__ = '0.5.3'
 __release__ = 20230118
 __all__ = ['Density', 'VolumeRatio', 'ProductivityIndex', 'PressureGradient']
 
-from unyts.dictionaries import dictionary as _dictionary
-from unyts.unit_class import Unit
-from unyts.helpers.common_classes import unit_or_str, numeric
+from ..dictionaries import dictionary as _dictionary
+from ..unit_class import Unit
+from ..helpers.common_classes import unit_or_str, numeric
 
 
 class Density(Unit):

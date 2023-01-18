@@ -7,10 +7,10 @@ Created on Sat Oct 24 15:57:27 2020
 """
 
 __version__ = '0.5.2'
-__release__ = 20230117
+__release__ = 20230118
 __all__ = ['split_ratio', 'split_product', 'split_unit', 'reduce_parentheses', 'reduce_units']
 
-from unyts.helpers.multi_split import multi_split
+from .multi_split import multi_split
 
 
 def split_ratio(unit: str) -> tuple:  # tuple[str]

@@ -6,11 +6,10 @@ Created on Wed Aug  3 21:14:44 2022
 """
 
 __version__ = '0.4.9'
-__release__ = 20221231
+__release__ = 20230118
 __all__ = ['caster', 'to_number']
 
-
-from unyts.helpers.common_classes import number
+from .common_classes import number
 
 
 def caster(string: str) -> number:

@@ -7,13 +7,13 @@ Created on Sat Oct 24 12:14:51 2020
 """
 
 __version__ = '0.5.8'
-__release__ = 20230115
+__release__ = 20230118
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'unitless_names']
 
 from json import load as json_load
 from pickle import load as pickle_load, dump as pickle_dump
 from os.path import isfile
-from unyts.parameters import unyts_parameters_, dir_path
+from .parameters import unyts_parameters_, dir_path
 
 StandardAirDensity = 1.225  # Kg/m3 or g/cc
 StandardEarthGravity = 9.80665  # m/s2 or 980.665 cm/s2 from

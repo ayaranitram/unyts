@@ -6,10 +6,10 @@ Created on Sat Oct 24 14:46:04 2020
 """
 
 __version__ = '0.4.9'
-__release__ = 20221231
+__release__ = 20230118
 __all__ = ['is_unit']
 
-from unyts.dictionaries import dictionary
+from ..dictionaries import dictionary as _dictionary
 
 
 def is_unit(unit: str) -> bool:
@@ -18,9 +18,9 @@ def is_unit(unit: str) -> bool:
     else:
         raise TypeError("unit must be a string.")
 
-    for each in list(dictionary.keys()):
+    for each in list(_dictionary.keys()):
         if '_' not in each:
-            is_u = unit in list(dictionary[each])
+            is_u = unit in list(_dictionary[each])
             if is_u:
                 return True
 
@@ -29,10 +29,10 @@ def is_unit(unit: str) -> bool:
         for each in unit.split('/'):
             unit_split += each.split('*')
         ret = [False] * len(unit_split)
-        for each in list(dictionary.keys()):
+        for each in list(_dictionary.keys()):
             if '_' not in each:
                 for sub_u in range(len(unit_split)):
-                    if unit_split[sub_u] in list(dictionary[each]):
+                    if unit_split[sub_u] in list(_dictionary[each]):
                         ret[sub_u] = True
         for each in ret:
             if not each:

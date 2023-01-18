@@ -7,10 +7,10 @@ Created on Sat Oct 24 14:34:59 2020
 """
 
 __version__ = '0.5.4'
-__release__ = 20230112
+__release__ = 20230118
 __all__ = ['array_like', 'number', 'numeric', 'unit_or_str']
 
-from unyts.unit_class import Unit
+from ..unit_class import Unit
 try:
     from numpy import ndarray, int64, float64, int32, float32
     _numpy_ = True

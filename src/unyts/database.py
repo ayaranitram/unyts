@@ -7,13 +7,13 @@ Created on Sat Oct 24 12:36:48 2020
 """
 
 __version__ = '0.5.3'
-__release__ = 20230115
+__release__ = 20230118
 __all__ = ['unitsNetwork']
 
-from unyts.dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
+from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
     StandardEarthGravity
-from unyts.network import UDigraph, UNode, Conversion
-from unyts.parameters import unyts_parameters_, dir_path
+from .network import UDigraph, UNode, Conversion
+from .parameters import unyts_parameters_, dir_path
 from os.path import isfile
 from json import dump as json_dump
 from warnings import warn

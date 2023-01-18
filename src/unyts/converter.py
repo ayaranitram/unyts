@@ -7,10 +7,10 @@ Created on Sat Oct 24 15:57:27 2020
 """
 
 __version__ = '0.5.3'
-__release__ = 20230117
+__release__ = 20230118
 __all__ = ['convert', 'convertible']
 
-from unyts.database import unitsNetwork
+from .database import unitsNetwork
 from unyts.dictionaries import dictionary, temperatureRatioConversions
 from unyts.searches import BFS, print_path
 from unyts.errors import NoConversionFoundError
@@ -372,7 +372,7 @@ def convert(value: numeric, from_unit: str, to_unit: str, print_conversion_path:
 
     print_conversion_path = _clean_print_conversion_path(print_conversion_path)
 
-    from unyts.unit_class import Unit
+    from .unit_class import Unit
     if isinstance(from_unit, Unit):
         from_unit = from_unit.get_unit()
     if isinstance(to_unit, Unit):
