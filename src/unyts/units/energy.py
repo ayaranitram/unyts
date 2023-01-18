@@ -33,3 +33,23 @@ class Power(Unit):
         self.kind = Power
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)
+
+
+class Current(Unit):
+    classUnits = _dictionary['Current']
+
+    def __init__(self, value: numeric, unit: unit_or_str):
+        self.name = 'current'
+        self.kind = Current
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(unit)
+
+
+class Voltage(Unit):
+    classUnits = _dictionary['Voltage']
+
+    def __init__(self, value: numeric, unit: unit_or_str):
+        self.name = 'voltage'
+        self.kind = Voltage
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(unit)

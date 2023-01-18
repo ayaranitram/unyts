@@ -349,9 +349,23 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Power'] = []
     dictionary['Power_UPPER_NAMES_REVERSE'] = {
         'Horsepower': ('hp',),
-        'Watt': ('W', 'J/s'),
+        'Watt': ('W', 'J/s', 'VA'),
     }
     dictionary['Power_SI'] = ('W',)
+
+    # Current
+    dictionary['Current'] = []
+    dictionary['Current_UPPER_NAMES_REVERSE'] = {
+        'Ampere': ('A',),
+    }
+    dictionary['Current_SI'] = ('A',)
+
+    # Voltage
+    dictionary['Voltage'] = []
+    dictionary['Voltage_UPPER_NAMES_REVERSE'] = {
+        'Volt': ('V', 'Voltio',),
+    }
+    dictionary['Voltage_SI'] = ('V',)
 
     # productivity index
     dictionary['ProductivityIndex'] = []
