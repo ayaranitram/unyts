@@ -6,17 +6,17 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.2'
-__release__ = 20230107
+__version__ = '0.5.3'
+__release__ = 20230118
 __all__ = ['Time']
 
-from unyts.dictionaries import dictionary
+from unyts.dictionaries import dictionary as _dictionary
 from unyts.unit_class import Unit
 from unyts.helpers.common_classes import unit_or_str, numeric
 
 
 class Time(Unit):
-    classUnits = dictionary['Time']
+    classUnits = _dictionary['Time']
 
     def __init__(self, value: numeric, units: unit_or_str):
         self.name = 'time'

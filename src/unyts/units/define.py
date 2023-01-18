@@ -6,11 +6,11 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.9'
-__release__ = 20221231
-__all__ = ['units', 'numeric', 'array_like']
+__version__ = '0.5.0'
+__release__ = 20230118
+__all__ = ['units']
 
-from unyts.dictionaries import dictionary
+from unyts.dictionaries import dictionary as _dictionary
 from unyts.units.custom import UserUnits, OtherUnits
 from unyts.units.force import Pressure, Weight, Compressibility
 from unyts.units.geometry import Length, Area, Volume
@@ -21,7 +21,7 @@ from unyts.units.ratios import Density, VolumeRatio, ProductivityIndex, Pressure
 from unyts.units.rates import Rate, Speed, Velocity
 from unyts.units.energy import Energy, Power
 from unyts.unit_class import Unit
-from unyts.helpers.common_classes import unit_or_str, array_like, number, numeric
+from unyts.helpers.common_classes import unit_or_str as unit_or_str, numeric as numeric
 
 
 def units(value: numeric, unit: unit_or_str = None) -> Unit:
@@ -52,17 +52,17 @@ def units(value: numeric, unit: unit_or_str = None) -> Unit:
         unit = 'Dimensionless'
     if type(unit) is not str:
         raise TypeError("'units' must be a string.")
+    if not isinstance(value, numeric):
+        raise TypeError("'value' parameter must be numeric.")
 
     unit = unit.strip()
-    for kind in dictionary:
-        if unit in dictionary[kind]:
-            if isinstance(value, number):
-                return eval(kind + "(" + str(value) + ",'" + unit + "')")
-            elif isinstance(value, array_like):
-                u = eval(kind + "(" + str(0) + ",'" + unit + "')")
-                u.value = value
-                return u
+    for kind in _dictionary:
+        if unit in _dictionary[kind]:
+            u = eval(kind + "(0, '" + unit + "')")
+            if type(u) is Percentage:
+                u.value = value / 100
             else:
-                raise TypeError("'value' parameter must be numeric.")
+                u.value = value
+            return u
 
     return UserUnits(value, unit)

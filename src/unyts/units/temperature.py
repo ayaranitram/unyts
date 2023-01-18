@@ -6,17 +6,17 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.2'
-__release__ = 20230107
+__version__ = '0.5.3'
+__release__ = 20230118
 __all__ = ['Temperature', 'TemperatureGradient']
 
-from unyts.dictionaries import dictionary
+from unyts.dictionaries import dictionary as _dictionary
 from unyts.unit_class import Unit
 from unyts.helpers.common_classes import unit_or_str, numeric
 
 
 class Temperature(Unit):
-    classUnits = dictionary['Temperature']
+    classUnits = _dictionary['Temperature']
 
     def __init__(self, value: numeric, units: unit_or_str):
         self.name = 'temperature'
@@ -26,7 +26,7 @@ class Temperature(Unit):
 
 
 class TemperatureGradient(Unit):
-    classUnits = dictionary['TemperatureGradient']
+    classUnits = _dictionary['TemperatureGradient']
 
     def __init__(self, value: str, units: unit_or_str):
         self.name = 'temperatureGradient'
