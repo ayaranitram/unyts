@@ -75,20 +75,29 @@ def _load_dictionary() -> (dict, dict):
     dictionary = {}
 
     dictionary['Time'] = []
-    dictionary['Time_NAMES_UPPER_PLURALwS_REVERSE'] = {
+    dictionary['Time_NAMES_REVERSE'] = {
         'nanosecond': ('ns',),
         'millisecond': ('ms',),
         'second': ('s', 'sec',),
         'minute': ('min',),
-        'hour': ('h', 'hr'),
-        'day': ('d', 'día', 'días', 'DíA'),
-        'week': ('w', 'we'),
-        'month': ('mo', 'mes', 'meses'),
-        'year': ('y', 'año'),
+        'hour': ('h', 'hr',),
+        'day': ('d', 'día', 'días', 'DíA',),
+        'week': ('we', 'w', 'WE',),  # 'w' can be confused with 'W' for Watt
+        'month': ('mo', 'mes', 'meses',),
+        'year': ('y', 'año',),
         'lustrum': tuple(),
         'decade': tuple(),
         'century': ('centuries',),
     }
+    dictionary['Time_PLURALwS_UPPER_REVERSE'] = tuple(dictionary['Time_NAMES_REVERSE'].keys()) + ('min', 'año')
+    dictionary['Time_UPPER_REVERSE'] = dictionary['Time_NAMES_REVERSE']['nanosecond'] + \
+                               dictionary['Time_NAMES_REVERSE']['millisecond'] + \
+                               dictionary['Time_NAMES_REVERSE']['second'] + \
+                               dictionary['Time_NAMES_REVERSE']['hour'] + \
+                               dictionary['Time_NAMES_REVERSE']['day'] + \
+                               dictionary['Time_NAMES_REVERSE']['hour'] + \
+                               dictionary['Time_NAMES_REVERSE']['month'] + \
+                               dictionary['Time_NAMES_REVERSE']['year'] + ('centuries',)
     dictionary['Time_SI'] = ('s',)
 
     # Temperature and related
@@ -105,19 +114,19 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Volume'] = []
     dictionary['Volume_SI_UPPER_REVERSE'] = (
         'm3', 'sm3', 'stm3', 'rm3',)  # 'l' # litre is Volume but the Conversion of SI prefixes is linear
-    dictionary['Volume_UK_NAMES_UPPER_REVERSE_PLURALwS'] = {
+    dictionary['Volume_UK_NAMES_UPPER_REVERSE'] = {
         'fluid ounce': ('fl oz', 'oz', 'ounce', 'ozUS', 'ounce'),
-        'gill': ('gi', 'gillUS', 'giUS'),
-        'pint': ('pt', 'pintUS', 'ptUS'),
-        'quart': ('qt', 'quartUS', 'qtUS'),
-        'gallonUS': ('gal', 'galUS', 'USgal', 'USgallon', 'gallon'),
-        'gallonUK': ('imperial gallon', 'galUK', 'UKgal', 'UKgallon'),  # 'gal', 'gallon'
+        'gill': ('gi', 'gillUS', 'giUS', 'USgill'),
+        'pint': ('pt', 'pintUS', 'ptUS', 'USpint'),
+        'quart': ('qt', 'quartUS', 'qtUS', 'USquart'),
+        'gallonUS': ('gal', 'galUS', 'USgal', 'USgallon', 'gallon', 'gallonsUS'),
+        'gallonUK': ('imperial gallon', 'galUK', 'UKgal', 'UKgallon', 'gallonsUK'),  # 'gal', 'gallon'
         'fluid ounce UK': ('fl oz UK', 'ozUK', 'ounceUK'),
-        'gillUK': ('giUK',),
-        'pintUK': ('ptUK',),
-        'quartUK': ('qtUK',),
+        'gillUK': ('giUK', 'UKgill'),
+        'pintUK': ('ptUK', 'UKpint'),
+        'quartUK': ('qtUK', 'UKquart'),
     }
-    dictionary['Volume_NAMES_UPPER_REVERSE_PLURALwS_SPACES'] = {
+    dictionary['Volume_NAMES_UPPER_REVERSE_SPACES'] = {
         'litre': ('l', 'liter', 'litro'),
         'millilitre': ('ml', 'milliliter', 'cubic centimeter'),
         'centilitre': ('cl', 'centiliter'),
@@ -128,16 +137,21 @@ def _load_dictionary() -> (dict, dict):
         'standard cubic centimeter': ('scc', 'scm3'),
         'reservoir cubic meter': ('rm3',),
         'reservoir cubic centimeter': ('rcc', 'rcm3'),
-        'cubic foot': ('cubic feet', 'ft3', 'cf', 'pie cúbico', 'pie cubico', 'pc'),
+        'cubic foot': ('cubic feet', 'ft3', 'cf', 'pie cúbico', 'pie cubico', 'pc', 'pies cúbicos', 'pies cubicos'),
         'standard cubic foot': ('scf', 'cf'),
         'cubic inch': ('in3', 'cubic inches'),
-        'barrel': ('bbl', 'stb'),
+        'barrel': ('bbl', 'stb', 'oil barrel'),
         'reservoir barrel': ('rb',),
         'standard barrel': ('stb', 'stbo', 'stbw', 'stbl', 'oil barrel'),
     }
     dictionary['Volume_UPPER_REVERSE'] = ('kstm3', 'Mstm3')
-    dictionary['Volume_PLURALwS'] = ('liter', 'milliliter', 'centiliter', 'deciliter', 'barrel', 'oil barrel', 'gals',
-                                     'UKgallons', 'USgallons', 'oil gallon')
+    dictionary['Volume_PLURALwS_UPPER_REVERSE'] = tuple(dictionary['Volume_NAMES_UPPER_REVERSE_SPACES'].keys()) + \
+                                    tuple(dictionary['Volume_UK_NAMES_UPPER_REVERSE'].keys()) + \
+                                    ('fl oz', 'oz', 'ounce', 'gallon', 'imperial gallon', 'barrel', 'gal',
+                                     'oil barrel', 'oil gallon',
+                                     'USgallon', 'UKgallon', 'USounce', 'UKounce',
+                                     'cubic centimeter', 'standard cubic centimeter',
+                                     'liter', 'milliliter', 'centiliter', 'deciliter')
     dictionary['Volume_OGF'] = ('scf', 'cf', 'ft3', 'stb', 'bbl', 'rb', 'stbo', 'stbw', 'stbl')
     # dictionary['Volume_oilgas_NAMES'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl')
     dictionary['Volume_oilgas_UPPER'] = ('sm3', 'm3', 'rm3', 'ksm3', 'Msm3', 'Gsm3',
@@ -209,15 +223,15 @@ def _load_dictionary() -> (dict, dict):
 
     # Weight
     dictionary['Weight'] = []
-    dictionary['Weight_NAMES_UPPER_REVERSE_SPACES_PLURALwS'] = {
+    dictionary['Weight_NAMES_UPPER_REVERSE_SPACES'] = {
         'gram': ('g',),
         'kilogram': ('kg', 'kgm', 'Kgm', 'kilogram mass'),
-        'milligrams': ('mg',),
+        'milligram': ('mg',),
         'metric ton': ('Tonne',),
         'g-mol': ('g-moles',),
         'Kg-mol': ('Kg-moles',),
     }
-    dictionary['Weight_UK_NAMES_UPPER_REVERSE_SPACES_PLURALwS'] = {
+    dictionary['Weight_UK_NAMES_UPPER_REVERSE_SPACES'] = {
         'grain': ('gr',),
         'pennyweight': ('pwt', 'dwt'),
         'dram': ('dr', 'dramch'),
@@ -226,12 +240,15 @@ def _load_dictionary() -> (dict, dict):
         'stone': ('st',),
         'quarter': ('qr', 'qrt'),
         # 'hundredweight' : ('cwt',),
-        'short hundredweight': ('US hundredweight', 'UScwt'),
-        'long hundredweight': ('UK hundredweight', 'UKcwt', 'cwt'),
+        'short hundredweight': ('US hundredweight', 'UScwt', 'swtUS'),
+        'long hundredweight': ('UK hundredweight', 'UKcwt', 'cwt', 'swtUK'),
         # 'ton' : ('t',),
-        'short ton': ('USton',),
-        'long ton': ('t', 'UKton', 'ton'),
+        'short ton': ('USton', 'tonUS'),
+        'long ton': ('t', 'UKton', 'ton', 'tonUK'),
     }
+    dictionary['Weight_PLURALwS_UPPER'] = tuple(dictionary['Weight_NAMES_UPPER_REVERSE_SPACES'].keys()) + \
+        tuple(dictionary['Weight_UK_NAMES_UPPER_REVERSE_SPACES'].keys()) + \
+        ('Tonne', 'ton', 'UKton', 'USton')
     dictionary['Weight_SI'] = ('g', 'g-mol')
 
     # mass
@@ -362,7 +379,7 @@ def _load_dictionary() -> (dict, dict):
 
     # Dates
     dictionary['Date'] = []
-    dictionary['Date_UPPER_PLURALwS'] = ['date']
+    dictionary['Date_UPPER_PLURALwS'] = ('date',)
 
     dictionary['UserUnits'] = []
 
