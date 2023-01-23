@@ -9,7 +9,7 @@ from unyts import convert
 from pandas import read_excel
 from math import isnan
 from unyts.converter import _apply_conversion, _get_conversion, _converter, _clean_print_conversion_path, convert_for_SimPandas
-from unyts.database import unitsNetwork as UnNe
+from unyts.database import units_network as UnNe
 import numpy as np
 
 
