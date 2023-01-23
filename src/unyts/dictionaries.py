@@ -363,23 +363,73 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Power'] = []
     dictionary['Power_UPPER_NAMES_REVERSE'] = {
         'Horsepower': ('hp',),
-        'Watt': ('W', 'J/s', 'VA'),
+        'Watt': ('W', 'J/s', 'VA', 'Volt*Ampere', 'Watt hour/hour', 'V*A', 'Wh/h'),
     }
     dictionary['Power_SI'] = ('W',)
-
-    # Current
-    dictionary['Current'] = []
-    dictionary['Current_UPPER_NAMES_REVERSE'] = {
-        'Ampere': ('A',),
-    }
-    dictionary['Current_SI'] = ('A',)
 
     # Voltage
     dictionary['Voltage'] = []
     dictionary['Voltage_UPPER_NAMES_REVERSE'] = {
-        'Volt': ('V', 'Voltio',),
+        'Volt': ('V', 'Voltio', 'Ampere*Ohm', 'Watt/Ampere', 'A*ohm', 'ohm*A', 'Ohm*Ampere', 'W/A'),
     }
     dictionary['Voltage_SI'] = ('V',)
+
+    # Current
+    dictionary['Current'] = []
+    dictionary['Current_UPPER_NAMES_REVERSE'] = {
+        'Ampere': ('A', 'Watt/Volt', 'Volt/Ohm', 'W/V', 'V/ohm'),
+    }
+    dictionary['Current_SI'] = ('A',)
+
+    # Resistance
+    dictionary['Resistance'] = []
+    dictionary['Resistance_UPPER_NAMES_REVERSE'] = {
+        'Ohm': ('ohm', 'Ω', 'Volt/Ampere', 'V/A'),
+    }
+    dictionary['Resistance_SI'] = ('Ω',)
+
+    # Impedance
+    dictionary['Impedance'] = []
+    dictionary['Impedance_UPPER_NAMES_REVERSE'] = {
+        'Ohm': ('ohm', 'Ω',),
+    }
+    dictionary['Impedance_SI'] = ('Ω',)
+
+    # Conductance
+    dictionary['Conductance'] = []
+    dictionary['Conductance_UPPER_NAMES_REVERSE'] = {
+        'Siemen': ('G', '℧',),
+    }
+    dictionary['Conductance_SI'] = ('℧',)
+
+    # Capacitance
+    dictionary['Capacitance'] = []
+    dictionary['Capacitance_UPPER_NAMES_REVERSE'] = {
+        'Farad': ('F', 'Faradio', 'Farads', 'farads', 'Coulomb/Volt', 'Q/V'),
+    }
+    dictionary['Capacitance_SI'] = ('F',)
+
+    # Charge
+    dictionary['Charge'] = []
+    dictionary['Charge_UPPER_NAMES_REVERSE'] = {
+        'Coulomb': ('Q', 'Volt*Farad', 'V*F'),
+    }
+    dictionary['Charge_SI'] = ('Q',)
+
+    # Inductance
+    dictionary['Inductance'] = []
+    dictionary['Inductance_UPPER_NAMES_REVERSE'] = {
+        'Henry': ('L', 'H'),
+    }
+    dictionary['Inductance_SI'] = ('H',)
+
+    # Frequency
+    dictionary['Frequency'] = []
+    dictionary['Frequency_UPPER_NAMES_REVERSE'] = {
+        'Hertz': ('Hz', 'hertz', '1/s', 's-1'),
+        'RPM': ('rpm', '1/min')
+    }
+    dictionary['Frequency_SI'] = ('H',)
 
     # productivity index
     dictionary['ProductivityIndex'] = []
