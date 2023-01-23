@@ -16,3 +16,4 @@ src/unyts/units/unitsNetwork.cache
 src/unyts/units/unitsDictionary.cache
 src/unyts/units/temperatureRatioConversions.cache
 src/unyts/units/UnitlessNames.cache
+*.cache

@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.7'
-__release__ = 20230117
+__version__ = '0.5.12'
+__release__ = 20230121
 __all__ = ['Unit', 'is_Unit']
 
 from .errors import WrongUnitsError, WrongValueError, NoConversionFoundError
@@ -48,7 +48,12 @@ else:
     array_like = tuple()
 
 
-class Unit(object):
+class UnytType(type):
+    def __repr__(self):
+        return self.__name__
+
+
+class Unit(object, metaclass=UnytType):
     """
     A class to cope with values associated to units, its arithmetic and logic
     operations and conversions.
@@ -586,7 +591,9 @@ class Unit(object):
                 units = units.unit
             except AttributeError:
                 raise WrongUnitsError("'" + str(units) + "' for '" + str(self.name) + "'")
-        if units in self.kind.classUnits:
+        if units != 'ounce' and units in self.kind.classUnits:
+            return units
+        elif units == 'ounce':
             return units
         else:
             raise WrongUnitsError("'" + str(units) + "' for '" + str(self.name) + "'")
