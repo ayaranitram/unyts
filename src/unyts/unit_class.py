@@ -90,12 +90,13 @@ class Unit(object):
         else:
             raise NotImplementedError("dtype not implemented without NumPy.")
 
-    def convert(self, new_unit):
-        if type(new_unit) is not str:
-            try:
-                new_unit = new_unit.unit
-            except AttributeError:
-                raise WrongUnitsError("'" + str(new_unit) + "' for '" + str(self.name) + "'")
+    def convert(self, new_unit: str):
+        if type(new_unit) is not str and hasattr(new_unit, 'units') and type(new_unit.units) is str:
+            new_unit = new_unit.units
+        elif type(new_unit) is not str:
+            raise TypeError("`new_units` should be string.")
+        if not _convertible(self.unit, new_unit):
+            raise WrongUnitsError("'" + str(new_unit) + "' is not valid units for '" + str(self.name) + "'.")
         return self.kind(_convert(self.value, self.unit, new_unit), new_unit)
 
     def to(self, new_unit):
