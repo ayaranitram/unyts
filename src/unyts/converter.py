@@ -7,10 +7,10 @@ Created on Sat Oct 24 15:57:27 2020
 """
 
 __version__ = '0.5.3'
-__release__ = 20230118
+__release__ = 20230122
 __all__ = ['convert', 'convertible']
 
-from .database import unitsNetwork
+from .database import units_network
 from unyts.dictionaries import dictionary, temperatureRatioConversions
 from unyts.searches import BFS, print_path
 from unyts.errors import NoConversionFoundError
@@ -91,13 +91,13 @@ def _apply_conversion(value, conversion_path):
                         value = _str2lambda(next_step)(value, _apply_conversion(value, further_step))
                     break
         else:
-            value = unitsNetwork.convert(value, this_step, next_step)
+            value = units_network.convert(value, this_step, next_step)
         i += 1
     return value
 
 
 def _lambda_conversion(conversion_path):
-    big_lambda = [unitsNetwork.conversion(conversion_path[i], conversion_path[i+1])
+    big_lambda = [units_network.conversion(conversion_path[i], conversion_path[i + 1])
                   for i in range(len(conversion_path)-1)]
     return lambda x: _lambda_loop(x, big_lambda[:])
 
@@ -110,20 +110,19 @@ def _lambda_loop(x, lambda_list):
 
 def _get_pair_child(unit: str):
     # get the Unit node if the name received
-    unit = unitsNetwork.get_node(unit) if type(unit) is str else unit
+    unit = units_network.get_node(unit) if type(unit) is str else unit
 
     # get pair of units children
-    pair_child = list(filter(lambda u: '/' in u or '*' in u, [u.get_name() for u in unitsNetwork.children_of(unit)]))
+    pair_child = list(filter(lambda u: '/' in u or '*' in u, [u.get_name() for u in units_network.children_of(unit)]))
 
     # if pair of units child is found, return the one with the shorter name
     if len(pair_child) > 0:
         pair_child = sorted(pair_child, key=len)[0]
-
     # if no children found at this level, look for children in next level
     else:
-        for child in unitsNetwork.children_of(unit):
+        for child in units_network.children_of(unit):
             pair_grandchild = list(
-                filter(lambda u: '/' in u or '*' in u, [u.get_name() for u in unitsNetwork.children_of(child)]))
+                filter(lambda u: '/' in u or '*' in u, [u.get_name() for u in units_network.children_of(child)]))
             if len(pair_grandchild) > 0:
                 pair_child = sorted(pair_grandchild, key=len)[0]
                 break
@@ -137,18 +136,18 @@ def _get_conversion(value, from_unit, to_unit):
     # no conversion required if 'from' and 'to' units are the same units
     if from_unit == to_unit:
         if value is None:
-            return lambda x: x, [unitsNetwork.get_node(from_unit) if unitsNetwork.has_node(from_unit) else from_unit]
+            return lambda x: x, [units_network.get_node(from_unit) if units_network.has_node(from_unit) else from_unit]
         else:
-            return value, [unitsNetwork.get_node(from_unit) if unitsNetwork.has_node(from_unit) else from_unit]
+            return value, [units_network.get_node(from_unit) if units_network.has_node(from_unit) else from_unit]
 
     # no conversion required if 'from' and 'to' units are dates
     if from_unit in dictionary['Date'] and to_unit in dictionary['Date']:
         if value is None:
-            return lambda x: x, [unitsNetwork.get_node(from_unit) if unitsNetwork.has_node(from_unit) else from_unit,
-                                 unitsNetwork.get_node(to_unit) if unitsNetwork.has_node(to_unit) else to_unit]
+            return lambda x: x, [units_network.get_node(from_unit) if units_network.has_node(from_unit) else from_unit,
+                                 units_network.get_node(to_unit) if units_network.has_node(to_unit) else to_unit]
         else:
-            return value, [unitsNetwork.get_node(from_unit) if unitsNetwork.has_node(from_unit) else from_unit,
-                           unitsNetwork.get_node(to_unit) if unitsNetwork.has_node(to_unit) else to_unit]
+            return value, [units_network.get_node(from_unit) if units_network.has_node(from_unit) else from_unit,
+                           units_network.get_node(to_unit) if units_network.has_node(to_unit) else to_unit]
 
     # from None to some units or viceversa
     if from_unit is None or to_unit is None:
@@ -202,24 +201,24 @@ def _get_conversion(value, from_unit, to_unit):
             return 1 / value, ['1/']
 
     # check if already solved and memorized
-    if (from_unit, to_unit) in unitsNetwork.memory:
-        conversion_lambda, conversion_path = unitsNetwork.memory[(from_unit, to_unit)]
+    if (from_unit, to_unit) in units_network.memory:
+        conversion_lambda, conversion_path = units_network.memory[(from_unit, to_unit)]
         return (conversion_lambda, conversion_path) if value is None else (conversion_lambda(value), conversion_path)
 
     # check if path is already defined in network
-    if unitsNetwork.has_node(from_unit) and unitsNetwork.has_node(to_unit):
-        conversion_path = BFS(unitsNetwork,
-                              unitsNetwork.get_node(from_unit),
-                              unitsNetwork.get_node(to_unit),
+    if units_network.has_node(from_unit) and units_network.has_node(to_unit):
+        conversion_path = BFS(units_network,
+                              units_network.get_node(from_unit),
+                              units_network.get_node(to_unit),
                               unyts_parameters_.verbose_)
     else:
         conversion_path = None
 
     # return Conversion if found in network
     if conversion_path is not None:
-        unitsNetwork.memory[(from_unit, to_unit)] = (_lambda_conversion(conversion_path), conversion_path)
+        units_network.memory[(from_unit, to_unit)] = (_lambda_conversion(conversion_path), conversion_path)
         if value is None:
-            return unitsNetwork.memory[(from_unit, to_unit)]
+            return units_network.memory[(from_unit, to_unit)]
         else:
             return _apply_conversion(value, conversion_path), conversion_path
     else:
@@ -233,7 +232,7 @@ def _converter(value, from_unit, to_unit):
     as well as conversion path.
     """
     # reset memory for this variable
-    unitsNetwork.previous = []
+    units_network.previous = []
 
     # try to convert
     conv, conv_path = _get_conversion(value, from_unit, to_unit)
@@ -242,7 +241,7 @@ def _converter(value, from_unit, to_unit):
     if conv is not None:
         return conv, conv_path
 
-    unitsNetwork.previous.append((from_unit, to_unit))
+    units_network.previous.append((from_unit, to_unit))
 
     list_conversion = []
     list_conversion_path = []
@@ -278,9 +277,9 @@ def _converter(value, from_unit, to_unit):
     if len(list_conversion) > 0 and not failed:
         conversion_factor = reduce(lambda x, y: x * y, list_conversion)
         conversion_path = [node for path in list_conversion_path for node in path]
-        unitsNetwork.memory[(from_unit, to_unit)] = lambda x: x * conversion_factor, conversion_path
+        units_network.memory[(from_unit, to_unit)] = lambda x: x * conversion_factor, conversion_path
         if value is None:
-            return unitsNetwork.memory[(from_unit, to_unit)]
+            return units_network.memory[(from_unit, to_unit)]
         else:
             return value * conversion_factor, conversion_path
 
@@ -293,9 +292,9 @@ def _converter(value, from_unit, to_unit):
             if pair_conversion is not None and base_conversion is not None:
                 conversion_path = base_conversion_path + pair_conversion_path
                 conversion = lambda x: pair_conversion(base_conversion(x))
-                unitsNetwork.memory[(from_unit, to_unit)] = conversion, conversion_path
+                units_network.memory[(from_unit, to_unit)] = conversion, conversion_path
                 if value is None:
-                    return unitsNetwork.memory[(from_unit, to_unit)]
+                    return units_network.memory[(from_unit, to_unit)]
                 else:
                     return conversion(value), conversion_path
 
@@ -308,9 +307,9 @@ def _converter(value, from_unit, to_unit):
             if pair_conversion is not None and final_conversion is not None:
                 conversion_path = pair_conversion_path + final_conversion_path
                 conversion = lambda x: final_conversion(pair_conversion(x))
-                unitsNetwork.memory[(from_unit, to_unit)] = conversion, conversion_path
+                units_network.memory[(from_unit, to_unit)] = conversion, conversion_path
                 if value is None:
-                    return unitsNetwork.memory[(from_unit, to_unit)]
+                    return units_network.memory[(from_unit, to_unit)]
                 else:
                     return conversion(value), conversion_path
 
