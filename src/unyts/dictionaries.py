@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.8'
-__release__ = 20230118
+__version__ = '0.5.12'
+__release__ = 20230123
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'unitless_names']
 
 from json import load as json_load
@@ -43,7 +43,9 @@ SI = {
     'y': (lambda X: X * 1E-24, lambda X: X * 1E-48, lambda X: X * 1E-72),  # yocto
 }
 
-SI_order = (('Length', 'Pressure', 'Weight', 'mass', 'Time',), ('Area',), ('Rate', 'Volume',),)
+SI_order = (('Length', 'Pressure', 'Weight', 'Mass', 'Time', 'Frequency', 'Power', 'Voltage', 'Current', 'Resistance'),
+            ('Area',),
+            ('Rate', 'Volume',),)
 
 DATA = {
     'Y': (lambda X: X * 1E+24, lambda X: X * 2 ** 80),  # yotta
@@ -80,7 +82,7 @@ def _load_dictionary() -> (dict, dict):
         'millisecond': ('ms',),
         'second': ('s', 'sec',),
         'minute': ('min',),
-        'hour': ('h', 'hr',),
+        'hour': ('h', 'hr', 'Wh/W', 'Watt hour/Watt'),
         'day': ('d', 'día', 'días', 'DíA',),
         'week': ('we', 'w', 'WE',),  # 'w' can be confused with 'W' for Watt
         'month': ('mo', 'mes', 'meses',),
@@ -89,32 +91,37 @@ def _load_dictionary() -> (dict, dict):
         'decade': tuple(),
         'century': ('centuries',),
     }
-    dictionary['Time_PLURALwS_UPPER_REVERSE'] = tuple(dictionary['Time_NAMES_REVERSE'].keys()) + ('min', 'año')
-    dictionary['Time_UPPER_REVERSE'] = dictionary['Time_NAMES_REVERSE']['nanosecond'] + \
-                               dictionary['Time_NAMES_REVERSE']['millisecond'] + \
-                               dictionary['Time_NAMES_REVERSE']['second'] + \
-                               dictionary['Time_NAMES_REVERSE']['hour'] + \
-                               dictionary['Time_NAMES_REVERSE']['day'] + \
-                               dictionary['Time_NAMES_REVERSE']['hour'] + \
-                               dictionary['Time_NAMES_REVERSE']['month'] + \
-                               dictionary['Time_NAMES_REVERSE']['year'] + ('centuries',)
+    dictionary['Time_PLURALwS_UPPER'] = tuple(dictionary['Time_NAMES_REVERSE'].keys()) + ('min', 'año')
+    dictionary['Time_UPPER'] = tuple(t for t in dictionary['Time_NAMES_REVERSE']['nanosecond'] if len(t) > 1) + \
+                               tuple(t for t in dictionary['Time_NAMES_REVERSE']['millisecond'] if len(t) > 1) + \
+                               tuple(t for t in dictionary['Time_NAMES_REVERSE']['second'] if len(t) > 1) + \
+                               tuple(t for t in dictionary['Time_NAMES_REVERSE']['hour'] if len(t) > 1) + \
+                               tuple(t for t in dictionary['Time_NAMES_REVERSE']['day'] if len(t) > 1) + \
+                               tuple(t for t in dictionary['Time_NAMES_REVERSE']['hour'] if len(t) > 1) + \
+                               tuple(t for t in dictionary['Time_NAMES_REVERSE']['month'] if len(t) > 1) + \
+                               tuple(t for t in dictionary['Time_NAMES_REVERSE']['year'] if len(t) > 1) + \
+                               ('centuries',)
     dictionary['Time_SI'] = ('s',)
 
     # Temperature and related
     dictionary['Temperature'] = ['C', 'K', 'F', 'R']
     dictionary['Temperature_NAMES'] = {
-        'Celsius': ('Centigrade', 'C', 'DEG C', 'DEGREES C'),
-        'Fahrenheit': ('F', 'DEG F', 'DEGREES F'),
-        'Rankine': ('R', 'DEG R', 'DEGREES R'),
-        'Kelvin': ('K', 'DEG K', 'DEGREES K')
+        'Celsius': ('Centigrade', 'C', 'deg c', 'degrees C'),
+        'Fahrenheit': ('F', 'deg F', 'degrees F'),
+        'Rankine': ('R', 'deg R', 'degrees R'),
+        'Kelvin': ('K', 'deg K', 'degrees K')
     }
+    dictionary['Temperature_UPPER_LOWER'] = tuple(dictionary['Temperature_NAMES'].keys()) + \
+                                            tuple(t
+                                                  for key in dictionary['Temperature_NAMES']
+                                                  for t in dictionary['Temperature_NAMES'][key] if len(t) > 1)
     dictionary['TemperatureGradient'] = []
 
     # Volume
     dictionary['Volume'] = []
     dictionary['Volume_SI_UPPER_REVERSE'] = (
         'm3', 'sm3', 'stm3', 'rm3',)  # 'l' # litre is Volume but the Conversion of SI prefixes is linear
-    dictionary['Volume_UK_NAMES_UPPER_REVERSE'] = {
+    dictionary['Volume_UK_UPPER_LOWER_NAMES_REVERSE'] = {
         'fluid ounce': ('fl oz', 'oz', 'ounce', 'ozUS', 'ounce'),
         'gill': ('gi', 'gillUS', 'giUS', 'USgill'),
         'pint': ('pt', 'pintUS', 'ptUS', 'USpint'),
@@ -144,14 +151,14 @@ def _load_dictionary() -> (dict, dict):
         'reservoir barrel': ('rb',),
         'standard barrel': ('stb', 'stbo', 'stbw', 'stbl', 'oil barrel'),
     }
-    dictionary['Volume_UPPER_REVERSE'] = ('kstm3', 'Mstm3')
-    dictionary['Volume_PLURALwS_UPPER_REVERSE'] = tuple(dictionary['Volume_NAMES_UPPER_REVERSE_SPACES'].keys()) + \
-                                    tuple(dictionary['Volume_UK_NAMES_UPPER_REVERSE'].keys()) + \
-                                    ('fl oz', 'oz', 'ounce', 'gallon', 'imperial gallon', 'barrel', 'gal',
-                                     'oil barrel', 'oil gallon',
-                                     'USgallon', 'UKgallon', 'USounce', 'UKounce',
-                                     'cubic centimeter', 'standard cubic centimeter',
-                                     'liter', 'milliliter', 'centiliter', 'deciliter')
+    dictionary['Volume_UPPER'] = ('kstm3', 'Mstm3')
+    dictionary['Volume_PLURALwS_UPPER_LOWER'] = tuple(dictionary['Volume_NAMES_UPPER_REVERSE_SPACES'].keys()) + \
+                                          tuple(dictionary['Volume_UK_UPPER_LOWER_NAMES_REVERSE'].keys()) + \
+                                          ('fl oz', 'oz', 'ounce', 'gallon', 'imperial gallon', 'barrel', 'gal',
+                                           'oil barrel', 'oil gallon',
+                                           'USgallon', 'UKgallon', 'USounce', 'UKounce',
+                                           'cubic centimeter', 'standard cubic centimeter',
+                                           'liter', 'milliliter', 'centiliter', 'deciliter')
     dictionary['Volume_OGF'] = ('scf', 'cf', 'ft3', 'stb', 'bbl', 'rb', 'stbo', 'stbw', 'stbl')
     # dictionary['Volume_oilgas_NAMES'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl')
     dictionary['Volume_oilgas_UPPER'] = ('sm3', 'm3', 'rm3', 'ksm3', 'Msm3', 'Gsm3',
@@ -170,7 +177,7 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Length'] = []
     dictionary['Length_NAMES_UPPER_REVERSE'] = {'meter': ('m', 'meter', 'metro')}
     dictionary['Length_SI'] = ('m', 'l')  # litre is Volume but the Conversion of SI prefixes is linear
-    dictionary['Length_UK_NAMES_UPPER_REVERSE'] = {
+    dictionary['Length_UK_NAMES_REVERSE'] = {
         'thou': ('th',),
         'tenth': ('te', '0.1 in'),
         'inch': ('in', '"'),
@@ -184,6 +191,8 @@ def _load_dictionary() -> (dict, dict):
         'nautical mile': ('nmi',),
         'nautical league': ('nlea',),
     }
+    dictionary['Length_UK_UPPER'] = tuple(dictionary['Length_UK_NAMES_REVERSE'].keys()) + \
+                                    ('feet', 'in', 'ft', 'yd')
 
     # Area
     dictionary['Area'] = []
@@ -200,20 +209,20 @@ def _load_dictionary() -> (dict, dict):
 
     # Pressure
     dictionary['Pressure'] = []
-    dictionary['Pressure_NAMES_UPPER_REVERSE_SPACES'] = {
-        'absolute psi': (
-            'psia', 'lb/in2', 'absolute pound/square inch', 'psi absolute', 'libras/pulgada cuadrada absoluta', 'lpca'),
+    dictionary['Pressure_NAMES_SPACES'] = {
+        'Pascal': ('Pa',),
+    }
+    dictionary['Pressure_NAMES_UPPER_SPACES'] = {
+        'absolute psi': ('psia', 'lb/in2', 'absolute pound/square inch', 'psi absolute', 'libras/pulgada cuadrada absoluta', 'lpca'),
+        'psi gauge': ('psi', 'pound/square inch', 'psig', 'gauge psi'),
         'absolute bar': ('bara', 'barsa', 'abs bar', 'bar absolute'),
+        'bar gauge': ('bar', 'barg', 'gauge bar', 'bars'),
         'atmosphere': ('atm', 'atma'),
-        'Pascal': ('Pa', 'Newton/m2'),
+        'Pascal': ('Newton/m2',),
         'kPa': ('KPa', 'kilopascal'),
         'hPa': ('hectopascal',),
         'Torr': ('millimeters of mercury',),
         'millimeters of mercury': ('mmHg',),
-    }
-    dictionary['Pressure_NAMES_UPPER_SPACES'] = {
-        'psi gauge': ('psi', 'pound/square inch', 'psig', 'gauge psi'),
-        'bar gauge': ('bar', 'barg', 'gauge bar', 'bars'),
     }
     dictionary['Pressure_SI'] = ('Pa', 'bara', 'barsa', 'bar', 'barg')
 
@@ -223,15 +232,15 @@ def _load_dictionary() -> (dict, dict):
 
     # Weight
     dictionary['Weight'] = []
-    dictionary['Weight_NAMES_UPPER_REVERSE_SPACES'] = {
+    dictionary['Weight_NAMES_UPPER_LOWER_REVERSE'] = {
         'gram': ('g',),
-        'kilogram': ('kg', 'kgm', 'Kgm', 'kilogram mass'),
+        'kilogram': ('kg',),
         'milligram': ('mg',),
         'metric ton': ('Tonne',),
         'g-mol': ('g-moles',),
         'Kg-mol': ('Kg-moles',),
     }
-    dictionary['Weight_UK_NAMES_UPPER_REVERSE_SPACES'] = {
+    dictionary['Weight_UK_NAMES_UPPER_LOWER_REVERSE_SPACES'] = {
         'grain': ('gr',),
         'pennyweight': ('pwt', 'dwt'),
         'dram': ('dr', 'dramch'),
@@ -246,22 +255,25 @@ def _load_dictionary() -> (dict, dict):
         'short ton': ('USton', 'tonUS'),
         'long ton': ('t', 'UKton', 'ton', 'tonUK'),
     }
-    dictionary['Weight_PLURALwS_UPPER'] = tuple(dictionary['Weight_NAMES_UPPER_REVERSE_SPACES'].keys()) + \
-        tuple(dictionary['Weight_UK_NAMES_UPPER_REVERSE_SPACES'].keys()) + \
-        ('Tonne', 'ton', 'UKton', 'USton')
+    dictionary['Weight_PLURALwS_UPPER_LOWER'] = tuple(dictionary['Weight_NAMES_UPPER_LOWER_REVERSE'].keys()) + \
+                                                tuple(dictionary['Weight_UK_NAMES_UPPER_LOWER_REVERSE_SPACES'].keys()) + \
+                                                ('Tonne', 'ton', 'UKton', 'USton')
     dictionary['Weight_SI'] = ('g', 'g-mol')
 
-    # mass
+    # Mass
     dictionary['Mass'] = ['kilogram mass']
+    dictionary['Mass_NAMES_UPPER_LOWER'] = {
+        'kilogram mass': ('Kgm', 'kilogram mass')
+    }
 
     # Density
     dictionary['Density'] = []
     dictionary['Density_oilgas'] = {}
-    dictionary['Density_NAMES_UPPER'] = {
-        'API': ('DEGREES',),
-        'SgG': ('gas-gravity', 'gas-specific-gravity'),
-        'SgW': ('water-gravity',),
-        'SgO': ('oil-gravity',),
+    dictionary['Density_NAMES_LOWER_UPPER'] = {
+        'API': ('degrees',),
+        'SgG': ('gas gravity', 'gas specific gravity'),
+        'SgW': ('water gravity',),
+        'SgO': ('oil gravity',),
     }
     dictionary['Density_NAMES_UPPER_REVERSE'] = {
         'g/cm3': ('g/cc',),
@@ -303,15 +315,12 @@ def _load_dictionary() -> (dict, dict):
         'ft3/day': ('cf/day',),
     }
 
-    # digital data
-    dictionary['dataBYTE'] = []
-    dictionary['dataBYTE_UPPER_PLURALwS_DATA_NAME_REVERSE'] = {'byte': ('Byte',)}
-    dictionary['dataBYTE_DATA_REVERSE'] = ('B',)
-    dictionary['dataBIT'] = []
-    dictionary['dataBIT_DATA_PLURALwS_NAME_REVERSE'] = {'bit': ('Bit', 'BIT',)}
-    dictionary['dataBIT_DATA_REVERSE'] = ('b',)
+    # digital Data
+    dictionary['Data'] = []
+    dictionary['Data_UPPER_LOWER_PLURALwS_DATA_NAME_REVERSE'] = {'byte': ('B', 'Byte', 'BYTE'),
+                                                                 'bit': ('b', 'Bit', 'BIT')}
 
-    # viscosity
+    # Viscosity
     dictionary['Viscosity'] = []
     dictionary['Viscosity_UPPER_NAMES_REVERSE'] = {
         'centipoise': ('cP',),
@@ -319,11 +328,16 @@ def _load_dictionary() -> (dict, dict):
         'Pa*s': ('N*s/m2', 'kg/m/s')
     }
 
-    # permeability
+    # Permeability
     dictionary['Permeability'] = []
-    dictionary['Permeability_UPPER_REVERSE'] = ('mD', 'Darcy',)
+    dictionary['Permeability_NAMES'] = {
+        'Darcy': ('D',),
+        'millidarcy': ('mD',)
+    }
+    dictionary['Permeability_UPPER_LOWER'] = ('Darcy', 'millidarcy')
+    dictionary['Energy_SI'] = ('D',)
 
-    # force
+    # Force
     dictionary['Force'] = []
     dictionary['Force_NAMES_SPACES_RECURSIVE_UPPER_REVERSE'] = {
         'Newton': ('N', 'newton', 'kg*m/s2'),
@@ -334,13 +348,13 @@ def _load_dictionary() -> (dict, dict):
 
     # Energy
     dictionary['Energy'] = []
-    dictionary['Energy_UPPER_NAMES_REVERSE'] = {
+    dictionary['Energy_UPPER_LOWER_NAMES_REVERSE_SPACES'] = {
         'Joule': ('J', 'Watt second', 'N*m', 'kg*m2/s2', 'Joules'),
         'Kilojoule': ('kJ',),
         'kilowatt hour': ('kWh', 'kW*h', 'kilovatio hora'),
         'British thermal unit': ('BTU', 'british thermal unit'),
-        'Watt second': ('Watt*second', 'W*s', 'Ws'),
-        'Watt hour': ('Wh', 'W*h',),
+        'Watt second': ('Ws', 'Watt*second', 'W*s'),
+        'Watt hour': ('Wh', 'Watt*hour', 'W*h'),
         'gram calorie': ('cal', 'calorie', 'Calorie'),
     }
     dictionary['Energy_SI'] = ('Wh', 'Ws',)
@@ -404,17 +418,17 @@ def _load_dictionary() -> (dict, dict):
         's2': ('s*s',)
     }
 
-    temperatureRatioFactors = {'Celsius': 9,
+    temperature_ratio_factors = {'Celsius': 9,
                                'Fahrenheit': 5,
                                'Kelvin': 9,
                                'Rankine': 5,
                                }
-    temperatureRatioConversions = {}
-    for t1, c1 in temperatureRatioFactors.items():
+    temperature_ratio_conversions = {}
+    for t1, c1 in temperature_ratio_factors.items():
         for t1a in ((t1,) + dictionary['Temperature_NAMES'][t1]):
-            for t2, c2 in temperatureRatioFactors.items():
+            for t2, c2 in temperature_ratio_factors.items():
                 for t2a in ((t2,) + dictionary['Temperature_NAMES'][t2]):
-                    temperatureRatioConversions[(t1a, t2a)] = c1 / c2
+                    temperature_ratio_conversions[(t1a, t2a)] = c1 / c2
 
     unitless_names = dictionary['Dimensionless'] + dictionary['Percentage']
     for name in [names for names in dictionary if names.startswith('Dimensionless') or names.startswith('Percentage')]:
@@ -423,28 +437,28 @@ def _load_dictionary() -> (dict, dict):
         elif type(dictionary[name]) is dict:
             for key in dictionary[name]:
                 unitless_names += [key] + list(dictionary[name][key])
-    unitless_names = set(unitless_names)
+    unitless_names = list(set(unitless_names)) + [None]
 
     if unyts_parameters_.cache_:
-        with open(dir_path + 'units/TemperatureRatioConversions.cache', 'wb') as f:
-            pickle_dump(temperatureRatioConversions, f)
-        with open(dir_path + 'units/UnitlessNames.cache', 'wb') as f:
+        with open(dir_path + 'units/temperature_ratio_conversions.cache', 'wb') as f:
+            pickle_dump(temperature_ratio_conversions, f)
+        with open(dir_path + 'units/unitless_names.cache', 'wb') as f:
             pickle_dump(unitless_names, f)
 
-    return dictionary, temperatureRatioConversions, unitless_names
+    return dictionary, temperature_ratio_conversions, unitless_names
 
 
 if not unyts_parameters_.reload_ and \
-        isfile(dir_path + 'units/UnitsDictionary.cache') and \
-        isfile(dir_path + 'units/UnitsNetwork.cache') and \
-        isfile(dir_path + 'units/TemperatureRatioConversions.cache') and \
-        isfile(dir_path + 'units/UnitlessNames.cache'):
+        isfile(dir_path + 'units/units_dictionary.cache') and \
+        isfile(dir_path + 'units/units_network.cache') and \
+        isfile(dir_path + 'units/temperature_ratio_conversions.cache') and \
+        isfile(dir_path + 'units/unitless_names.cache'):
     try:
-        with open(dir_path + 'units/UnitsDictionary.cache', 'r') as f:
+        with open(dir_path + 'units/units_dictionary.cache', 'r') as f:
             dictionary = json_load(f)
-        with open(dir_path + 'units/TemperatureRatioConversions.cache', 'rb') as f:
+        with open(dir_path + 'units/temperature_ratio_conversions.cache', 'rb') as f:
             temperatureRatioConversions = pickle_load(f)
-        with open(dir_path + 'units/UnitlessNames.cache', 'rb') as f:
+        with open(dir_path + 'units/unitless_names.cache', 'rb') as f:
             unitless_names = pickle_load(f)
         print('units dictionary loaded from cache...')
     except:
