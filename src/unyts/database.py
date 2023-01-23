@@ -6,9 +6,9 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.3'
-__release__ = 20230118
-__all__ = ['unitsNetwork']
+__version__ = '0.5.12'
+__release__ = 20230121
+__all__ = ['units_network', 'network_to_frame']
 
 from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
     StandardEarthGravity
@@ -32,71 +32,63 @@ def _load_network():
     network = UDigraph()
 
     for unit_kind in list(dictionary.keys()):
-        # print('1: ' +unit_kind)
         if '_' not in unit_kind:
             for unit_name in dictionary[unit_kind]:
-                # print('_ 2: ' + unit_name)
                 network.add_node(UNode(unit_name))
         if '_NAMES' in unit_kind:
             for unit_name in list(dictionary[unit_kind].keys()):
-                # print('N  2: ' + unit_name,unit_kind.split('_')[0])
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for secondName in dictionary[unit_kind][unit_name]:
-                    # print('N   3: ' + unit_name)
                     network.add_node(UNode(secondName))
                     network.add_edge(Conversion(network.get_node(secondName), network.get_node(unit_name), lambda x: x))
                     network.add_edge(Conversion(network.get_node(unit_name), network.get_node(secondName), lambda x: x))
                     dictionary[unit_kind.split('_')[0]].append(secondName)
         if '_SPACES' in unit_kind:
-            for unit_name in list(dictionary[unit_kind].keys()):
-                # print('N  2: ' + unit_name,unit_kind.split('_')[0])
-                if ' ' in unit_name:
-                    network.add_node(UNode(unit_name))
-                    network.add_node(UNode(unit_name.replace(' ', '-')))
-                    dictionary[unit_kind.split('_')[0]].append(unit_name)
-                    dictionary[unit_kind.split('_')[0]].append(unit_name.replace(' ', '-'))
-                    network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', '-')),
-                                   lambda x: x))
-                    network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', '-')),
-                                   lambda x: x))
-                    for secondName in dictionary[unit_kind][unit_name]:
-                        # print('N   3: ' + unit_name)
-                        if ' ' in secondName:
-                            network.add_node(UNode(secondName))
-                            network.add_node(UNode(secondName.replace(' ', '-')))
-                            network.add_edge(
-                                Conversion(network.get_node(secondName.replace(' ', '-')), network.get_node(secondName),
-                                           lambda x: x))
-                            network.add_edge(
-                                Conversion(network.get_node(secondName), network.get_node(secondName.replace(' ', '-')),
-                                           lambda x: x))
-                            dictionary[unit_kind.split('_')[0]].append(secondName)
-                            dictionary[unit_kind.split('_')[0]].append(secondName.replace(' ', '-'))
-                else:
-                    for secondName in dictionary[unit_kind][unit_name]:
-                        # print('N   3: ' + unit_name)
-                        if ' ' in secondName:
-                            network.add_node(UNode(secondName))
-                            network.add_node(UNode(secondName.replace(' ', '-')))
-                            network.add_edge(
-                                Conversion(network.get_node(secondName.replace(' ', '-')), network.get_node(secondName),
-                                           lambda x: x))
-                            network.add_edge(
-                                Conversion(network.get_node(secondName), network.get_node(secondName.replace(' ', '-')),
-                                           lambda x: x))
-                            dictionary[unit_kind.split('_')[0]].append(secondName)
-                            dictionary[unit_kind.split('_')[0]].append(secondName.replace(' ', '-'))
+            for rep in ['-', '_']:
+                for unit_name in list(dictionary[unit_kind].keys()):
+                    if ' ' in unit_name:
+                        network.add_node(UNode(unit_name))
+                        network.add_node(UNode(unit_name.replace(' ', rep)))
+                        dictionary[unit_kind.split('_')[0]].append(unit_name)
+                        dictionary[unit_kind.split('_')[0]].append(unit_name.replace(' ', rep))
+                        network.add_edge(
+                            Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', rep)),
+                                       lambda x: x))
+                        network.add_edge(
+                            Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', rep)),
+                                       lambda x: x))
+                        for secondName in dictionary[unit_kind][unit_name]:
+                            if ' ' in secondName:
+                                network.add_node(UNode(secondName))
+                                network.add_node(UNode(secondName.replace(' ', rep)))
+                                network.add_edge(
+                                    Conversion(network.get_node(secondName.replace(' ', rep)), network.get_node(secondName),
+                                               lambda x: x))
+                                network.add_edge(
+                                    Conversion(network.get_node(secondName), network.get_node(secondName.replace(' ', rep)),
+                                               lambda x: x))
+                                dictionary[unit_kind.split('_')[0]].append(secondName)
+                                dictionary[unit_kind.split('_')[0]].append(secondName.replace(' ', rep))
+                    else:
+                        for secondName in dictionary[unit_kind][unit_name]:
+                            if ' ' in secondName:
+                                network.add_node(UNode(secondName))
+                                network.add_node(UNode(secondName.replace(' ', rep)))
+                                network.add_edge(
+                                    Conversion(network.get_node(secondName.replace(' ', rep)), network.get_node(secondName),
+                                               lambda x: x))
+                                network.add_edge(
+                                    Conversion(network.get_node(secondName), network.get_node(secondName.replace(' ', rep)),
+                                               lambda x: x))
+                                dictionary[unit_kind.split('_')[0]].append(secondName)
+                                dictionary[unit_kind.split('_')[0]].append(secondName.replace(' ', rep))
 
         if '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[0]:
             for unit_name in list(dictionary[unit_kind]):
-                # print('S  2: ' + unit_name)
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for prefix in list(SI.keys()):
-                    # print('S   3: ' + prefix+unit_name+'_'+str(SI[prefix][0]))
                     network.add_node(UNode(prefix + unit_name))
                     network.add_edge(
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), SI[prefix][0]))
@@ -106,11 +98,9 @@ def _load_network():
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[1]:
             for unit_name in list(dictionary[unit_kind]):
-                # print('S  2: ' + unit_name)
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for prefix in list(SI.keys()):
-                    # print('S   3: ' + prefix+unit_name+'_'+str(SI[prefix][1]))
                     network.add_node(UNode(prefix + unit_name))
                     network.add_edge(
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), SI[prefix][1]))
@@ -120,11 +110,9 @@ def _load_network():
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[2]:
             for unit_name in list(dictionary[unit_kind]):
-                # print('S  2: ' + unit_name)
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for prefix in list(SI.keys()):
-                    # print('S   3: ' + prefix+unit_name+'_'+str(SI[prefix]))
                     network.add_node(UNode(prefix + unit_name))
                     network.add_edge(
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), SI[prefix][2]))
@@ -134,11 +122,9 @@ def _load_network():
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_DATA' in unit_kind and unit_kind.split('_')[0] in DATA_order[0]:
             for unit_name in list(dictionary[unit_kind]):
-                # print('S  2: ' + unit_name)
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for prefix in list(DATA.keys()):
-                    # print('S   3: ' + prefix+unit_name+'_'+str(SI[prefix]))
                     network.add_node(UNode(prefix + unit_name))
                     network.add_edge(
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), DATA[prefix][0]))
@@ -148,11 +134,9 @@ def _load_network():
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_DATA' in unit_kind and unit_kind.split('_')[0] in DATA_order[1]:
             for unit_name in list(dictionary[unit_kind]):
-                # print('S  2: ' + unit_name)
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for prefix in list(DATA.keys()):
-                    # print('S   3: ' + prefix+unit_name+'_'+str(SI[prefix]))
                     network.add_node(UNode(prefix + unit_name))
                     network.add_edge(
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), DATA[prefix][1]))
@@ -162,11 +146,9 @@ def _load_network():
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_OGF' in unit_kind and unit_kind.split('_')[0] in OGF_order[2]:
             for unit_name in list(dictionary[unit_kind]):
-                # print('O  2: ' + unit_name)
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for prefix in list(OGF.keys()):
-                    # print('S   3: ' + prefix+unit_name+'_'+str(SI[prefix]))
                     network.add_node(UNode(prefix + unit_name))
                     network.add_edge(
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), OGF[prefix][2]))
@@ -176,9 +158,8 @@ def _load_network():
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_PLURALwS' in unit_kind:
             if type(dictionary[unit_kind]) is dict:
-                list_names = list(dictionary[unit_kind].keys())
+                # list_names = list(dictionary[unit_kind].keys())
                 for unit_name in list(dictionary[unit_kind].keys()):
-                    # print('U  2: ' + unit_name,unit_kind.split('_')[0])
                     network.add_node(UNode(unit_name))
                     network.add_node(UNode(unit_name + 's'))
                     network.add_edge(
@@ -188,7 +169,6 @@ def _load_network():
                     dictionary[unit_kind.split('_')[0]].append(unit_name + 's')
             else:
                 for unit_name in list(dictionary[unit_kind]):
-                    # print('U  2: ' + unit_name,unit_kind.split('_')[0])
                     network.add_node(UNode(unit_name))
                     network.add_node(UNode(unit_name + 's'))
                     network.add_edge(
@@ -198,9 +178,8 @@ def _load_network():
                     dictionary[unit_kind.split('_')[0]].append(unit_name + 's')
             if '_UPPER' in unit_kind:
                 if type(dictionary[unit_kind]) is dict:
-                    list_names = list(dictionary[unit_kind].keys())
+                    # list_names = list(dictionary[unit_kind].keys())
                     for unit_name in list(dictionary[unit_kind].keys()):
-                        # print('U  2: ' + unit_name,unit_kind.split('_')[0])
                         network.add_node(UNode(unit_name))
                         network.add_node(UNode(unit_name.upper() + 'S'))
                         network.add_edge(
@@ -212,7 +191,6 @@ def _load_network():
                         dictionary[unit_kind.split('_')[0]].append(unit_name.upper() + 'S')
                 else:
                     for unit_name in list(dictionary[unit_kind]):
-                        # print('U  2: ' + unit_name,unit_kind.split('_')[0])
                         network.add_node(UNode(unit_name))
                         network.add_node(UNode(unit_name.upper() + 'S'))
                         network.add_edge(
@@ -222,11 +200,34 @@ def _load_network():
                             Conversion(network.get_node(unit_name.upper() + 'S'), network.get_node(unit_name),
                                        lambda x: x))
                         dictionary[unit_kind.split('_')[0]].append(unit_name.upper() + 'S')
+            if '_LOWER' in unit_kind:
+                if type(dictionary[unit_kind]) is dict:
+                    # list_names = list(dictionary[unit_kind].keys())
+                    for unit_name in list(dictionary[unit_kind].keys()):
+                        network.add_node(UNode(unit_name))
+                        network.add_node(UNode(unit_name.lower() + 's'))
+                        network.add_edge(
+                            Conversion(network.get_node(unit_name), network.get_node(unit_name.lower() + 's'),
+                                       lambda x: x))
+                        network.add_edge(
+                            Conversion(network.get_node(unit_name.lower() + 's'), network.get_node(unit_name),
+                                       lambda x: x))
+                        dictionary[unit_kind.split('_')[0]].append(unit_name.lower() + 's')
+                else:
+                    for unit_name in list(dictionary[unit_kind]):
+                        network.add_node(UNode(unit_name))
+                        network.add_node(UNode(unit_name.lower() + 's'))
+                        network.add_edge(
+                            Conversion(network.get_node(unit_name), network.get_node(unit_name.lower() + 's'),
+                                       lambda x: x))
+                        network.add_edge(
+                            Conversion(network.get_node(unit_name.lower() + 's'), network.get_node(unit_name),
+                                       lambda x: x))
+                        dictionary[unit_kind.split('_')[0]].append(unit_name.lower() + 's')
         if '_UPPER' in unit_kind:
             if type(dictionary[unit_kind]) is dict:
-                list_names = list(dictionary[unit_kind].keys())
+                # list_names = list(dictionary[unit_kind].keys())
                 for unit_name in list(dictionary[unit_kind].keys()):
-                    # print('U  2: ' + unit_name,unit_kind.split('_')[0])
                     network.add_node(UNode(unit_name))
                     network.add_node(UNode(unit_name.upper()))
                     network.add_edge(
@@ -235,7 +236,6 @@ def _load_network():
                         Conversion(network.get_node(unit_name.upper()), network.get_node(unit_name), lambda x: x))
                     dictionary[unit_kind.split('_')[0]].append(unit_name.upper())
                     for secondName in dictionary[unit_kind][unit_name]:
-                        # print('U   3: ' + unit_name)
                         network.add_node(UNode(secondName))
                         network.add_node(UNode(secondName.upper()))
                         network.add_edge(
@@ -245,7 +245,6 @@ def _load_network():
                         dictionary[unit_kind.split('_')[0]].append(secondName.upper())
             else:
                 for unit_name in list(dictionary[unit_kind]):
-                    # print('U  2: ' + unit_name,unit_kind.split('_')[0])
                     network.add_node(UNode(unit_name))
                     network.add_node(UNode(unit_name.upper()))
                     network.add_edge(
@@ -253,6 +252,34 @@ def _load_network():
                     network.add_edge(
                         Conversion(network.get_node(unit_name.upper()), network.get_node(unit_name), lambda x: x))
                     dictionary[unit_kind.split('_')[0]].append(unit_name.upper())
+        if '_LOWER' in unit_kind:
+            if type(dictionary[unit_kind]) is dict:
+                # list_names = list(dictionary[unit_kind].keys())
+                for unit_name in list(dictionary[unit_kind].keys()):
+                    network.add_node(UNode(unit_name))
+                    network.add_node(UNode(unit_name.lower()))
+                    network.add_edge(
+                        Conversion(network.get_node(unit_name), network.get_node(unit_name.lower()), lambda x: x))
+                    network.add_edge(
+                        Conversion(network.get_node(unit_name.lower()), network.get_node(unit_name), lambda x: x))
+                    dictionary[unit_kind.split('_')[0]].append(unit_name.lower())
+                    for secondName in dictionary[unit_kind][unit_name]:
+                        network.add_node(UNode(secondName))
+                        network.add_node(UNode(secondName.lower()))
+                        network.add_edge(
+                            Conversion(network.get_node(secondName), network.get_node(secondName.lower()), lambda x: x))
+                        network.add_edge(
+                            Conversion(network.get_node(secondName.lower()), network.get_node(secondName), lambda x: x))
+                        dictionary[unit_kind.split('_')[0]].append(secondName.lower())
+            else:
+                for unit_name in list(dictionary[unit_kind]):
+                    network.add_node(UNode(unit_name))
+                    network.add_node(UNode(unit_name.lower()))
+                    network.add_edge(
+                        Conversion(network.get_node(unit_name), network.get_node(unit_name.lower()), lambda x: x))
+                    network.add_edge(
+                        Conversion(network.get_node(unit_name.lower()), network.get_node(unit_name), lambda x: x))
+                    dictionary[unit_kind.split('_')[0]].append(unit_name.lower())
         if '_INVERSE' in unit_kind:
             pass
 
@@ -309,7 +336,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square inch'), lambda d: d * 144))
     network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square meter'),
                                 lambda d: d * (3048 ** 2) / (10000 ** 2)))
-    network.add_edge(Conversion(network.get_node('Darcy'), network.get_node('mD'), lambda d: d * 1000))
+    # network.add_edge(Conversion(network.get_node('Darcy'), network.get_node('mD'), lambda d: d * 1000))
     network.add_edge(Conversion(network.get_node('Darcy'), network.get_node('µm2'), lambda d: d * 0.9869233))
     # network.addEdge(Conversion(network.getNode('m*m'), network.getNode('m'), lambda d: d**0.5))
     # network.addEdge(Conversion(network.getNode('m'), network.getNode('m*m'), lambda d: d**2))
@@ -433,8 +460,6 @@ def _load_network():
 
     # data conversions
     network.add_edge(Conversion(network.get_node('byte'), network.get_node('bit'), lambda d: d * 8))
-    network.add_edge(Conversion(network.get_node('byte'), network.get_node('B'), lambda d: d))
-    network.add_edge(Conversion(network.get_node('bit'), network.get_node('b'), lambda d: d))
 
     for unit_kind in list(dictionary.keys()):
         if '_REVERSE' in unit_kind:
@@ -442,11 +467,8 @@ def _load_network():
                 nameList = list(dictionary[unit_kind].keys())
             else:
                 nameList = list(dictionary[unit_kind])
-            # print(nameList)
             for unit_name in nameList:
-                # print('R  2: ' + unit_name)
                 for otherName in network.children_of(network.get_node(unit_name)):
-                    # print('R   3: '+unit_name,otherName.getName())
                     if network.get_node(unit_name) != otherName:
                         network.add_edge(Conversion(otherName, network.get_node(unit_name),
                                                     network.edges[network.get_node(unit_name)][1][
@@ -455,9 +477,7 @@ def _load_network():
 
     for unit_kind in list(dictionary.keys()):
         if '_FROMvolume' in unit_kind and unit_kind.split('_')[0] in SI_order[2]:
-            # if '_SI' in unit_kind and unit_kind.split('_')[0]  in SI_order[2] :
             for unit_name in list(dictionary[unit_kind]):
-                # print('S  2: ' + unit_name)
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for otherName in network.children_of(network.get_node(unit_name.split('/')[0])):
@@ -495,8 +515,7 @@ def _create_Rates() -> None:
     rates = list(dictionary['Rate']) if 'Rate' in dictionary else []
     rates += [volume + '/' + time for volume in dictionary['Volume'] for time in dictionary['Time']]
     rates += [weight + '/' + time for weight in dictionary['Weight'] for time in dictionary['Time']]
-    rates += [data + '/' + time for data in dictionary['dataBYTE'] for time in dictionary['Time']]
-    rates += [data + '/' + time for data in dictionary['dataBIT'] for time in dictionary['Time']]
+    rates += [data + '/' + time for data in dictionary['Data'] for time in dictionary['Time']]
     dictionary['Rate'] = tuple(set(rates))
 
 
@@ -515,18 +534,74 @@ def _create_Density() -> None:
     dictionary['Density'] = tuple(set(density))
 
 
-def _create_Speed() -> None:
+def _create_Velocity() -> None:
     # Length / Time
-    speed = list(dictionary['Speed']) if 'Speed' in dictionary else []
-    speed += [length + '/' + time for length in dictionary['Length'] for time in dictionary['Time']]
-    dictionary['Speed'] = tuple(set(speed))
+    velocity = list(dictionary['Velocity']) if 'Velocity' in dictionary else []
+    velocity += [length + '/' + time for length in dictionary['Length'] for time in dictionary['Time']]
+    dictionary['Velocity'] = tuple(set(velocity))
 
 
 def _create_Power() -> None:
     # Length / Time
     power = list(dictionary['Power']) if 'Power' in dictionary else []
     power += [energy + '/' + time for energy in dictionary['Energy'] for time in dictionary['Time']]
+    power += [voltage + '*' + current for voltage in dictionary['Voltage'] for current in dictionary['Current']]
+    power += [current + '*' + voltage for voltage in dictionary['Voltage'] for current in dictionary['Current']]
+    power += [current + '2*' + resistance for resistance in dictionary['Resistance'] for current in dictionary['Current']]
+    power += [resistance + '*' + current + '2' for resistance in dictionary['Resistance'] for current in dictionary['Current']]
     dictionary['Power'] = tuple(set(power))
+
+
+def _create_Frequency() -> None:
+    # 1 / Time
+    frequency = list(dictionary['Frequency']) if 'Frequency' in dictionary else []
+    frequency += ['1/' + time for time in dictionary['Time']]
+    dictionary['Frequency'] = tuple(set(frequency))
+
+
+def _create_Conductance() -> None:
+    # 1 / Resistance
+    conductance = list(dictionary['Conductance']) if 'Conductance' in dictionary else []
+    conductance += ['1/' + resistance for resistance in dictionary['Resistance']]
+    dictionary['Conductance'] = tuple(set(conductance))
+
+
+def _create_Capacitance_Charge() -> None:
+    # Capacitance, Charge = Charge / Voltage, Capacitance * Voltage
+    capacitance, charge = \
+        list(dictionary['Capacitance']) if 'Capacitance' in dictionary else [], \
+        list(dictionary['Charge']) if 'Charge' in dictionary else []
+    capacitance, charge, = \
+        capacitance + \
+        [charge + '/' + voltage for voltage in dictionary['Voltage'] for charge in dictionary['Charge']], \
+        charge + \
+        [capacitance + '*' + voltage for voltage in dictionary['Voltage'] for capacitance in dictionary['Capacitance']] + \
+        [voltage + '*' + capacitance for voltage in dictionary['Voltage'] for capacitance in dictionary['Capacitance']]
+    dictionary['Capacitance'] = tuple(set(capacitance))
+    dictionary['Charge'] = tuple(set(charge))
+
+
+def _create_Voltage_Current_Resistance() -> None:
+    # Voltage, Current, Resistance = (Current * Resistance) + (Power / Current), \
+    #                                (Voltage / Resistance) + (Power / Voltage), \
+    #                                (Voltage / Current)
+    voltage, current, resistance = \
+        list(dictionary['Voltage']) if 'Voltage' in dictionary else [], \
+        list(dictionary['Current']) if 'Current' in dictionary else [], \
+        list(dictionary['Resistance']) if 'Resistance' in dictionary else []
+    voltage, current, resistance = \
+        voltage + \
+        [current + '*' + resistance for resistance in dictionary['Resistance'] for current in dictionary['Current']] + \
+        [resistance + '*' + current for resistance in dictionary['Resistance'] for current in dictionary['Current']] + \
+        [power + '/' + current for power in dictionary['Power'] for current in dictionary['Current']], \
+        current + \
+        [voltage + '/' + resistance for resistance in dictionary['Resistance'] for voltage in dictionary['Voltage']] + \
+        [power + '/' + voltage for power in dictionary['Power'] for voltage in dictionary['Voltage']], \
+        resistance + \
+        [voltage + '/' + current for current in dictionary['Current'] for voltage in dictionary['Voltage']]
+    dictionary['Voltage'] = tuple(set(voltage))
+    dictionary['Current'] = tuple(set(current))
+    dictionary['Resistance'] = tuple(set(resistance))
 
 
 def _create_ProductivityIndex() -> None:
@@ -565,7 +640,16 @@ def _create_Acceleration() -> None:
     dictionary['Acceleration'] = tuple(set(acceleration))
 
 
+def _complete_products() -> None:
+    for key in dictionary:
+        dictionary[key] = tuple(set(list(dictionary[key]) + [(u.split('*')[1] + '*' + u.split('*')[0])
+                                                             for u in dictionary[key]
+                                                             if '/' not in u
+                                                             and len(u.split('*')) == 2]))
+
+
 def _rebuild_units():
+    print('Rebuilding units dictionary...')
     from .dictionaries import _load_dictionary
     dictionary, temperatureRatioConversions, unitless_names = _load_dictionary()
     units_network = _load_network()
@@ -574,7 +658,7 @@ def _rebuild_units():
     return units_network, dictionary, temperatureRatioConversions, unitless_names
 
 
-def network2frame():
+def network_to_frame():
     try:
         from pandas import DataFrame
     except ModuleNotFoundError:
@@ -582,49 +666,55 @@ def network2frame():
 
     frame = DataFrame(data={}, columns=['source', 'target', 'lambda'])
     i = 0
-    for node in unitsNetwork.edges:
-        for children in unitsNetwork.children_of(node):
+    for node in units_network.edges:
+        for children in units_network.children_of(node):
             frame.loc[i, ['source', 'target', 'lambda']] = [node.get_name(), children.get_name(),
-                                                            unitsNetwork.conversion(node, children)]
+                                                            units_network.conversion(node, children)]
             i += 1
     return frame.drop_duplicates(['source', 'target'])
 
 
 # load the network into an instance of the graph database
 if not unyts_parameters_.reload_ and \
-        isfile(dir_path + 'units/UnitsNetwork.cache') and \
-        (not _cloudpickle_ or (_cloudpickle_ and isfile(dir_path + 'units/UnitsDictionary.cache'))) and \
-        isfile(dir_path + 'units/TemperatureRatioConversions.cache') and \
-        isfile(dir_path + 'units/UnitlessNames.cache'):
+        isfile(dir_path + 'units/units_network.cache') and \
+        (not _cloudpickle_ or (_cloudpickle_ and isfile(dir_path + 'units/units_dictionary.cache'))) and \
+        isfile(dir_path + 'units/temperature_ratio_conversions.cache') and \
+        isfile(dir_path + 'units/unitless_names.cache'):
     try:
-        with open(dir_path + 'units/UnitsNetwork.cache', 'rb') as f:
-            unitsNetwork = cloudpickle_load(f)
+        with open(dir_path + 'units/units_network.cache', 'rb') as f:
+            units_network = cloudpickle_load(f)
         print('units network loaded from cache...')
         unyts_parameters_.reload_ = False
         unyts_parameters_.save_params()
     except:
         warn("Failed to load from cache. Creating new dictionaries and saving them to cache...")
-        unitsNetwork, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
+        units_network, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
 else:
-    try:
-        unitsNetwork = _load_network()
-        # load the dictionary with ratio unis
-        _create_Rates()
-        _create_VolumeRatio()
-        _create_Density()
-        _create_Speed()
-        _create_ProductivityIndex()
-        _create_PressureGradient()
-        _create_TemperatureGradient()
-        _create_Power()
-        unyts_parameters_.reload_ = False
-        unyts_parameters_.save_params()
-    except:
-        unitsNetwork, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
+    #try:
+    units_network = _load_network()
+    # load the dictionary with ratio unis
+    _create_Rates()
+    _create_VolumeRatio()
+    _create_Density()
+    _create_Velocity()
+    _create_ProductivityIndex()
+    _create_PressureGradient()
+    _create_TemperatureGradient()
+    _create_Power()
+    _create_Frequency()
+    _create_Conductance()
+    _create_Capacitance_Charge()
+    _create_Voltage_Current_Resistance()
+    _complete_products()
+
+    unyts_parameters_.reload_ = False
+    unyts_parameters_.save_params()
+    #except:
+    #    units_network, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
     if unyts_parameters_.cache_:
         print('saving units network and dictionary to cache...')
         if _cloudpickle_:
-            with open(dir_path + 'units/UnitsNetwork.cache', 'wb') as f:
-                cloudpickle_dump(unitsNetwork, f)
-        with open(dir_path + 'units/UnitsDictionary.cache', 'w') as f:
+            with open(dir_path + 'units/units_network.cache', 'wb') as f:
+                cloudpickle_dump(units_network, f)
+        with open(dir_path + 'units/units_dictionary.cache', 'w') as f:
             json_dump(dictionary, f)
