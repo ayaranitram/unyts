@@ -25,15 +25,15 @@ class Rate(Unit):
         self.unit = self.check_unit(units)
 
 
-class Speed(Unit):
-    classUnits = _dictionary['Speed']
+class Velocity(Unit):
+    classUnits = _dictionary['Velocity']
 
     def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'speed'
-        self.kind = Speed
+        self.name = 'velocity'
+        self.kind = Velocity
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
 
 
-def Velocity(value: numeric, units: unit_or_str):
-    return Speed(value, units)
+def Speed(value: numeric, units: unit_or_str):
+    return Velocity(value, units)

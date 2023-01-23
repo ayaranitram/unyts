@@ -29,7 +29,7 @@ class VolumeRatio(Unit):
     classUnits = _dictionary['VolumeRatio']
 
     def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'volumeRatio'
+        self.name = 'volume_ratio'
         self.kid = VolumeRatio
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -39,7 +39,7 @@ class ProductivityIndex(Unit):
     classUnits = _dictionary['ProductivityIndex']
 
     def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'productivityIndex'
+        self.name = 'productivity_index'
         self.kind = ProductivityIndex
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -49,7 +49,7 @@ class PressureGradient(Unit):
     classUnits = _dictionary['PressureGradient']
 
     def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'pressureGradient'
+        self.name = 'pressure_gradient'
         self.kind = PressureGradient
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

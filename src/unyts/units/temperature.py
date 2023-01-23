@@ -29,7 +29,7 @@ class TemperatureGradient(Unit):
     classUnits = _dictionary['TemperatureGradient']
 
     def __init__(self, value: str, units: unit_or_str):
-        self.name = 'temperatureGradient'
+        self.name = 'temperature_gradient'
         self.kind = TemperatureGradient
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

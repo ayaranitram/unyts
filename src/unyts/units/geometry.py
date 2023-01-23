@@ -8,7 +8,7 @@ Created on Sat Oct 24 14:34:59 2020
 
 __version__ = '0.5.3'
 __release__ = 20230118
-__all__ = ['Length', 'Area', 'Volume']
+__all__ = ['Length', 'Area', 'Volume', 'Permeability']
 
 from ..dictionaries import dictionary as _dictionary
 from ..unit_class import Unit
@@ -41,5 +41,15 @@ class Volume(Unit):
     def __init__(self, value: numeric, units: unit_or_str):
         self.name = 'volume'
         self.kind = Volume
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)
+
+
+class Permeability(Unit):
+    classUnits = _dictionary['Permeability']
+
+    def __init__(self, value: numeric, units: unit_or_str):
+        self.name = 'permeability'
+        self.kind = Permeability
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
