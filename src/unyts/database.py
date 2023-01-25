@@ -694,6 +694,7 @@ else:
     _create_VolumeRatio()
     _create_Density()
     _create_Velocity()
+    _create_Acceleration()
     _create_ProductivityIndex()
     _create_PressureGradient()
     _create_TemperatureGradient()

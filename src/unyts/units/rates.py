@@ -8,7 +8,7 @@ Created on Sat Oct 24 14:34:59 2020
 
 __version__ = '0.5.3'
 __release__ = 20230118
-__all__ = ['Rate', 'Speed', 'Velocity']
+__all__ = ['Rate', 'Speed', 'Velocity', 'Acceleration']
 
 from ..dictionaries import dictionary as _dictionary
 from ..unit_class import Unit
@@ -37,3 +37,13 @@ class Velocity(Unit):
 
 def Speed(value: numeric, units: unit_or_str):
     return Velocity(value, units)
+
+
+class Acceleration(Unit):
+    classUnits = _dictionary['Acceleration']
+
+    def __init__(self, value: numeric, units: unit_or_str):
+        self.name = 'acceleration'
+        self.kind = Acceleration
+        self.value = self.check_value(value)
+        self.unit = self.check_unit(units)
