@@ -586,11 +586,12 @@ class Unit(object, metaclass=UnytType):
             raise WrongValueError(str(value))
 
     def check_unit(self, units):
-        if type(units) is not str:
-            try:
-                units = units.unit
-            except AttributeError:
-                raise WrongUnitsError("'" + str(units) + "' for '" + str(self.name) + "'")
+        if type(units) is str:
+            pass
+        elif type(units) is not str and hasattr(units, 'units'):
+            units = units.unit
+        else:
+            raise WrongUnitsError("'" + str(units) + "' for '" + str(self.name) + "'")
         if units != 'ounce' and units in self.kind.classUnits:
             return units
         elif units == 'ounce':
