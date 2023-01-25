@@ -91,8 +91,8 @@ def _load_dictionary() -> (dict, dict):
         'decade': tuple(),
         'century': ('centuries',),
     }
-    dictionary['Time_PLURALwS_UPPER'] = tuple(dictionary['Time_NAMES_REVERSE'].keys()) + ('min', 'año')
-    dictionary['Time_UPPER'] = tuple(t for t in dictionary['Time_NAMES_REVERSE']['nanosecond'] if len(t) > 1) + \
+    dictionary['Time_PLURALwS_UPPER_REVERSE'] = tuple(dictionary['Time_NAMES_REVERSE'].keys()) + ('min', 'año')
+    dictionary['Time_UPPER_REVERSE'] = tuple(t for t in dictionary['Time_NAMES_REVERSE']['nanosecond'] if len(t) > 1) + \
                                tuple(t for t in dictionary['Time_NAMES_REVERSE']['millisecond'] if len(t) > 1) + \
                                tuple(t for t in dictionary['Time_NAMES_REVERSE']['second'] if len(t) > 1) + \
                                tuple(t for t in dictionary['Time_NAMES_REVERSE']['hour'] if len(t) > 1) + \
@@ -119,9 +119,9 @@ def _load_dictionary() -> (dict, dict):
 
     # Volume
     dictionary['Volume'] = []
-    dictionary['Volume_SI_UPPER_REVERSE'] = (
+    dictionary['Volume_SI_UPPER'] = (
         'm3', 'sm3', 'stm3', 'rm3',)  # 'l' # litre is Volume but the Conversion of SI prefixes is linear
-    dictionary['Volume_UK_UPPER_LOWER_NAMES_REVERSE'] = {
+    dictionary['Volume_UK_NAMES_REVERSE'] = {
         'fluid ounce': ('fl oz', 'oz', 'ounce', 'ozUS', 'ounce'),
         'gill': ('gi', 'gillUS', 'giUS', 'USgill'),
         'pint': ('pt', 'pintUS', 'ptUS', 'USpint'),
@@ -133,7 +133,7 @@ def _load_dictionary() -> (dict, dict):
         'pintUK': ('ptUK', 'UKpint'),
         'quartUK': ('qtUK', 'UKquart'),
     }
-    dictionary['Volume_NAMES_UPPER_REVERSE_SPACES'] = {
+    dictionary['Volume_NAMES_SPACES_REVERSE'] = {
         'litre': ('l', 'liter', 'litro'),
         'millilitre': ('ml', 'milliliter', 'cubic centimeter'),
         'centilitre': ('cl', 'centiliter'),
@@ -152,8 +152,8 @@ def _load_dictionary() -> (dict, dict):
         'standard barrel': ('stb', 'stbo', 'stbw', 'stbl', 'oil barrel'),
     }
     dictionary['Volume_UPPER'] = ('kstm3', 'Mstm3')
-    dictionary['Volume_PLURALwS_UPPER_LOWER'] = tuple(dictionary['Volume_NAMES_UPPER_REVERSE_SPACES'].keys()) + \
-                                          tuple(dictionary['Volume_UK_UPPER_LOWER_NAMES_REVERSE'].keys()) + \
+    dictionary['Volume_PLURALwS_UPPER_LOWER'] = tuple(dictionary['Volume_NAMES_SPACES_REVERSE'].keys()) + \
+                                          tuple(dictionary['Volume_UK_NAMES_REVERSE'].keys()) + \
                                           ('fl oz', 'oz', 'ounce', 'gallon', 'imperial gallon', 'barrel', 'gal',
                                            'oil barrel', 'oil gallon',
                                            'USgallon', 'UKgallon', 'USounce', 'UKounce',
@@ -166,7 +166,7 @@ def _load_dictionary() -> (dict, dict):
                                          'Tcf',
                                          'stb', 'bbl', 'rb', 'Mstb', 'MMstb', 'Bstb', 'Tstb', 'Mbbl', 'MMbbl', 'Mrb',
                                          'MMrb')
-    dictionary['Volume_product_NAMES'] = {
+    dictionary['Volume_product_NAMES_REVERSE'] = {
         'm3': ('m2*m',),
         'cm3': ('cm2*cm',),
         'ft3': ('ft2*ft',),
@@ -175,11 +175,11 @@ def _load_dictionary() -> (dict, dict):
 
     # Length
     dictionary['Length'] = []
-    dictionary['Length_NAMES_UPPER_REVERSE'] = {'meter': ('m', 'meter', 'metro')}
+    dictionary['Length_NAMES_REVERSE_UPPER'] = {'meter': ('m', 'meter', 'metro')}
     dictionary['Length_SI'] = ('m', 'l')  # litre is Volume but the Conversion of SI prefixes is linear
     dictionary['Length_UK_NAMES_REVERSE'] = {
         'thou': ('th',),
-        'tenth': ('te', '0.1 in'),
+        'tenth': ('te', '0.1 in', '0.1in'),
         'inch': ('in', '"'),
         'foot': ('feet', 'ft', "'"),
         'yard': ('yd',),
@@ -192,13 +192,13 @@ def _load_dictionary() -> (dict, dict):
         'nautical league': ('nlea',),
     }
     dictionary['Length_UK_UPPER'] = tuple(dictionary['Length_UK_NAMES_REVERSE'].keys()) + \
-                                    ('feet', 'in', 'ft', 'yd')
+                                    ('feet', 'in', 'ft', 'yd', '0.1 in', '0.1in')
 
     # Area
     dictionary['Area'] = []
-    dictionary['Area_NAMES_UPPER_REVERSE'] = {'square meter': ('sq m', 'm2', 'sqmeter', 'm*m', 'm3/m')}
+    dictionary['Area_NAMES_REVERSE_UPPER'] = {'square meter': ('sq m', 'm2', 'sqmeter', 'm*m', 'm3/m')}
     dictionary['Area_SI'] = ('m2',)
-    dictionary['Area_UK_NAMES_UPPER_REVERSE'] = {
+    dictionary['Area_UK_NAMES_UPPER'] = {
         'square mile': ('sq mi', 'mi2', 'sqmile', 'mi*mi'),
         'acre': tuple(),
         'square rod': ('sq rd', 'sqrd', 'rd2', 'rd*rd'),
@@ -209,10 +209,10 @@ def _load_dictionary() -> (dict, dict):
 
     # Pressure
     dictionary['Pressure'] = []
-    dictionary['Pressure_NAMES_SPACES'] = {
+    dictionary['Pressure_NAMES_REVERSE_SPACES'] = {
         'Pascal': ('Pa',),
     }
-    dictionary['Pressure_NAMES_UPPER_SPACES'] = {
+    dictionary['Pressure_NAMES_REVERSE_UPPER_SPACES'] = {
         'absolute psi': ('psia', 'lb/in2', 'absolute pound/square inch', 'psi absolute', 'libras/pulgada cuadrada absoluta', 'lpca'),
         'psi gauge': ('psi', 'pound/square inch', 'psig', 'gauge psi'),
         'absolute bar': ('bara', 'barsa', 'abs bar', 'bar absolute'),
@@ -232,7 +232,7 @@ def _load_dictionary() -> (dict, dict):
 
     # Weight
     dictionary['Weight'] = []
-    dictionary['Weight_NAMES_UPPER_LOWER_REVERSE'] = {
+    dictionary['Weight_NAMES_REVERSE'] = {
         'gram': ('g',),
         'kilogram': ('kg',),
         'milligram': ('mg',),
@@ -240,7 +240,7 @@ def _load_dictionary() -> (dict, dict):
         'g-mol': ('g-moles',),
         'Kg-mol': ('Kg-moles',),
     }
-    dictionary['Weight_UK_NAMES_UPPER_LOWER_REVERSE_SPACES'] = {
+    dictionary['Weight_UK_NAMES_REVERSE'] = {
         'grain': ('gr',),
         'pennyweight': ('pwt', 'dwt'),
         'dram': ('dr', 'dramch'),
@@ -255,27 +255,27 @@ def _load_dictionary() -> (dict, dict):
         'short ton': ('USton', 'tonUS'),
         'long ton': ('t', 'UKton', 'ton', 'tonUK'),
     }
-    dictionary['Weight_PLURALwS_UPPER_LOWER'] = tuple(dictionary['Weight_NAMES_UPPER_LOWER_REVERSE'].keys()) + \
-                                                tuple(dictionary['Weight_UK_NAMES_UPPER_LOWER_REVERSE_SPACES'].keys()) + \
+    dictionary['Weight_PLURALwS_UPPER_LOWER_SPACES'] = tuple(dictionary['Weight_NAMES_REVERSE'].keys()) + \
+                                                tuple(dictionary['Weight_UK_NAMES_REVERSE'].keys()) + \
                                                 ('Tonne', 'ton', 'UKton', 'USton')
     dictionary['Weight_SI'] = ('g', 'g-mol')
 
     # Mass
     dictionary['Mass'] = ['kilogram mass']
-    dictionary['Mass_NAMES_UPPER_LOWER'] = {
+    dictionary['Mass_NAMES_REVERSE_UPPER_LOWER'] = {
         'kilogram mass': ('Kgm', 'kilogram mass')
     }
 
     # Density
     dictionary['Density'] = []
     dictionary['Density_oilgas'] = {}
-    dictionary['Density_NAMES_LOWER_UPPER'] = {
+    dictionary['Density_NAMES_REVERSE_LOWER_UPPER'] = {
         'API': ('degrees',),
         'SgG': ('gas gravity', 'gas specific gravity'),
         'SgW': ('water gravity',),
         'SgO': ('oil gravity',),
     }
-    dictionary['Density_NAMES_UPPER_REVERSE'] = {
+    dictionary['Density_NAMES_REVERSE_UPPER'] = {
         'g/cm3': ('g/cc',),
         'kg/m3': ('Kg/m3',),
         'lb/ft3': tuple(),
@@ -288,7 +288,7 @@ def _load_dictionary() -> (dict, dict):
 
     # Compressibility
     dictionary['Compressibility'] = []
-    dictionary['Compressibility_UPPER_NAMES'] = {
+    dictionary['Compressibility_UPPER_NAMES_REVERSE'] = {
         '1/psi': ('1/psia', 'µsip', 'usip', '1/psig'),
         'µsip': ('usip',),
         '1/bar': ('1/bara', '1/barg')
@@ -296,7 +296,7 @@ def _load_dictionary() -> (dict, dict):
 
     # Rate
     dictionary['Rate'] = []
-    dictionary['Rate_NAMES_UPPER_SPACES_REVERSE'] = {
+    dictionary['Rate_NAMES_REVERSE_UPPER_SPACES'] = {
         'standard barrel per day': ('stb/day',),
         'standard cubic foot per day': ('scf/day', 'cf/day', 'scfd'),
         'standard cubic meter per day': ('sm3/day',),
@@ -306,7 +306,7 @@ def _load_dictionary() -> (dict, dict):
         'reservoir barrel per day': ('rb/day',),
         'reservoir cubic meter per day': ('rm3/day',),
     }
-    dictionary['Rate_NAMES_UPPER_SPACES_REVERSE'] = {
+    dictionary['Rate_NAMES_REVERSE_UPPER_SPACES'] = {
         'stb/day': ('stbd',),
         'scf/day': ('scfd', 'cf/day',),
         'sm3/day': ('sm3d', 'stm3d', 'stm3/day'),
@@ -317,12 +317,12 @@ def _load_dictionary() -> (dict, dict):
 
     # digital Data
     dictionary['Data'] = []
-    dictionary['Data_UPPER_LOWER_PLURALwS_DATA_NAME_REVERSE'] = {'byte': ('B', 'Byte', 'BYTE'),
+    dictionary['Data_DATA_NAME_REVERSE_UPPER_LOWER_PLURALwS'] = {'byte': ('B', 'Byte', 'BYTE'),
                                                                  'bit': ('b', 'Bit', 'BIT')}
 
     # Viscosity
     dictionary['Viscosity'] = []
-    dictionary['Viscosity_UPPER_NAMES_REVERSE'] = {
+    dictionary['Viscosity_NAMES_REVERSE_UPPER'] = {
         'centipoise': ('cP',),
         'Poise': ('dyne*s/cm2', 'g/cm/s'),
         'Pa*s': ('N*s/m2', 'kg/m/s')
@@ -330,7 +330,7 @@ def _load_dictionary() -> (dict, dict):
 
     # Permeability
     dictionary['Permeability'] = []
-    dictionary['Permeability_NAMES'] = {
+    dictionary['Permeability_NAMES_REVERSE'] = {
         'Darcy': ('D',),
         'millidarcy': ('mD',)
     }
@@ -339,7 +339,7 @@ def _load_dictionary() -> (dict, dict):
 
     # Force
     dictionary['Force'] = []
-    dictionary['Force_NAMES_SPACES_RECURSIVE_UPPER_REVERSE'] = {
+    dictionary['Force_NAMES_REVERSE_SPACES_RECURSIVE_UPPER'] = {
         'Newton': ('N', 'newton', 'kg*m/s2'),
         'kilogram force': ('kgf', 'kilopondio',),  # 'kilogram'
         'kilopondio': ('kp',),
@@ -348,7 +348,7 @@ def _load_dictionary() -> (dict, dict):
 
     # Energy
     dictionary['Energy'] = []
-    dictionary['Energy_UPPER_LOWER_NAMES_REVERSE_SPACES'] = {
+    dictionary['Energy_NAMES_REVERSE_SPACES_UPPER_LOWER'] = {
         'Joule': ('J', 'Watt second', 'N*m', 'kg*m2/s2', 'Joules'),
         'Kilojoule': ('kJ',),
         'kilowatt hour': ('kWh', 'kW*h', 'kilovatio hora'),
@@ -361,7 +361,7 @@ def _load_dictionary() -> (dict, dict):
 
     # Power
     dictionary['Power'] = []
-    dictionary['Power_UPPER_NAMES_REVERSE'] = {
+    dictionary['Power_NAMES_REVERSE_UPPER'] = {
         'Horsepower': ('hp',),
         'Watt': ('W', 'J/s', 'VA', 'Volt*Ampere', 'Watt hour/hour', 'V*A', 'Wh/h'),
     }
@@ -369,63 +369,64 @@ def _load_dictionary() -> (dict, dict):
 
     # Voltage
     dictionary['Voltage'] = []
-    dictionary['Voltage_UPPER_NAMES_REVERSE'] = {
+    dictionary['Voltage_NAMES_REVERSE_UPPER'] = {
         'Volt': ('V', 'Voltio', 'Ampere*Ohm', 'Watt/Ampere', 'A*ohm', 'ohm*A', 'Ohm*Ampere', 'W/A'),
     }
     dictionary['Voltage_SI'] = ('V',)
 
     # Current
     dictionary['Current'] = []
-    dictionary['Current_UPPER_NAMES_REVERSE'] = {
+    dictionary['Current_NAMES_REVERSE_UPPER'] = {
         'Ampere': ('A', 'Watt/Volt', 'Volt/Ohm', 'W/V', 'V/ohm'),
     }
     dictionary['Current_SI'] = ('A',)
 
     # Resistance
     dictionary['Resistance'] = []
-    dictionary['Resistance_UPPER_NAMES_REVERSE'] = {
+    dictionary['Resistance_NAMES_REVERSE_UPPER'] = {
         'Ohm': ('ohm', 'Ω', 'Volt/Ampere', 'V/A'),
     }
     dictionary['Resistance_SI'] = ('Ω',)
 
     # Impedance
     dictionary['Impedance'] = []
-    dictionary['Impedance_UPPER_NAMES_REVERSE'] = {
+    dictionary['Impedance_NAMES_REVERSE_UPPER'] = {
         'Ohm': ('ohm', 'Ω',),
     }
     dictionary['Impedance_SI'] = ('Ω',)
 
     # Conductance
     dictionary['Conductance'] = []
-    dictionary['Conductance_UPPER_NAMES_REVERSE'] = {
+    dictionary['Conductance_NAMES_REVERSE'] = {
         'Siemen': ('G', '℧',),
     }
     dictionary['Conductance_SI'] = ('℧',)
+    dictionary['Conductance_UPPER'] = ('Siemen',)
 
     # Capacitance
     dictionary['Capacitance'] = []
-    dictionary['Capacitance_UPPER_NAMES_REVERSE'] = {
+    dictionary['Capacitance_NAMES_REVERSE_UPPER'] = {
         'Farad': ('F', 'Faradio', 'Farads', 'farads', 'Coulomb/Volt', 'Q/V'),
     }
     dictionary['Capacitance_SI'] = ('F',)
 
     # Charge
     dictionary['Charge'] = []
-    dictionary['Charge_UPPER_NAMES_REVERSE'] = {
+    dictionary['Charge_NAMES_REVERSE_UPPER'] = {
         'Coulomb': ('Q', 'Volt*Farad', 'V*F'),
     }
     dictionary['Charge_SI'] = ('Q',)
 
     # Inductance
     dictionary['Inductance'] = []
-    dictionary['Inductance_UPPER_NAMES_REVERSE'] = {
+    dictionary['Inductance_NAMES_REVERSE_UPPER'] = {
         'Henry': ('L', 'H'),
     }
     dictionary['Inductance_SI'] = ('H',)
 
     # Frequency
     dictionary['Frequency'] = []
-    dictionary['Frequency_UPPER_NAMES_REVERSE'] = {
+    dictionary['Frequency_NAMES_REVERSE_UPPER'] = {
         'Hertz': ('Hz', 'hertz', '1/s', 's-1'),
         'RPM': ('rpm', '1/min')
     }
@@ -433,7 +434,7 @@ def _load_dictionary() -> (dict, dict):
 
     # productivity index
     dictionary['ProductivityIndex'] = []
-    dictionary['ProductivityIndex_UPPER_NAMES_REVERSE'] = {
+    dictionary['ProductivityIndex_NAMES_REVERSE_UPPER'] = {
         'stb/day/psi': (
             'STB/DAY/', 'stbd/psi', 'stbd/psia', 'stb/day/psia', 'stb/day-psi', 'STB/DAY-PSI', 'stb/day-psia',
             'STB/DAY-PSIA',
@@ -450,7 +451,7 @@ def _load_dictionary() -> (dict, dict):
 
     # Dimensionless
     dictionary['Dimensionless'] = []
-    dictionary['Dimensionless_fractions_UPPER_NAMES'] = {'fraction': ('ratio', 'dimensionless', 'unitless', 'None', '')}
+    dictionary['Dimensionless_fractions_NAMES_REVERSE_UPPER'] = {'fraction': ('ratio', 'dimensionless', 'unitless', 'None', '')}
 
     dictionary['Percentage'] = []
     dictionary['Percentage_NAMES_REVERSE'] = {'percentage': ('%', 'perc', 'percent', '/100'), }
@@ -463,7 +464,7 @@ def _load_dictionary() -> (dict, dict):
 
     # other
     dictionary['otherUnits'] = []
-    dictionary['otherUnits_UPPER_NAMES'] = {
+    dictionary['otherUnits_NAMES_REVERSE_UPPER'] = {
         'sec/day': ('sec/d',),
         's2': ('s*s',)
     }
