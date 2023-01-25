@@ -7,7 +7,7 @@ Created on Sat Oct 24 14:34:59 2020
 """
 
 __version__ = '0.5.12'
-__release__ = 20230121
+__release__ = 20230124
 __all__ = ['Unit', 'is_Unit']
 
 from .errors import WrongUnitsError, WrongValueError, NoConversionFoundError
@@ -122,7 +122,7 @@ class Unit(object, metaclass=UnytType):
 
     def __add__(self, other):
         from .units.unitless import Dimensionless, Percentage
-        if '.units.' in str(type(other)):
+        if isinstance(other, Unit):
             if other.kind is self.kind:
                 if self.unit == other.unit:
                     return self.kind(self.value + other.value, self.unit)
@@ -156,7 +156,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__radd__(self)
         else:
-            raise NotImplementedError("Addition of Unit and " + str(type(other)) + " not implemented.")
+            raise NotImplementedError("Addition of " + str(type(self)) + " and " + str(type(other)) + " not implemented.")
 
     def __radd__(self, other):
         return self.__add__(other)
@@ -164,7 +164,7 @@ class Unit(object, metaclass=UnytType):
     def __mul__(self, other):
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
-        if '.units.' in str(type(other)):
+        if isinstance(other, Unit):
             if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
                 return other.kind(self.value * other.value, other.unit)
             elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
@@ -196,7 +196,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rmul__(self)
         else:
-            raise NotImplementedError("Product of Unit and " + type(other) + " not implemented.")
+            raise NotImplementedError("Product of " + str(type(self)) + " and " + str(type(other)) + " not implemented.")
 
     def __rmul__(self, other):
         return self.__mul__(other)
@@ -204,7 +204,7 @@ class Unit(object, metaclass=UnytType):
     def __pow__(self, other):
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
-        if '.units.' in str(type(other)):
+        if isinstance(other, Unit):
             if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
                 return other.kind(self.value ** other.value, other.unit)
             elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
@@ -239,7 +239,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rpow__(self)
         else:
-            raise NotImplementedError("Power of Unit to " + type(other) + " not implemented.")
+            raise NotImplementedError("Power of " + str(type(self)) + " to " + str(type(other)) + " not implemented.")
 
     def __rpow__(self, other):
         from .units.unitless import Dimensionless, Percentage
@@ -254,7 +254,7 @@ class Unit(object, metaclass=UnytType):
     def __sub__(self, other):
         # return self.__add__(other * -1)
         from .units.unitless import Dimensionless, Percentage
-        if '.units.' in str(type(other)):
+        if isinstance(other, Unit):
             if other.kind is self.kind:
                 if self.unit == other.unit:
                     return self.kind(self.value - other.value, self.unit)
@@ -288,7 +288,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rsub__(self)
         else:
-            raise NotImplementedError("Subtraction of Unit and " + type(other) + " not implemented.")
+            raise NotImplementedError("Subtraction of " + str(type(self)) + " and " + str(type(other)) + " not implemented.")
 
     def __rsub__(self, other):
         return self.__neg__() + other
@@ -296,7 +296,7 @@ class Unit(object, metaclass=UnytType):
     def __truediv__(self, other):
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
-        if '.units.' in str(type(other)):
+        if isinstance(other, Unit):
             if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
                 return other.kind(self.value / other.value, '1/' + other.unit)
             elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
@@ -325,7 +325,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rtruediv__(self)
         else:
-            raise NotImplementedError("Division of Unit by " + type(other) + " not implemented.")
+            raise NotImplementedError("Division of " + str(type(self)) + " by " + str(type(other)) + " not implemented.")
 
     def __rtruediv__(self, other):
         from .units.define import units
@@ -337,12 +337,12 @@ class Unit(object, metaclass=UnytType):
         elif type(other) in numeric:
             return units(other / self.value, self.unit + '-1')
         else:
-            raise NotImplementedError("Division of Unit by " + type(other) + " not implemented.")
+            raise NotImplementedError("Division of " + str(type(self)) + " by " + str(type(other)) + " not implemented.")
 
     def __floordiv__(self, other):
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
-        if '.units.' in str(type(other)):
+        if isinstance(other, Unit):
             if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
                 return other.kind(self.value // other.value, '1/' + other.unit)
             elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
@@ -371,7 +371,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rfloordiv__(self)
         else:
-            raise NotImplementedError("Division of Unit by " + type(other) + " not implemented.")
+            raise NotImplementedError("Division of " + str(type(self)) + " by " + str(type(other)) + " not implemented.")
 
     def __rfloordiv__(self, other):
         from .units.define import units
@@ -383,12 +383,12 @@ class Unit(object, metaclass=UnytType):
         elif type(other) in numeric:
             return units(other // self.value, self.unit + '-1')
         else:
-            raise NotImplementedError("Division of Unit by " + type(other) + " not implemented.")
+            raise NotImplementedError("Division of " + str(type(self)) + " by " + str(type(other)) + " not implemented.")
 
     def __matmul__(self, other):
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
-        if '.units.' in str(type(other)):
+        if isinstance(other, Unit):
             if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
                 return other.kind(self.value / other.value, '1/' + other.unit)
             elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
@@ -409,12 +409,12 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rmatmul__(self)
         else:
-            raise NotImplementedError("Division of Unit by " + type(other) + " not implemented.")
+            raise NotImplementedError("Division of " + str(type(self)) + " by " + str(type(other)) + " not implemented.")
 
     def __mod__(self, other):
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
-        if '.units.' in str(type(other)):
+        if isinstance(other, Unit):
             if self.kind in (Dimensionless, Percentage) and other.kind not in (Dimensionless, Percentage):
                 return other.kind(self.value % other.value, self.unit)
             elif self.kind is Percentage and other.kind in (Dimensionless, Percentage):
@@ -442,7 +442,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rmod__(self)
         else:
-            raise NotImplementedError("Module of Unit when divided by " + type(other) + " not implemented.")
+            raise NotImplementedError("Module of " + str(type(self)) + " when divided by " + str(type(other)) + " not implemented.")
 
     def __lt__(self, other) -> bool:
         if type(self) == type(other):
