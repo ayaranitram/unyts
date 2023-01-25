@@ -430,7 +430,7 @@ def _load_dictionary() -> (dict, dict):
         'Hertz': ('Hz', 'hertz', '1/s', 's-1'),
         'RPM': ('rpm', '1/min')
     }
-    dictionary['Frequency_SI'] = ('H',)
+    dictionary['Frequency_SI'] = ('Hz',)
 
     # productivity index
     dictionary['ProductivityIndex'] = []
