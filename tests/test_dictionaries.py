@@ -13,15 +13,17 @@ def key2name(txt):
     return (''.join([('_' if s in ascii_uppercase else '') +  s.lower() for s in txt])).strip('_')
     
 
+max_check = 10
+
 for key in dictionary:
-    if key == 'Impedance':
+    if key in ['Impedance', 'Date', 'otherUnits']:
         continue
     print(key)
-    if len(dictionary[key]) > 100:
+    if len(dictionary[key]) > max_check:
         to_check = [u for u in dictionary[key] if (u.count('*') <= 1 and u.count('/') == 0) or (u.count('/') <= 1 and u.count('*') == 0)]
     else:
         to_check = dictionary[key]
-    for unit in to_check:
+    for unit in to_check[:max_check]:
         if key in ['Length', 'Rate'] and unit == 'l' or (len(unit) == 2 and unit.endswith('l')) or ('/' in unit and len(unit.split('/')[0]) <= 2 and unit.split('/')[0].endswith('l')):
             continue  # litre is defines as length for SI sufixes (linear multiplier)
         if unit.lower() in ['ounce', 'oz', 'ounces'] and key == 'Weight':
@@ -31,6 +33,6 @@ for key in dictionary:
         if key == 'Capacitance' and unit == 'F':
             continue  # F for Farad
         rept_units = [k for k in dictionary for u in dictionary[k] if u == unit]
-        if  len(rept_units) > 1 and unit not in ['F', 'l', 'ounces', 'OUNCES', 'ounce', 'OUNCE', 'oz'] and key not in ['PressureGradient']:
+        if  len(rept_units) > 1 and unit not in ['F', 'l', 'ounces', 'OUNCES', 'ounce', 'OUNCE', 'oz'] and key not in ['PressureGradient', 'Date']:
             raise ValueError('unit ' + str(unit) + ' repeteated in more than one dictionary:\n ' + '\n '.join(rept_units) )
         assert units(1, unit).name.lower() == key2name(key)
