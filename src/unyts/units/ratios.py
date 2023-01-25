@@ -30,7 +30,7 @@ class VolumeRatio(Unit):
 
     def __init__(self, value: numeric, units: unit_or_str):
         self.name = 'volume_ratio'
-        self.kid = VolumeRatio
+        self.kind = VolumeRatio
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
 
