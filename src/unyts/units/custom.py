@@ -33,6 +33,8 @@ class UserUnits(Unit):
         if isinstance(units, Unit):
             units = units.unit
         if units not in dictionary['UserUnits']:
+            if type(dictionary['UserUnits']) is tuple:
+                dictionary['UserUnits'] = list(dictionary['UserUnits'])
             dictionary['UserUnits'].append(units)
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
