@@ -80,13 +80,13 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Time_NAMES_REVERSE'] = {
         'nanosecond': ('ns',),
         'millisecond': ('ms',),
-        'second': ('s', 'sec',),
+        'second': ('s', 'ss', 'sec',),
         'minute': ('min',),
-        'hour': ('h', 'hr', 'Wh/W', 'Watt hour/Watt'),
+        'hour': ('h', 'hh', 'hr', 'Wh/W', 'Watt hour/Watt'),
         'day': ('d', 'día', 'días', 'DíA',),
         'week': ('we', 'w', 'WE',),  # 'w' can be confused with 'W' for Watt
         'month': ('mo', 'mes', 'meses',),
-        'year': ('y', 'año',),
+        'year': ('y', 'yy', 'yyyy', 'año',),
         'lustrum': tuple(),
         'decade': tuple(),
         'century': ('centuries',),
@@ -94,7 +94,7 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Time_PLURALwS_UPPER_REVERSE'] = tuple(dictionary['Time_NAMES_REVERSE'].keys()) + ('min', 'año')
     dictionary['Time_UPPER_REVERSE'] = tuple(t for t in dictionary['Time_NAMES_REVERSE']['nanosecond'] if len(t) > 1) + \
                                tuple(t for t in dictionary['Time_NAMES_REVERSE']['millisecond'] if len(t) > 1) + \
-                               tuple(t for t in dictionary['Time_NAMES_REVERSE']['second'] if len(t) > 1) + \
+                               tuple(t for t in dictionary['Time_NAMES_REVERSE']['second'] if len(t) > 1) + ('s',) + \
                                tuple(t for t in dictionary['Time_NAMES_REVERSE']['hour'] if len(t) > 1) + \
                                tuple(t for t in dictionary['Time_NAMES_REVERSE']['day'] if len(t) > 1) + \
                                tuple(t for t in dictionary['Time_NAMES_REVERSE']['hour'] if len(t) > 1) + \
