@@ -499,7 +499,7 @@ def _load_network():
         if '_' in unit_kind:
             to_remove.append(unit_kind)
         else:  # if '_' not in unit_kind :
-            dictionary[unit_kind] = tuple(dictionary[unit_kind])
+            dictionary[unit_kind] = tuple(set(dictionary[unit_kind]))
     dictionary['UserUnits'] = []
     for unit_kind in to_remove:
         dictionary.pop(unit_kind)
