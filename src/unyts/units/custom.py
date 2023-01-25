@@ -30,8 +30,10 @@ class UserUnits(Unit):
         self.name = 'UserUnits'
         self.kind = UserUnits
         units = units.strip()
+        if isinstance(units, Unit):
+            units = units.unit
         if units not in dictionary['UserUnits']:
-            dictionary['UserUnits'] += (units,)
+            dictionary['UserUnits'].append(units)
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
 
