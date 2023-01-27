@@ -198,7 +198,7 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Area'] = []
     dictionary['Area_NAMES_REVERSE_UPPER'] = {'square meter': ('sq m', 'm2', 'sqmeter', 'm*m', 'm3/m')}
     dictionary['Area_SI'] = ('m2',)
-    dictionary['Area_UK_NAMES_UPPER'] = {
+    dictionary['Area_UK_NAMES_REVERSE_UPPER'] = {
         'square mile': ('sq mi', 'mi2', 'sqmile', 'mi*mi'),
         'acre': tuple(),
         'square rod': ('sq rd', 'sqrd', 'rd2', 'rd*rd'),
@@ -458,7 +458,7 @@ def _load_dictionary() -> (dict, dict):
 
     # Dates
     dictionary['Date'] = []
-    dictionary['Date_UPPER_PLURALwS'] = ('date',)
+    dictionary['Date_NAMES_REVERSE_UPPER_PLURALwS'] = {'date': ('dates', 'Date', 'Dates')}
 
     dictionary['UserUnits'] = []
 
