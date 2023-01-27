@@ -8,7 +8,7 @@ Created on Sat Oct 24 12:36:48 2020
 
 __version__ = '0.5.13'
 __release__ = 20230124
-__all__ = ['units_network', 'network_to_frame']
+__all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory']
 
 from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
     StandardEarthGravity
@@ -25,6 +25,14 @@ except ModuleNotFoundError:
     if unyts_parameters_.cache_:
         warn("Missing `cloudpickle` package. Not able to cache network dictionary.")
     _cloudpickle_ = False
+
+
+def save_memory(path=None) -> None:
+    units_network.save_memory(path)
+
+
+def load_memory(path=None) -> None:
+    units_network.load_memory(path)
 
 
 def _load_network():

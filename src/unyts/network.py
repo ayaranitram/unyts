@@ -5,9 +5,19 @@ Created on Sat Oct 24 12:36:48 2020
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
+import logging
+import os.path
+from .parameters import unyts_parameters_, dir_path
 
-__version__ = '0.4.7'
-__release__ = 20221230
+try:
+    from cloudpickle import dump as cloudpickle_dump, load as cloudpickle_load
+    _cloudpickle_ = True
+except ModuleNotFoundError:
+    _cloudpickle_ = False
+
+
+__version__ = '0.4.8'
+__release__ = 20230126
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -33,6 +43,33 @@ class UDigraph(object):
         self.memory = {}
         self.fvf = None
         self.print = False
+        self._cloudpickle_ = _cloudpickle_
+        if unyts_parameters_.cache_:
+            self.load_memory()
+
+    def save_memory(self, path=None) -> None:
+        if path is None:
+            path = dir_path + 'units/search_memory.cache'
+        if self._cloudpickle_:
+            print('saving search memory to cache...')
+            with open(path, 'wb') as f:
+                cloudpickle_dump(self.memory, f)
+        else:
+            logging.warning("Missing `cloudpickle` package. Not able to cache search memory.")
+
+    def load_memory(self, path=None) -> None:
+        if path is None:
+            path = dir_path + 'units/search_memory.cache'
+        if self._cloudpickle_ and os.path.isfile(dir_path + 'units/search_memory.cache'):
+            try:
+                print('loading search memory from cache...')
+                with open(path, 'wb') as f:
+                    cached_memory = cloudpickle_load(f)
+                    self.memory.update(cached_memory)
+            except:
+                print('not able to load memory from cache.')
+        elif not self._cloudpickle_:
+            logging.warning("Missing `cloudpickle` package. Not able to cache search memory.")
 
     def add_node(self, node) -> None:
         if node in self.edges:
