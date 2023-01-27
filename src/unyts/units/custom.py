@@ -37,7 +37,7 @@ class UserUnits(Unit):
                 dictionary['UserUnits'] = list(dictionary['UserUnits'])
             dictionary['UserUnits'].append(units)
         self.value = self.check_value(value)
-        self.unit = self.check_unit(units)
+        self.unit = units  # self.check_unit(units)
 
 
 def set_unit(unit_name: str) -> bool:
