@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.15'
-__release__ = 2023026
+__version__ = '0.5.16'
+__release__ = 2023028
 __all__ = ['units', 'convert', 'Unit', 'is_Unit', 'set_unit', 'set_conversion', 'convertible', 'save']
 
 # import unyts.parameters
@@ -20,8 +20,8 @@ from .units.custom import set_unit, set_conversion
 
 if unyts_parameters_.show_version_:
     print("loaded unyts version", __version__)
-    # unyts_parameters_.show_version_ = False
-    # unyts_parameters_.save_params()
+    unyts_parameters_.show_version_ = False
+    unyts_parameters_.save_params()
 
 
 def save(path=None) -> None:
