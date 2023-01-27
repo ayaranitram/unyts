@@ -37,6 +37,6 @@ for key in dictionary:
             continue  # F for Farad
         rept_units = [k for k in dictionary for u in dictionary[k] if u == unit]
         if len(rept_units) > 1 and (unit not in ['F', 'l', 'ounces', 'OUNCES', 'ounce', 'OUNCE', 'oz', 'Ohm']
-                                    or key not in ['PressureGradient', 'Date', 'Impedance']):
+                                    and key not in ['PressureGradient', 'Date', 'Impedance']):
             raise ValueError('unit ' + str(unit) + ' repeated in more than one dictionary:\n ' + '\n '.join(rept_units))
         assert units(1, unit).name.lower() == key2name(key)
