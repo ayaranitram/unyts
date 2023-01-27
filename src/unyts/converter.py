@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.3'
-__release__ = 20230122
+__version__ = '0.5.4'
+__release__ = 20230126
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -17,7 +17,7 @@ from .errors import NoConversionFoundError
 from .parameters import unyts_parameters_
 from .helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
 from functools import reduce
-from warnings import warn
+import logging
 
 try:
     import numpy as np
@@ -25,7 +25,7 @@ try:
     _numpy_ = True
 except ModuleNotFoundError:
     _numpy_ = False
-    warn("Missing NumPy package, operations with `list` of values will fail.")
+    logging.warning("Missing NumPy package, operations with `list` of values will fail.")
 try:
     from pandas import Series, DataFrame
     _pandas_ = True
@@ -411,5 +411,5 @@ def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str, print_co
         print("converting from '" + str(from_unit) + "' to '" + str(to_unit),
               print_path(conv_path), sep='\n')
     elif print_conversion_path and conv is not None:
-        warn("conversion not found, returning original values.")
+        logging.warning("conversion not found, returning original values.")
     return value if conv is None else conv

@@ -10,20 +10,20 @@ __version__ = '0.5.13'
 __release__ = 20230124
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory']
 
+import logging
 from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
     StandardEarthGravity
 from .network import UDigraph, UNode, Conversion
 from .parameters import unyts_parameters_, dir_path
 from os.path import isfile
 from json import dump as json_dump
-from warnings import warn
 
 try:
     from cloudpickle import dump as cloudpickle_dump, load as cloudpickle_load
     _cloudpickle_ = True
 except ModuleNotFoundError:
     if unyts_parameters_.cache_:
-        warn("Missing `cloudpickle` package. Not able to cache network dictionary.")
+        logging.warning("Missing `cloudpickle` package. Not able to cache network dictionary.")
     _cloudpickle_ = False
 
 
@@ -691,7 +691,7 @@ if not unyts_parameters_.reload_ and \
         unyts_parameters_.reload_ = False
         unyts_parameters_.save_params()
     except:
-        warn("Failed to load from cache. Creating new dictionaries and saving them to cache...")
+        logging.warning("Failed to load from cache. Creating new dictionaries and saving them to cache...")
         units_network, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
 else:
     #try:
