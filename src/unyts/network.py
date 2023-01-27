@@ -16,8 +16,8 @@ except ModuleNotFoundError:
     _cloudpickle_ = False
 
 
-__version__ = '0.4.8'
-__release__ = 20230126
+__version__ = '0.4.9'
+__release__ = 20230127
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -41,7 +41,6 @@ class UDigraph(object):
         self.recursion_limit = 5
         self.fvf = None
         self.memory = {}
-        self.fvf = None
         self.print = False
         self._cloudpickle_ = _cloudpickle_
         if unyts_parameters_.cache_:
@@ -132,11 +131,11 @@ class UDigraph(object):
         if type(FVF) is str:
             try:
                 FVF = float(FVF)
-            except:
+            except ValueError:
                 print('received FVF value is not a number: ' + str(FVF))
-        if type(FVF) in [int, float]:
+        if type(FVF) in (int, float):
             if FVF <= 0:
-                print('FVF should be a positive number...')
+                logging.warning('FVF should be a positive number...')
             self.fvf = FVF
 
     def get_fvf(self):
@@ -144,23 +143,24 @@ class UDigraph(object):
             if type(FVF) is str:
                 try:
                     FVF = float(FVF)
-                except:
+                except ValueError:
                     return False
-            if type(FVF) is int or type(FVF) is float:
+            if type(FVF) in (int, float):
                 if FVF <= 0:
                     return False
                 else:
                     return FVF
-            return False
+            else:
+                return False
 
         if self.fvf is None:
             print('Please enter formation Volume factor (FVF) in reservoir_volume/standard_volume:')
             while self.fvf is None:
                 self.fvf = input(' FVF (rV/stV) = ')
-                if not self.valid_fvf(self.fvf):
+                if not valid_fvf(self.fvf):
                     self.fvf = None
                 else:
-                    self.fvf = self.valid_fvf(self.fvf)
+                    self.fvf = valid_fvf(self.fvf)
         return self.fvf
 
 
