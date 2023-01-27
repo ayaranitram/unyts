@@ -11,11 +11,11 @@ __release__ = 20230122
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
-from unyts.dictionaries import dictionary, temperatureRatioConversions
-from unyts.searches import BFS, print_path
-from unyts.errors import NoConversionFoundError
-from unyts.parameters import unyts_parameters_
-from unyts.helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
+from .dictionaries import dictionary, temperatureRatioConversions
+from .searches import BFS, print_path
+from .errors import NoConversionFoundError
+from .parameters import unyts_parameters_
+from .helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
 from functools import reduce
 from warnings import warn
 
