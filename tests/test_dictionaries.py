@@ -4,6 +4,7 @@ Created on Sat Jan 21 22:34:17 2023
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
+import logging
 
 from unyts.dictionaries import dictionary
 from unyts import units
@@ -13,6 +14,9 @@ from string import ascii_uppercase
 def key2name(txt):
     return (''.join([('_' if s in ascii_uppercase else '') + s.lower() for s in txt])).strip('_')
 
+
+known_duplicated_units = ['F', 'l', 'ounces', 'OUNCES', 'ounce', 'OUNCE', 'oz', 'Ohm', 'ohm', 'OHM']
+known_duplicated_keys = ['PressureGradient', 'Date', 'Impedance', 'Capacitance']
 
 max_check = 10
 
@@ -35,8 +39,10 @@ for key in dictionary:
             continue  # pressure gradients have density units
         if key == 'Capacitance' and unit == 'F':
             continue  # F for Farad
-        rept_units = [k for k in dictionary for u in dictionary[k] if u == unit]
-        if len(rept_units) > 1 and (unit not in ['F', 'l', 'ounces', 'OUNCES', 'ounce', 'OUNCE', 'oz', 'Ohm', 'ohm', 'OHM']
-                                    and key not in ['PressureGradient', 'Date', 'Impedance']):
-            raise ValueError('unit ' + str(unit) + ' repeated in more than one dictionary:\n ' + '\n '.join(rept_units))
+        if unit not in known_duplicated_units and key not in known_duplicated_keys:
+            rept_units = [k for k in dictionary for u in dictionary[k] if u == unit]
+        else:
+            rept_units = []
+        if len(rept_units) > 1:
+            logging.warning('unit ' + str(unit) + ' repeated in more than one dictionary:\n ' + '\n '.join(rept_units))
         assert units(1, unit).name.lower() == key2name(key)

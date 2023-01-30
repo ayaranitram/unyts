@@ -11,6 +11,7 @@ src/unyts/operations.py
 src/unyts/parameters.py
 src/unyts/searches.py
 src/unyts/unit_class.py
+src/unyts/unitary.py
 src/unyts.egg-info/PKG-INFO
 src/unyts.egg-info/SOURCES.txt
 src/unyts.egg-info/dependency_links.txt

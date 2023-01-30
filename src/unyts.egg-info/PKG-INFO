@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: unyts
-Version: 0.5.15
+Version: 0.5.16
 Summary: a unit converter based on graph network and classes to operate with units.
 Author-email: Martin Carlos Araya <martinaraya@gmail.com>
 License: MIT License
@@ -51,12 +51,12 @@ This package is under development and is regularly updated. Back compatibility i
   
 ## What Contains This Package
 - It is loaded with a network of units preloaded for distances, area, volume, mass and time conversions defined for SI and Imperial systems according to the definition of each Unit, i.e.: _1_foot = 12_inches_.
-- Prefixes applied to the basic units, like _k_ to _m_ to make _km_, are loaded as a network of conversion paths allowing the algorithm to apply the prefix to any other unit in the same system.
+- Prefixes applied to the basic units, like in SI units _k_ to _m_ to make _km_, are loaded as a network of conversion paths allowing the algorithm to apply the prefix to any other unit in the same system.
 - It provides a class _Unit_ powered with arithmetic and logic operations to intrinsically consider unit conversions when making calculations.  
   
 ## How To Use It
 This package is intended to be used in two ways:  
-- Using the function `units()` to define instances of the __Units__ class, holding _values with units_, or, _quantities_.  
+- Calling the function `units()` to define instances of the __Units__ class, that holds _values associated to units_, or, _quantities_.  
 - As unit converter with the function `convert()` to explicitly make conversion of numeric variables and instances.  
   
 ### To use the _units converter_ function `convert()`:  
@@ -79,7 +79,7 @@ Out: 18_in
 
 ### Referring to the `Unit` class:
 `from unyts import Unit`  
-- The `Unit` class is not intended to be used to create **Unit _instances_**, but to allow checking if other objects are instances of **Unit**: i.e.: `isinstance(variable, Unit)`  
+- The `Unit` class is not intended to be used to create **Unit _instances_**, but to allow checking if other object `isinstance` of **Unit**: i.e.: `isinstance(variable, Unit)`  
 - In order to create instances of **Unit** it is convenient to use the `units()` function as it will return the appropriate **Unit _subclass_**.  
   
 ### Uses examples:  
