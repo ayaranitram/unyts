@@ -6,12 +6,12 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.3'
-__release__ = 20230121
+__version__ = '0.5.4'
+__release__ = 20230130
 __all__ = ['CustomUnits', 'UserUnits', 'OtherUnits', 'set_unit', 'set_conversion']
 
-from ..dictionaries import dictionary
 from ..unit_class import Unit
+from ..dictionaries import dictionary
 from ..helpers.common_classes import unit_or_str, numeric
 
 
@@ -27,7 +27,7 @@ class UserUnits(Unit):
     classUnits = dictionary['UserUnits']
 
     def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'UserUnits'
+        self.name = 'user_units'
         self.kind = UserUnits
         units = units.strip()
         if isinstance(units, Unit):
