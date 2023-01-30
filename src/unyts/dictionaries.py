@@ -17,6 +17,7 @@ from .parameters import unyts_parameters_, dir_path
 
 StandardAirDensity = 1.225  # Kg/m3 or g/cc
 StandardEarthGravity = 9.80665  # m/s2 or 980.665 cm/s2 from
+uncertain_names = ['oz', 'ounce', 'ounces', 'OZ', 'OUNCE', 'OUNCES']
 
 # Sistema Internacional
 SI = {
