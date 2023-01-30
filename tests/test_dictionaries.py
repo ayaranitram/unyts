@@ -6,7 +6,7 @@ Created on Sat Jan 21 22:34:17 2023
 """
 import logging
 
-from unyts.dictionaries import dictionary
+from unyts.dictionaries import dictionary, uncertain_names
 from unyts import units
 from string import ascii_uppercase
 
@@ -18,7 +18,7 @@ def key2name(txt):
 known_duplicated_units = ['F', 'l', 'ounces', 'OUNCES', 'ounce', 'OUNCE', 'oz', 'Ohm', 'ohm', 'OHM']
 known_duplicated_keys = ['PressureGradient', 'Date', 'Impedance', 'Capacitance']
 
-max_check = 10
+max_check = 25
 
 for key in dictionary:
     if key in ['Impedance', 'Date', 'otherUnits']:
@@ -30,7 +30,7 @@ for key in dictionary:
     else:
         to_check = dictionary[key]
     for unit in to_check[:max_check]:
-        if key in ['Length', 'Rate'] and unit == 'l' or (len(unit) == 2 and unit.endswith('l')) or (
+        if key in ['Length', 'Rate'] and (len(unit) <= 2 and unit.endswith('l')) or (
                 '/' in unit and len(unit.split('/')[0]) <= 2 and unit.split('/')[0].endswith('l')):
             continue  # litre is defines as length for SI sufixes (linear multiplier)
         if unit.lower() in ['ounce', 'oz', 'ounces'] and key == 'Weight':
@@ -45,4 +45,7 @@ for key in dictionary:
             rept_units = []
         if len(rept_units) > 1:
             logging.warning('unit ' + str(unit) + ' repeated in more than one dictionary:\n ' + '\n '.join(rept_units))
-        assert units(1, unit).name.lower() == key2name(key)
+        if unit in uncertain_names:
+            assert units(1, unit).name.lower() == 'unit'
+        else:
+            assert units(1, unit).name.lower() == key2name(key)
