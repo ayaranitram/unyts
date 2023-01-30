@@ -18,7 +18,7 @@ limit_dict_units = 3
 
 for kind in [k for k in dictionary if k in ['Length']]:
     for unit1 in range(len(dictionary[kind][:limit_dict_units])-1):
-        if len(dictionary[kind][unit1]) == 2 and dictionary[kind][unit1].endswith('l'):
+        if len(dictionary[kind][unit1]) <= 2 and dictionary[kind][unit1].endswith('l'):
             continue
         print(dictionary[kind][unit1])
         u0 = units(2.78, dictionary[kind][unit1])
@@ -35,7 +35,7 @@ for kind in [k for k in dictionary if k in ['Length']]:
         assert u1 ** 2 == units(u1.value ** 2, unit_product(u1.unit, u1.unit))
 
         for unit2 in range(unit1, len(dictionary[kind][:limit_dict_units])):
-            if len(dictionary[kind][unit2]) == 2 and dictionary[kind][unit2].endswith('l'):
+            if len(dictionary[kind][unit2]) <= 2 and dictionary[kind][unit2].endswith('l'):
                 continue
             u2 = units(3, dictionary[kind][unit2])
             print(u1, '<->', u2)
@@ -78,7 +78,7 @@ for kind in [k for k in dictionary if k in ['Length']]:
 
 for kind in [k for k in dictionary if k in ['Length']]:  # [k for k in dictionary if k not in ['Dimensionless', 'Percentage']]:
     for unit1 in range(len(dictionary[kind][:limit_dict_units])-1):
-        if len(dictionary[kind][unit1]) == 2 and dictionary[kind][unit1].endswith('l'):
+        if len(dictionary[kind][unit1]) <= 2 and dictionary[kind][unit1].endswith('l'):
             continue
         print(dictionary[kind][unit1])
         u1 = units(array, dictionary[kind][unit1])
