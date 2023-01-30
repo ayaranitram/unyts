@@ -54,6 +54,7 @@ class Compressibility(Unit):
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
 
+
 class Viscosity(Unit):
     classUnits = _dictionary['Viscosity']
 
@@ -62,4 +63,3 @@ class Viscosity(Unit):
         self.kind = Viscosity
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
-

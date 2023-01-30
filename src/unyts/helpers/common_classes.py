@@ -10,7 +10,6 @@ __version__ = '0.5.4'
 __release__ = 20230118
 __all__ = ['array_like', 'number', 'numeric', 'unit_or_str']
 
-from ..unit_class import Unit
 try:
     from numpy import ndarray, int64, float64, int32, float32
     _numpy_ = True
@@ -21,9 +20,8 @@ try:
     _pandas_ = True
 except ModuleNotFoundError:
     _pandas_ = False
-
-
-unit_or_str = (Unit, str)
+from ..unit_class import Unit
+unit_or_str = (str, Unit)
 
 
 if _numpy_ and _pandas_:
