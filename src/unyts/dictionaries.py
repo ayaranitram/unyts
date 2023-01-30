@@ -316,9 +316,13 @@ def _load_dictionary() -> (dict, dict):
     }
 
     # digital Data
-    dictionary['Data'] = []
-    dictionary['Data_DATA_NAME_REVERSE_UPPER_LOWER_PLURALwS'] = {'byte': ('B', 'Byte', 'BYTE'),
-                                                                 'bit': ('b', 'Bit', 'BIT')}
+    # dictionary['Data'] = []
+    dictionary['dataBYTE'] = []
+    dictionary['dataBYTE_NAMES_REVERSE'] = {'byte': ('B', 'Byte', 'BYTE')}
+    dictionary['dataBYTE_DATA'] = ('B', 'byte')
+    dictionary['dataBIT'] = []
+    dictionary['dataBIT_NAMES_REVERSE'] = {'bit': ('b', 'Bit', 'BIT')}
+    dictionary['dataBIT_DATA'] = ('b', 'bit')
 
     # Viscosity
     dictionary['Viscosity'] = []

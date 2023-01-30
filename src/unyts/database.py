@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.13'
-__release__ = 20230124
+__version__ = '0.5.14'
+__release__ = 20230129
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory']
 
 import logging
@@ -510,6 +510,10 @@ def _load_network():
             dictionary[unit_kind] = tuple(set(dictionary[unit_kind]))
     for unit_kind in to_remove:
         dictionary.pop(unit_kind)
+    # merge data dictionaries into a single
+    dictionary['Data'] = tuple(dictionary['dataBYTE'] + dictionary['dataBIT'])
+    del dictionary['dataBYTE']
+    del dictionary['dataBIT']
     dictionary['UserUnits'] = list(dictionary['UserUnits'])
     return network
 
