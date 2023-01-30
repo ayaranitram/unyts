@@ -4,7 +4,7 @@ Created on Sat Jan 28 09:41:45 2023
 
 @author: martin
 """
-__version__ = '0.0.0'
+__version__ = '0.0.1'
 __release__ = 20230128
 
 from unyts import units, Unit
@@ -45,16 +45,18 @@ quart = units(1, 'qt')
 gallonUS = units(1, 'galUS')
 gallonUK = units(1, 'galUK')
 
-# Weigh
+# Weight
 gram = units(1, 'g')
 kilogram = units(1, 'kg')
 grain = units(1, 'gr')
 pennyweight = units(1, 'pwt')
 dram = units(1, 'dr')
-ounce = Unit(1, 'oz')
 pound = units(1, 'lb')
 quarter = units(1, 'qrt')
 ton = units(1, 'long ton')
+
+# ounce as Volume or Weight
+ounce = Unit(1, 'oz')
 
 # Time
 second = units(1, 'sec')
