@@ -6,11 +6,11 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.13'
-__release__ = 20230122
+__version__ = '0.5.17'
+__release__ = 20230130
 __all__ = ['units']
 
-from ..dictionaries import dictionary as _dictionary
+from ..dictionaries import dictionary as _dictionary, uncertain_names
 from .custom import UserUnits
 from .data import *
 from .date import *
@@ -49,16 +49,20 @@ def units(value: numeric, unit: unit_or_str = None) -> Unit:
         instance of units.
 
     """
-    if unit is None and '.units.' in str(type(value)):
+    if unit is None and isinstance(value, Unit):
         value, unit = value.value, value.units
     if unit is None:
         unit = 'Dimensionless'
     if type(unit) is not str:
-        raise TypeError("'units' must be a string.")
+        raise TypeError("'units' must be a string or Unit instance.")
     if not isinstance(value, numeric):
         raise TypeError("'value' parameter must be numeric.")
 
     unit = unit.strip()
+
+    if unit in uncertain_names:
+        return Unit(value, unit)
+
     for kind in _dictionary:
         if unit in _dictionary[kind]:
             if "'" in unit:

@@ -6,15 +6,19 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.12'
-__release__ = 20230124
+__version__ = '0.5.17'
+__release__ = 20230130
 __all__ = ['Unit', 'is_Unit']
+
+import logging
 
 from .errors import WrongUnitsError, WrongValueError, NoConversionFoundError
 from .operations import unit_product as _unit_product, unit_division as _unit_division, \
     unit_base_power as _unit_base_power
 from .helpers.unit_string_tools import reduce_units as _reduce_units
 from .converter import convert as _convert, convertible as _convertible
+from .dictionaries import _all_units
+from .parameters import unyts_parameters_
 from numbers import Number
 
 
@@ -59,18 +63,24 @@ class Unit(object, metaclass=UnytType):
     operations and conversions.
     """
 
-    def __init__(self, value=None, unit=None):
-        self.unit = None
-        self.value = None
-        self.name = None
-        self.kind = None
-        if value is not None and unit is not None:
-            from .units.define import units
-            u = units(value, unit)
-            self.unit = u.unit
-            self.value = u.value
-            self.name = u.name
-            self.kind = u.kind
+    def __init__(self, value, unit=None):
+        if isinstance(value, Unit):
+            if unit is None:
+                value, unit = value.value, value.unit
+            else:
+                value = value.value
+        if unit is None:
+            unit = 'dimensionless'
+        elif type(unit) is str and unit.strip() in _all_units():
+            self.unit = unit.strip()
+        elif unyts_parameters_.raise_error:
+            raise WrongUnitsError("'" + str(unit) + "' is not a valid units name.")
+        elif not unyts_parameters_.raise_error:
+            logging.warning("'" + str(unit) + "' is not a valid units name.")
+        self.value = self.check_value(value)
+        self.unit = unit
+        self.name = 'unit'
+        self.kind = Unit
 
     def __call__(self) -> numeric:
         return self.value
@@ -101,8 +111,12 @@ class Unit(object, metaclass=UnytType):
         elif type(new_unit) is not str:
             raise TypeError("`new_units` should be string.")
         if not _convertible(self.unit, new_unit):
-            raise WrongUnitsError("'" + str(new_unit) + "' is not valid units for '" + str(self.name) + "'.")
-        return self.kind(_convert(self.value, self.unit, new_unit), new_unit)
+            raise WrongUnitsError("'" + str(new_unit) + "' is not valid units for " + str(self.name) + ".")
+        if type(self) is Unit:
+            from .units.define import units
+            return units(_convert(self.value, self.unit, new_unit), new_unit)
+        else:
+            return self.kind(_convert(self.value, self.unit, new_unit), new_unit)
 
     def to(self, new_unit):
         return self.convert(new_unit)
@@ -578,6 +592,8 @@ class Unit(object, metaclass=UnytType):
                 return np.array(value)
             except TypeError:
                 raise WrongValueError(str(value))
+        elif isinstance(value, Unit):
+            return value.value
         elif isinstance(value, Number):
             return value
         elif isinstance(value, array_like):
@@ -588,13 +604,13 @@ class Unit(object, metaclass=UnytType):
     def check_unit(self, units):
         if type(units) is str:
             pass
-        elif type(units) is not str and hasattr(units, 'units'):
-            units = units.unit
+        elif type(self) is units:
+            return units.unit
+        elif hasattr(units, 'units'):
+            units = units.units
         else:
             raise WrongUnitsError("'" + str(units) + "' for '" + str(self.name) + "'")
-        if units != 'ounce' and units in self.kind.classUnits:
-            return units
-        elif units == 'ounce':
+        if units in self.kind.classUnits:
             return units
         else:
             raise WrongUnitsError("'" + str(units) + "' for '" + str(self.name) + "'")
