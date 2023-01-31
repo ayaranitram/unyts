@@ -182,7 +182,7 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Length_SI'] = ('m', 'l')  # litre is Volume but the Conversion of SI prefixes is linear
     dictionary['Length_UK_NAMES_REVERSE'] = {
         'thou': ('th',),
-        'tenth': ('te', '0.1 in', '0.1in'),
+        'tenth': ('te', '0.1 in', '0.1in', '.1in'),
         'inch': ('in', '"'),
         'foot': ('feet', 'ft', "'"),
         'yard': ('yd',),
@@ -195,7 +195,7 @@ def _load_dictionary() -> (dict, dict):
         'nautical league': ('nlea',),
     }
     dictionary['Length_UK_UPPER'] = tuple(dictionary['Length_UK_NAMES_REVERSE'].keys()) + \
-                                    ('feet', 'in', 'ft', 'yd', '0.1 in', '0.1in')
+                                    ('feet', 'in', 'ft', 'yd', '0.1 in', '0.1in', '.1in')
 
     # Area
     dictionary['Area'] = []
