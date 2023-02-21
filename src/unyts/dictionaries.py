@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.13'
-__release__ = 20230130
+__version__ = '0.5.14'
+__release__ = 20230221
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'unitless_names',
            'uncertain_names']
 
@@ -392,7 +392,7 @@ def _load_dictionary() -> (dict, dict):
     # Resistance
     dictionary['Resistance'] = []
     dictionary['Resistance_NAMES_REVERSE_UPPER'] = {
-        'Ohm': ('ohm', 'Ω', 'Volt/Ampere', 'V/A'),
+        'Ohm': ('ohm', 'Ω', 'Volt/Ampere', 'V/A', 'ohm.m'),
     }
     dictionary['Resistance_SI'] = ('Ω',)
 
