@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.4'
-__release__ = 20230126
+__version__ = '0.5.5'
+__release__ = 20230221
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -361,21 +361,21 @@ def convert(value: numeric, from_unit: str, to_unit: str, print_conversion_path:
     converted_value : int, float, array, Series, DataFrame ...
         the converted value if input value is not None
     """
+    from unyts.unit_class import Unit
     # cleaning inputs
     if _numpy_ and hasattr(value, '__iter__') and type(value) is not np.array:
         value = np.array(value)
+    if isinstance(value, Unit):
+        value = value.get_value()
     if value is not None and not isinstance(value, numeric):
         raise ValueError("value must be numeric.")
     if type(value) in [list, tuple]:
         raise TypeError("`value` can not be a list or tuple if NumPy is not installed.")
-
-    print_conversion_path = _clean_print_conversion_path(print_conversion_path)
-
-    from .unit_class import Unit
     if isinstance(from_unit, Unit):
         from_unit = from_unit.get_unit()
     if isinstance(to_unit, Unit):
         to_unit = to_unit.get_unit()
+    print_conversion_path = _clean_print_conversion_path(print_conversion_path)
 
     if type(from_unit) is str and from_unit not in ('"', "'"):
         from_unit = from_unit.strip("( ')").strip('( ")').strip("'")
@@ -397,8 +397,8 @@ def convert(value: numeric, from_unit: str, to_unit: str, print_conversion_path:
         else:
             return None
     if print_conversion_path:
-        logging.info("converting from '" + str(from_unit) + "' to '" + str(to_unit),
-              print_path(conv_path), sep='\n')
+        logging.info("converting from '" + str(from_unit) + "' to '" + str(to_unit) + ":\n" +
+                     str(print_path(conv_path)))
     return conv
 
 
@@ -408,8 +408,8 @@ def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str, print_co
     if convertible(from_unit, to_unit):
         conv, conv_path = _converter(value, from_unit, to_unit)
     if print_conversion_path and conv is not None:
-        logging.info("converting from '" + str(from_unit) + "' to '" + str(to_unit),
-              print_path(conv_path), sep='\n')
+        logging.info("converting from '" + str(from_unit) + "' to '" + str(to_unit) + ":\n" +
+                     str(print_path(conv_path)))
     elif print_conversion_path and conv is not None:
         logging.warning("conversion not found, returning original values.")
     return value if conv is None else conv
