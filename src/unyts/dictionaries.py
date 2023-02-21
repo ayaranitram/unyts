@@ -6,7 +6,7 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.14'
+__version__ = '0.5.15'
 __release__ = 20230221
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'unitless_names',
            'uncertain_names']
@@ -109,10 +109,10 @@ def _load_dictionary() -> (dict, dict):
     # Temperature and related
     dictionary['Temperature'] = ['C', 'K', 'F', 'R']
     dictionary['Temperature_NAMES'] = {
-        'Celsius': ('Centigrade', 'C', 'deg c', 'degrees C'),
-        'Fahrenheit': ('F', 'deg F', 'degrees F'),
-        'Rankine': ('R', 'deg R', 'degrees R'),
-        'Kelvin': ('K', 'deg K', 'degrees K')
+        'Celsius': ('Centigrade', 'C', 'deg C', 'degC', 'degrees C',),
+        'Fahrenheit': ('F', 'deg F', 'degF', 'degrees F'),
+        'Rankine': ('R', 'deg R', 'degR', 'degrees R'),
+        'Kelvin': ('K', 'deg K', 'degK', 'degrees K')
     }
     dictionary['Temperature_UPPER_LOWER'] = tuple(dictionary['Temperature_NAMES'].keys()) + \
                                             tuple(t
