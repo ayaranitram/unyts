@@ -37,3 +37,8 @@ src/unyts/units/ratios.py
 src/unyts/units/temperature.py
 src/unyts/units/time.py
 src/unyts/units/unitless.py
+tests/test_converter.py
+tests/test_dictionaries.py
+tests/test_operations.py
+tests/test_uncertain_units.py
+tests/test_units.py
