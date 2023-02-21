@@ -111,7 +111,11 @@ class Unit(object, metaclass=UnytType):
         elif type(new_unit) is not str:
             raise TypeError("`new_units` should be string.")
         if not _convertible(self.unit, new_unit):
-            raise WrongUnitsError("'" + str(new_unit) + "' is not valid units for " + str(self.name) + ".")
+            if self.name == 'user_units':
+                logging.warning("'" + str(new_unit) + "' is not valid units for " + str(self.name) + ".")
+                return self
+            else:
+                raise WrongUnitsError("'" + str(new_unit) + "' is not valid units for " + str(self.name) + ".")
         if type(self) is Unit:
             from .units.define import units
             return units(_convert(self.value, self.unit, new_unit), new_unit)
