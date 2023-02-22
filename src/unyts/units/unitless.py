@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.3'
-__release__ = 20230118
+__version__ = '0.5.4'
+__release__ = 20230222
 __all__ = ['Dimensionless', 'Percentage', 'unitless_names']
 
 from ..dictionaries import dictionary as _dictionary
@@ -33,7 +33,7 @@ class Dimensionless(Unit):
             try:
                 new_unit = new_unit.unit
             except:
-                raise WrongUnitsError("'" + str(new_unit) + "' for '" + str(self.name) + "'")
+                raise WrongUnitsError("'" + str(new_unit) + "' for '" + str(type(self)) + "'")
         if new_unit is None or len(new_unit) == 0:
             return self.value
         elif new_unit in _dictionary['Percentage']:

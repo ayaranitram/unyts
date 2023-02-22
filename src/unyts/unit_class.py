@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.17'
-__release__ = 20230130
+__version__ = '0.5.18'
+__release__ = 20230222
 __all__ = ['Unit', 'is_Unit']
 
 import logging
@@ -111,11 +111,12 @@ class Unit(object, metaclass=UnytType):
         elif type(new_unit) is not str:
             raise TypeError("`new_units` should be string.")
         if not _convertible(self.unit, new_unit):
-            if self.name == 'user_units':
-                logging.warning("'" + str(new_unit) + "' is not valid units for " + str(self.name) + ".")
+            from .units.custom import UserUnits
+            if self.kind is UserUnits:
+                logging.warning("'" + str(new_unit) + "' is not valid units for " + str(type(self)) + ".")
                 return self
             else:
-                raise WrongUnitsError("'" + str(new_unit) + "' is not valid units for " + str(self.name) + ".")
+                raise WrongUnitsError("'" + str(new_unit) + "' is not valid units for " + str(type(self)) + ".")
         if type(self) is Unit:
             from .units.define import units
             return units(_convert(self.value, self.unit, new_unit), new_unit)
@@ -267,7 +268,8 @@ class Unit(object, metaclass=UnytType):
         elif self.kind is Dimensionless:
             return units(other ** self.value, self.unit)
         else:
-            raise TypeError("unsupported operand type(s) for ** or pow(): '" + str(type(other)) + "' and '" + self.name)
+            raise TypeError("unsupported operand type(s) for ** or pow(): '" +
+                            str(type(other)) + "' and '" + str(type(self)))
 
     def __sub__(self, other):
         # return self.__add__(other * -1)
@@ -621,11 +623,11 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(units, 'units'):
             units = units.units
         else:
-            raise WrongUnitsError("'" + str(units) + "' for '" + str(self.name) + "'")
+            raise WrongUnitsError("'" + str(units) + "' for '" + str(type(self)) + "'")
         if units in self.kind.classUnits:
             return units
         else:
-            raise WrongUnitsError("'" + str(units) + "' for '" + str(self.name) + "'")
+            raise WrongUnitsError("'" + str(units) + "' for '" + str(type(self)) + "'")
 
 
 def is_Unit(obj) -> bool:
