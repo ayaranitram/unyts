@@ -32,6 +32,8 @@ try:
 except ModuleNotFoundError:
     _pandas_ = False
 
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+
 if _numpy_ and _pandas_:
     numeric = (int, float, complex, ndarray, Series, DataFrame)
 elif _numpy_:

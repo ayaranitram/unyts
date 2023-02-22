@@ -11,7 +11,6 @@ __release__ = 20230130
 __all__ = ['Unit', 'is_Unit']
 
 import logging
-
 from .errors import WrongUnitsError, WrongValueError, NoConversionFoundError
 from .operations import unit_product as _unit_product, unit_division as _unit_division, \
     unit_base_power as _unit_base_power
@@ -21,6 +20,7 @@ from .dictionaries import _all_units
 from .parameters import unyts_parameters_
 from numbers import Number
 
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 try:
     import numpy as np
@@ -76,7 +76,7 @@ class Unit(object, metaclass=UnytType):
         elif unyts_parameters_.raise_error:
             raise WrongUnitsError("'" + str(unit) + "' is not a valid units name.")
         elif not unyts_parameters_.raise_error:
-            logging.warning("'" + str(unit) + "' is not a valid units name.")
+            logging.error("'" + str(unit) + "' is not a valid units name.")
         self.value = self.check_value(value)
         self.unit = unit
         self.name = 'unit'

@@ -15,6 +15,7 @@ try:
 except ModuleNotFoundError:
     _cloudpickle_ = False
 
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 __version__ = '0.4.9'
 __release__ = 20230127
@@ -135,7 +136,7 @@ class UDigraph(object):
                 print('received FVF value is not a number: ' + str(FVF))
         if type(FVF) in (int, float):
             if FVF <= 0:
-                logging.warning('FVF should be a positive number...')
+                logging.error('FVF should be a positive number...')
             self.fvf = FVF
 
     def get_fvf(self):

@@ -26,6 +26,8 @@ except ModuleNotFoundError:
         logging.warning("Missing `cloudpickle` package. Not able to cache network dictionary.")
     _cloudpickle_ = False
 
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+
 
 def save_memory(path=None) -> None:
     units_network.save_memory(path)
@@ -695,7 +697,7 @@ if not unyts_parameters_.reload_ and \
         unyts_parameters_.reload_ = False
         unyts_parameters_.save_params()
     except:
-        logging.warning("Failed to load from cache. Creating new dictionaries and saving them to cache...")
+        logging.error("Failed to load from cache. Creating new dictionaries and saving them to cache...")
         units_network, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
 else:
     #try:
