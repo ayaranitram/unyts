@@ -583,12 +583,20 @@ class Unit(object, metaclass=UnytType):
     def units(self):
         return self.unit
 
+    @units.setter
+    def units(self, units):
+        self.unit = units
+
     def get_value(self):
         return self.value
 
     @property
     def values(self):
         return self.value
+
+    @values.setter
+    def values(self, value):
+        self.value = value
 
     def check_value(self, value):
         if type(value) in (list, tuple):
