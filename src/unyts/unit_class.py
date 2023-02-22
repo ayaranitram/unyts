@@ -6,7 +6,7 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.18'
+__version__ = '0.5.19'
 __release__ = 20230222
 __all__ = ['Unit', 'is_Unit']
 
@@ -89,7 +89,10 @@ class Unit(object, metaclass=UnytType):
         return str(self.value) + '_' + str(self.unit)
 
     def __str__(self) -> str:
-        return str(self.value) + '_' + str(self.unit)
+        if self.unit is None or len(str(self.unit).strip()) == 0:
+            return str(self.value)
+        else:
+            return str(self.value) + '_' + str(self.unit)
 
     @property
     def dtype(self):
