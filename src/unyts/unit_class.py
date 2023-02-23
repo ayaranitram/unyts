@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.19'
-__release__ = 20230222
+__version__ = '0.5.20'
+__release__ = 20230223
 __all__ = ['Unit', 'is_Unit']
 
 import logging
@@ -471,84 +471,42 @@ class Unit(object, metaclass=UnytType):
         if type(self) == type(other):
             return self.value < other.convert(self.unit).value
         else:
-            msg = "'<' not supported between instances of '" + \
-                  (str(type(self))[
-                   str(type(self)).index("'") + 1:len(str(type(self))) - str(type(self))[::-1].index("'") - 1]).replace(
-                      '__main__.', '') + \
-                  "' and '" + \
-                  (str(type(other))[
-                   str(type(other)).index("'") + 1:len(str(type(other))) - str(type(other))[::-1].index(
-                       "'") - 1]).replace('__main__.', '') + "'"
+            msg = "'<' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
             raise TypeError(msg)
 
     def __le__(self, other) -> bool:
         if type(self) == type(other):
             return self.value <= other.convert(self.unit).value
         else:
-            msg = "'<=' not supported between instances of '" + \
-                  (str(type(self))[
-                   str(type(self)).index("'") + 1:len(str(type(self))) - str(type(self))[::-1].index("'") - 1]).replace(
-                      '__main__.', '') + \
-                  "' and '" + \
-                  (str(type(other))[
-                   str(type(other)).index("'") + 1:len(str(type(other))) - str(type(other))[::-1].index(
-                       "'") - 1]).replace('__main__.', '') + "'"
+            msg = "'<=' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
             raise TypeError(msg)
 
     def __eq__(self, other) -> bool:
         if type(self) is type(other):
             return self.value == other.convert(self.unit).value
         else:
-            msg = "'==' not supported between instances of '" + \
-                  (str(type(self))[
-                   str(type(self)).index("'") + 1:len(str(type(self))) - str(type(self))[::-1].index("'") - 1]).replace(
-                      '__main__.', '') + \
-                  "' and '" + \
-                  (str(type(other))[
-                   str(type(other)).index("'") + 1:len(str(type(other))) - str(type(other))[::-1].index(
-                       "'") - 1]).replace('__main__.', '') + "'"
+            msg = "'==' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
             raise TypeError(msg)
 
     def __ne__(self, other):
         if type(self) is type(other):
             return self.value != other.convert(self.unit).value
         else:
-            msg = "'!=' not supported between instances of '" + \
-                  (str(type(self))[
-                   str(type(self)).index("'") + 1:len(str(type(self))) - str(type(self))[::-1].index("'") - 1]).replace(
-                      '__main__.', '') + \
-                  "' and '" + \
-                  (str(type(other))[
-                   str(type(other)).index("'") + 1:len(str(type(other))) - str(type(other))[::-1].index(
-                       "'") - 1]).replace('__main__.', '') + "'"
+            msg = "'!=' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
             raise TypeError(msg)
 
     def __ge__(self, other):
         if type(self) is type(other):
             return self.value >= other.convert(self.unit).value
         else:
-            msg = "'>=' not supported between instances of '" + \
-                  (str(type(self))[
-                   str(type(self)).index("'") + 1:len(str(type(self))) - str(type(self))[::-1].index("'") - 1]).replace(
-                      '__main__.', '') + \
-                  "' and '" + \
-                  (str(type(other))[
-                   str(type(other)).index("'") + 1:len(str(type(other))) - str(type(other))[::-1].index(
-                       "'") - 1]).replace('__main__.', '') + "'"
+            msg = "'>=' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
             raise TypeError(msg)
 
     def __gt__(self, other):
         if type(self) is type(other):
             return self.value > other.convert(self.unit).value
         else:
-            msg = "'>' not supported between instances of '" + \
-                  (str(type(self))[
-                   str(type(self)).index("'") + 1:len(str(type(self))) - str(type(self))[::-1].index("'") - 1]).replace(
-                      '__main__.', '') + \
-                  "' and '" + \
-                  (str(type(other))[
-                   str(type(other)).index("'") + 1:len(str(type(other))) - str(type(other))[::-1].index(
-                       "'") - 1]).replace('__main__.', '') + "'"
+            msg = "'>' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
             raise TypeError(msg)
 
     def __len__(self):

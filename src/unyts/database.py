@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.14'
-__release__ = 20230129
+__version__ = '0.5.15'
+__release__ = 20230223
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory']
 
 import logging
@@ -700,7 +700,6 @@ if not unyts_parameters_.reload_ and \
         logging.error("Failed to load from cache. Creating new dictionaries and saving them to cache...")
         units_network, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
 else:
-    #try:
     units_network = _load_network()
     # load the dictionary with ratio unis
     _create_Rates()
@@ -720,8 +719,6 @@ else:
 
     unyts_parameters_.reload_ = False
     unyts_parameters_.save_params()
-    #except:
-    #    units_network, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
     if unyts_parameters_.cache_:
         print('saving units network and dictionary to cache...')
         if _cloudpickle_:
