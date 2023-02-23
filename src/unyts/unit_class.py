@@ -468,42 +468,54 @@ class Unit(object, metaclass=UnytType):
             raise NotImplementedError("Module of " + str(type(self)) + " when divided by " + str(type(other)) + " not implemented.")
 
     def __lt__(self, other) -> bool:
-        if type(self) == type(other):
+        if not isinstance(other, Unit):
+            return self.value < other
+        elif type(self) == type(other):
             return self.value < other.convert(self.unit).value
         else:
             msg = "'<' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
             raise TypeError(msg)
 
     def __le__(self, other) -> bool:
-        if type(self) == type(other):
+        if not isinstance(other, Unit):
+            return self.value <= other
+        elif type(self) == type(other):
             return self.value <= other.convert(self.unit).value
         else:
             msg = "'<=' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
             raise TypeError(msg)
 
     def __eq__(self, other) -> bool:
-        if type(self) is type(other):
+        if not isinstance(other, Unit):
+            return self.value == other
+        elif type(self) is type(other):
             return self.value == other.convert(self.unit).value
         else:
             msg = "'==' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
             raise TypeError(msg)
 
     def __ne__(self, other):
-        if type(self) is type(other):
+        if not isinstance(other, Unit):
+            return self.value != other
+        elif type(self) is type(other):
             return self.value != other.convert(self.unit).value
         else:
             msg = "'!=' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
             raise TypeError(msg)
 
     def __ge__(self, other):
-        if type(self) is type(other):
+        if not isinstance(other, Unit):
+            return self.value >= other
+        elif type(self) is type(other):
             return self.value >= other.convert(self.unit).value
         else:
             msg = "'>=' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
             raise TypeError(msg)
 
     def __gt__(self, other):
-        if type(self) is type(other):
+        if not isinstance(other, Unit):
+            return self.value > other
+        elif type(self) is type(other):
             return self.value > other.convert(self.unit).value
         else:
             msg = "'>' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
@@ -523,7 +535,7 @@ class Unit(object, metaclass=UnytType):
             if item >= len(self):
                 raise IndexError
         else:
-            raise ValueError
+            raise IndexError
         from .units.unitless import Percentage
         if self.kind is Percentage:
             return self.kind(self.value[item] * 100, self.unit)
