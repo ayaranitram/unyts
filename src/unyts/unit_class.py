@@ -6,7 +6,7 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.20'
+__version__ = '0.5.21'
 __release__ = 20230223
 __all__ = ['Unit', 'is_Unit']
 
@@ -543,7 +543,7 @@ class Unit(object, metaclass=UnytType):
             return self.kind(self.value[item], self.unit)
 
     def __iter__(self):
-        if type(self.value) in (int, float):
+        if not hasattr(self.value, '__iter__'):
             return np.array((self.value,)).__iter__()
         else:
             return self.value.__iter__()
