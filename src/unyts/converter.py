@@ -22,12 +22,14 @@ import logging
 try:
     import numpy as np
     from numpy import ndarray
+
     _numpy_ = True
 except ModuleNotFoundError:
     _numpy_ = False
     logging.warning("Missing NumPy package, operations with `list` of values will fail.")
 try:
     from pandas import Series, DataFrame
+
     _pandas_ = True
 except ModuleNotFoundError:
     _pandas_ = False
@@ -55,40 +57,40 @@ def _apply_conversion(value, conversion_path):
     if len(conversion_path) == 1 and conversion_path[0] == '1/':
         return 1 / value
     i = 0
-    while i < len(conversion_path)-1:
-        this_step, next_step = conversion_path[i], conversion_path[i+1]
+    while i < len(conversion_path) - 1:
+        this_step, next_step = conversion_path[i], conversion_path[i + 1]
         if type(this_step) is str:
             if len(this_step) == 1:
                 if type(next_step) in (int, float, complex):
-                    value = _str2lambda(this_step)(value, _apply_conversion(next_step, conversion_path[i+2:]))
+                    value = _str2lambda(this_step)(value, _apply_conversion(next_step, conversion_path[i + 2:]))
                 else:
-                    value = _str2lambda(this_step)(value, _apply_conversion(value, conversion_path[i+1:]))
+                    value = _str2lambda(this_step)(value, _apply_conversion(value, conversion_path[i + 1:]))
                 break
             elif this_step == '1/':
-                value = 1 / _apply_conversion(value, conversion_path[i+1:])
+                value = 1 / _apply_conversion(value, conversion_path[i + 1:])
                 break
             else:
                 raise ValueError("string operation in conversion_path must be '/' or '*'")
         elif type(this_step) in (int, float, complex):
             if type(next_step) is str:
-                value = _str2lambda(next_step)(value, _apply_conversion(this_step, conversion_path[i+2:]))
+                value = _str2lambda(next_step)(value, _apply_conversion(this_step, conversion_path[i + 2:]))
                 break
             else:
                 value = _apply_conversion(this_step, conversion_path[i + 1:])
                 break
         elif type(next_step) is str:
             if len(next_step) == 1:
-                if len(conversion_path) == i+2:
-                    further_step = conversion_path[i+2]
+                if len(conversion_path) == i + 2:
+                    further_step = conversion_path[i + 2]
                     if type(further_step) in (int, float, complex):
                         value = _str2lambda(next_step)(value, further_step)
                     else:
                         value = _str2lambda(next_step)(value, _apply_conversion(value, further_step))
                     break
-                elif len(conversion_path) > i+2:
-                    further_step = conversion_path[i+2]
+                elif len(conversion_path) > i + 2:
+                    further_step = conversion_path[i + 2]
                     if type(further_step) in (int, float, complex):
-                        value = _str2lambda(next_step)(value, _apply_conversion(further_step, conversion_path[i+3:]))
+                        value = _str2lambda(next_step)(value, _apply_conversion(further_step, conversion_path[i + 3:]))
                     else:
                         value = _str2lambda(next_step)(value, _apply_conversion(value, further_step))
                     break
@@ -100,7 +102,7 @@ def _apply_conversion(value, conversion_path):
 
 def _lambda_conversion(conversion_path):
     big_lambda = [units_network.conversion(conversion_path[i], conversion_path[i + 1])
-                  for i in range(len(conversion_path)-1)]
+                  for i in range(len(conversion_path) - 1)]
     return lambda x: _lambda_loop(x, big_lambda[:])
 
 
@@ -265,7 +267,7 @@ def _converter(value, from_unit, to_unit):
                 flag = True
                 if len(list_conversion_path) > 0:
                     conv_path = [1] + conv_path
-                if (f > 0 and split_from[f-1] == '/') or (t > 0 and split_to[t-1] == '/'):
+                if (f > 0 and split_from[f - 1] == '/') or (t > 0 and split_to[t - 1] == '/'):
                     conv = 1 / conv
                     conv_path = ['/'] + conv_path
                 list_conversion.append(conv)
