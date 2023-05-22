@@ -315,6 +315,7 @@ def _converter(value, from_unit, to_unit):
                 else:
                     return conversion(value), conversion_path
 
+    units_network.memory[(from_unit, to_unit)] = None, None
     return None, None
 
 
