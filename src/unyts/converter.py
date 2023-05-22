@@ -207,7 +207,8 @@ def _get_conversion(value, from_unit, to_unit):
     # check if already solved and memorized
     if (from_unit, to_unit) in units_network.memory:
         conversion_lambda, conversion_path = units_network.memory[(from_unit, to_unit)]
-        return (conversion_lambda, conversion_path) if value is None else (conversion_lambda(value), conversion_path)
+        return (conversion_lambda, conversion_path) if (conversion_lambda is None or value is None) \
+            else (conversion_lambda(value), conversion_path)
 
     # check if path is already defined in network
     if units_network.has_node(from_unit) and units_network.has_node(to_unit):
