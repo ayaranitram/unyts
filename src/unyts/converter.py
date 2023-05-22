@@ -385,12 +385,20 @@ def convert(value: numeric, from_unit: str, to_unit: str, print_conversion_path:
 
     if type(from_unit) is str and from_unit not in ('"', "'"):
         from_unit = from_unit.strip("( ')").strip('( ")').strip("'")
-    else:
+    elif type(from_unit) is str:
         from_unit = from_unit.strip("( )")
+    elif from_unit is None:
+        from_unit = 'None'
+    else:
+        raise TypeError(f"'from_unit' must be string, not {type(from_unit)}, like {from_unit}")
     if type(to_unit) is str and to_unit not in ('"', "'"):
         to_unit = to_unit.strip("( ')").strip('( ")').strip("'")
-    else:
+    elif type(to_unit) is str:
         to_unit = to_unit.strip("( )")
+    elif to_unit is None:
+        to_unit = 'None'
+    else:
+        raise TypeError(f"'to_unit' must be string, not {type(to_unit)}, like {to_unit}")
 
     if unyts_parameters_.reduce_parentheses_:
         from_unit = _reduce_parentheses(from_unit)
