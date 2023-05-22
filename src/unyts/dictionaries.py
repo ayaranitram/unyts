@@ -7,7 +7,7 @@ Created on Sat Oct 24 12:14:51 2020
 """
 
 __version__ = '0.5.15'
-__release__ = 20230221
+__release__ = 20230522
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'unitless_names',
            'uncertain_names']
 
@@ -96,8 +96,8 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Time_PLURALwS_UPPER_REVERSE'] = tuple(dictionary['Time_NAMES_REVERSE'].keys()) + ('min', 'año')
     dictionary['Time_UPPER_REVERSE'] = tuple(t for t in dictionary['Time_NAMES_REVERSE']['nanosecond'] if len(t) > 1) + \
                                        tuple(t for t in dictionary['Time_NAMES_REVERSE']['millisecond'] if len(t) > 1) + \
-                                       tuple(t for t in dictionary['Time_NAMES_REVERSE']['second'] if len(t) > 1) + (
-                                       's',) + \
+                                       tuple(t for t in dictionary['Time_NAMES_REVERSE']['second'] if len(t) > 1) + \
+                                       ('s',) + \
                                        tuple(t for t in dictionary['Time_NAMES_REVERSE']['hour'] if len(t) > 1) + \
                                        tuple(t for t in dictionary['Time_NAMES_REVERSE']['day'] if len(t) > 1) + \
                                        tuple(t for t in dictionary['Time_NAMES_REVERSE']['hour'] if len(t) > 1) + \
@@ -216,8 +216,8 @@ def _load_dictionary() -> (dict, dict):
         'Pascal': ('Pa',),
     }
     dictionary['Pressure_NAMES_REVERSE_UPPER_SPACES'] = {
-        'absolute psi': (
-        'psia', 'lb/in2', 'absolute pound/square inch', 'psi absolute', 'libras/pulgada cuadrada absoluta', 'lpca'),
+        'absolute psi': ('psia', 'lb/in2', 'absolute pound/square inch', 'psi absolute',
+                         'libras/pulgada cuadrada absoluta', 'lpca'),
         'psi gauge': ('psi', 'pound/square inch', 'psig', 'gauge psi'),
         'absolute bar': ('bara', 'barsa', 'abs bar', 'bar absolute'),
         'bar gauge': ('bar', 'barg', 'gauge bar', 'bars'),
