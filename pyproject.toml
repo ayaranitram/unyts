@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "unyts"
-version = "0.5.25"
+version = "0.5.27"
 authors = [
   { name="Martin Carlos Araya", email="martinaraya@gmail.com" },
 ]

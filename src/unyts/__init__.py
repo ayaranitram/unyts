@@ -6,12 +6,12 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.25'
-__release__ = 20230225
-__all__ = ['units', 'convert', 'Unit', 'is_Unit', 'set_unit', 'set_conversion', 'convertible', 'save']
+__version__ = '0.5.27'
+__release__ = 20230522
+__all__ = ['units', 'convert', 'Unit', 'is_Unit', 'set_unit', 'set_conversion', 'convertible', 'save', 'set_density']
 
 # import unyts.parameters
-from .parameters import unyts_parameters_, print_path, reload, raise_error, cache
+from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density
 from .database import network_to_frame, save_memory, load_memory
 from .units.define import units
 from .converter import convert, convertible
