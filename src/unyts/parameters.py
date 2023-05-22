@@ -8,8 +8,9 @@ Created on Sat Oct 24 18:24:20 2020
 
 __version__ = '0.5.2'
 __release__ = 20230107
-__all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'dir_path']
+__all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'dir_path', 'set_density']
 
+import logging
 import os.path
 from json import load as json_load, dump as json_dump
 from os.path import isfile
@@ -32,6 +33,7 @@ class UnytsParameters(object):
         self.verbose_ = False
         self.reduce_parentheses_ = True
         self.show_version_ = True
+        self.density_ = None
         self.load_params()
         self.reload_ = self.reload_ if reload is None else bool(reload)
 
@@ -134,6 +136,44 @@ def verbose(switch=None) -> None:
 
 def cache(switch=None) -> None:
     unyts_parameters_.cache(switch)
+
+
+def set_density(density: float, units: str = 'g/cc') -> None:
+    from .units.ratios import Density
+    if not isinstance(density, (int, float)) and not type(density) is Density:
+        raise ValueError("'density' must be a float or int.")
+    elif type(density) is Density:
+        density = density.to('g/cc')
+        density, units = density.value, density.unit
+    if units.lower() not in ('g/cc', 'g/cm3'):
+        from .converter import convert
+        from .errors import NoConversionFoundError
+        try:
+            density = convert(density, units, 'g/cc')
+        except NoConversionFoundError:
+            raise ValueError("density 'units' are not valid.")
+        if density is None:
+            raise ValueError("density 'units' are not valid.")
+    unyts_parameters_.density_ = density
+
+
+def _get_density() -> float:
+    while unyts_parameters_.density_ is None:
+        density = input("Please set density value: ")
+        try:
+            density = float(density)
+            unyts_parameters_.density_ = density
+        except ValueError:
+            print("'density' must be float or int.")
+            density = None
+    return unyts_parameters_.density_
+
+
+def get_density():
+    from .units.ratios import Density
+    if unyts_parameters_.density_ is None:
+        raise ValueError("'density' is not set.")
+    return Density(unyts_parameters_.density_, 'g/cc')
 
 
 def reload() -> None:

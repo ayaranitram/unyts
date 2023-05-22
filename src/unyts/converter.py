@@ -6,15 +6,15 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.5'
-__release__ = 20230221
+__version__ = '0.5.6'
+__release__ = 20230522
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
-from .dictionaries import dictionary, temperatureRatioConversions
+from .dictionaries import dictionary, temperatureRatioConversions, uncertain_names
 from .searches import BFS, print_path
 from .errors import NoConversionFoundError
-from .parameters import unyts_parameters_
+from .parameters import unyts_parameters_, _get_density
 from .helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
 from functools import reduce
 import logging
@@ -393,15 +393,41 @@ def convert(value: numeric, from_unit: str, to_unit: str, print_conversion_path:
         from_unit = _reduce_parentheses(from_unit)
         to_unit = _reduce_parentheses(to_unit)
 
-    conv, conv_path = _converter(value, from_unit, to_unit)
+    # density factor, in case of conversion from volume to mass or mass to volume
+    density = False
+    if from_unit not in uncertain_names and to_unit not in uncertain_names:
+        dens_gcc = _get_density()
+        if from_unit in dictionary['Volume'] and to_unit in dictionary['Weight']:
+            conv1, conv_path1 = _converter(value, from_unit, 'cc')
+            conv2, conv_path2 = _converter(value, 'g', to_unit)
+            if value is None:
+                conv = lambda x: conv2(conv1(x) * dens_gcc)
+            else:
+                conv = conv1 * dens_gcc * conv2
+            conv_path = conv_path1 + ['*', dens_gcc, '*'] + conv_path2
+            density = True
+        elif to_unit in dictionary['Volume'] and from_unit in dictionary['Weight']:
+            conv1, conv_path1 = _converter(value, from_unit, 'g')
+            conv2, conv_path2 = _converter(value, 'cc', to_unit)
+            if value is None:
+                conv = lambda x: conv2(conv1(x) / dens_gcc)
+            else:
+                conv = conv1 / dens_gcc * conv2
+            conv_path = conv_path1 + ['/', dens_gcc, '*'] + conv_path2
+            density = True
+
+    if not density:
+        conv, conv_path = _converter(value, from_unit, to_unit)
     if conv is None:
         if unyts_parameters_.raise_error_:
             raise NoConversionFoundError("from '" + str(from_unit) + "' to '" + str(to_unit) + "'")
         else:
             return None
+
     if print_conversion_path:
         logging.info("converting from '" + str(from_unit) + "' to '" + str(to_unit) + ":\n" +
                      str(print_path(conv_path)))
+
     return conv
 
 
