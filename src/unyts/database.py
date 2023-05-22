@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.15'
-__release__ = 20230223
+__version__ = '0.5.16'
+__release__ = 20230522
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory']
 
 import logging
@@ -417,8 +417,8 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('dram'), network.get_node('pound'), lambda w: w / 256))
     network.add_edge(Conversion(network.get_node('stone'), network.get_node('pound'), lambda w: w * 14))
     network.add_edge(Conversion(network.get_node('quarter'), network.get_node('stone'), lambda w: w * 2))
-    network.add_edge(Conversion(network.get_node('ounce'), network.get_node('dram'), lambda w: w * 16))
-    network.add_edge(Conversion(network.get_node('pound'), network.get_node('ounce'), lambda w: w * 16))
+    network.add_edge(Conversion(network.get_node('weight ounce'), network.get_node('dram'), lambda w: w * 16))
+    network.add_edge(Conversion(network.get_node('pound'), network.get_node('weight ounce'), lambda w: w * 16))
     network.add_edge(Conversion(network.get_node('long hundredweight'), network.get_node('quarter'), lambda w: w * 4))
     network.add_edge(Conversion(network.get_node('short hundredweight'), network.get_node('pound'), lambda w: w * 100))
     network.add_edge(
