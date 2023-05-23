@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.6'
-__release__ = 20230522
+__version__ = '0.5.7'
+__release__ = 20230523
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -389,6 +389,8 @@ def convert(value: numeric, from_unit: str, to_unit: str, print_conversion_path:
         from_unit = from_unit.strip("( )")
     elif from_unit is None:
         from_unit = 'None'
+    elif _numpy_ and isinstance(from_unit, float) and np.isnan(from_unit):
+        from_unit = 'None'
     else:
         raise TypeError(f"'from_unit' must be string, not {type(from_unit)}, like {from_unit}")
     if type(to_unit) is str and to_unit not in ('"', "'"):
@@ -396,6 +398,8 @@ def convert(value: numeric, from_unit: str, to_unit: str, print_conversion_path:
     elif type(to_unit) is str:
         to_unit = to_unit.strip("( )")
     elif to_unit is None:
+        to_unit = 'None'
+    elif _numpy_ and isinstance(to_unit, float) and np.isnan(to_unit):
         to_unit = 'None'
     else:
         raise TypeError(f"'to_unit' must be string, not {type(to_unit)}, like {to_unit}")

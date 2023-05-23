@@ -86,6 +86,12 @@ def test__clean_print_conversion_path():
 
 
 def test_convert():
+    assert convert(1, 'unitless', np.nan) == 1
+    assert convert(1, 'unitless', None) == 1
+    assert convert(1, None, np.nan) == 1
+    assert convert(1, np.nan, np.nan) == 1
+    assert convert(1, np.nan, 'unitless') == 1
+
     data = read_excel('./tests/conversions_check.xlsx')
     error = 1E-4
     for i in data.index:
