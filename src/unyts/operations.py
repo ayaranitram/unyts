@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:38:58 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.2'
-__release__ = 20230118
+__version__ = '0.5.3'
+__release__ = 20230719
 __all__ = ['unit_product', 'unit_division', 'unit_base_power', 'unit_power', 'unit_addition', 'unit_inverse']
 
 from .dictionaries import dictionary, unitless_names
@@ -87,6 +87,17 @@ def unit_product(unit_string1: str, unit_string2: str) -> str:
             return unit_string2
         else:
             return unit_string1
+
+    if unit_string1 == unit_string2:
+        parenthesis = False
+        for s in '*/+-':
+            if s in unit_base_power(unit_string1)[0]:
+                parenthesis = True
+                break
+        if parenthesis:
+            return '(' + unit_string1 + ')2'
+        else:
+            return unit_base_power(unit_string1)[0] + str(int(unit_base_power(unit_string1)[1]) * 2)
 
     if unit_string1 != unit_string2 and convertible(unit_string1, unit_string2):
         return unit_product(unit_string1, unit_string1)
