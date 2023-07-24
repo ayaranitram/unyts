@@ -6,11 +6,10 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.29'
-__release__ = 20230719
+__version__ = '0.5.30'
+__release__ = 20230724
 __all__ = ['units', 'convert', 'Unit', 'is_Unit', 'set_unit', 'set_conversion', 'convertible', 'save', 'set_density']
 
-# import unyts.parameters
 from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density
 from .database import network_to_frame, save_memory, load_memory
 from .units.define import units
