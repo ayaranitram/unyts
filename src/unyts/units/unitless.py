@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.4'
-__release__ = 20230222
+__version__ = '0.5.30'
+__release__ = 20230724
 __all__ = ['Dimensionless', 'Percentage', 'unitless_names']
 
 from ..dictionaries import dictionary as _dictionary
@@ -20,8 +20,8 @@ from ..dictionaries import unitless_names
 class Dimensionless(Unit):
     classUnits = _dictionary['Dimensionless']
 
-    def __init__(self, value: numeric, units: unit_or_str = None):
-        self.name = 'dimensionless'
+    def __init__(self, value: numeric, units: unit_or_str = None, name=None):
+        self.name = 'dimensionless' if name is None else name
         self.kind = Dimensionless
         self.value = self.check_value(value)
         if units is None:
@@ -51,8 +51,8 @@ class Dimensionless(Unit):
 class Percentage(Dimensionless):
     classUnits = _dictionary['Percentage']
 
-    def __init__(self, value: numeric, units: unit_or_str = None):
-        self.name = 'percentage'
+    def __init__(self, value: numeric, units: unit_or_str = None, name=None):
+        self.name = 'percentage' if name is None else name
         self.kind = Percentage
         self.value = self.check_value(value) / 100
         if units is None:

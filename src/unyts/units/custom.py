@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.4'
-__release__ = 20230130
+__version__ = '0.5.30'
+__release__ = 20230724
 __all__ = ['CustomUnits', 'UserUnits', 'OtherUnits', 'set_unit', 'set_conversion']
 
 from ..unit_class import Unit
@@ -15,19 +15,19 @@ from ..dictionaries import dictionary
 from ..helpers.common_classes import unit_or_str, numeric
 
 
-def CustomUnits(value: numeric, units: unit_or_str) -> Unit:
-    return UserUnits(value, units)
+def CustomUnits(value: numeric, units: unit_or_str, name=None) -> Unit:
+    return UserUnits(value, units, name)
 
 
-def OtherUnits(value: numeric, units: unit_or_str) -> Unit:
-    return UserUnits(value, units)
+def OtherUnits(value: numeric, units: unit_or_str, name=None) -> Unit:
+    return UserUnits(value, units, name)
 
 
 class UserUnits(Unit):
     classUnits = dictionary['UserUnits']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'user_units'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'user_units' if name is None else name
         self.kind = UserUnits
         units = units.strip()
         if isinstance(units, Unit):

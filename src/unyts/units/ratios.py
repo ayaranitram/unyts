@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.3'
-__release__ = 20230118
+__version__ = '0.5.30'
+__release__ = 20230724
 __all__ = ['Density', 'VolumeRatio', 'ProductivityIndex', 'PressureGradient']
 
 from ..dictionaries import dictionary as _dictionary
@@ -18,8 +18,8 @@ from ..helpers.common_classes import unit_or_str, numeric
 class Density(Unit):
     classUnits = _dictionary['Density']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'density'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'density' if name is None else name
         self.kind = Density
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -28,8 +28,8 @@ class Density(Unit):
 class VolumeRatio(Unit):
     classUnits = _dictionary['VolumeRatio']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'volume_ratio'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'volume_ratio' if name is None else name
         self.kind = VolumeRatio
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -38,8 +38,8 @@ class VolumeRatio(Unit):
 class ProductivityIndex(Unit):
     classUnits = _dictionary['ProductivityIndex']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'productivity_index'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'productivity_index' if name is None else name
         self.kind = ProductivityIndex
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -48,8 +48,8 @@ class ProductivityIndex(Unit):
 class PressureGradient(Unit):
     classUnits = _dictionary['PressureGradient']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'pressure_gradient'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'pressure_gradient' if name is None else name
         self.kind = PressureGradient
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

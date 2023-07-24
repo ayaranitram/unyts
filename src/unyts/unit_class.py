@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.21'
-__release__ = 20230223
+__version__ = '0.5.30'
+__release__ = 20230724
 __all__ = ['Unit', 'is_Unit']
 
 import logging
@@ -63,7 +63,7 @@ class Unit(object, metaclass=UnytType):
     operations and conversions.
     """
 
-    def __init__(self, value, unit=None):
+    def __init__(self, value, unit=None, name=None):
         if isinstance(value, Unit):
             if unit is None:
                 value, unit = value.value, value.unit
@@ -79,7 +79,7 @@ class Unit(object, metaclass=UnytType):
             logging.error("'" + str(unit) + "' is not a valid units name.")
         self.value = self.check_value(value)
         self.unit = unit
-        self.name = 'unit'
+        self.name = 'unit' if name is None else name
         self.kind = Unit
 
     def __call__(self) -> numeric:

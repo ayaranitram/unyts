@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.3'
-__release__ = 20230118
+__version__ = '0.5.30'
+__release__ = 20230724
 __all__ = ['Length', 'Area', 'Volume', 'Permeability']
 
 from ..dictionaries import dictionary as _dictionary
@@ -18,8 +18,8 @@ from ..helpers.common_classes import unit_or_str, numeric
 class Length(Unit):
     classUnits = _dictionary['Length']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'length'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'length' if name is None else name
         self.kind = Length
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -28,8 +28,8 @@ class Length(Unit):
 class Area(Unit):
     classUnits = _dictionary['Area']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'area'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'area' if name is None else name
         self.kind = Area
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -38,8 +38,8 @@ class Area(Unit):
 class Volume(Unit):
     classUnits = _dictionary['Volume']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'volume'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'volume' if name is None else name
         self.kind = Volume
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -48,8 +48,8 @@ class Volume(Unit):
 class Permeability(Unit):
     classUnits = _dictionary['Permeability']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'permeability'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'permeability' if name is None else name
         self.kind = Permeability
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

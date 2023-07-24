@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.4'
-__release__ = 20230121
+__version__ = '0.5.30'
+__release__ = 20230724
 __all__ = ['Time', 'Frequency']
 
 from ..dictionaries import dictionary as _dictionary
@@ -18,8 +18,8 @@ from ..helpers.common_classes import unit_or_str, numeric
 class Time(Unit):
     classUnits = _dictionary['Time']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'time'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'time' if name is None else name
         self.kind = Time
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -35,8 +35,8 @@ class Time(Unit):
 class Frequency(Unit):
     classUnits = _dictionary['Frequency']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'frequency'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'frequency' if name is None else name
         self.kind = Frequency
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

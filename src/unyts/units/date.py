@@ -6,8 +6,8 @@ Created on Wed Jan 26 21:45:34 2023
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.0.1'
-__release__ = 20230126
+__version__ = '0.5.30'
+__release__ = 20230724
 __all__ = ['Date']
 
 from ..dictionaries import dictionary as _dictionary
@@ -20,9 +20,9 @@ from numpy import datetime64, timedelta64
 class Date(Unit):
     classUnits = _dictionary['Date']
 
-    def __init__(self, value, units='dates'):
+    def __init__(self, value, units='date', name=None):
         self.value = datetime64(value)
-        self.name = 'date'
+        self.name = 'date' if name is None else name
         self.kind = Date
 
     def __add__(self, other):

@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.4'
-__release__ = 20230121
+__version__ = '0.5.30'
+__release__ = 20230724
 __all__ = ['Force', 'Pressure', 'Weight', 'Compressibility', 'Viscosity']
 
 from ..dictionaries import dictionary as _dictionary
@@ -18,8 +18,8 @@ from ..helpers.common_classes import unit_or_str, numeric
 class Force(Unit):
     classUnits = _dictionary['Force']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'force'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'force' if name is None else name
         self.kind = Force
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -28,8 +28,8 @@ class Force(Unit):
 class Pressure(Unit):
     classUnits = _dictionary['Pressure']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'pressure'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'pressure' if name is None else name
         self.kind = Pressure
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -38,8 +38,8 @@ class Pressure(Unit):
 class Weight(Unit):
     classUnits = _dictionary['Weight']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'weight'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'weight' if name is None else name
         self.kind = Weight
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -48,8 +48,8 @@ class Weight(Unit):
 class Compressibility(Unit):
     classUnits = _dictionary['Compressibility']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'compressibility'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'compressibility' if name is None else name
         self.kind = Compressibility
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)
@@ -58,8 +58,8 @@ class Compressibility(Unit):
 class Viscosity(Unit):
     classUnits = _dictionary['Viscosity']
 
-    def __init__(self, value: numeric, units: unit_or_str):
-        self.name = 'viscosity'
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
+        self.name = 'viscosity' if name is None else name
         self.kind = Viscosity
         self.value = self.check_value(value)
         self.unit = self.check_unit(units)

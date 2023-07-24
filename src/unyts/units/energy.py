@@ -6,8 +6,8 @@ Created on Fri Aug 26 21:17:35 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.12'
-__release__ = 20230121
+__version__ = '0.5.30'
+__release__ = 20230724
 __all__ = ['Energy', 'Power', 'Current', 'Voltage', 'Resistance', 'Conductance', 'Capacitance', 'Charge', 'Inductance', 'Impedance']
 
 from ..dictionaries import dictionary as _dictionary
@@ -19,8 +19,8 @@ from .time import Time
 class Energy(Unit):
     classUnits = _dictionary['Energy']
 
-    def __init__(self, value: numeric, unit: unit_or_str):
-        self.name = 'energy'
+    def __init__(self, value: numeric, unit: unit_or_str, name=None):
+        self.name = 'energy' if name is None else name
         self.kind = Energy
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)
@@ -37,8 +37,8 @@ class Energy(Unit):
 class Power(Unit):
     classUnits = _dictionary['Power']
 
-    def __init__(self, value: numeric, unit: unit_or_str):
-        self.name = 'power'
+    def __init__(self, value: numeric, unit: unit_or_str, name=None):
+        self.name = 'power' if name is None else name
         self.kind = Power
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)
@@ -61,8 +61,8 @@ class Power(Unit):
 class Current(Unit):
     classUnits = _dictionary['Current']
 
-    def __init__(self, value: numeric, unit: unit_or_str):
-        self.name = 'current'
+    def __init__(self, value: numeric, unit: unit_or_str, name=None):
+        self.name = 'current' if name is None else name
         self.kind = Current
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)
@@ -77,8 +77,8 @@ class Current(Unit):
 class Voltage(Unit):
     classUnits = _dictionary['Voltage']
 
-    def __init__(self, value: numeric, unit: unit_or_str):
-        self.name = 'voltage'
+    def __init__(self, value: numeric, unit: unit_or_str, name=None):
+        self.name = 'voltage' if name is None else name
         self.kind = Voltage
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)
@@ -103,8 +103,8 @@ class Voltage(Unit):
 class Resistance(Unit):
     classUnits = _dictionary['Resistance']
 
-    def __init__(self, value: numeric, unit: unit_or_str):
-        self.name = 'resistance'
+    def __init__(self, value: numeric, unit: unit_or_str, name=None):
+        self.name = 'resistance' if name is None else name
         self.kind = Resistance
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)
@@ -119,8 +119,8 @@ class Resistance(Unit):
 class Conductance(Unit):
     classUnits = _dictionary['Conductance']
 
-    def __init__(self, value: numeric, unit: unit_or_str):
-        self.name = 'conductance'
+    def __init__(self, value: numeric, unit: unit_or_str, name=None):
+        self.name = 'conductance' if name is None else name
         self.kind = Conductance
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)
@@ -129,8 +129,8 @@ class Conductance(Unit):
 class Capacitance(Unit):
     classUnits = _dictionary['Capacitance']
 
-    def __init__(self, value: numeric, unit: unit_or_str):
-        self.name = 'capacitance'
+    def __init__(self, value: numeric, unit: unit_or_str, name=None):
+        self.name = 'capacitance' if name is None else name
         self.kind = Capacitance
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)
@@ -145,8 +145,8 @@ class Capacitance(Unit):
 class Charge(Unit):
     classUnits = _dictionary['Charge']
 
-    def __init__(self, value: numeric, unit: unit_or_str):
-        self.name = 'charge'
+    def __init__(self, value: numeric, unit: unit_or_str, name=None):
+        self.name = 'charge' if name is None else name
         self.kind = Charge
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)
@@ -161,8 +161,8 @@ class Charge(Unit):
 class Inductance(Unit):
     classUnits = _dictionary['Inductance']
 
-    def __init__(self, value: numeric, unit: unit_or_str):
-        self.name = 'inductance'
+    def __init__(self, value: numeric, unit: unit_or_str, name=None):
+        self.name = 'inductance' if name is None else name
         self.kind = Inductance
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)
@@ -171,8 +171,8 @@ class Inductance(Unit):
 class Impedance(Unit):
     classUnits = _dictionary['Impedance']
 
-    def __init__(self, value: numeric, unit: unit_or_str):
-        self.name = 'Impedance'
+    def __init__(self, value: numeric, unit: unit_or_str, name=None):
+        self.name = 'Impedance' if name is None else name
         self.kind = Impedance
         self.value = self.check_value(value)
         self.unit = self.check_unit(unit)
