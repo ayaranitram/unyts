@@ -6,11 +6,12 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.15'
-__release__ = 20230522
+__version__ = '0.5.30'
+__release__ = 20230724
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'unitless_names',
            'uncertain_names']
 
+import logging
 from json import load as json_load
 from pickle import load as pickle_load, dump as pickle_dump
 from os.path import isfile
@@ -19,6 +20,8 @@ from .parameters import unyts_parameters_, dir_path
 StandardAirDensity = 1.225  # Kg/m3 or g/cc
 StandardEarthGravity = 9.80665  # m/s2 or 980.665 cm/s2 from
 uncertain_names = ['oz', 'ounce', 'ounces', 'OZ', 'OUNCE', 'OUNCES']
+
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 # Sistema Internacional
 SI = {
@@ -73,7 +76,7 @@ OGF_order = (tuple(), tuple, ('Volume', 'Rate',))
 
 
 def _load_dictionary() -> (dict, dict):
-    print('preparing units dictionary...')
+    logging.info('preparing units dictionary...')
 
     # the dictionary that contains all the units definitions
     dictionary = {}
@@ -520,7 +523,7 @@ if not unyts_parameters_.reload_ and \
             temperatureRatioConversions = pickle_load(f)
         with open(dir_path + 'units/unitless_names.cache', 'rb') as f:
             unitless_names = pickle_load(f)
-        print('units dictionary loaded from cache...')
+        logging.info('units dictionary loaded from cache...')
     except:
         unyts_parameters_.reload_ = True
         dictionary, temperatureRatioConversions, unitless_names = _load_dictionary()

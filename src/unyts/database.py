@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.16'
-__release__ = 20230522
+__version__ = '0.5.30'
+__release__ = 20230724
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory']
 
 import logging
@@ -38,7 +38,7 @@ def load_memory(path=None) -> None:
 
 
 def _load_network():
-    print('preparing units network...')
+    logging.info('preparing units network...')
     network = UDigraph()
 
     for unit_kind in dictionary:
@@ -490,7 +490,7 @@ def _load_network():
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for otherName in network.children_of(network.get_node(unit_name.split('/')[0])):
                     if network.get_node(unit_name.split('/')[0]) != otherName:
-                        print('R   3: ' + unit_name, otherName.get_name())
+                        logging.warning('R   3: ' + unit_name, otherName.get_name())
                         otherRate = otherName.get_name() + '/' + unit_name.split('/')[1]
                         network.add_node(UNode(otherRate))
                         network.add_edge(Conversion(network.get_node(unit_name), otherRate,
@@ -659,7 +659,7 @@ def _complete_products() -> None:
 
 
 def _rebuild_units():
-    print('Rebuilding units dictionary...')
+    logging.warning('Rebuilding units dictionary...')
     from .dictionaries import _load_dictionary
     dictionary, temperatureRatioConversions, unitless_names = _load_dictionary()
     units_network = _load_network()
@@ -693,7 +693,7 @@ if not unyts_parameters_.reload_ and \
     try:
         with open(dir_path + 'units/units_network.cache', 'rb') as f:
             units_network = cloudpickle_load(f)
-        print('units network loaded from cache...')
+        logging.info('units network loaded from cache...')
         unyts_parameters_.reload_ = False
         unyts_parameters_.save_params()
     except:
@@ -720,7 +720,7 @@ else:
     unyts_parameters_.reload_ = False
     unyts_parameters_.save_params()
     if unyts_parameters_.cache_:
-        print('saving units network and dictionary to cache...')
+        logging.info('saving units network and dictionary to cache...')
         if _cloudpickle_:
             with open(dir_path + 'units/units_network.cache', 'wb') as f:
                 cloudpickle_dump(units_network, f)
