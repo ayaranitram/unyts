@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.7'
-__release__ = 20230523
+__version__ = '0.5.8'
+__release__ = 20231220
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -344,7 +344,7 @@ def convertible(from_unit: str, to_unit: str) -> bool:
         return False
 
 
-def convert(value: numeric, from_unit: str, to_unit: str, print_conversion_path: bool = None):
+def convert(value: numeric, from_unit: str, to_unit: str = 'Empty', print_conversion_path: bool = None):
     """
     returns the received value (integer, float, array, Series, DataFrame, etc)
     transformed from the units 'from_unit' to the units 'to_units'.
@@ -368,11 +368,14 @@ def convert(value: numeric, from_unit: str, to_unit: str, print_conversion_path:
         the converted value if input value is not None
     """
     from unyts.unit_class import Unit
+
     # cleaning inputs
+    if isinstance(value, Unit):
+        if to_unit == 'Empty':
+            from_unit, to_unit = value.unit, from_unit
+        value = value.get_value()
     if _numpy_ and hasattr(value, '__iter__') and type(value) is not np.array:
         value = np.array(value)
-    if isinstance(value, Unit):
-        value = value.get_value()
     if value is not None and not isinstance(value, numeric):
         raise ValueError("value must be numeric.")
     if type(value) in [list, tuple]:
@@ -393,6 +396,9 @@ def convert(value: numeric, from_unit: str, to_unit: str, print_conversion_path:
         from_unit = 'None'
     else:
         raise TypeError(f"'from_unit' must be string, not {type(from_unit)}, like {from_unit}")
+
+    if to_unit == 'Empty':
+        raise TypeError("convert() missing 1 required positional argument: 'to_unit'")
     if type(to_unit) is str and to_unit not in ('"', "'"):
         to_unit = to_unit.strip("( ')").strip('( ")').strip("'")
     elif type(to_unit) is str:
