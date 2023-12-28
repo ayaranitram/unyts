@@ -17,6 +17,7 @@ from .errors import NoConversionFoundError
 from .parameters import unyts_parameters_, _get_density
 from .helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
 from functools import reduce
+from typing import Union
 import logging
 
 try:
@@ -37,13 +38,27 @@ except ModuleNotFoundError:
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 if _numpy_ and _pandas_:
-    numeric = (int, float, complex, ndarray, Series, DataFrame)
+    numeric = Union[int, float, complex, ndarray, Series, DataFrame]
 elif _numpy_:
-    numeric = (int, float, complex, ndarray)
+    numeric = Union[int, float, complex, ndarray]
 elif _pandas_:
-    numeric = (int, float, complex, Series, DataFrame)
+    numeric = Union[int, float, complex, Series, DataFrame]
 else:
-    numeric = (int, float, complex)
+    numeric = Union[int, float, complex]
+
+
+class EmptyType(type):
+    def __repr__(self):
+        return "Empty"
+
+
+class Empty(object, metaclass=EmptyType):
+    """
+    A class to specify an "Empty" (not Null nor None) value.
+    """
+
+
+str_Empty = Union[str, Empty]
 
 
 def _str2lambda(string: str):
@@ -344,14 +359,14 @@ def convertible(from_unit: str, to_unit: str) -> bool:
         return False
 
 
-def convert(value: numeric, from_unit: str, to_unit: str = 'Empty', print_conversion_path: bool = None):
+def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_conversion_path: bool = None):
     """
     returns the received value (integer, float, array, Series, DataFrame, etc)
     transformed from the units 'from_unit' to the units 'to_units'.
 
     Parameters
     ----------
-    value : int, float, array, Series, DataFrame, etc
+    value : numeric (int, float, NumPy.array, Series, DataFrame, ...)
         the value to be converted.
     from_unit : str
         the units of the provided value.
