@@ -8,10 +8,11 @@ Created on Sat Oct 24 15:57:27 2020
 
 __version__ = '0.5.8'
 __release__ = 20231220
-__all__ = ['convert', 'convertible', 'Empty']
+__all__ = ['convert', 'convertible']
 
 from .database import units_network
 from .dictionaries import dictionary, temperatureRatioConversions, uncertain_names
+from .Empty import Empty, str_Empty
 from .searches import BFS, print_path
 from .errors import NoConversionFoundError
 from .parameters import unyts_parameters_, _get_density
@@ -45,20 +46,6 @@ elif _pandas_:
     numeric = Union[int, float, complex, Series, DataFrame]
 else:
     numeric = Union[int, float, complex]
-
-
-class EmptyType(type):
-    def __repr__(self):
-        return "Empty"
-
-
-class Empty(object, metaclass=EmptyType):
-    """
-    A class to specify an "Empty" (not Null nor None) value.
-    """
-
-
-str_Empty = Union[str, Empty]
 
 
 def _str2lambda(string: str):
