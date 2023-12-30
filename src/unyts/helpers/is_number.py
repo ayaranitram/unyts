@@ -17,9 +17,10 @@ def is_number(string: str) -> bool:
     Checks if a string represents a number.
     Valid numbers are:
         positive integers, as in .isnumeric() and .isdigit() methods from string class
-        floats, numbers with pointsç
-        negative numbers, with dash at the left of the digits
-        complex numbers,
+        floats, numbers with dot
+        negative numbers, with hyphen at the left of the digits
+        complex numbers, a tuple of two numbers, the first one for the 'real' part
+            and the second one for the imaginary part.
 
     Parameters
     ----------
