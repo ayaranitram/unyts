@@ -63,6 +63,7 @@ class Unit(object, metaclass=UnytType):
     A class to cope with values associated to units, its arithmetic and logic
     operations and conversions.
     """
+    class_units = []
 
     def __init__(self, value, unit=None, name=None):
         if isinstance(value, Unit):

@@ -16,7 +16,7 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 
 class Density(Unit):
-    classUnits = _dictionary['Density']
+    class_units = _dictionary['Density']
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'density' if name is None else name
@@ -26,7 +26,7 @@ class Density(Unit):
 
 
 class VolumeRatio(Unit):
-    classUnits = _dictionary['VolumeRatio']
+    class_units = _dictionary['VolumeRatio']
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'volume_ratio' if name is None else name
@@ -36,7 +36,7 @@ class VolumeRatio(Unit):
 
 
 class ProductivityIndex(Unit):
-    classUnits = _dictionary['ProductivityIndex']
+    class_units = _dictionary['ProductivityIndex']
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'productivity_index' if name is None else name
@@ -46,7 +46,7 @@ class ProductivityIndex(Unit):
 
 
 class PressureGradient(Unit):
-    classUnits = _dictionary['PressureGradient']
+    class_units = _dictionary['PressureGradient']
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'pressure_gradient' if name is None else name

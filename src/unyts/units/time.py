@@ -16,7 +16,7 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 
 class Time(Unit):
-    classUnits = _dictionary['Time']
+    class_units = _dictionary['Time']
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'time' if name is None else name
@@ -33,7 +33,7 @@ class Time(Unit):
 
 
 class Frequency(Unit):
-    classUnits = _dictionary['Frequency']
+    class_units = _dictionary['Frequency']
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'frequency' if name is None else name

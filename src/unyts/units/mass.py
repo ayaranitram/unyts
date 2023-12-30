@@ -16,7 +16,7 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 
 class Mass(Unit):
-    classUnits = _dictionary['Mass']
+    class_units = _dictionary['Mass']
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'mass' if name is None else name

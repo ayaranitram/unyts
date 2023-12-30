@@ -16,7 +16,7 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 
 class Force(Unit):
-    classUnits = _dictionary['Force']
+    class_units = _dictionary['Force']
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'force' if name is None else name
@@ -26,7 +26,7 @@ class Force(Unit):
 
 
 class Pressure(Unit):
-    classUnits = _dictionary['Pressure']
+    class_units = _dictionary['Pressure']
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'pressure' if name is None else name
@@ -36,7 +36,7 @@ class Pressure(Unit):
 
 
 class Weight(Unit):
-    classUnits = _dictionary['Weight']
+    class_units = _dictionary['Weight']
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'weight' if name is None else name
@@ -46,7 +46,7 @@ class Weight(Unit):
 
 
 class Compressibility(Unit):
-    classUnits = _dictionary['Compressibility']
+    class_units = _dictionary['Compressibility']
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'compressibility' if name is None else name
@@ -56,7 +56,7 @@ class Compressibility(Unit):
 
 
 class Viscosity(Unit):
-    classUnits = _dictionary['Viscosity']
+    class_units = _dictionary['Viscosity']
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'viscosity' if name is None else name

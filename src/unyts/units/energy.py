@@ -17,7 +17,7 @@ from .time import Time
 
 
 class Energy(Unit):
-    classUnits = _dictionary['Energy']
+    class_units = _dictionary['Energy']
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'energy' if name is None else name
@@ -35,7 +35,7 @@ class Energy(Unit):
 
 
 class Power(Unit):
-    classUnits = _dictionary['Power']
+    class_units = _dictionary['Power']
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'power' if name is None else name
@@ -59,7 +59,7 @@ class Power(Unit):
 
 
 class Current(Unit):
-    classUnits = _dictionary['Current']
+    class_units = _dictionary['Current']
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'current' if name is None else name
@@ -75,7 +75,7 @@ class Current(Unit):
 
 
 class Voltage(Unit):
-    classUnits = _dictionary['Voltage']
+    class_units = _dictionary['Voltage']
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'voltage' if name is None else name
@@ -101,7 +101,7 @@ class Voltage(Unit):
 
 
 class Resistance(Unit):
-    classUnits = _dictionary['Resistance']
+    class_units = _dictionary['Resistance']
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'resistance' if name is None else name
@@ -117,7 +117,7 @@ class Resistance(Unit):
 
 
 class Conductance(Unit):
-    classUnits = _dictionary['Conductance']
+    class_units = _dictionary['Conductance']
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'conductance' if name is None else name
@@ -127,7 +127,7 @@ class Conductance(Unit):
 
 
 class Capacitance(Unit):
-    classUnits = _dictionary['Capacitance']
+    class_units = _dictionary['Capacitance']
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'capacitance' if name is None else name
@@ -143,7 +143,7 @@ class Capacitance(Unit):
 
 
 class Charge(Unit):
-    classUnits = _dictionary['Charge']
+    class_units = _dictionary['Charge']
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'charge' if name is None else name
@@ -159,7 +159,7 @@ class Charge(Unit):
 
 
 class Inductance(Unit):
-    classUnits = _dictionary['Inductance']
+    class_units = _dictionary['Inductance']
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'inductance' if name is None else name
@@ -169,7 +169,7 @@ class Inductance(Unit):
 
 
 class Impedance(Unit):
-    classUnits = _dictionary['Impedance']
+    class_units = _dictionary['Impedance']
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'Impedance' if name is None else name

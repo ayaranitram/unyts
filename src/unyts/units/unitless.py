@@ -18,7 +18,7 @@ from ..dictionaries import unitless_names
 
 
 class Dimensionless(Unit):
-    classUnits = _dictionary['Dimensionless']
+    class_units = _dictionary['Dimensionless']
 
     def __init__(self, value: numeric, units: unit_or_str = None, name=None):
         self.name = 'dimensionless' if name is None else name
@@ -49,7 +49,7 @@ class Dimensionless(Unit):
 
 
 class Percentage(Dimensionless):
-    classUnits = _dictionary['Percentage']
+    class_units = _dictionary['Percentage']
 
     def __init__(self, value: numeric, units: unit_or_str = None, name=None):
         self.name = 'percentage' if name is None else name
