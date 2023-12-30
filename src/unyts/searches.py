@@ -29,10 +29,9 @@ def BFS(graph, start, end, verbose=False) -> list:
             last_node = conv_path[-1]
             if last_node is end:
                 return conv_path
-            for next_node in graph.children_of(last_node):
-                if next_node not in conv_path:
-                    new_path = conv_path + [next_node]
-                    path_queue.append(new_path)
+            path_queue += [conv_path + [next_node]
+                           for next_node in graph.children_of(last_node) 
+                           if next_node not in conv_path]
             visited.append(conv_path)
 
 
