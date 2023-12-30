@@ -13,15 +13,15 @@ __all__ = ['split_ratio', 'split_product', 'split_unit', 'reduce_parentheses', '
 from .multi_split import multi_split
 
 
-def split_ratio(unit: str) -> tuple:  # tuple[str]
+def split_ratio(unit: str) -> list[str]:
     return list(map(str.strip, unit.split('/')))
 
 
-def split_product(unit: str) -> tuple:  # tuple[str]
+def split_product(unit: str) -> list[str]:
     return list(map(str.strip, unit.split('*')))
 
 
-def split_unit(unit: str) -> tuple:  # tuple[str]
+def split_unit(unit: str) -> list:
     return multi_split(unit,
                        sep=('*', '/',),
                        remove=None)
