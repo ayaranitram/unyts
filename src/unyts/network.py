@@ -11,6 +11,7 @@ from .parameters import unyts_parameters_, dir_path
 
 try:
     from cloudpickle import dump as cloudpickle_dump, load as cloudpickle_load
+
     _cloudpickle_ = True
 except ModuleNotFoundError:
     _cloudpickle_ = False
@@ -23,6 +24,8 @@ __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
 class UNode(object):
+    __slots__ = ('name',)
+
     def __init__(self, name):
         self.name = name if type(name) is str else ''
 
@@ -35,6 +38,7 @@ class UNode(object):
 
 class UDigraph(object):
     """edges is a dict mapping each node to a list of its children"""
+    __slots__ = ('edges', 'previous', 'recursion_limit', 'fvf', 'memory', 'print', '_cloudpickle_')
 
     def __init__(self) -> None:
         self.edges = {}
@@ -103,7 +107,7 @@ class UDigraph(object):
             return result[0]
 
     def list_nodes(self):
-        return list(set([N.get_name() for N in self.edge.keys()]))
+        return list(set([n.get_name() for n in self.edge.keys()]))
 
     def convert(self, value, src, dest):
         if type(src) != UNode:
@@ -166,6 +170,8 @@ class UDigraph(object):
 
 
 class Conversion(object):
+    __slots__ = ('src', 'dest', 'conv', 'rev')
+
     def __init__(self, src, dest, conv, reverse=False):
         """Assumes src and dest are nodes"""
         self.src = src

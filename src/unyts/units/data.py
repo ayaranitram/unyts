@@ -17,6 +17,7 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 class Data(Unit):
     class_units = _dictionary['Data']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'data' if name is None else name

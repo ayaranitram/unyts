@@ -17,6 +17,7 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 class Length(Unit):
     class_units = _dictionary['Length']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'length' if name is None else name
@@ -27,6 +28,7 @@ class Length(Unit):
 
 class Area(Unit):
     class_units = _dictionary['Area']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'area' if name is None else name
@@ -37,6 +39,7 @@ class Area(Unit):
 
 class Volume(Unit):
     class_units = _dictionary['Volume']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'volume' if name is None else name
@@ -47,6 +50,7 @@ class Volume(Unit):
 
 class Permeability(Unit):
     class_units = _dictionary['Permeability']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'permeability' if name is None else name

@@ -25,6 +25,7 @@ def OtherUnits(value: numeric, units: unit_or_str, name=None) -> Unit:
 
 class UserUnits(Unit):
     class_units = dictionary['UserUnits']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'user_units' if name is None else name

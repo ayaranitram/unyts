@@ -17,6 +17,7 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 class Rate(Unit):
     class_units = _dictionary['Rate']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'rate' if name is None else name
@@ -27,6 +28,7 @@ class Rate(Unit):
 
 class Velocity(Unit):
     class_units = _dictionary['Velocity']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'velocity' if name is None else name
@@ -41,6 +43,7 @@ def Speed(value: numeric, units: unit_or_str, name=None):
 
 class Acceleration(Unit):
     class_units = _dictionary['Acceleration']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'acceleration' if name is None else name

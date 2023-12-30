@@ -17,6 +17,7 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 class Time(Unit):
     class_units = _dictionary['Time']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'time' if name is None else name
@@ -34,6 +35,7 @@ class Time(Unit):
 
 class Frequency(Unit):
     class_units = _dictionary['Frequency']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'frequency' if name is None else name

@@ -17,6 +17,7 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 class Temperature(Unit):
     class_units = _dictionary['Temperature']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'temperature' if name is None else name
@@ -27,6 +28,7 @@ class Temperature(Unit):
 
 class TemperatureGradient(Unit):
     class_units = _dictionary['TemperatureGradient']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: str, units: unit_or_str, name=None):
         self.name = 'temperature_gradient' if name is None else name

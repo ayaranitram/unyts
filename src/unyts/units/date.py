@@ -19,6 +19,7 @@ from numpy import datetime64, timedelta64
 
 class Date(Unit):
     class_units = _dictionary['Date']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value, units='date', name=None):
         self.value = datetime64(value)

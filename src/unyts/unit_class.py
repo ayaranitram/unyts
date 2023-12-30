@@ -64,6 +64,7 @@ class Unit(object, metaclass=UnytType):
     operations and conversions.
     """
     class_units = []
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, unit=None, name=None):
         if isinstance(value, Unit):

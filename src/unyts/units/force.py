@@ -17,6 +17,7 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 class Force(Unit):
     class_units = _dictionary['Force']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'force' if name is None else name
@@ -27,6 +28,7 @@ class Force(Unit):
 
 class Pressure(Unit):
     class_units = _dictionary['Pressure']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'pressure' if name is None else name
@@ -37,6 +39,7 @@ class Pressure(Unit):
 
 class Weight(Unit):
     class_units = _dictionary['Weight']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'weight' if name is None else name
@@ -47,6 +50,7 @@ class Weight(Unit):
 
 class Compressibility(Unit):
     class_units = _dictionary['Compressibility']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'compressibility' if name is None else name
@@ -57,6 +61,7 @@ class Compressibility(Unit):
 
 class Viscosity(Unit):
     class_units = _dictionary['Viscosity']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
         self.name = 'viscosity' if name is None else name

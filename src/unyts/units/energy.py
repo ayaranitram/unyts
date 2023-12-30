@@ -18,6 +18,7 @@ from .time import Time
 
 class Energy(Unit):
     class_units = _dictionary['Energy']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'energy' if name is None else name
@@ -36,6 +37,7 @@ class Energy(Unit):
 
 class Power(Unit):
     class_units = _dictionary['Power']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'power' if name is None else name
@@ -60,6 +62,7 @@ class Power(Unit):
 
 class Current(Unit):
     class_units = _dictionary['Current']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'current' if name is None else name
@@ -76,6 +79,7 @@ class Current(Unit):
 
 class Voltage(Unit):
     class_units = _dictionary['Voltage']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'voltage' if name is None else name
@@ -102,6 +106,7 @@ class Voltage(Unit):
 
 class Resistance(Unit):
     class_units = _dictionary['Resistance']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'resistance' if name is None else name
@@ -118,6 +123,7 @@ class Resistance(Unit):
 
 class Conductance(Unit):
     class_units = _dictionary['Conductance']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'conductance' if name is None else name
@@ -128,6 +134,7 @@ class Conductance(Unit):
 
 class Capacitance(Unit):
     class_units = _dictionary['Capacitance']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'capacitance' if name is None else name
@@ -144,6 +151,7 @@ class Capacitance(Unit):
 
 class Charge(Unit):
     class_units = _dictionary['Charge']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'charge' if name is None else name
@@ -160,6 +168,7 @@ class Charge(Unit):
 
 class Inductance(Unit):
     class_units = _dictionary['Inductance']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'inductance' if name is None else name
@@ -170,6 +179,7 @@ class Inductance(Unit):
 
 class Impedance(Unit):
     class_units = _dictionary['Impedance']
+    __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, unit: unit_or_str, name=None):
         self.name = 'Impedance' if name is None else name
