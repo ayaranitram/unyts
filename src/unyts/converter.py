@@ -8,7 +8,7 @@ Created on Sat Oct 24 15:57:27 2020
 
 __version__ = '0.5.8'
 __release__ = 20231220
-__all__ = ['convert', 'convertible']
+__all__ = ['convert', 'convertible', 'Empty']
 
 from .database import units_network
 from .dictionaries import dictionary, temperatureRatioConversions, uncertain_names
@@ -62,6 +62,17 @@ str_Empty = Union[str, Empty]
 
 
 def _str2lambda(string: str):
+    """
+    Returns a lambda with a multiplication or division operation, depending on the received string.
+
+    Parameters
+    ----------
+    string: str
+
+    Returns
+    -------
+    lambda
+    """
     if string == '/':
         return lambda x, y: x / y
     if string == '*':
@@ -69,6 +80,19 @@ def _str2lambda(string: str):
 
 
 def _apply_conversion(value, conversion_path):
+    """
+    Helper function to apply the functions stated in the `conversion_path`.
+    Parameters
+    ----------
+    value: numeric (int, float, NumPy.array, ...)
+        the value(s) to apply the conversion
+    conversion_path: list
+        conversion_path provided by _get_conversion()
+
+    Returns
+    -------
+        numeric (int, float, NumPy.array, ...)
+    """
     if len(conversion_path) == 1 and conversion_path[0] == '1/':
         return 1 / value
     i = 0
@@ -116,25 +140,62 @@ def _apply_conversion(value, conversion_path):
 
 
 def _lambda_conversion(conversion_path):
+    """
+    Helper function to make a lambda applying in sequence all the conversions listed in the conversion_path.
+
+    Parameters
+    ----------
+    conversion_path: list
+        sequence of the conversions to be applied
+    Returns
+    -------
+    conversion_lambda: lambda
+        to apply the conversion path
+    """
     big_lambda = [units_network.conversion(conversion_path[i], conversion_path[i + 1])
                   for i in range(len(conversion_path) - 1)]
     return lambda x: _lambda_loop(x, big_lambda[:])
 
 
 def _lambda_loop(x, lambda_list):
+    """
+    Helper function to apply lambda functions in sequence.
+
+    Parameters
+    ----------
+    x: numeric
+        the value to apply the conversion sequence
+    lambda_list : list
+        a list of the conversions that should be applied in sequence
+
+    Returns
+    -------
+    lambda_sequence : lambda
+        all the lambdas in the list applied in sequence
+    """
     for lambda_i in lambda_list:
         x = lambda_i(x)
     return x
 
 
 def _get_pair_child(unit: str):
-    # get the Unit node if the name received
+    """
+    Returns the following child of a unit node.
+    Parameters
+    ----------
+    unit: str
+
+    Returns
+    -------
+        unit_node
+    """
+    # get the Unit node if the name received is string
     unit = units_network.get_node(unit) if type(unit) is str else unit
 
-    # get pair of units children
+    # get a pair of units children
     pair_child = list(filter(lambda u: '/' in u or '*' in u, [u.get_name() for u in units_network.children_of(unit)]))
 
-    # if pair of units child is found, return the one with the shorter name
+    # if a pair of units child is found, return the one with the shorter name
     if len(pair_child) > 0:
         pair_child = sorted(pair_child, key=len)[0]
     # if no children found at this level, look for children in next level
@@ -151,6 +212,26 @@ def _get_pair_child(unit: str):
 
 
 def _get_conversion(value, from_unit, to_unit):
+    """
+    Helper function to handle looking for the conversion factor of special cases and through the units network.
+
+    Parameters
+    ----------
+    value: numeric or None
+    from_unit: str
+    to_unit: str
+
+    Returns
+    -------
+        (conversion, conversion_path)
+
+    """
+    # check if already solved and memorized
+    if (from_unit, to_unit) in units_network.memory:
+        conversion_lambda, conversion_path = units_network.memory[(from_unit, to_unit)]
+        return (conversion_lambda, conversion_path) if (conversion_lambda is None or value is None) \
+            else (conversion_lambda(value), conversion_path)
+
     # specific cases for quick conversions
     # no conversion required if 'from' and 'to' units are the same units
     if from_unit == to_unit:
@@ -168,11 +249,11 @@ def _get_conversion(value, from_unit, to_unit):
             return value, [units_network.get_node(from_unit) if units_network.has_node(from_unit) else from_unit,
                            units_network.get_node(to_unit) if units_network.has_node(to_unit) else to_unit]
 
-    # from None to some units or viceversa
+    # from None to some units or vice-versa
     if from_unit is None or to_unit is None:
         return (lambda x: x, []) if value is None else (value, [])
 
-    # from Dimensionless to Percentage or viceversa
+    # from Dimensionless to Percentage or vice-versa
     if (from_unit.lower() in dictionary['Dimensionless']) and to_unit.lower() in dictionary['Percentage']:
         return (lambda x: x * 100, ['*', 100]) if value is None else (value * 100, ['*', 100])
     if from_unit.lower() in dictionary['Percentage'] and to_unit.lower() in dictionary['Dimensionless']:
@@ -219,21 +300,8 @@ def _get_conversion(value, from_unit, to_unit):
         else:
             return 1 / value, ['1/']
 
-    # check if already solved and memorized
-    if (from_unit, to_unit) in units_network.memory:
-        conversion_lambda, conversion_path = units_network.memory[(from_unit, to_unit)]
-        return (conversion_lambda, conversion_path) if (conversion_lambda is None or value is None) \
-            else (conversion_lambda(value), conversion_path)
-
     # check if path is already defined in network
-    if units_network.has_node(from_unit) and units_network.has_node(to_unit):
-        conversion_path = BFS(units_network,
-                              units_network.get_node(from_unit),
-                              units_network.get_node(to_unit),
-                              unyts_parameters_.verbose_)
-    else:
-        conversion_path = None
-
+    conversion_path = _search_network(from_unit, to_unit)
     # return Conversion if found in network
     if conversion_path is not None:
         units_network.memory[(from_unit, to_unit)] = (_lambda_conversion(conversion_path), conversion_path)
@@ -247,9 +315,19 @@ def _get_conversion(value, from_unit, to_unit):
 
 def _converter(value, from_unit, to_unit):
     """
-    returns the received value (integer, float, array, series, dataframe, etc)
-    transformed from the units 'from_unit' to the units 'to_units'
+    Transform the received value (integer, float, array, series, frame, ...)
+    from the units `from_unit` to the units `to_units`
     as well as conversion path.
+
+    Parameters
+    ----------
+    value: numeric or None
+    from_unit: str
+    to_unit: str
+
+    Returns
+    -------
+        (conversion, conversion_path)
     """
     # reset memory for this variable
     units_network.previous = []
@@ -337,73 +415,41 @@ def _converter(value, from_unit, to_unit):
     return None, None
 
 
-def _clean_print_conversion_path(print_conversion_path: bool = None) -> bool:
-    return unyts_parameters_.print_path_ if print_conversion_path is None else bool(print_conversion_path)
-
-
-def _clean_verbose(verbose) -> bool:
-    return unyts_parameters_.verbose_ if verbose is None else bool(verbose)
-
-
-def convertible(from_unit: str, to_unit: str) -> bool:
-    from unyts.unit_class import Unit
-    if isinstance(from_unit, Unit):
-        from_unit = from_unit.get_unit()
-    if isinstance(to_unit, Unit):
-        to_unit = to_unit.get_unit()
-
-    try:
-        conv, conv_path = _converter(1, from_unit, to_unit)
-        return False if conv is None else True
-    except NoConversionFoundError:
-        return False
-
-
-def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_conversion_path: bool = None):
+def _clean_input(value: numeric, from_unit: str, to_unit: str_Empty) -> (numeric, str, str):
     """
-    returns the received value (integer, float, array, Series, DataFrame, etc)
-    transformed from the units 'from_unit' to the units 'to_units'.
-
+    Helper function to preprocess the input parameters from the user
     Parameters
     ----------
-    value : numeric (int, float, NumPy.array, Series, DataFrame, ...)
-        the value to be converted.
-    from_unit : str
-        the units of the provided value.
-    to_unit : str
-        the units to convert the value.
-    print_conversion_path : bool, optional
-        Set to True to show the path used for Conversion. The default is False.
+    value: numeric, Unit or None
+    from_unit: str, Unit or None
+    to_unit: str, Unit, None or Empty
 
     Returns
     -------
-    lambda_conversion : lambda
-        if input value is None, or
-    converted_value : int, float, array, Series, DataFrame ...
-        the converted value if input value is not None
+        value: numeric
+        from_unit: str
+        to_unit: str
     """
     from unyts.unit_class import Unit
 
-    # cleaning inputs
     if isinstance(value, Unit):
-        if to_unit == 'Empty':
+        if to_unit is Empty or to_unit == 'Empty':
             from_unit, to_unit = value.unit, from_unit
         value = value.get_value()
     if _numpy_ and hasattr(value, '__iter__') and type(value) is not np.array:
         value = np.array(value)
+    elif not _numpy_ and type(value) in [list, tuple]:
+        raise TypeError("Can't operate with list or tuple without NumPy. `value` can not be a list or tuple.")
     if value is not None and not isinstance(value, numeric):
         raise ValueError("value must be numeric.")
-    if type(value) in [list, tuple]:
-        raise TypeError("`value` can not be a list or tuple if NumPy is not installed.")
     if isinstance(from_unit, Unit):
         from_unit = from_unit.get_unit()
     if isinstance(to_unit, Unit):
         to_unit = to_unit.get_unit()
-    print_conversion_path = _clean_print_conversion_path(print_conversion_path)
 
-    if type(from_unit) is str and from_unit not in ('"', "'"):
+    if isinstance(from_unit, str) and from_unit not in ('"', "'"):
         from_unit = from_unit.strip("( ')").strip('( ")').strip("'")
-    elif type(from_unit) is str:
+    elif isinstance(from_unit, str):
         from_unit = from_unit.strip("( )")
     elif from_unit is None:
         from_unit = 'None'
@@ -412,11 +458,11 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_co
     else:
         raise TypeError(f"'from_unit' must be string, not {type(from_unit)}, like {from_unit}")
 
-    if to_unit == 'Empty':
+    if to_unit is Empty or to_unit == 'Empty':
         raise TypeError("convert() missing 1 required positional argument: 'to_unit'")
-    if type(to_unit) is str and to_unit not in ('"', "'"):
+    if isinstance(to_unit, str) and to_unit not in ('"', "'"):
         to_unit = to_unit.strip("( ')").strip('( ")').strip("'")
-    elif type(to_unit) is str:
+    elif isinstance(to_unit, str):
         to_unit = to_unit.strip("( )")
     elif to_unit is None:
         to_unit = 'None'
@@ -429,7 +475,32 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_co
         from_unit = _reduce_parentheses(from_unit)
         to_unit = _reduce_parentheses(to_unit)
 
-    # density factor, in case of conversion from volume to mass or mass to volume
+    return value, from_unit, to_unit
+
+
+def _clean_print_conversion_path(print_conversion_path: bool = None) -> bool:
+    return unyts_parameters_.print_path_ if print_conversion_path is None else bool(print_conversion_path)
+
+
+def _clean_verbose(verbose) -> bool:
+    return unyts_parameters_.verbose_ if verbose is None else bool(verbose)
+
+
+def _density_conversion(value: numeric, from_unit: str, to_unit: str):
+    """
+    Helper function to deal with conversion between weight and volume, using density.
+
+    Parameters
+    ----------
+    value: numeric
+    from_unit: str
+    to_unit: str
+
+    Returns
+    -------
+    (conv, conv_path): (numeric or lambda, list) or (None, None)
+        a conversion and the conversion path, if found.
+    """
     if from_unit not in uncertain_names and to_unit not in uncertain_names and \
             from_unit in dictionary['Volume'] and to_unit in dictionary['Weight']:
         density = _get_density()
@@ -450,8 +521,99 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_co
         else:
             conv = conv1 / density * conv2
         conv_path = conv_path1 + ['/', density, '*'] + conv_path2
-    else:  # regular conversion
-        conv, conv_path = _converter(value, from_unit, to_unit)
+    else:
+        conv, conv_path = None, None
+
+    return conv, conv_path
+
+
+def _search_network(from_unit, to_unit, algorithm='BFS'):
+    """
+    Searches for a path from `from_units` through the units network to `to_units`.
+
+    Parameters
+    ----------
+    from_unit: str
+        the starting point of the search.
+    to_unit: str
+        the target to be found in the network.
+    algorithm: str, "BFS"
+        the algorithm to use for searching the network.
+    Returns
+    -------
+        conversion_path: list
+            the list of steps to go from `from_unit` until `to_unit`.
+    """
+    if units_network.has_node(from_unit) and units_network.has_node(to_unit):
+        if algorithm == 'BFS':
+            conversion_path = BFS(units_network,
+                                  units_network.get_node(from_unit),
+                                  units_network.get_node(to_unit),
+                                  unyts_parameters_.verbose_)
+        else:
+            raise NotImplementedError("other search algorithms different from BFS are not yet implemented.")
+    else:
+        conversion_path = None
+    return conversion_path
+
+
+def convertible(from_unit: str, to_unit: str) -> bool:
+    """
+    Returns True if a conversion path from `from_unit` to `to_unit` is found, otherwise returns True.
+
+    Parameters.
+    ----------
+    from_unit: str, Unit or None
+    to_unit: str, Unit or None
+
+    Returns
+    -------
+        bool
+    """
+    from unyts.unit_class import Unit
+    if isinstance(from_unit, Unit):
+        from_unit = from_unit.get_unit()
+    if isinstance(to_unit, Unit):
+        to_unit = to_unit.get_unit()
+
+    try:
+        conv, conv_path = _converter(1, from_unit, to_unit)
+        return False if conv is None else True
+    except NoConversionFoundError:
+        return False
+
+
+def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_conversion_path: bool = None):
+    """
+    Converts the received value (integer, float, array, Series, Frame, ...) from the units 'from_unit' to the units 'to_units'.
+
+    Parameters
+    ----------
+    value : numeric (int, float, NumPy.array, Series, DataFrame, ...)
+        the value to be converted.
+    from_unit : str, Unit or None
+        the units of the provided value.
+    to_unit : str, Unit, None or Empty (the Empty class or the string "Empty")
+        the units to convert the value.
+    print_conversion_path : bool, optional
+        Set to True to show the path used for Conversion. The default is False.
+
+    Returns
+    -------
+    lambda_conversion : lambda
+        if input value is None, or
+    converted_value : int, float, array, Series, DataFrame ...
+        the converted value if input value is not None
+    """
+    # cleaning inputs
+    value, from_unit, to_unit = _clean_input(value, from_unit, to_unit)
+    print_conversion_path = _clean_print_conversion_path(print_conversion_path)
+
+    # density factor, in case of conversion from volume to mass or mass to volume
+    conv, conv_path = _density_conversion(value, from_unit, to_unit)
+
+    # regular conversion
+    conv, conv_path = _converter(value, from_unit, to_unit)
 
     if conv is None:
         if unyts_parameters_.raise_error_:
@@ -467,6 +629,28 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_co
 
 
 def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str, print_conversion_path: bool = False):
+    """
+    Particular implementation of `convert` function, specially set for SimDataFrames and SimSeries.
+    If possible to convert the units, the returns the received value (integer, float, array, Series, Frame, ...)
+    transformed from the units 'from_unit' to the units 'to_units'.
+    If not possible to convert, return the original `value`.
+
+    Parameters
+    ----------
+    value : Series, DataFrame
+        the value to be converted.
+    from_unit : str
+        the units of the provided value.
+    to_unit : str
+        the units to convert the value.
+    print_conversion_path : bool, optional
+        Set to True to show the path used for Conversion. The default is False.
+
+    Returns
+    -------
+    converted_value : Series, DataFrame
+        the converted value if input value is not None
+    """
     conv = None
     print_conversion_path = bool(print_conversion_path)
     if convertible(from_unit, to_unit):
