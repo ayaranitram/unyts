@@ -13,11 +13,11 @@ __all__ = ['split_ratio', 'split_product', 'split_unit', 'reduce_parentheses', '
 from .multi_split import multi_split
 
 
-def split_ratio(unit: str) -> list[str]:
+def split_ratio(unit: str) -> list:  # list[str]  not sub-typing in order to be compatible with Python 3.7 - 3.9
     return list(map(str.strip, unit.split('/')))
 
 
-def split_product(unit: str) -> list[str]:
+def split_product(unit: str) -> list:  # list[str]  not sub-typing in order to be compatible with Python 3.7 - 3.9
     return list(map(str.strip, unit.split('*')))
 
 
