@@ -19,6 +19,7 @@ from .converter import convert as _convert, convertible as _convertible
 from .dictionaries import _all_units
 from .parameters import unyts_parameters_
 from numbers import Number
+from typing import Union
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
@@ -35,21 +36,21 @@ except ModuleNotFoundError:
     _pandas_ = False
 
 if _numpy_ and _pandas_:
-    number = (int, float, complex, int32, int64, float32, float64)
-    numeric = (int, float, complex, int32, int64, float32, float64, ndarray, Series, DataFrame)
-    array_like = (ndarray, Series, DataFrame)
+    number = Union[int, float, complex, int32, int64, float32, float64]
+    numeric = Union[int, float, complex, int32, int64, float32, float64, ndarray, Series, DataFrame]
+    array_like = Union[ndarray, Series, DataFrame]
 elif _numpy_:
-    number = (int, float, complex, int32, int64, float32, float64)
-    numeric = (int, float, complex, ndarray, int32, int64, float32, float64)
-    array_like = (ndarray,)
+    number = Union[int, float, complex, int32, int64, float32, float64]
+    numeric = Union[int, float, complex, ndarray, int32, int64, float32, float64]
+    array_like = Union[ndarray]
 elif _pandas_:
-    number = (int, float, complex)
-    numeric = (int, float, complex, Series, DataFrame)
-    array_like = (Series, DataFrame)
+    number = Union[int, float, complex]
+    numeric = Union[int, float, complex, Series, DataFrame]
+    array_like = Union[Series, DataFrame]
 else:
-    number = (int, float, complex)
-    numeric = (int, float, complex)
-    array_like = tuple()
+    number = Union[int, float, complex]
+    numeric = Union[int, float, complex]
+    array_like = None
 
 
 class UnytType(type):
@@ -173,7 +174,7 @@ class Unit(object, metaclass=UnytType):
             return tuple(result) if flag else other + (self,)
         elif self.kind is Percentage:
             return self.kind((self.value + other) * 100, self.unit)
-        elif type(other) in numeric:
+        elif isinstance(other, numeric):
             return self.kind(self.value + other, self.unit)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__radd__(self)
@@ -213,7 +214,7 @@ class Unit(object, metaclass=UnytType):
             return tuple(result)
         elif self.kind is Percentage:
             return self.kind(self.value * other * 100, self.unit)
-        elif type(other) in numeric:
+        elif isinstance(other, numeric):
             return self.kind(self.value * other, self.unit)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rmul__(self)
@@ -249,7 +250,7 @@ class Unit(object, metaclass=UnytType):
             return tuple(result)
         elif self.kind is Percentage:
             return self.kind((self.value ** other) * 100, self.unit)
-        elif type(other) in numeric:
+        elif isinstance(other, numeric):
             pow_units = _unit_base_power(self.unit)[1] * other
             if pow_units == 0:
                 pow_units = 'Dimensionless'
@@ -306,7 +307,7 @@ class Unit(object, metaclass=UnytType):
             return tuple(result) if flag else other + (self,)
         elif self.kind is Percentage:
             return self.kind((self.value - other) * 100, self.unit)
-        elif type(other) in numeric:
+        elif isinstance(other, numeric):
             return self.kind(self.value - other, self.unit)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rsub__(self)
@@ -343,7 +344,7 @@ class Unit(object, metaclass=UnytType):
             return tuple(result)
         elif self.kind is Percentage:
             return self.kind(self.value / other * 100, self.unit)
-        elif type(other) in numeric:
+        elif isinstance(other, numeric):
             return units(self.value / other, self.unit)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rtruediv__(self)
@@ -357,7 +358,7 @@ class Unit(object, metaclass=UnytType):
             return units(other / self.value * 100, self.unit)
         elif self.kind is Dimensionless:
             return units(other / self.value, self.unit)
-        elif type(other) in numeric:
+        elif isinstance(other, numeric):
             return units(other / self.value, self.unit + '-1')
         else:
             raise NotImplementedError("Division of " + str(type(self)) + " by " + str(type(other)) + " not implemented.")
@@ -389,7 +390,7 @@ class Unit(object, metaclass=UnytType):
             return tuple(result)
         elif self.kind is Percentage:
             return self.kind(self.value // other * 100, self.unit)
-        elif type(other) in numeric:
+        elif isinstance(other, numeric):
             return self.kind(self.value // other, self.unit)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rfloordiv__(self)
@@ -403,7 +404,7 @@ class Unit(object, metaclass=UnytType):
             return units(other // self.value * 100, self.unit)
         elif self.kind is Dimensionless:
             return units(other // self.value, self.unit)
-        elif type(other) in numeric:
+        elif isinstance(other, numeric):
             return units(other // self.value, self.unit + '-1')
         else:
             raise NotImplementedError("Division of " + str(type(self)) + " by " + str(type(other)) + " not implemented.")
@@ -427,7 +428,7 @@ class Unit(object, metaclass=UnytType):
             return tuple(result)
         elif self.kind is Percentage:
             return self.kind(self.value / other * 100, self.unit)
-        elif type(other) in numeric:
+        elif isinstance(other, numeric):
             return self.kind(self.value / other, self.unit)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rmatmul__(self)
@@ -460,7 +461,7 @@ class Unit(object, metaclass=UnytType):
             return tuple(result)
         elif self.kind is Percentage:
             return self.kind(self.value % other * 100, self.unit)
-        elif type(other) in numeric:
+        elif isinstance(other, numeric):
             return self.kind(self.value % other, self.unit)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rmod__(self)
