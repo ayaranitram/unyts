@@ -6,14 +6,27 @@ Created on Sat Oct 24 17:52:34 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.9'
-__release__ = 20221231
+__version__ = '0.5.0'
+__release__ = 20231222
 __all__ = ['BFS', 'print_path']
 
 
 def BFS(graph, start, end, verbose=False) -> list:
-    """Assumes graph is a Digraph; start and end are nodes
-        Returns a shortest path from start to end in graph"""
+    """
+    Assumes graph is a Digraph; start and end are nodes.
+    Returns a shortest path from start to end in graph.
+
+    Parameters
+    ----------
+    graph: Digraph
+    start: node
+    end: node
+    verbose: bool
+        to print or not print messages.
+    Returns
+    -------
+    shortest_path: list
+    """
     init_path = [start]
     path_queue = [init_path]
     visited = []
@@ -22,12 +35,17 @@ def BFS(graph, start, end, verbose=False) -> list:
         conv_path = path_queue.pop(0)
         if conv_path in visited:
             if verbose:
-                print('<UnitsConv> ' + str(len(path_queue)) + ' paths in queue. ' + 'Already visited BFS path:\n', print_path(conv_path))
+                print(f'<UnitsConv> {len(path_queue)} paths in queue. Already visited BFS path:\n',
+                      print_path(conv_path))
         else:
             if verbose:
-                print('<UnitsConv> ' + str(len(path_queue)) + ' paths in queue. ' + 'Current BFS path:\n', print_path(conv_path))
+                print(f'<UnitsConv> {len(path_queue)} paths in queue. Current BFS path:\n',
+                      print_path(conv_path))
             last_node = conv_path[-1]
             if last_node is end:
+                if verbose:
+                    print(f'<UnitsConv> Found end node {end.get_name()} in the path',
+                          print_path(conv_path))
                 return conv_path
             path_queue += [conv_path + [next_node]
                            for next_node in graph.children_of(last_node) 
@@ -36,7 +54,18 @@ def BFS(graph, start, end, verbose=False) -> list:
 
 
 def print_path(path: list) -> str:
-    """Assumes path is a list of nodes"""
+    """
+    Assumes path is a list of nodes.
+
+    Parameters
+    ----------
+    path: list
+        a list of nodes
+    Returns
+    -------
+    str
+        string representation of list of nodes
+    """
     result = '    '
     if len(path) == 1:
         result = result + str(path[0]) + ' = ' + str(path[0])
