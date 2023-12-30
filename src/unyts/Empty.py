@@ -6,7 +6,7 @@ Created on Sat Dec 30 22:27:33 2023
 
 __version__ = '0.0.0'
 __release__ = 20231230
-__all__ = ['Empty', 'str_Empty']
+__all__ = ['Empty', 'str_Empty', 'str_Empty_']
 
 from typing import Union
 
@@ -23,3 +23,4 @@ class Empty(object, metaclass=EmptyType):
 
 
 str_Empty = Union[str, Empty]
+str_Empty_ = (str, Empty)

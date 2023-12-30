@@ -24,7 +24,7 @@ from .temperature import *
 from .time import *
 from .unitless import Dimensionless, Percentage
 from ..unit_class import Unit
-from ..helpers.common_classes import unit_or_str as unit_or_str, numeric as numeric
+from ..helpers.common_classes import unit_or_str as unit_or_str, numeric as numeric, numeric_ as _numeric
 
 
 def units(value: numeric, unit: unit_or_str = None, name=None) -> Unit:
@@ -57,7 +57,7 @@ def units(value: numeric, unit: unit_or_str = None, name=None) -> Unit:
         unit = 'Dimensionless'
     if type(unit) is not str:
         raise TypeError("'units' must be a string or Unit instance.")
-    if not isinstance(value, numeric):
+    if not isinstance(value, _numeric):
         raise TypeError("'value' parameter must be numeric.")
 
     unit = unit.strip()

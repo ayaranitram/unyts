@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.8'
-__release__ = 20231220
+__version__ = '0.6.1'
+__release__ = 20231230
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -39,12 +39,16 @@ except ModuleNotFoundError:
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 if _numpy_ and _pandas_:
+    _numeric = (int, float, complex, ndarray, Series, DataFrame)
     numeric = Union[int, float, complex, ndarray, Series, DataFrame]
 elif _numpy_:
+    _numeric = (int, float, complex, ndarray)
     numeric = Union[int, float, complex, ndarray]
 elif _pandas_:
+    _numeric = (int, float, complex, Series, DataFrame)
     numeric = Union[int, float, complex, Series, DataFrame]
 else:
+    _numeric = (int, float, complex)
     numeric = Union[int, float, complex]
 
 
@@ -427,7 +431,7 @@ def _clean_input(value: numeric, from_unit: str, to_unit: str_Empty) -> (numeric
         value = np.array(value)
     elif not _numpy_ and type(value) in [list, tuple]:
         raise TypeError("Can't operate with list or tuple without NumPy. `value` can not be a list or tuple.")
-    if value is not None and not isinstance(value, numeric):
+    if value is not None and not isinstance(value, _numeric):
         raise ValueError("value must be numeric.")
     if isinstance(from_unit, Unit):
         from_unit = from_unit.get_unit()
