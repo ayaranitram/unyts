@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: unyts
-Version: 0.5.30
+Version: 0.6.1
 Summary: a unit converter based on graph network and classes to operate with units.
 Author-email: Martin Carlos Araya <martinaraya@gmail.com>
 License: MIT License
@@ -49,12 +49,12 @@ After culminating a project for a class from MITx courses, I saw the opportunity
 
 This package is under development and is regularly updated. Back compatibility is intended to be maintained when possible.
   
-## What Contains This Package
+## What do this package contains:
 - It is loaded with a network of units preloaded for distances, area, volume, mass and time conversions defined for SI and Imperial systems according to the definition of each Unit, i.e.: _1_foot = 12_inches_.
 - Prefixes applied to the basic units, like in SI units _k_ to _m_ to make _km_, are loaded as a network of conversion paths allowing the algorithm to apply the prefix to any other unit in the same system.
 - It provides a class _Unit_ powered with arithmetic and logic operations to intrinsically consider unit conversions when making calculations.  
   
-## How To Use It
+## How to use this package:
 This package is intended to be used in two ways:  
 - Calling the function `units()` to define instances of the __Units__ class, that holds _values associated to units_, or, _quantities_.  
 - As unit converter with the function `convert()` to explicitly make conversion of numeric variables and instances.  
