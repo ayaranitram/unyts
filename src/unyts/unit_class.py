@@ -65,7 +65,7 @@ class Unit(object, metaclass=UnytType):
     """
     class_units = []
 
-    def __init__(self, value, unit=None, name=None):
+    def __init__(self, value: numeric, unit=None, name=None):
         if isinstance(value, Unit):
             if unit is None:
                 value, unit = value.value, value.unit
@@ -180,7 +180,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__radd__(self)
         else:
-            raise NotImplementedError("Addition of " + str(type(self)) + " and " + str(type(other)) + " not implemented.")
+            raise NotImplementedError(f"Addition of {type(self)} and {type(other)} not implemented.")
 
     def __radd__(self, other):
         return self.__add__(other)
@@ -220,7 +220,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rmul__(self)
         else:
-            raise NotImplementedError("Product of " + str(type(self)) + " and " + str(type(other)) + " not implemented.")
+            raise NotImplementedError(f"Product of {type(self)} and {type(other)} not implemented.")
 
     def __rmul__(self, other):
         return self.__mul__(other)
@@ -263,7 +263,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rpow__(self)
         else:
-            raise NotImplementedError("Power of " + str(type(self)) + " to " + str(type(other)) + " not implemented.")
+            raise NotImplementedError(f"Power of {type(self)} to {type(other)} not implemented.")
 
     def __rpow__(self, other):
         from .units.unitless import Dimensionless, Percentage
@@ -273,8 +273,7 @@ class Unit(object, metaclass=UnytType):
         elif self.kind is Dimensionless:
             return units(other ** self.value, self.unit)
         else:
-            raise TypeError("unsupported operand type(s) for ** or pow(): '" +
-                            str(type(other)) + "' and '" + str(type(self)))
+            raise TypeError(f"unsupported operand type(s) for ** or pow(): '{type(other)}' and '{type(self)}.")
 
     def __sub__(self, other):
         # return self.__add__(other * -1)
@@ -313,7 +312,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rsub__(self)
         else:
-            raise NotImplementedError("Subtraction of " + str(type(self)) + " and " + str(type(other)) + " not implemented.")
+            raise NotImplementedError(f"Subtraction of {type(self)} and {type(other)} not implemented.")
 
     def __rsub__(self, other):
         return self.__neg__() + other
@@ -350,7 +349,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rtruediv__(self)
         else:
-            raise NotImplementedError("Division of " + str(type(self)) + " by " + str(type(other)) + " not implemented.")
+            raise NotImplementedError(f"Division of {type(self)} by {type(other)} not implemented.")
 
     def __rtruediv__(self, other):
         from .units.define import units
@@ -362,7 +361,7 @@ class Unit(object, metaclass=UnytType):
         elif isinstance(other, numeric):
             return units(other / self.value, self.unit + '-1')
         else:
-            raise NotImplementedError("Division of " + str(type(self)) + " by " + str(type(other)) + " not implemented.")
+            raise NotImplementedError(f"Division of {type(self)} by {type(other)} not implemented.")
 
     def __floordiv__(self, other):
         from .units.unitless import Dimensionless, Percentage
@@ -396,7 +395,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rfloordiv__(self)
         else:
-            raise NotImplementedError("Division of " + str(type(self)) + " by " + str(type(other)) + " not implemented.")
+            raise NotImplementedError(f"Division of {type(self)} by {type(other)} not implemented.")
 
     def __rfloordiv__(self, other):
         from .units.define import units
@@ -408,7 +407,7 @@ class Unit(object, metaclass=UnytType):
         elif isinstance(other, numeric):
             return units(other // self.value, self.unit + '-1')
         else:
-            raise NotImplementedError("Division of " + str(type(self)) + " by " + str(type(other)) + " not implemented.")
+            raise NotImplementedError(f"Division of {type(self)} by {type(other)} not implemented.")
 
     def __matmul__(self, other):
         from .units.unitless import Dimensionless, Percentage
@@ -434,7 +433,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rmatmul__(self)
         else:
-            raise NotImplementedError("Division of " + str(type(self)) + " by " + str(type(other)) + " not implemented.")
+            raise NotImplementedError(f"Division of {type(self)} by {type(other)} not implemented.")
 
     def __mod__(self, other):
         from .units.unitless import Dimensionless, Percentage
@@ -467,7 +466,7 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rmod__(self)
         else:
-            raise NotImplementedError("Module of " + str(type(self)) + " when divided by " + str(type(other)) + " not implemented.")
+            raise NotImplementedError(f"Module of {type(self)} when divided by {type(other)} not implemented.")
 
     def __lt__(self, other) -> bool:
         if not isinstance(other, Unit):
@@ -475,7 +474,7 @@ class Unit(object, metaclass=UnytType):
         elif type(self) == type(other):
             return self.value < other.convert(self.unit).value
         else:
-            msg = "'<' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
+            msg = f"'<' not supported between instances of '{type(self)}' and '{type(other)}'."
             raise TypeError(msg)
 
     def __le__(self, other) -> bool:
@@ -484,7 +483,7 @@ class Unit(object, metaclass=UnytType):
         elif type(self) == type(other):
             return self.value <= other.convert(self.unit).value
         else:
-            msg = "'<=' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
+            msg = f"'<=' not supported between instances of '{type(self)}' and '{type(other)}'."
             raise TypeError(msg)
 
     def __eq__(self, other) -> bool:
@@ -493,7 +492,7 @@ class Unit(object, metaclass=UnytType):
         elif type(self) is type(other):
             return self.value == other.convert(self.unit).value
         else:
-            msg = "'==' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
+            msg = f"'==' not supported between instances of '{type(self)}' and '{type(other)}'."
             raise TypeError(msg)
 
     def __ne__(self, other):
@@ -502,7 +501,7 @@ class Unit(object, metaclass=UnytType):
         elif type(self) is type(other):
             return self.value != other.convert(self.unit).value
         else:
-            msg = "'!=' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
+            msg = f"'!=' not supported between instances of '{type(self)}' and '{type(other)}'."
             raise TypeError(msg)
 
     def __ge__(self, other):
@@ -511,7 +510,7 @@ class Unit(object, metaclass=UnytType):
         elif type(self) is type(other):
             return self.value >= other.convert(self.unit).value
         else:
-            msg = "'>=' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
+            msg = f"'>=' not supported between instances of '{type(self)}' and '{type(other)}'."
             raise TypeError(msg)
 
     def __gt__(self, other):
@@ -520,7 +519,7 @@ class Unit(object, metaclass=UnytType):
         elif type(self) is type(other):
             return self.value > other.convert(self.unit).value
         else:
-            msg = "'>' not supported between instances of '" + str(type(self)) + "' and '" + str(type(other)) + "'."
+            msg = f"'>' not supported between instances of '{type(self)}' and '{type(other)}'."
             raise TypeError(msg)
 
     def __len__(self):
@@ -598,11 +597,11 @@ class Unit(object, metaclass=UnytType):
         elif hasattr(units, 'units'):
             units = units.units
         else:
-            raise WrongUnitsError("'" + str(units) + "' for '" + str(type(self)) + "'")
-        if units in self.kind.classUnits:
+            raise WrongUnitsError(f"'{units}' for '{type(self)}'.")
+        if units in self.kind.class_units:
             return units
         else:
-            raise WrongUnitsError("'" + str(units) + "' for '" + str(type(self)) + "'")
+            raise WrongUnitsError(f"'{units}' for '{type(self)}'.")
 
 
 def is_Unit(obj) -> bool:
