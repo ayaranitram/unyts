@@ -608,13 +608,12 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_co
 
     if conv is None:
         if unyts_parameters_.raise_error_:
-            raise NoConversionFoundError("from '" + str(from_unit) + "' to '" + str(to_unit) + "'")
+            raise NoConversionFoundError("from '{from_unit}' to '{to_unit}'")
         else:
             return None
 
     if print_conversion_path:
-        logging.info("converting from '" + str(from_unit) + "' to '" + str(to_unit) + ":\n" +
-                     str(print_path(conv_path)))
+        logging.info(f"converting from '{from_unit}' to '{to_unit}':\n {print_path(conv_path)}")
 
     return conv
 
@@ -647,8 +646,7 @@ def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str, print_co
     if convertible(from_unit, to_unit):
         conv, conv_path = _converter(value, from_unit, to_unit)
     if print_conversion_path and conv is not None:
-        logging.info("converting from '" + str(from_unit) + "' to '" + str(to_unit) + ":\n" +
-                     str(print_path(conv_path)))
+        logging.info("converting from '{from_unit}' to '{to_unit}':\n {print_path(conv_path)}")
     elif print_conversion_path and conv is not None:
         logging.warning("conversion not found, returning original values.")
     return value if conv is None else conv

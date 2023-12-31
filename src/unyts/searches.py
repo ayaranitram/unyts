@@ -44,7 +44,7 @@ def BFS(graph, start, end, verbose=False) -> list:
             last_node = conv_path[-1]
             if last_node is end:
                 if verbose:
-                    print(f'<UnitsConv> Found end node {end.get_name()} in the path',
+                    print(f'<UnitsConv> Found end node {end.get_name()} in the path:\n',
                           print_path(conv_path))
                 return conv_path
             path_queue += [conv_path + [next_node]
@@ -68,7 +68,7 @@ def print_path(path: list) -> str:
     """
     result = '    '
     if len(path) == 1:
-        result = result + str(path[0]) + ' = ' + str(path[0])
+        result = f"{path[0]} = {path[0]}"
     else:
         for i in range(len(path)):
             if type(path[i]) is str and path[i] not in ['(1)', '(v)']:
