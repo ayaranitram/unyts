@@ -13,9 +13,9 @@ __all__ = ['start_gui']
 import tkinter as tk
 from tkinter import ttk
 from stringthings import get_number, is_numeric
-from unyts import convert
-from unyts.dictionaries import _all_units
-from unyts.errors import NoConversionFoundError
+from .converter import convert
+from .dictionaries import _all_units
+from .errors import NoConversionFoundError
 import pathlib, os
 
 _all_units_str = _all_units()

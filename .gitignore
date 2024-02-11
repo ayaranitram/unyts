@@ -12,3 +12,4 @@ dist/*.tar.gz
 build
 .DS_Store
 *.cache
+venv

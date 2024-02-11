@@ -10,7 +10,7 @@ __version__ = '0.7.0'
 __release__ = 20240211
 __all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit',
            'set_unit', 'set_conversion', 'set_density',
-           'save', 'gui']
+           'save', 'start_gui']
 
 from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density
 from .database import network_to_frame, save_memory, load_memory
@@ -19,7 +19,7 @@ from .converter import convert, convertible
 from .Empty import Empty
 from .unit_class import Unit, is_Unit
 from .units.custom import set_unit, set_conversion
-from .gui import start_gui as gui
+from .gui import start_gui
 
 if unyts_parameters_.show_version_:
     print("loaded unyts version", __version__)
