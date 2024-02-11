@@ -6,9 +6,11 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__all__ = ['units', 'convert', 'Unit', 'is_Unit', 'set_unit', 'set_conversion', 'convertible', 'save', 'set_density']
-__version__ = '0.6.2'
+__version__ = '0.7.0'
 __release__ = 20240211
+__all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit',
+           'set_unit', 'set_conversion', 'set_density',
+           'save', 'gui']
 
 from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density
 from .database import network_to_frame, save_memory, load_memory
@@ -17,6 +19,7 @@ from .converter import convert, convertible
 from .Empty import Empty
 from .unit_class import Unit, is_Unit
 from .units.custom import set_unit, set_conversion
+from .gui import start_gui as gui
 
 if unyts_parameters_.show_version_:
     print("loaded unyts version", __version__)
