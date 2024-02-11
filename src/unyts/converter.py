@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.1'
-__release__ = 20231230
+__version__ = '0.6.2'
+__release__ = 20240211
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -608,7 +608,7 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_co
 
     if conv is None:
         if unyts_parameters_.raise_error_:
-            raise NoConversionFoundError("from '{from_unit}' to '{to_unit}'")
+            raise NoConversionFoundError(f"from '{from_unit}' to '{to_unit}'")
         else:
             return None
 

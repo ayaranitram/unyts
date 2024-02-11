@@ -35,17 +35,20 @@ def BFS(graph, start, end, verbose=False) -> list:
         conv_path = path_queue.pop(0)
         if conv_path in visited:
             if verbose:
-                print(f'<UnitsConv> {len(path_queue)} paths in queue. Already visited BFS path:\n',
-                      print_path(conv_path))
+                print(f"<UnitsConv> {len(path_queue)} paths in queue. Already visited BFS path:",
+                      print_path(conv_path),
+                      sep='\n')
         else:
             if verbose:
-                print(f'<UnitsConv> {len(path_queue)} paths in queue. Current BFS path:\n',
-                      print_path(conv_path))
+                print(f"<UnitsConv> {len(path_queue)} paths in queue. Current BFS path:",
+                      print_path(conv_path),
+                      sep='\n')
             last_node = conv_path[-1]
             if last_node is end:
                 if verbose:
-                    print(f'<UnitsConv> Found end node {end.get_name()} in the path:\n',
-                          print_path(conv_path))
+                    print(f"<UnitsConv> Found end node {end.get_name()} in the path:",
+                          print_path(conv_path),
+                          sep='\n')
                 return conv_path
             path_queue += [conv_path + [next_node]
                            for next_node in graph.children_of(last_node) 
