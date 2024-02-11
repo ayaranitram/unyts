@@ -126,6 +126,9 @@ class UnytsApp(tk.Frame):
             self.button_text.set("no conversion found!")
 
 def start_gui():
+    def close_gui():
+        print("INFO:shutting down Unyts.")
+        root.destroy()
     w, h = 325, 175
     root = tk.Tk(screenName='Unyts')
     root.geometry(f"{w}x{h}")
@@ -138,4 +141,5 @@ def start_gui():
     root.iconbitmap(icon_path)
     unyts_gui = UnytsApp()
     unyts_gui.master.title("Unyts converter")
+    root.protocol("WM_DELETE_WINDOW", close_gui)
     unyts_gui.mainloop()
