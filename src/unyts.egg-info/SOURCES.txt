@@ -1,14 +1,19 @@
 LICENSE
+MANIFEST.in
 README.md
 pyproject.toml
 src/unyts/Empty.py
 src/unyts/__init__.py
+src/unyts/__main__.py
 src/unyts/converter.py
 src/unyts/database.py
 src/unyts/dictionaries.py
 src/unyts/errors.py
+src/unyts/gui.py
 src/unyts/network.py
+src/unyts/openbook.ico
 src/unyts/operations.py
+src/unyts/parameters.ini
 src/unyts/parameters.py
 src/unyts/searches.py
 src/unyts/unit_class.py
@@ -16,6 +21,7 @@ src/unyts/unitary.py
 src/unyts.egg-info/PKG-INFO
 src/unyts.egg-info/SOURCES.txt
 src/unyts.egg-info/dependency_links.txt
+src/unyts.egg-info/requires.txt
 src/unyts.egg-info/top_level.txt
 src/unyts/helpers/__init__.py
 src/unyts/helpers/caster.py

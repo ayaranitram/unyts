@@ -135,7 +135,7 @@ def start_gui():
     root.maxsize(w, h)
     root.minsize(w, h)
     root.resizable(False, False)
-    icon_file = '713openbook_100531.ico'
+    icon_file = 'openbook.ico'
     current_dir = pathlib.Path(__file__).parent.resolve()
     icon_path = os.path.join(current_dir, icon_file)
     root.iconbitmap(icon_path)

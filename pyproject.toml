@@ -2,9 +2,12 @@
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [project]
 name = "unyts"
-version = "0.7.0"
+version = "0.7.1"
 authors = [
   { name="Martin Carlos Araya", email="martinaraya@gmail.com" },
 ]
@@ -22,6 +25,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
+    'stringthings'
     ]
 [project.urls]
 "Homepage" = "https://github.com/ayaranitram/unyts"

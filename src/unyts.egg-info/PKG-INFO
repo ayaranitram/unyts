@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: unyts
-Version: 0.6.1
+Version: 0.7.1
 Summary: a unit converter based on graph network and classes to operate with units.
 Author-email: Martin Carlos Araya <martinaraya@gmail.com>
 License: MIT License
@@ -37,6 +37,7 @@ Classifier: Operating System :: OS Independent
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
 License-File: LICENSE
+Requires-Dist: stringthings
 
 [![Run tests](https://github.com/ayaranitram/unyts/actions/workflows/test-package.yml/badge.svg)](https://github.com/ayaranitram/unyts/actions/workflows/test-package.yml)
 [![PyPI version](https://img.shields.io/pypi/v/unyts.svg)](https://pypi.org/project/unyts/)
