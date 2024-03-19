@@ -6,16 +6,18 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.1.0'
-__release__ = 20240211
+__version__ = '0.1.1'
+__release__ = 20240319
 __all__ = ['start_gui']
 
+import logging
 import tkinter as tk
 from tkinter import ttk
 from stringthings import get_number, is_numeric
 from .converter import convert
 from .dictionaries import _all_units
 from .errors import NoConversionFoundError
+from .database import save_memory, load_memory
 import pathlib, os
 
 _all_units_str = _all_units()
@@ -52,7 +54,6 @@ class UnytsApp(tk.Frame):
         self.to_value = ttk.Entry(frame, textvariable=self.to_value_val)
         self.to_value.grid(column=2, row=2, pady=3, padx=1)
         self.to_value.bind('<Key-Return>', self._rcalculate)
-
 
         self.button_text = tk.StringVar()
         self.button_text.set("convert")
@@ -127,8 +128,12 @@ class UnytsApp(tk.Frame):
 
 def start_gui():
     def close_gui():
-        print("INFO:shutting down Unyts.")
+        logging.info("saving memory...")
+        save_memory()
+        logging.info("INFO:shutting down Unyts.")
         root.destroy()
+    load_memory()
+    logging.info("starting Unyts GUI...")
     w, h = 325, 175
     root = tk.Tk(screenName='Unyts')
     root.geometry(f"{w}x{h}")

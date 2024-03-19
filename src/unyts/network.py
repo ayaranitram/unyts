@@ -6,7 +6,7 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 import logging
-import os.path
+from os.path import isfile
 from .parameters import unyts_parameters_, dir_path
 
 try:
@@ -18,8 +18,8 @@ except ModuleNotFoundError:
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
-__version__ = '0.4.9'
-__release__ = 20230127
+__version__ = '0.4.10'
+__release__ = 20240319
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -55,7 +55,7 @@ class UDigraph(object):
         if path is None:
             path = dir_path + 'units/search_memory.cache'
         if self._cloudpickle_:
-            print('saving search memory to cache...')
+            logging.info('saving search memory to cache...')
             with open(path, 'wb') as f:
                 cloudpickle_dump(self.memory, f)
         else:
@@ -64,16 +64,18 @@ class UDigraph(object):
     def load_memory(self, path=None) -> None:
         if path is None:
             path = dir_path + 'units/search_memory.cache'
-        if self._cloudpickle_ and os.path.isfile(dir_path + 'units/search_memory.cache'):
+        if not self._cloudpickle_:
+            logging.warning("Missing `cloudpickle` package. Not able to cache search memory.")
+        if not isfile(dir_path + 'units/search_memory.cache'):
+            logging.info("starting clean memory...")
+        else:
+            logging.info('loading memory from cache...')
             try:
-                print('loading search memory from cache...')
-                with open(path, 'wb') as f:
+                with open(path, 'rb') as f:
                     cached_memory = cloudpickle_load(f)
                     self.memory.update(cached_memory)
             except:
-                print('not able to load memory from cache.')
-        elif not self._cloudpickle_:
-            logging.warning("Missing `cloudpickle` package. Not able to cache search memory.")
+                logging.error('not able to load memory from cache.')
 
     def add_node(self, node) -> None:
         if node in self.edges:
