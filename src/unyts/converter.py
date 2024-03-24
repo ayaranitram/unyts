@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.2'
-__release__ = 20240211
+__version__ = '0.6.3'
+__release__ = 20240317
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -19,6 +19,7 @@ from .parameters import unyts_parameters_, _get_density
 from .helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
 from functools import reduce
 from typing import Union
+from sys import getrecursionlimit
 import logging
 
 try:
@@ -202,7 +203,7 @@ def _get_pair_child(unit: str):
         return pair_child
 
 
-def _get_conversion(value, from_unit, to_unit):
+def _get_conversion(value, from_unit, to_unit, recursion=None):
     """
     Helper function to handle looking for the conversion factor of special cases and through the units network.
 
@@ -217,6 +218,15 @@ def _get_conversion(value, from_unit, to_unit):
         (conversion, conversion_path)
 
     """
+    # get and set recursion limit
+    if recursion is None:
+        recursion = min(getrecursionlimit()-15, 250)
+    elif recursion == 1:
+        return None, None
+    else:
+        recursion -= 1
+    print(f"_get_conversion: {from_unit=}, {to_unit=}")
+
     # check if already solved and memorized
     if (from_unit, to_unit) in units_network.memory:
         conversion_lambda, conversion_path = units_network.memory[(from_unit, to_unit)]
@@ -260,7 +270,7 @@ def _get_conversion(value, from_unit, to_unit):
         t1, d1 = from_unit.split('/')
         t2, d2 = to_unit.split('/')
         num = temperatureRatioConversions[(t1, t2)]
-        den, den_path = _get_conversion(1, d1, d2)
+        den, den_path = _get_conversion(1, d1, d2, recursion=recursion)
         if num is None or den is None:
             if unyts_parameters_.raise_error_:
                 raise NoConversionFoundError("from '" + str(d1) + "' to '" + str(d2) + "'")
@@ -304,7 +314,7 @@ def _get_conversion(value, from_unit, to_unit):
         return None, None
 
 
-def _converter(value, from_unit, to_unit):
+def _converter(value, from_unit, to_unit, recursion=None):
     """
     Transform the received value (integer, float, array, series, frame, ...)
     from the units `from_unit` to the units `to_units`
@@ -320,11 +330,20 @@ def _converter(value, from_unit, to_unit):
     -------
         (conversion, conversion_path)
     """
+    # get and set recursion limit
+    if recursion is None:
+        recursion = min(getrecursionlimit()-15, 250)
+    elif recursion == 1:
+        return None, None
+    else:
+        recursion -= 1
+    print(f"_converter: {from_unit=}, {to_unit=}")
+
     # reset memory for this variable
     units_network.previous = []
 
     # try to convert
-    conv, conv_path = _get_conversion(value, from_unit, to_unit)
+    conv, conv_path = _get_conversion(value, from_unit, to_unit, recursion=recursion)
 
     # if Conversion found
     if conv is not None:
@@ -347,7 +366,7 @@ def _converter(value, from_unit, to_unit):
                 continue
             if split_to[t] in '*/':
                 continue
-            conv, conv_path = _get_conversion(1, split_from[f], split_to[t])
+            conv, conv_path = _get_conversion(1, split_from[f], split_to[t], recursion=recursion)
             if conv is not None:
                 flag = True
                 if len(list_conversion_path) > 0:
@@ -376,8 +395,8 @@ def _converter(value, from_unit, to_unit):
     if ('/' in to_unit or '*' in to_unit) and ('/' not in from_unit and '*' not in from_unit):
         from_unit_child = _get_pair_child(from_unit)
         if from_unit_child is not None:
-            base_conversion, base_conversion_path = _get_conversion(None, from_unit, from_unit_child)
-            pair_conversion, pair_conversion_path = _converter(None, from_unit_child, to_unit)
+            base_conversion, base_conversion_path = _get_conversion(None, from_unit, from_unit_child, recursion=recursion)
+            pair_conversion, pair_conversion_path = _converter(None, from_unit_child, to_unit, recursion=recursion)
             if pair_conversion is not None and base_conversion is not None:
                 conversion_path = base_conversion_path + pair_conversion_path
                 conversion = lambda x: pair_conversion(base_conversion(x))
@@ -391,8 +410,8 @@ def _converter(value, from_unit, to_unit):
     elif ('/' in from_unit or '*' in from_unit) and ('/' not in to_unit or '*' not in to_unit):
         to_unit_child = _get_pair_child(to_unit)
         if to_unit_child is not None:
-            final_conversion, final_conversion_path = _get_conversion(None, to_unit_child, to_unit)
-            pair_conversion, pair_conversion_path = _converter(None, from_unit, to_unit_child)
+            final_conversion, final_conversion_path = _get_conversion(None, to_unit_child, to_unit, recursion=recursion)
+            pair_conversion, pair_conversion_path = _converter(None, from_unit, to_unit_child, recursion=recursion)
             if pair_conversion is not None and final_conversion is not None:
                 conversion_path = pair_conversion_path + final_conversion_path
                 conversion = lambda x: final_conversion(pair_conversion(x))
