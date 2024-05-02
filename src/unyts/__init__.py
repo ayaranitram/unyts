@@ -10,10 +10,10 @@ __version__ = '0.8.0'
 __release__ = 20240502
 __all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit',
            'set_unit', 'set_conversion', 'set_density',
-           'save', 'start_gui']
+           'save', 'start_gui', 'set_fvf']
 
 from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density
-from .database import network_to_frame, save_memory, load_memory
+from .database import network_to_frame, save_memory, load_memory, set_fvf
 from .units.define import units
 from .converter import convert, convertible
 from .Empty import Empty

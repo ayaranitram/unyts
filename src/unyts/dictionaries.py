@@ -48,7 +48,7 @@ SI = {
     'y': (lambda X: X * 1E-24, lambda X: X * 1E-48, lambda X: X * 1E-72),  # yocto
 }
 
-SI_order = (('Length', 'Pressure', 'Weight', 'Mass', 'Time', 'Frequency', 'Power', 'Voltage', 'Current', 'Resistance'),
+SI_order = (('Length', 'Pressure', 'Weight', 'Mass', 'Time', 'Frequency', 'Power', 'Voltage', 'Current', 'Resistance',),
             ('Area',),
             ('Rate', 'Volume',),)
 
@@ -157,7 +157,7 @@ def _load_dictionary() -> (dict, dict):
         'reservoir barrel': ('rb',),
         'standard barrel': ('stb', 'stbo', 'stbw', 'stbl', 'oil barrel'),
     }
-    dictionary['Volume_UPPER'] = ('kstm3', 'Mstm3')
+    dictionary['Volume_UPPER'] = ('sm3', 'rm3', 'kstm3', 'Mstm3')
     dictionary['Volume_PLURALwS_UPPER_LOWER'] = tuple(dictionary['Volume_NAMES_SPACES_REVERSE'].keys()) + \
                                                 tuple(dictionary['Volume_UK_NAMES_REVERSE'].keys()) + \
                                                 ('fl oz', 'oz', 'ounce', 'gallon', 'imperial gallon', 'barrel', 'gal',
@@ -178,11 +178,12 @@ def _load_dictionary() -> (dict, dict):
         'ft3': ('ft2*ft',),
         'in3': ('in2*in',)
     }
+    dictionary['Volume_linearSI'] = ('sm3', 'rm3',)
 
     # Length
     dictionary['Length'] = []
     dictionary['Length_NAMES_REVERSE_UPPER'] = {'meter': ('m', 'meter', 'metro')}
-    dictionary['Length_SI'] = ('m', 'l', 'sm3', 'rm3')  # litre, sm3 and rm3 are Volume but the conversion of SI prefixes is linear
+    dictionary['Length_SI'] = ('m', 'l',)  # litre, sm3 and rm3 are Volume but the conversion of SI prefixes is linear
     dictionary['Length_UK_NAMES_REVERSE'] = {
         'thou': ('th',),
         'tenth': ('te', '0.1 in', '0.1in', '.1in'),

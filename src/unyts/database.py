@@ -6,7 +6,7 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.31'
+__version__ = '0.5.32'
 __release__ = 20240502
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache']
 
@@ -154,7 +154,7 @@ def _load_network():
                         Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][0],
                                    True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
-        if '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[1]:
+        elif '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[1]:
             for unit_name in dictionary[unit_kind]:
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
@@ -166,7 +166,7 @@ def _load_network():
                         Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][1],
                                    True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
-        if '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[2]:
+        elif '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[2]:
             for unit_name in dictionary[unit_kind]:
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
@@ -176,6 +176,18 @@ def _load_network():
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), SI[prefix][2]))
                     network.add_edge(
                         Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][2],
+                                   True))
+                    dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
+        elif '_linearSI' in unit_kind and unit_kind.split('_')[0] in SI_order[2]:
+            for unit_name in dictionary[unit_kind]:
+                network.add_node(UNode(unit_name))
+                dictionary[unit_kind.split('_')[0]].append(unit_name)
+                for prefix in SI:
+                    network.add_node(UNode(prefix + unit_name))
+                    network.add_edge(
+                        Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), SI[prefix][0]))
+                    network.add_edge(
+                        Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][0],
                                    True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_DATA' in unit_kind and unit_kind.split('_')[0] in DATA_order[0]:
