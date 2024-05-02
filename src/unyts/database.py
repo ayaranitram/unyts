@@ -457,7 +457,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('g/cc'), network.get_node('API'), lambda d: 141.5 / d - 131.5))
     network.add_edge(Conversion(network.get_node('SgO'), network.get_node('g/cc'), lambda d: d))
     network.add_edge(Conversion(network.get_node('SgW'), network.get_node('g/cc'), lambda d: d))
-    network.add_edge(Conversion(network.get_node('SgG'), network.get_node('g/cc'), lambda d: d * StandardAirDensity))
+    network.add_edge(Conversion(network.get_node('SgG'), network.get_node('kg/m3'), lambda d: d * StandardAirDensity))
     network.add_edge(Conversion(network.get_node('psia/ft'), network.get_node('lb/ft3'), lambda d: d * 144))
     network.add_edge(
         Conversion(network.get_node('g/cm3'), network.get_node('lb/ft3'), lambda d: d * 62.427960576144606))
