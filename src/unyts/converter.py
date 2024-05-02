@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.3'
-__release__ = 20240317
+__version__ = '0.6.4'
+__release__ = 20240502
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -225,7 +225,7 @@ def _get_conversion(value, from_unit, to_unit, recursion=None):
         return None, None
     else:
         recursion -= 1
-    print(f"_get_conversion: {from_unit=}, {to_unit=}")
+    # print(f"_get_conversion: {from_unit=}, {to_unit=}")
 
     # check if already solved and memorized
     if (from_unit, to_unit) in units_network.memory:
@@ -337,7 +337,7 @@ def _converter(value, from_unit, to_unit, recursion=None):
         return None, None
     else:
         recursion -= 1
-    print(f"_converter: {from_unit=}, {to_unit=}")
+    # print(f"_converter: {from_unit=}, {to_unit=}")
 
     # reset memory for this variable
     units_network.previous = []
