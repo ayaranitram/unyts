@@ -278,9 +278,9 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Density_oilgas'] = {}
     dictionary['Density_NAMES_REVERSE_LOWER_UPPER'] = {
         'API': ('degrees',),
-        'SgG': ('gas gravity', 'gas specific gravity'),
-        'SgW': ('water gravity',),
-        'SgO': ('oil gravity',),
+        'SgG': ('gas gravity', 'gas specific gravity', 'sgg'),
+        'SgW': ('water gravity', 'sgw'),
+        'SgO': ('oil gravity', 'sgo'),
     }
     dictionary['Density_NAMES_REVERSE_UPPER'] = {
         'g/cm3': ('g/cc',),
