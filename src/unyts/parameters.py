@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.2'
-__release__ = 20230107
+__version__ = '0.5.3'
+__release__ = 20240502
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'dir_path', 'set_density']
 
 import logging
@@ -36,6 +36,7 @@ class UnytsParameters(object):
         self.density_ = None
         self.load_params()
         self.reload_ = self.reload_ if reload is None else bool(reload)
+        self.memory_ = not self.reload_
 
     def load_params(self) -> None:
         if isfile(ini_path):

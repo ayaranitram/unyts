@@ -6,11 +6,13 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.30'
-__release__ = 20230724
-__all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory']
+__version__ = '0.5.31'
+__release__ = 20240502
+__all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache']
 
 import logging
+import os
+
 from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
     StandardEarthGravity
 from .network import UDigraph, UNode, Conversion
@@ -35,6 +37,50 @@ def save_memory(path=None) -> None:
 
 def load_memory(path=None) -> None:
     units_network.load_memory(path)
+
+
+def clean_memory(path=None) -> None:
+    units_network.clean_memory()
+
+
+def delete_cache() -> None:
+    for each in ('units/search_memory.cache', 'units/units_network.cache', 'units/units_dictionary.cache',
+                 'units/temperature_ratio_conversions.cache', 'units/unitless_names.cache'):
+        path = dir_path + each
+        if os.path.exists(path):
+            os.remove(path)
+
+
+def set_fvf(fvf=None) -> None:
+    def valid_fvf(fvf):
+        if type(fvf) is str:
+            try:
+                fvf = float(fvf)
+            except ValueError:
+                return False
+        if type(fvf) in (int, float):
+            if fvf <= 0:
+                return False
+            else:
+                return fvf
+        else:
+            return False
+    if fvf is None:
+        print('Please enter formation Volume factor (FVF) in reservoir_volume/standard_volume:')
+        while fvf is None:
+            fvf = input(' FVF (rV/stV) = ')
+            if not valid_fvf(fvf):
+                fvf = None
+            else:
+                fvf = valid_fvf(fvf)
+    units_network.set_fvf(fvf)
+
+
+def get_fvf() -> None:
+    if units_network.fvf is not None:
+        return str(round(units_network.fvf, 3))
+    else:
+        return ""
 
 
 def _load_network():

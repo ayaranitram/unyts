@@ -18,8 +18,8 @@ except ModuleNotFoundError:
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
-__version__ = '0.4.10'
-__release__ = 20240319
+__version__ = '0.4.12'
+__release__ = 20240502
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -76,6 +76,9 @@ class UDigraph(object):
                     self.memory.update(cached_memory)
             except:
                 logging.error('not able to load memory from cache.')
+
+    def clean_memory(self):
+        self.memory = {}
 
     def add_node(self, node) -> None:
         if node in self.edges:

@@ -6,8 +6,8 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.1.1'
-__release__ = 20240319
+__version__ = '0.2.1'
+__release__ = 20240502
 __all__ = ['start_gui']
 
 import logging
@@ -17,11 +17,15 @@ from stringthings import get_number, is_numeric
 from .converter import convert
 from .dictionaries import _all_units
 from .errors import NoConversionFoundError
-from .database import save_memory, load_memory
+from .database import save_memory, load_memory, clean_memory, delete_cache, unyts_parameters_, set_fvf
 import pathlib, os
 
+
 _all_units_str = _all_units()
+
+
 class UnytsApp(tk.Frame):
+
     def __init__(self, master=None):
         super().__init__(master)
         self.pack()
@@ -109,6 +113,7 @@ class UnytsApp(tk.Frame):
     def _calculate(self, *args):
         from_unit, from_value = self._get_from()
         to_unit = self.to_unit_val.get()
+        self.to_value_val.set("")
         try:
             to_value = convert(from_value, from_unit, to_unit,
                                print_conversion_path=False)
@@ -119,6 +124,7 @@ class UnytsApp(tk.Frame):
     def _rcalculate(self, *args):
         from_unit, from_value = self._get_to()
         to_unit = self.from_unit_val.get()
+        self.from_value_val.set("")
         try:
             to_value = convert(from_value, from_unit, to_unit,
                                print_conversion_path=False)
@@ -126,24 +132,51 @@ class UnytsApp(tk.Frame):
         except NoConversionFoundError:
             self.button_text.set("no conversion found!")
 
+
 def start_gui():
     def close_gui():
         logging.info("saving memory...")
         save_memory()
         logging.info("INFO:shutting down Unyts.")
         root.destroy()
-    load_memory()
+    if unyts_parameters_.memory_:
+        load_memory()
+    else:
+        delete_cache()
+
     logging.info("starting Unyts GUI...")
-    w, h = 325, 175
+    w, h = 325, 185
     root = tk.Tk(screenName='Unyts')
     root.geometry(f"{w}x{h}")
     root.maxsize(w, h)
     root.minsize(w, h)
     root.resizable(False, False)
-    icon_file = 'openbook.ico'
+    icon_file = 'unyts_icon.ico'
     current_dir = pathlib.Path(__file__).parent.resolve()
     icon_path = os.path.join(current_dir, icon_file)
     root.iconbitmap(icon_path)
+
+    # setting menu
+    root.option_add('*tearOff', False)
+    unyts_menu = tk.Menu(root)
+    root.config(menu=unyts_menu)
+    # File menu
+    file_menu = tk.Menu(unyts_menu)
+    unyts_menu.add_cascade(label='File', menu=file_menu)
+    file_menu.add_command(label='Save memory', command=save_memory)
+    file_menu.add_command(label='Reload memory', command=load_memory)
+    file_menu.add_command(label='Clean memory', command=clean_memory)
+    file_menu.add_command(label='Delete cache', command=delete_cache)
+    file_menu.add_separator()
+    file_menu.add_command(label='Exit', command=close_gui)
+    # Options menu
+    options_menu = tk.Menu(unyts_menu)
+    unyts_menu.add_cascade(label='Options', menu=options_menu)
+    options_menu.add_command(label="Set FVF in CMD", command=set_fvf)
+    # options_menu.add_checkbutton(label='Print path', onvalue=True, offvalue=False, variable=unyts_parameters_.print_path_)
+    # options_menu.add_checkbutton(label='Cache', onvalue=True, offvalue=False, variable=unyts_parameters_.cache_)
+    # options_menu.add_checkbutton(label='Reload on next start', onvalue=True, offvalue=False, variable=unyts_parameters_.reload_)
+
     unyts_gui = UnytsApp()
     unyts_gui.master.title("Unyts converter")
     root.protocol("WM_DELETE_WINDOW", close_gui)
