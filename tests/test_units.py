@@ -5,7 +5,7 @@ Created on Fri Aug 26 21:34:21 2022
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-from unyts import units, convert
+from unyts import units, convert, set_fvf
 from unyts.dictionaries import dictionary
 from unyts.units.unitless import Dimensionless, Percentage
 from unyts.operations import unit_product, unit_division
@@ -15,6 +15,7 @@ num = 3
 array = np.array([1, 2, 3, 4, 5])
 limit_dict_units = 3
 
+set_fvf(1.10)  # set FVF for these tests
 
 for kind in [k for k in dictionary if k in ['Length']]:
     for unit1 in range(len(dictionary[kind][:limit_dict_units])-1):
