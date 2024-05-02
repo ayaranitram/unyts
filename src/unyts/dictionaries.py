@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.30'
-__release__ = 20230724
+__version__ = '0.5.31'
+__release__ = 20240502
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'unitless_names',
            'uncertain_names']
 
@@ -126,7 +126,7 @@ def _load_dictionary() -> (dict, dict):
     # Volume
     dictionary['Volume'] = []
     dictionary['Volume_SI_UPPER'] = (
-        'm3', 'sm3', 'stm3', 'rm3',)  # 'l' # litre is Volume but the Conversion of SI prefixes is linear
+        'm3',)  # 'l', 'sm3', 'rm3' are Volume but the conversion of SI prefixes is linear
     dictionary['Volume_UK_NAMES_REVERSE'] = {
         'fluid ounce': ('fl oz', 'oz', 'ounce', 'ozUS'),
         'gill': ('gi', 'gillUS', 'giUS', 'USgill'),
@@ -145,10 +145,10 @@ def _load_dictionary() -> (dict, dict):
         'centilitre': ('cl', 'centiliter'),
         'decilitre': ('dl', 'deciliter'),
         'cubic meter': ('CM', 'm3'),
-        'standard cubic meter': ('scm', 'sm3', 'stm3', 'm3'),
+        'standard cubic meter': ('scm', 'sm3', 'stm3', 'm3', 'Sm3'),
         'cubic centimeter': ('cc', 'cm3', 'standard cubic centimeter'),
         'standard cubic centimeter': ('scc', 'scm3'),
-        'reservoir cubic meter': ('rm3',),
+        'reservoir cubic meter': ('rm3', 'Rm3'),
         'reservoir cubic centimeter': ('rcc', 'rcm3'),
         'cubic foot': ('cubic feet', 'ft3', 'cf', 'pie cúbico', 'pie cubico', 'pc', 'pies cúbicos', 'pies cubicos'),
         'standard cubic foot': ('scf', 'cf'),
@@ -167,7 +167,7 @@ def _load_dictionary() -> (dict, dict):
                                                  'liter', 'milliliter', 'centiliter', 'deciliter')
     dictionary['Volume_OGF'] = ('scf', 'cf', 'ft3', 'stb', 'bbl', 'rb', 'stbo', 'stbw', 'stbl')
     # dictionary['Volume_oilgas_NAMES'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl')
-    dictionary['Volume_oilgas_UPPER'] = ('sm3', 'm3', 'rm3', 'ksm3', 'Msm3', 'Gsm3',
+    dictionary['Volume_oilgas_UPPER'] = ('sm3', 'Sm3', 'm3', 'rm3', 'Rm3', 'ksm3', 'Msm3', 'Gsm3',
                                          'scf', 'cf', 'ft3', 'Mscf', 'MMscf', 'Bscf', 'Tscf', 'Mcf', 'MMcf', 'Bcf',
                                          'Tcf',
                                          'stb', 'bbl', 'rb', 'Mstb', 'MMstb', 'Bstb', 'Tstb', 'Mbbl', 'MMbbl', 'Mrb',
@@ -182,7 +182,7 @@ def _load_dictionary() -> (dict, dict):
     # Length
     dictionary['Length'] = []
     dictionary['Length_NAMES_REVERSE_UPPER'] = {'meter': ('m', 'meter', 'metro')}
-    dictionary['Length_SI'] = ('m', 'l')  # litre is Volume but the Conversion of SI prefixes is linear
+    dictionary['Length_SI'] = ('m', 'l', 'sm3', 'rm3')  # litre, sm3 and rm3 are Volume but the conversion of SI prefixes is linear
     dictionary['Length_UK_NAMES_REVERSE'] = {
         'thou': ('th',),
         'tenth': ('te', '0.1 in', '0.1in', '.1in'),
