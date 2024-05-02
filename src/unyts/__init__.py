@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.7.1'
-__release__ = 20240211
+__version__ = '0.8.0'
+__release__ = 20240502
 __all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit',
            'set_unit', 'set_conversion', 'set_density',
            'save', 'start_gui']
@@ -22,7 +22,7 @@ from .units.custom import set_unit, set_conversion
 from .gui import start_gui
 
 if unyts_parameters_.show_version_:
-    print("loaded unyts version", __version__)
+    print(f"loaded unyts version {str(__version__)}")
     unyts_parameters_.show_version_ = False
     unyts_parameters_.save_params()
 

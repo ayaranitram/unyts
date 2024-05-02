@@ -48,7 +48,7 @@ class UDigraph(object):
         self.memory = {}
         self.print = False
         self._cloudpickle_ = _cloudpickle_
-        if unyts_parameters_.cache_:
+        if unyts_parameters_.cache_ and unyts_parameters_.memory_:
             self.load_memory()
 
     def save_memory(self, path=None) -> None:
