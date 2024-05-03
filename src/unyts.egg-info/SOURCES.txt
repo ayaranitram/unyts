@@ -11,13 +11,13 @@ src/unyts/dictionaries.py
 src/unyts/errors.py
 src/unyts/gui.py
 src/unyts/network.py
-src/unyts/openbook.ico
 src/unyts/operations.py
 src/unyts/parameters.ini
 src/unyts/parameters.py
 src/unyts/searches.py
 src/unyts/unit_class.py
 src/unyts/unitary.py
+src/unyts/unyts_icon.ico
 src/unyts.egg-info/PKG-INFO
 src/unyts.egg-info/SOURCES.txt
 src/unyts.egg-info/dependency_links.txt
