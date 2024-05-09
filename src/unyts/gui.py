@@ -6,8 +6,8 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.2.1'
-__release__ = 20240502
+__version__ = '0.2.5'
+__release__ = 20240509
 __all__ = ['start_gui']
 
 import logging
@@ -82,10 +82,13 @@ class UnytsApp(tk.Frame):
         try:
             from_value = get_number(self.from_value_val.get())
             from_unit = self.from_unit_val.get()
+            self.from_value_val.set(from_value)
         except ValueError:
             try:
                 from_value = get_number(self.from_unit_val.get())
                 from_unit = self.from_value_val.get()
+                self.from_unit_val.set(from_unit)
+                self.from_value_val.set(from_value)
             except ValueError:
                 from_value = self.from_value_val.get()
                 from_unit = self.from_unit_val.get()
@@ -98,10 +101,13 @@ class UnytsApp(tk.Frame):
         try:
             to_value = get_number(self.to_value_val.get())
             to_unit = self.to_unit_val.get()
+            self.to_value_val.set(to_value)
         except ValueError:
             try:
                 to_value = get_number(self.to_unit_val.get())
                 to_unit = self.to_value_val.get()
+                self.to_unit_val.set(to_unit)
+                self.to_value_val.set(to_value)
             except ValueError:
                 to_value = self.to_value_val.get()
                 to_unit = self.to_unit_val.get()
@@ -119,6 +125,7 @@ class UnytsApp(tk.Frame):
                                print_conversion_path=False)
             self.to_value_val.set(str(to_value))
         except NoConversionFoundError:
+            self.to_value_val.set("")
             self.button_text.set("no conversion found!")
 
     def _rcalculate(self, *args):
@@ -130,6 +137,7 @@ class UnytsApp(tk.Frame):
                                print_conversion_path=False)
             self.from_value_val.set(str(to_value))
         except NoConversionFoundError:
+            self.from_value_val("")
             self.button_text.set("no conversion found!")
 
 
