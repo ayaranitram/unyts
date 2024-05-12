@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.31'
-__release__ = 20240502
+__version__ = '0.5.40'
+__release__ = 20240512
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'unitless_names',
            'uncertain_names']
 
@@ -150,9 +150,18 @@ def _load_dictionary() -> (dict, dict):
         'standard cubic centimeter': ('scc', 'scm3'),
         'reservoir cubic meter': ('rm3', 'Rm3'),
         'reservoir cubic centimeter': ('rcc', 'rcm3'),
-        'cubic foot': ('cubic feet', 'ft3', 'cf', 'pie cúbico', 'pie cubico', 'pc', 'pies cúbicos', 'pies cubicos'),
+        'cubic thou': ('th3', 'th2*th', 'th*th2'),
+        'cubic tenth': ('te3', 'te2*te', 'te*te2'),
+        'cubic inch': ('cubic inches', 'in3', 'in2*in', 'in*in2'),
+        'cubic foot': ('cubic feet', 'ft3', 'cf', 'ft2*ft', 'ft*ft2', 'pie cúbico', 'pie cubico', 'pc', 'pies cúbicos',
+                       'pies cubicos'),
+        'cubic yard': ('yd3', 'yd2*yd' 'yd*yd2'),
+        'cubic chain': ('ch3', 'ch2*ch', 'ch*ch2'),
+        'cubic rod': ('rd3', 'rd2*rd', 'rd*rd2'),
+        'cubic furlong': ('fur3', 'fur2*fur', 'fur*fur2'),
+        'cubic mile': ('mi3', 'mi2*mi', 'mi*mi2'),
+        'cubic league': ('lea3', 'lea2*lea', 'lea*lea2'),
         'standard cubic foot': ('scf', 'cf'),
-        'cubic inch': ('in3', 'cubic inches'),
         'barrel': ('bbl', 'stb', 'oil barrel'),
         'reservoir barrel': ('rb',),
         'standard barrel': ('stb', 'stbo', 'stbw', 'stbl', 'oil barrel'),
@@ -173,10 +182,11 @@ def _load_dictionary() -> (dict, dict):
                                          'stb', 'bbl', 'rb', 'Mstb', 'MMstb', 'Bstb', 'Tstb', 'Mbbl', 'MMbbl', 'Mrb',
                                          'MMrb')
     dictionary['Volume_product_NAMES_REVERSE'] = {
-        'm3': ('m2*m',),
-        'cm3': ('cm2*cm',),
-        'ft3': ('ft2*ft',),
-        'in3': ('in2*in',)
+        'm3': ('m2*m', 'm*m2'),
+        'cm3': ('cm2*cm', 'cm*cm2'),
+        'yd3': ('yd2*yd', 'yd*yd2'),
+        'ft3': ('ft2*ft', 'ft*ft2'),
+        'in3': ('in2*in', 'in*in2'),
     }
     dictionary['Volume_linearSI'] = ('sm3', 'rm3',)
 
@@ -206,12 +216,17 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Area_NAMES_REVERSE_UPPER'] = {'square meter': ('sq m', 'm2', 'sqmeter', 'm*m', 'm3/m')}
     dictionary['Area_SI'] = ('m2',)
     dictionary['Area_UK_NAMES_REVERSE_UPPER'] = {
-        'square mile': ('sq mi', 'mi2', 'sqmile', 'mi*mi'),
         'acre': tuple(),
-        'square rod': ('sq rd', 'sqrd', 'rd2', 'rd*rd'),
-        'square yard': ('sq yd', 'sqyd', 'yd2', 'yd*yd'),
+        'square thou': ('sq th', 'sqth', 'th2', 'th*th', 'th3/th'),
+        'square tenth': ('sq te', 'sqte', 'te2', 'te*te', 'te3/te'),
+        'square inch': ('sq in', 'sqin', 'in2', 'in*in', 'in3/in'),
         'square foot': ('sq ft', 'sqft', 'ft2', 'ft*ft', 'ft3/ft'),
-        'square inch': ('sq in', 'sqin', 'in2', 'in*in', 'in3/in')
+        'square yard': ('sq yd', 'sqyd', 'yd2', 'yd*yd', 'yd3/yd'),
+        'square chain': ('sq ch', 'sqch', 'ch2', 'ch*ch', 'ch3/ch'),
+        'square rod': ('sq rd', 'sqrd', 'rd2', 'rd*rd', 'rd3/rd'),
+        'square furlong': ('sq fur', 'sqfur', 'fur2', 'fur*fur', 'fur3/fur'),
+        'square mile': ('sq mi', 'mi2', 'sqmile', 'mi*mi', 'mi3/mi'),
+        'square league': ('sq lea', 'sqlea', 'lea2', 'lea*lea', 'lea3/lea'),
     }
 
     # Pressure
@@ -287,11 +302,14 @@ def _load_dictionary() -> (dict, dict):
         'g/cm3': ('g/cc',),
         'kg/m3': ('Kg/m3',),
         'lb/ft3': tuple(),
+        'lb/yd3': tuple(),
         'psi/ft': tuple(),
         'kJ/rm3': ('KJ/rm3',),
+        'kJ/sm3': ('KJ/sm3',),
+        'kJ/m3': ('KJ/m3',),
         'lb/stb': tuple(),
-        'psia/ft': ('psi/ft',),
-        'bara/m': ('bar/m',),
+        'psia/ft': ('psi/ft', 'psig/ft'),
+        'bara/m': ('bar/m', 'barg/m'),
     }
 
     # Compressibility
@@ -311,6 +329,7 @@ def _load_dictionary() -> (dict, dict):
         'barrel per day': ('bbl/day',),
         'cubic meter per day': ('m3/day',),
         'cubic foot per day': ('ft3/day',),
+        'cubic yard per day': ('yd3/day',),
         'reservoir barrel per day': ('rb/day',),
         'reservoir cubic meter per day': ('rm3/day',),
     }
