@@ -79,50 +79,49 @@ class UnytsApp(tk.Frame):
             return True
 
     def _get_from(self):
-        try:
-            from_value = get_number(self.from_value_val.get())
-            from_unit = self.from_unit_val.get()
-            self.from_value_val.set(from_value)
-        except ValueError:
-            try:
-                from_value = get_number(self.from_unit_val.get())
-                from_unit = self.from_value_val.get()
-                self.from_unit_val.set(from_unit)
-                self.from_value_val.set(from_value)
-            except ValueError:
-                from_value = self.from_value_val.get()
-                from_unit = self.from_unit_val.get()
-                self.from_value_val.set(f"wrong number format")
-                self.from_unit_val.set(from_unit)
-                return None
+        from_value = self.from_value_val.get().strip()
+        from_unit = self.from_unit_val.get().strip()
+        if len(from_value) == 0 and len(from_unit) > 0 and not is_numeric(from_unit):
+            pass  # is OK
+        elif len(from_unit) == 0 and len(from_value) > 0 and not is_numeric(from_value):
+            from_value, from_unit = from_unit, from_value
+        elif is_numeric(from_value) and not is_numeric(from_unit):
+            from_value = get_number(from_value)
+        elif not is_numeric(from_value) and is_numeric(from_unit):
+            from_value, from_unit = get_number(from_unit), from_value
+        elif not is_numeric(from_value) and not is_numeric(from_unit):
+            self.from_value_val.set(f"wrong number format")
+            from_value, from_unit = None, None
+        self.from_unit_val.set(from_unit)
+        self.from_value_val.set(from_value)
         return from_unit, from_value
 
     def _get_to(self):
-        try:
-            to_value = get_number(self.to_value_val.get())
-            to_unit = self.to_unit_val.get()
-            self.to_value_val.set(to_value)
-        except ValueError:
-            try:
-                to_value = get_number(self.to_unit_val.get())
-                to_unit = self.to_value_val.get()
-                self.to_unit_val.set(to_unit)
-                self.to_value_val.set(to_value)
-            except ValueError:
-                to_value = self.to_value_val.get()
-                to_unit = self.to_unit_val.get()
-                self.to_value_val.set(f"wrong number format")
-                self.to_unit_val.set(to_unit)
-                return None, None
+        to_value = self.to_value_val.get().strip()
+        to_unit = self.to_unit_val.get().strip()
+        if len(to_value) == 0 and len(to_unit) > 0 and not is_numeric(to_unit):
+            pass  # is OK
+        elif len(to_unit) == 0 and len(to_value) > 0 and not is_numeric(to_value):
+            to_value, to_unit = to_unit, to_value
+        elif is_numeric(to_value) and not is_numeric(to_unit):
+            to_value = get_number(to_value)
+        elif not is_numeric(to_value) and is_numeric(to_unit):
+            to_value, to_unit = get_number(to_unit), to_value
+        elif not is_numeric(to_value) and not is_numeric(to_unit):
+            self.to_value_val.set(f"wrong number format")
+            to_value, to_unit = None, None
+        self.to_unit_val.set(to_unit)
+        self.to_value_val.set(to_value)
         return to_unit, to_value
 
     def _calculate(self, *args):
         from_unit, from_value = self._get_from()
-        to_unit = self.to_unit_val.get()
-        self.to_value_val.set("")
+        to_unit, to_value = self._get_to()
+        if from_value == "" and is_numeric(to_value):
+            return self._rcalculate()
         try:
             to_value = convert(from_value, from_unit, to_unit,
-                               print_conversion_path=False)
+                               print_conversion_path=up_.print_path_)
             self.to_value_val.set(str(to_value))
         except NoConversionFoundError:
             self.to_value_val.set("")
@@ -130,14 +129,15 @@ class UnytsApp(tk.Frame):
 
     def _rcalculate(self, *args):
         from_unit, from_value = self._get_to()
-        to_unit = self.from_unit_val.get()
-        self.from_value_val.set("")
+        to_unit, to_value = self._get_from()
+        if from_value == "" and is_numeric(to_value):
+            return self._calculate()
         try:
             to_value = convert(from_value, from_unit, to_unit,
-                               print_conversion_path=False)
+                               print_conversion_path=up_.print_path_)
             self.from_value_val.set(str(to_value))
         except NoConversionFoundError:
-            self.from_value_val("")
+            self.from_value_val.set("")
             self.button_text.set("no conversion found!")
 
 
