@@ -6,8 +6,8 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.2.5'
-__release__ = 20240509
+__version__ = '0.3.0'
+__release__ = 20240510
 __all__ = ['start_gui']
 
 import logging
@@ -17,7 +17,7 @@ from stringthings import get_number, is_numeric
 from .converter import convert
 from .dictionaries import _all_units
 from .errors import NoConversionFoundError
-from .database import save_memory, load_memory, clean_memory, delete_cache, unyts_parameters_, set_fvf
+from .database import save_memory, load_memory, clean_memory, delete_cache, unyts_parameters_ as up_, set_fvf
 import pathlib, os
 
 
@@ -143,11 +143,12 @@ class UnytsApp(tk.Frame):
 
 def start_gui():
     def close_gui():
-        logging.info("saving memory...")
-        save_memory()
         logging.info("INFO:shutting down Unyts.")
+        if up_.cache_:
+            logging.info("saving memory...")
+            save_memory()
         root.destroy()
-    if unyts_parameters_.memory_:
+    if up_.memory_:
         load_memory()
     else:
         delete_cache()
@@ -180,10 +181,10 @@ def start_gui():
     # Options menu
     options_menu = tk.Menu(unyts_menu)
     unyts_menu.add_cascade(label='Options', menu=options_menu)
-    options_menu.add_command(label="Set FVF in CMD", command=set_fvf)
-    # options_menu.add_checkbutton(label='Print path', onvalue=True, offvalue=False, variable=unyts_parameters_.print_path_)
-    # options_menu.add_checkbutton(label='Cache', onvalue=True, offvalue=False, variable=unyts_parameters_.cache_)
-    # options_menu.add_checkbutton(label='Reload on next start', onvalue=True, offvalue=False, variable=unyts_parameters_.reload_)
+    options_menu.add_command(label="Set FVF (in CMD)", command=set_fvf)
+    options_menu.add_checkbutton(label='Print path', variable=up_.print_path_, command=up_.print_path)
+    options_menu.add_checkbutton(label='Cache', variable=up_.cache_, command=up_.cache)
+    options_menu.add_checkbutton(label='Reload on next start', variable=up_.reload_, command=up_.reload_next_time)
 
     unyts_gui = UnytsApp()
     unyts_gui.master.title("Unyts converter")

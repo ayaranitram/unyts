@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.3'
-__release__ = 20240502
+__version__ = '0.5.5'
+__release__ = 20240510
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'dir_path', 'set_density']
 
 import logging
@@ -81,7 +81,8 @@ class UnytsParameters(object):
                 self.print_path_ = True
         else:
             self.print_path_ = bool(switch)
-        print("print_path", "ON" if self.print_path_ else "OFF")
+        print(f"print path {'ON' if self.print_path_ else 'OFF'}")
+        self.save_params()
 
     def cache(self, switch=None) -> None:
         if switch is None:
@@ -93,7 +94,8 @@ class UnytsParameters(object):
                 self.cache_ = True
         else:
             self.cache_ = bool(switch)
-        print("cache", "ON" if self.cache_ else "OFF")
+        print(f"cache {'ON' if self.cache_ else 'OFF'}")
+        self.save_params()
 
     def raise_error(self, switch=None) -> None:
         if switch is None:
@@ -105,7 +107,8 @@ class UnytsParameters(object):
                 self.raise_error_ = True
         else:
             self.raise_error_ = bool(switch)
-        print("raise_error", "ON" if self.raise_error_ else "OFF")
+        print(f"raise_error {'ON' if self.raise_error_ else 'OFF'}")
+        self.save_params()
 
     def verbose(self, switch=None) -> None:
         if switch is None:
@@ -117,8 +120,22 @@ class UnytsParameters(object):
                 self.verbose_ = True
         else:
             self.verbose_ = bool(switch)
-        print("verbose", "ON" if self.verbose_ else "OFF")
+        print(f"verbose {'ON' if self.verbose_ else 'OFF'}")
+        self.save_params()
 
+    def reload_next_time(self, switch=None):
+        if switch is None:
+            self.reload_ = not self.reload_
+        elif type(switch) is str:
+            if switch.lower().strip() in off_switches:
+                self.reload_ = False
+            else:
+                self.reload_ = True
+        else:
+            self.reload_ = bool(switch)
+        if self.reload_:
+            print("Unyts will recreate dictionaries next time.")
+        self.save_params()
 
 unyts_parameters_ = UnytsParameters()
 
