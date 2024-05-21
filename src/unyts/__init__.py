@@ -6,13 +6,13 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.8.7'
-__release__ = 20240512
+__version__ = '0.8.9'
+__release__ = 20240521
 __all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit',
-           'set_unit', 'set_conversion', 'set_density',
+           'set_unit', 'set_conversion', 'set_density', 'get_density'
            'save', 'start_gui', 'set_fvf']
 
-from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density
+from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density, recursion_limit
 from .database import network_to_frame, save_memory, load_memory, set_fvf
 from .units.define import units
 from .converter import convert, convertible
@@ -20,6 +20,7 @@ from .Empty import Empty
 from .unit_class import Unit, is_Unit
 from .units.custom import set_unit, set_conversion
 from .gui import start_gui
+
 
 if unyts_parameters_.show_version_:
     print(f"loaded unyts version {str(__version__)}")

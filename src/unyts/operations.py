@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:38:58 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.3'
-__release__ = 20230719
+__version__ = '0.5.4'
+__release__ = 20240521
 __all__ = ['unit_product', 'unit_division', 'unit_base_power', 'unit_power', 'unit_addition', 'unit_inverse']
 
 from .dictionaries import dictionary, unitless_names
@@ -16,6 +16,8 @@ from .helpers.is_number import is_number
 from .helpers.unit_string_tools import reduce_units
 from .helpers.multi_split import multi_split
 
+
+_super_numbers_ = dict(zip('⁰¹³²⁴⁵⁶⁷⁸⁹', '0123456789'))
 
 def unit_split(unit_string: str) -> str:
     us = multi_split(unit_string)

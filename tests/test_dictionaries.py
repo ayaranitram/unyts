@@ -23,13 +23,14 @@ max_check = 25
 for key in dictionary:
     if key in ['Impedance', 'Date', 'otherUnits']:
         continue
-    print(key)
+    # print(key)
     if len(dictionary[key]) > max_check:
         to_check = [u for u in dictionary[key] if
                     (u.count('*') <= 1 and u.count('/') == 0) or (u.count('/') <= 1 and u.count('*') == 0)]
     else:
         to_check = dictionary[key]
     for unit in to_check[:max_check]:
+        print(key, unit)
         if key in ['Length', 'Rate'] and (len(unit) <= 2 and unit.endswith('l')) or (
                 '/' in unit and len(unit.split('/')[0]) <= 2 and unit.split('/')[0].endswith('l')):
             continue  # litre is defines as length for SI sufixes (linear multiplier)

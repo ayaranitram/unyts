@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.4'
-__release__ = 20240502
+__version__ = '0.6.5'
+__release__ = 20240521
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -326,8 +326,7 @@ def _get_conversion(value, from_unit, to_unit, recursion=None):
 def _converter(value, from_unit, to_unit, recursion=None):
     """
     Transform the received value (integer, float, array, series, frame, ...)
-    from the units `from_unit` to the units `to_units`
-    as well as conversion path.
+    from the units `from_unit` to the units `to_units` and report the conversion path used.
 
     Parameters
     ----------
@@ -396,7 +395,7 @@ def _converter(value, from_unit, to_unit, recursion=None):
         else:
             return value * conversion_factor, conversion_path
 
-    # look for one to pair conversion path
+    # look for one-to-pair conversion path
     if ('/' in to_unit or '*' in to_unit) and ('/' not in from_unit and '*' not in from_unit):
         from_unit_child = _get_pair_child(from_unit)
         if from_unit_child is not None:
