@@ -144,29 +144,29 @@ def _load_dictionary() -> (dict, dict):
         'millilitre': ('ml', 'milliliter', 'cubic centimeter'),
         'centilitre': ('cl', 'centiliter'),
         'decilitre': ('dl', 'deciliter'),
-        'cubic meter': ('CM', 'm3'),
-        'standard cubic meter': ('scm', 'sm3', 'stm3', 'm3', 'Sm3'),
-        'cubic centimeter': ('cc', 'cm3', 'standard cubic centimeter'),
-        'standard cubic centimeter': ('scc', 'scm3'),
-        'reservoir cubic meter': ('rm3', 'Rm3'),
-        'reservoir cubic centimeter': ('rcc', 'rcm3'),
-        'cubic thou': ('th3', 'th2*th', 'th*th2'),
-        'cubic tenth': ('te3', 'te2*te', 'te*te2'),
-        'cubic inch': ('cubic inches', 'in3', 'in2*in', 'in*in2'),
-        'cubic foot': ('cubic feet', 'ft3', 'cf', 'ft2*ft', 'ft*ft2', 'pie cúbico', 'pie cubico', 'pc', 'pies cúbicos',
-                       'pies cubicos'),
-        'cubic yard': ('yd3', 'yd2*yd' 'yd*yd2'),
-        'cubic chain': ('ch3', 'ch2*ch', 'ch*ch2'),
-        'cubic rod': ('rd3', 'rd2*rd', 'rd*rd2'),
-        'cubic furlong': ('fur3', 'fur2*fur', 'fur*fur2'),
-        'cubic mile': ('mi3', 'mi2*mi', 'mi*mi2'),
-        'cubic league': ('lea3', 'lea2*lea', 'lea*lea2'),
+        'cubic meter': ('CM', 'm3', 'm³'),
+        'standard cubic meter': ('scm', 'sm3', 'stm3', 'm3', 'Sm3', 'sm³'),
+        'cubic centimeter': ('cc', 'cm3', 'standard cubic centimeter', 'cm³'),
+        'standard cubic centimeter': ('scc', 'scm3', 'scm³'),
+        'reservoir cubic meter': ('rm3', 'Rm3', 'rm³'),
+        'reservoir cubic centimeter': ('rcc', 'rcm3', 'rcm³'),
+        'cubic thou': ('th3', 'th2*th', 'th*th2', 'th³'),
+        'cubic tenth': ('te3', 'te2*te', 'te*te2', 'te³'),
+        'cubic inch': ('cubic inches', 'in3', 'in2*in', 'in*in2', 'in³'),
+        'cubic foot': ('cubic feet', 'ft3', 'ft³', 'cf', 'ft2*ft', 'ft*ft2',
+                       'pie cúbico', 'pie cubico', 'pc', 'pies cúbicos', 'pies cubicos',),
+        'cubic yard': ('yd3', 'yd³', 'yd2*yd' 'yd*yd2'),
+        'cubic chain': ('ch3', 'ch³', 'ch2*ch', 'ch*ch2'),
+        'cubic rod': ('rd3', 'rd³', 'rd2*rd', 'rd*rd2'),
+        'cubic furlong': ('fur3', 'fur³', 'fur2*fur', 'fur*fur2'),
+        'cubic mile': ('mi3', 'mi³', 'mi2*mi', 'mi*mi2'),
+        'cubic league': ('lea3', 'lea³', 'lea2*lea', 'lea*lea2'),
         'standard cubic foot': ('scf', 'cf'),
         'barrel': ('bbl', 'stb', 'oil barrel'),
         'reservoir barrel': ('rb',),
         'standard barrel': ('stb', 'stbo', 'stbw', 'stbl', 'oil barrel'),
     }
-    dictionary['Volume_UPPER'] = ('sm3', 'rm3', 'kstm3', 'Mstm3')
+    dictionary['Volume_UPPER'] = ('sm3', 'sm³', 'rm3', 'rm³', 'kstm3', 'kstm³', 'Mstm3', 'Mstm³')
     dictionary['Volume_PLURALwS_UPPER_LOWER'] = tuple(dictionary['Volume_NAMES_SPACES_REVERSE'].keys()) + \
                                                 tuple(dictionary['Volume_UK_NAMES_REVERSE'].keys()) + \
                                                 ('fl oz', 'oz', 'ounce', 'gallon', 'imperial gallon', 'barrel', 'gal',
@@ -174,7 +174,7 @@ def _load_dictionary() -> (dict, dict):
                                                  'USgallon', 'UKgallon', 'USounce', 'UKounce',
                                                  'cubic centimeter', 'standard cubic centimeter',
                                                  'liter', 'milliliter', 'centiliter', 'deciliter')
-    dictionary['Volume_OGF'] = ('scf', 'cf', 'ft3', 'stb', 'bbl', 'rb', 'stbo', 'stbw', 'stbl')
+    dictionary['Volume_OGF'] = ('scf', 'cf', 'ft3', 'ft³', 'stb', 'bbl', 'rb', 'stbo', 'stbw', 'stbl')
     # dictionary['Volume_oilgas_NAMES'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl')
     dictionary['Volume_oilgas_UPPER'] = ('sm3', 'Sm3', 'm3', 'rm3', 'Rm3', 'ksm3', 'Msm3', 'Gsm3',
                                          'scf', 'cf', 'ft3', 'Mscf', 'MMscf', 'Bscf', 'Tscf', 'Mcf', 'MMcf', 'Bcf',
@@ -182,11 +182,11 @@ def _load_dictionary() -> (dict, dict):
                                          'stb', 'bbl', 'rb', 'Mstb', 'MMstb', 'Bstb', 'Tstb', 'Mbbl', 'MMbbl', 'Mrb',
                                          'MMrb')
     dictionary['Volume_product_NAMES_REVERSE'] = {
-        'm3': ('m2*m', 'm*m2'),
-        'cm3': ('cm2*cm', 'cm*cm2'),
-        'yd3': ('yd2*yd', 'yd*yd2'),
-        'ft3': ('ft2*ft', 'ft*ft2'),
-        'in3': ('in2*in', 'in*in2'),
+        'm3': ('m³', 'm2*m', 'm*m2', 'm²*m', 'm*m²'),
+        'cm3': ('cm³', 'cm2*cm', 'cm*cm2', 'cm²*cm', 'cm*cm²'),
+        'yd3': ('yd³', 'yd2*yd', 'yd*yd2', 'yd²*yd', 'yd*yd²'),
+        'ft3': ('ft³', 'ft2*ft', 'ft*ft2', 'ft²ft', 'ft*ft²'),
+        'in3': ('in³', 'in2*in', 'in*in2', 'in²*in', 'in*in²'),
     }
     dictionary['Volume_linearSI'] = ('sm3', 'rm3',)
 
@@ -213,20 +213,20 @@ def _load_dictionary() -> (dict, dict):
 
     # Area
     dictionary['Area'] = []
-    dictionary['Area_NAMES_REVERSE_UPPER'] = {'square meter': ('sq m', 'm2', 'sqmeter', 'm*m', 'm3/m')}
-    dictionary['Area_SI'] = ('m2',)
+    dictionary['Area_NAMES_REVERSE_UPPER'] = {'square meter': ('sq m', 'm2', 'm²', 'sqmeter', 'm*m', 'm3/m')}
+    dictionary['Area_SI'] = ('m2', 'm²',)
     dictionary['Area_UK_NAMES_REVERSE_UPPER'] = {
         'acre': tuple(),
-        'square thou': ('sq th', 'sqth', 'th2', 'th*th', 'th3/th'),
-        'square tenth': ('sq te', 'sqte', 'te2', 'te*te', 'te3/te'),
-        'square inch': ('sq in', 'sqin', 'in2', 'in*in', 'in3/in'),
-        'square foot': ('sq ft', 'sqft', 'ft2', 'ft*ft', 'ft3/ft'),
-        'square yard': ('sq yd', 'sqyd', 'yd2', 'yd*yd', 'yd3/yd'),
-        'square chain': ('sq ch', 'sqch', 'ch2', 'ch*ch', 'ch3/ch'),
-        'square rod': ('sq rd', 'sqrd', 'rd2', 'rd*rd', 'rd3/rd'),
-        'square furlong': ('sq fur', 'sqfur', 'fur2', 'fur*fur', 'fur3/fur'),
-        'square mile': ('sq mi', 'mi2', 'sqmile', 'mi*mi', 'mi3/mi'),
-        'square league': ('sq lea', 'sqlea', 'lea2', 'lea*lea', 'lea3/lea'),
+        'square thou': ('sq th', 'sqth', 'th2', 'th²', 'th*th', 'th3/th'),
+        'square tenth': ('sq te', 'sqte', 'te2', 'te²', 'te*te', 'te3/te'),
+        'square inch': ('sq in', 'sqin', 'in2', 'in²', 'in*in', 'in3/in'),
+        'square foot': ('sq ft', 'sqft', 'ft2', 'ft²', 'ft*ft', 'ft3/ft'),
+        'square yard': ('sq yd', 'sqyd', 'yd2', 'yd²', 'yd*yd', 'yd3/yd'),
+        'square chain': ('sq ch', 'sqch', 'ch2', 'ch²', 'ch*ch', 'ch3/ch'),
+        'square rod': ('sq rd', 'sqrd', 'rd2', 'rd²', 'rd*rd', 'rd3/rd'),
+        'square furlong': ('sq fur', 'sqfur', 'fur2', 'fur²', 'fur*fur', 'fur3/fur'),
+        'square mile': ('sq mi', 'mi2', 'mi²', 'sqmile', 'mi*mi', 'mi3/mi'),
+        'square league': ('sq lea', 'sqlea', 'lea2', 'lea²', 'lea*lea', 'lea3/lea'),
     }
 
     # Pressure
@@ -299,14 +299,14 @@ def _load_dictionary() -> (dict, dict):
         'SgO': ('oil gravity', 'sgo'),
     }
     dictionary['Density_NAMES_REVERSE_UPPER'] = {
-        'g/cm3': ('g/cc',),
-        'kg/m3': ('Kg/m3',),
+        'g/cm3': ('g/cc', 'g/cm³',),
+        'kg/m3': ('Kg/m3', 'kg/m³'),
         'lb/ft3': tuple(),
         'lb/yd3': tuple(),
         'psi/ft': tuple(),
-        'kJ/rm3': ('KJ/rm3',),
-        'kJ/sm3': ('KJ/sm3',),
-        'kJ/m3': ('KJ/m3',),
+        'kJ/rm3': ('KJ/rm3', 'kJ/rm³'),
+        'kJ/sm3': ('KJ/sm3', 'kJ/sm³'),
+        'kJ/m3': ('KJ/m3', 'kJ/m³'),
         'lb/stb': tuple(),
         'psia/ft': ('psi/ft', 'psig/ft'),
         'bara/m': ('bar/m', 'barg/m'),
@@ -336,9 +336,9 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Rate_NAMES_REVERSE_UPPER_SPACES'] = {
         'stb/day': ('stbd',),
         'scf/day': ('scfd', 'cf/day',),
-        'sm3/day': ('sm3d', 'stm3d', 'stm3/day'),
+        'sm3/day': ('sm3d', 'stm3d', 'stm3/day', 'sm³/day'),
         'bbl/day': ('bbld',),
-        'm3/day': ('m3/d',),
+        'm3/day': ('m3/d', 'm³/day'),
         'ft3/day': ('cf/day',),
     }
 
