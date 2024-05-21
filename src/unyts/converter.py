@@ -411,8 +411,8 @@ def _converter(value, from_unit, to_unit, recursion=None):
                 else:
                     return conversion(value), conversion_path
 
-    # look for pair to one conversion path
-    elif ('/' in from_unit or '*' in from_unit) and ('/' not in to_unit or '*' not in to_unit):
+    # look for pair-to-one conversion path
+    elif ('/' in from_unit or '*' in from_unit) and ('/' not in to_unit and '*' not in to_unit):
         to_unit_child = _get_pair_child(to_unit)
         if to_unit_child is not None:
             final_conversion, final_conversion_path = _get_conversion(None, to_unit_child, to_unit, recursion=recursion)
