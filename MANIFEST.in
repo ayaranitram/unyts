@@ -1,2 +1,2 @@
 include src/unyts/parameters.ini
-include src/unyts/openbook.ico
+include src/unyts/unyts_icon.ico
