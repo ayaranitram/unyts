@@ -48,7 +48,8 @@ SI = {
     'y': (lambda X: X * 1E-24, lambda X: X * 1E-48, lambda X: X * 1E-72),  # yocto
 }
 
-SI_order = (('Length', 'Pressure', 'Weight', 'Mass', 'Time', 'Frequency', 'Power', 'Voltage', 'Current', 'Resistance',),
+SI_order = (('Length', 'Pressure', 'Weight', 'Mass', 'Time', 'Frequency', 'Power', 'Voltage', 'Current', 'Resistance',
+             'Impedance', 'Conductance', 'Capacitance', 'Charge', 'Inductance', 'Energy', 'Permeability'),
             ('Area',),
             ('Rate', 'Volume',),)
 
@@ -369,7 +370,7 @@ def _load_dictionary() -> (dict, dict):
         'millidarcy': ('mD',)
     }
     dictionary['Permeability_UPPER_LOWER'] = ('Darcy', 'millidarcy')
-    dictionary['Energy_SI'] = ('D',)
+    dictionary['Permeability_SI'] = ('D',)
 
     # Force
     dictionary['Force'] = []
