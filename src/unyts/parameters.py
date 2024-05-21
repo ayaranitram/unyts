@@ -15,11 +15,12 @@ import os.path
 from json import load as json_load, dump as json_dump
 from os.path import isfile
 from pathlib import Path
+from sys import getrecursionlimit
 
 ini_path = Path(__file__).with_name('parameters.ini').absolute()
 dir_path = os.path.dirname(ini_path) + '/'
 off_switches = ('off', 'no', 'not', '')
-
+__max_recursion_default__ = 25
 
 class UnytsParameters(object):
     """
@@ -34,6 +35,7 @@ class UnytsParameters(object):
         self.reduce_parentheses_ = True
         self.show_version_ = True
         self.density_ = None
+        self.max_recursion_ = __max_recursion_default__
         self.load_params()
         self.reload_ = self.reload_ if reload is None else bool(reload)
         self.memory_ = not self.reload_
@@ -49,7 +51,8 @@ class UnytsParameters(object):
                       'raise_error_': True,
                       'verbose_': False,
                       'reduce_parentheses_': True,
-                      'show_version_': False}
+                      'show_version_': False,
+                      'max_recursion_': __max_recursion_default__}
             with open(ini_path, 'w') as f:
                 json_dump(params, f)
         self.print_path_ = params['print_path_']
@@ -59,6 +62,7 @@ class UnytsParameters(object):
         self.verbose_ = params['verbose_']
         self.reduce_parentheses_ = params['reduce_parentheses_']
         self.show_version_ = params['show_version_']
+        self.max_recursion_ = params['max_recursion_'] if 'max_recursion_' in params else __max_recursion_default__
 
     def save_params(self) -> None:
         params = {'print_path_': self.print_path_,
@@ -67,7 +71,8 @@ class UnytsParameters(object):
                   'raise_error_': self.raise_error_,
                   'verbose_': self.verbose_,
                   'reduce_parentheses_': self.verbose_,
-                  'show_version_': self.show_version_}
+                  'show_version_': self.show_version_,
+                  'max_recursion_': self.max_recursion_}
         with open(ini_path, 'w') as f:
             json_dump(params, f)
 
@@ -137,6 +142,21 @@ class UnytsParameters(object):
             print("Unyts will recreate dictionaries next time.")
         self.save_params()
 
+    def recursion_limit(self, limit=None):
+        if limit is None:
+            return self.max_recursion_
+        elif limit.lower() == 'max' or limit is False:
+            self.max_recursion_ = getrecursionlimit() - 15
+            return self.max_recursion_
+        elif limit is True:
+            self.max_recursion_ = __max_recursion_default__
+            return self.max_recursion_
+        elif type(limit) is int:
+            self.max_recursion_ = min(limit, getrecursionlimit() - 15)
+        else:
+            raise ValueError(f"not valid recursion limit, must be an integer of False.")
+
+
 unyts_parameters_ = UnytsParameters()
 
 
@@ -154,6 +174,9 @@ def verbose(switch=None) -> None:
 
 def cache(switch=None) -> None:
     unyts_parameters_.cache(switch)
+
+def recursion_limit(limit=None) -> int:
+    return unyts_parameters_.recursion_limit(limit)
 
 
 def set_density(density: float, units: str = 'g/cc') -> None:

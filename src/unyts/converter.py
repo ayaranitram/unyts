@@ -203,6 +203,18 @@ def _get_pair_child(unit: str):
         return pair_child
 
 
+def _get_recursion_limit(recursion=None):
+    if recursion is None:
+        recursion = min(getrecursionlimit() - 15, unyts_parameters_.max_recursion_)
+    elif recursion > 1:
+        recursion = min(getrecursionlimit() - 15, recursion)
+    elif recursion <= 1:
+        recursion = 0
+    else:
+        recursion -= 1
+    return recursion
+
+
 def _get_conversion(value, from_unit, to_unit, recursion=None):
     """
     Helper function to handle looking for the conversion factor of special cases and through the units network.
@@ -219,12 +231,9 @@ def _get_conversion(value, from_unit, to_unit, recursion=None):
 
     """
     # get and set recursion limit
-    if recursion is None:
-        recursion = min(getrecursionlimit()-15, 250)
-    elif recursion == 1:
+    recursion = _get_recursion_limit(recursion)
+    if recursion == 0:
         return None, None
-    else:
-        recursion -= 1
     # print(f"_get_conversion: {from_unit=}, {to_unit=}")
 
     # check if already solved and memorized
@@ -331,13 +340,9 @@ def _converter(value, from_unit, to_unit, recursion=None):
         (conversion, conversion_path)
     """
     # get and set recursion limit
-    if recursion is None:
-        recursion = min(getrecursionlimit()-15, 250)
-    elif recursion == 1:
+    recursion = _get_recursion_limit(recursion)
+    if recursion == 0:
         return None, None
-    else:
-        recursion -= 1
-    # print(f"_converter: {from_unit=}, {to_unit=}")
 
     # reset memory for this variable
     units_network.previous = []
