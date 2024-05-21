@@ -268,7 +268,7 @@ def _load_dictionary() -> (dict, dict):
         'pennyweight': ('pwt', 'dwt'),
         'dram': ('dr', 'dramch'),
         'ounce': ('oz', 'wt oz', 'weight ounce'),
-        'pound': ('lb', '#', 'libra'),
+        'pound': ('lb', '#', 'libra',),
         'stone': ('st',),
         'quarter': ('qr', 'qrt'),
         # 'hundredweight' : ('cwt',),
@@ -276,11 +276,11 @@ def _load_dictionary() -> (dict, dict):
         'long hundredweight': ('UK hundredweight', 'UKcwt', 'cwt', 'swtUK'),
         # 'ton' : ('t',),
         'short ton': ('USton', 'tonUS'),
-        'long ton': ('t', 'UKton', 'ton', 'tonUK'),
+        'long ton': ('t', 'UKton', 'ton', 'tonUK', 'Ton'),
     }
     dictionary['Weight_PLURALwS_UPPER_LOWER_SPACES'] = tuple(dictionary['Weight_NAMES_REVERSE'].keys()) + \
                                                        tuple(dictionary['Weight_UK_NAMES_REVERSE'].keys()) + \
-                                                       ('Tonne', 'ton', 'UKton', 'USton')
+                                                       ('Tonne', 'ton', 'UKton', 'USton', 'lb', 'libra')
     dictionary['Weight_SI'] = ('g', 'g-mol')
 
     # Mass
