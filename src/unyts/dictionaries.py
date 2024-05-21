@@ -346,6 +346,13 @@ def _load_dictionary() -> (dict, dict):
         'ft3/day': ('cf/day',),
     }
 
+    # Velocity
+    dictionary['Velocity'] = ['kilometer per hour', 'mile per hour',]
+    dictionary['Velocity_NAMES_REVERSE_UPPER_LOWER'] = {
+        'kilometer per hour': ('kilometers per hour', 'kph', 'KPH', 'km/hr'),
+        'mile per hour': ('miles per hour', 'mph', 'MPH', 'mi/hr'),
+    }
+
     # digital Data
     # dictionary['Data'] = []
     dictionary['dataBYTE'] = []
