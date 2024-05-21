@@ -236,8 +236,8 @@ def _load_dictionary() -> (dict, dict):
     }
     dictionary['Pressure_NAMES_REVERSE_UPPER_SPACES'] = {
         'absolute psi': ('psia', 'lb/in2', 'absolute pound/square inch', 'psi absolute',
-                         'libras/pulgada cuadrada absoluta', 'lpca'),
-        'psi gauge': ('psi', 'pound/square inch', 'psig', 'gauge psi'),
+                         'lpca', 'libras/pulgada cuadrada absoluta'),
+        'psi gauge': ('psi', 'pound/square inch', 'psig', 'gauge psi', 'lpc', 'lpcm', 'libras/pulgada cuadrada'),
         'absolute bar': ('bara', 'barsa', 'abs bar', 'bar absolute'),
         'bar gauge': ('bar', 'barg', 'gauge bar', 'bars'),
         'atmosphere': ('atm', 'atma'),
@@ -250,8 +250,10 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Pressure_SI'] = ('Pa', 'bara', 'barsa', 'bar', 'barg')
 
     dictionary['PressureGradient'] = []
-    dictionary['PressureGradient'] = ('psi/ft', 'psia/ft', 'psig/ft', 'psi/m', 'psia/m', 'psig/m', 'bar/m', 'bars/m',
-                                      'barsa/m', 'bara/m', 'barg/m')
+    dictionary['PressureGradient'] = ('psi/ft', 'psia/ft', 'psig/ft',
+                                      'psi/m', 'psia/m', 'psig/m',
+                                      'bar/m', 'bars/m', 'barsa/m', 'bara/m', 'barg/m',
+                                      'bar/ft', 'bars/ft', 'barsa/ft', 'bara/ft', 'barg/ft')
 
     # Weight
     dictionary['Weight'] = []
