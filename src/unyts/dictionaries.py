@@ -209,7 +209,7 @@ def _load_dictionary() -> (dict, dict):
         'nautical league': ('nlea',),
     }
     dictionary['Length_UK_UPPER'] = tuple(dictionary['Length_UK_NAMES_REVERSE'].keys()) + \
-                                    ('feet', 'in', 'ft', 'yd', '0.1 in', '0.1in', '.1in')
+                                    ('feet', 'in', 'ft', '0.1 in', '0.1in', '.1in')  # 'yd' uppercase is confused with yottaDarcy
 
     # Area
     dictionary['Area'] = []
@@ -261,6 +261,7 @@ def _load_dictionary() -> (dict, dict):
         'gram': ('g',),
         'kilogram': ('kg',),
         'milligram': ('mg',),
+        'microgram': ('ug', 'µg'),
         'metric ton': ('Tonne',),
         'g-mol': ('g-moles',),
         'Kg-mol': ('Kg-moles',),
