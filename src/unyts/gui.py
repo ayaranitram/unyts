@@ -6,19 +6,21 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.3.0'
-__release__ = 20240510
+__version__ = '0.3.5'
+__release__ = 20240521
 __all__ = ['start_gui']
 
 import logging
 import tkinter as tk
 from tkinter import ttk
 from stringthings import get_number, is_numeric
+from unyts import __version__ as unyts_version
 from .converter import convert
 from .dictionaries import _all_units
 from .errors import NoConversionFoundError
 from .database import save_memory, load_memory, clean_memory, delete_cache, unyts_parameters_ as up_, set_fvf
 import pathlib, os
+import webbrowser
 
 
 _all_units_str = _all_units()
@@ -115,8 +117,16 @@ class UnytsApp(tk.Frame):
         return to_unit, to_value
 
     def _calculate(self, *args):
+        self.button_text.set("looking for conversion...")
         from_unit, from_value = self._get_from()
         to_unit, to_value = self._get_to()
+        if from_unit is None and from_value is None and to_unit is None and to_value is None:
+            self.from_value_val.set("")
+            self.from_unit_val.set("")
+            self.to_value_val.set("")
+            self.to_unit_val.set("")
+            self.button_text.set("convert")
+            return None
         if from_value == "" and is_numeric(to_value):
             return self._rcalculate()
         try:
@@ -126,10 +136,20 @@ class UnytsApp(tk.Frame):
         except NoConversionFoundError:
             self.to_value_val.set("")
             self.button_text.set("no conversion found!")
+            return None
+        self.button_text.set("convert")
 
     def _rcalculate(self, *args):
+        self.button_text.set("looking for conversion...")
         from_unit, from_value = self._get_to()
         to_unit, to_value = self._get_from()
+        if from_unit is None and from_value is None and to_unit is None and to_value is None:
+            self.from_value_val.set("")
+            self.from_unit_val.set("")
+            self.to_value_val.set("")
+            self.to_unit_val.set("")
+            self.button_text.set("convert")
+            return None
         if from_value == "" and is_numeric(to_value):
             return self._calculate()
         try:
@@ -139,6 +159,8 @@ class UnytsApp(tk.Frame):
         except NoConversionFoundError:
             self.from_value_val.set("")
             self.button_text.set("no conversion found!")
+            return None
+        self.button_text.set("convert")
 
 
 def start_gui():
@@ -152,6 +174,10 @@ def start_gui():
         load_memory()
     else:
         delete_cache()
+    def open_help():
+        webbrowser.open('https://github.com/ayaranitram/unyts/blob/master/unyts_demo.ipynb')
+    def open_git():
+        webbrowser.open('https://github.com/ayaranitram/unyts')
 
     logging.info("starting Unyts GUI...")
     w, h = 325, 185
@@ -164,6 +190,12 @@ def start_gui():
     current_dir = pathlib.Path(__file__).parent.resolve()
     icon_path = os.path.join(current_dir, icon_file)
     root.iconbitmap(icon_path)
+
+    # variables
+    _cache_ = tk.BooleanVar()
+    _cache_.set(up_.cache_)
+    _print_path_ = tk.BooleanVar()
+    _print_path_.set(up_.print_path_)
 
     # setting menu
     root.option_add('*tearOff', False)
@@ -182,9 +214,16 @@ def start_gui():
     options_menu = tk.Menu(unyts_menu)
     unyts_menu.add_cascade(label='Options', menu=options_menu)
     options_menu.add_command(label="Set FVF (in CMD)", command=set_fvf)
-    options_menu.add_checkbutton(label='Print path', variable=up_.print_path_, command=up_.print_path)
-    options_menu.add_checkbutton(label='Cache', variable=up_.cache_, command=up_.cache)
+    options_menu.add_separator()
+    options_menu.add_checkbutton(label='Show conversion path', variable=_print_path_, command=up_.print_path)
+    options_menu.add_checkbutton(label='Cache', variable=_cache_, command=up_.cache)
     options_menu.add_checkbutton(label='Reload on next start', variable=up_.reload_, command=up_.reload_next_time)
+    # help menu
+    help_menu = tk.Menu(unyts_menu)
+    unyts_menu.add_cascade(label='Help', menu=help_menu)
+    help_menu.add_command(label='Help', command=open_help)
+    help_menu.add_command(label='GitHub', command=open_git)
+    help_menu.add_command(label=f"Version {unyts_version}")
 
     unyts_gui = UnytsApp()
     unyts_gui.master.title("Unyts converter")

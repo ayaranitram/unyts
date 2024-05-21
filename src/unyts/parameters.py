@@ -86,7 +86,7 @@ class UnytsParameters(object):
                 self.print_path_ = True
         else:
             self.print_path_ = bool(switch)
-        print(f"print path {'ON' if self.print_path_ else 'OFF'}")
+        logging.info(f"print path {'ON' if self.print_path_ else 'OFF'}")
         self.save_params()
 
     def cache(self, switch=None) -> None:
@@ -99,7 +99,7 @@ class UnytsParameters(object):
                 self.cache_ = True
         else:
             self.cache_ = bool(switch)
-        print(f"cache {'ON' if self.cache_ else 'OFF'}")
+        logging.info(f"cache {'ON' if self.cache_ else 'OFF'}")
         self.save_params()
 
     def raise_error(self, switch=None) -> None:
@@ -112,7 +112,7 @@ class UnytsParameters(object):
                 self.raise_error_ = True
         else:
             self.raise_error_ = bool(switch)
-        print(f"raise_error {'ON' if self.raise_error_ else 'OFF'}")
+        logging.info(f"raise_error {'ON' if self.raise_error_ else 'OFF'}")
         self.save_params()
 
     def verbose(self, switch=None) -> None:
@@ -125,7 +125,7 @@ class UnytsParameters(object):
                 self.verbose_ = True
         else:
             self.verbose_ = bool(switch)
-        print(f"verbose {'ON' if self.verbose_ else 'OFF'}")
+        logging.info(f"verbose {'ON' if self.verbose_ else 'OFF'}")
         self.save_params()
 
     def reload_next_time(self, switch=None):
@@ -139,7 +139,9 @@ class UnytsParameters(object):
         else:
             self.reload_ = bool(switch)
         if self.reload_:
-            print("Unyts will recreate dictionaries next time.")
+            logging.info("Unyts will recreate dictionaries next time.")
+        else:
+            logging.info("Unyts will try to load dictionaries from cache next time.")
         self.save_params()
 
     def recursion_limit(self, limit=None):
@@ -220,5 +222,4 @@ def get_density():
 def reload() -> None:
     unyts_parameters_.reload_ = True
     unyts_parameters_.save_params()
-    print("On next 'import unyts', the dictionary and network will be re-created.",
-          'It might be required to restart the Python kernel.', sep='\n')
+    logging.info("On next 'import unyts', the dictionary and network will be re-created.\n It might be required to restart the Python kernel.")
