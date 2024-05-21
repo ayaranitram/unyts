@@ -354,7 +354,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('percentage'), network.get_node('fraction'), lambda p: p / 100))
 
     # Time conversions
-    # network.addEdge(Conversion(network.getNode('second'), network.getNode('millisecond'), lambda t: t*1000))
+    network.add_edge(Conversion(network.get_node('second'), network.get_node('millisecond'), lambda t: t*1000))
     network.add_edge(Conversion(network.get_node('minute'), network.get_node('second'), lambda t: t * 60))
     network.add_edge(Conversion(network.get_node('hour'), network.get_node('minute'), lambda t: t * 60))
     network.add_edge(Conversion(network.get_node('day'), network.get_node('hour'), lambda t: t * 24))
@@ -392,6 +392,10 @@ def _load_network():
         Conversion(network.get_node('nautical league'), network.get_node('nautical mile'), lambda d: d * 3))
     network.add_edge(Conversion(network.get_node('nautical mile'), network.get_node('meter'), lambda d: d * 1852))
     network.add_edge(Conversion(network.get_node('rod'), network.get_node('yard'), lambda d: d * 55 / 10))
+
+    # Velocity conversion
+    network.add_edge(Conversion(network.get_node('mile per hour'), network.get_node('kilometer per hour'),
+                                lambda v: v * 8 * 10 * 22 * 9144 / 10000 / 1000))
 
     # Area conversions
     network.add_edge(Conversion(network.get_node('square mile'), network.get_node('acre'), lambda d: d * 640))
