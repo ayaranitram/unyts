@@ -406,18 +406,16 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square inch'), lambda d: d * 144))
     network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square meter'),
                                 lambda d: d * (3048 ** 2) / (10000 ** 2)))
-    # network.add_edge(Conversion(network.get_node('Darcy'), network.get_node('mD'), lambda d: d * 1000))
+    # network.addEdge(Conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048))
+    network.add_edge(Conversion(network.get_node('square inch'), network.get_node('square thou'), lambda d: d * (1000 ** 2)))
+    network.add_edge(Conversion(network.get_node('square inch'), network.get_node('square tenth'), lambda d: d * (10 ** 2)))
+    network.add_edge(Conversion(network.get_node('square chain'), network.get_node('square yard'), lambda d: d * (22 ** 2)))
+    network.add_edge(Conversion(network.get_node('square furlong'), network.get_node('square chain'), lambda d: d * (10 ** 2)))
+    network.add_edge(Conversion(network.get_node('square mile'), network.get_node('square furlong'), lambda d: d * (8 ** 2)))
+    network.add_edge(Conversion(network.get_node('square league'), network.get_node('square mile'), lambda d: d * (3 ** 2)))
+
     network.add_edge(Conversion(network.get_node('Darcy'), network.get_node('µm2'), lambda d: d * 0.9869233))
-    # network.addEdge(Conversion(network.getNode('m*m'), network.getNode('m'), lambda d: d**0.5))
-    # network.addEdge(Conversion(network.getNode('m'), network.getNode('m*m'), lambda d: d**2))
-    # network.addEdge(Conversion(network.getNode('rd*rd'), network.getNode('rd'), lambda d: d**0.5))
-    # network.addEdge(Conversion(network.getNode('rd'), network.getNode('rd*rd'), lambda d: d**2))
-    # network.addEdge(Conversion(network.getNode('yd*yd'), network.getNode('yd'), lambda d: d**0.5))
-    # network.addEdge(Conversion(network.getNode('yd'), network.getNode('yd*yd'), lambda d: d**2))
-    # network.addEdge(Conversion(network.getNode('ft*ft'), network.getNode('ft'), lambda d: d**0.5))
-    # network.addEdge(Conversion(network.getNode('ft'), network.getNode('ft*ft'), lambda d: d**2))
-    # network.addEdge(Conversion(network.getNode('in*in'), network.getNode('in'), lambda d: d**0.5))
-    # network.addEdge(Conversion(network.getNode('in'), network.getNode('in*in'), lambda d: d**2))
+
 
     # Volume conversions
     network.add_edge(Conversion(network.get_node('gill'), network.get_node('fluid ounce'), lambda v: v * 4))
@@ -452,6 +450,15 @@ def _load_network():
                                 lambda v: v / network.get_fvf()))
     # network.addEdge(Conversion(network.getNode('standard cubic meter'), network.getNode('standard cubic foot'), lambda v: v/5.614584))
 
+    network.add_edge(Conversion(network.get_node('cubic inch'), network.get_node('cubic thou'), lambda d: d * (1000 ** 3)))
+    network.add_edge(Conversion(network.get_node('cubic inch'), network.get_node('cubic tenth'), lambda d: d * (10 ** 3)))
+    network.add_edge(Conversion(network.get_node('cubic foot'), network.get_node('cubic inch'), lambda d: d * (12 ** 3)))
+    network.add_edge(Conversion(network.get_node('cubic yard'), network.get_node('cubic foot'), lambda d: d * (3 ** 3)))
+    network.add_edge(Conversion(network.get_node('cubic chain'), network.get_node('cubic yard'), lambda d: d * (22 ** 3)))
+    network.add_edge(Conversion(network.get_node('cubic furlong'), network.get_node('cubic chain'), lambda d: d * (10 ** 3)))
+    network.add_edge(Conversion(network.get_node('cubic mile'), network.get_node('cubic furlong'), lambda d: d * (8 ** 3)))
+    network.add_edge(Conversion(network.get_node('cubic league'), network.get_node('cubic mile'), lambda d: d * (3 ** 3)))
+
     # Pressure conversions
     network.add_edge(Conversion(network.get_node('psi gauge'), network.get_node('absolute psi'), lambda p: p + 14.6959))
     network.add_edge(Conversion(network.get_node('absolute psi'), network.get_node('psi gauge'), lambda p: p - 14.6959))
@@ -473,7 +480,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('bar gauge'), network.get_node('bar'), lambda p: p))
     network.add_edge(Conversion(network.get_node('psi gauge'), network.get_node('psi'), lambda p: p))
 
-    # mass Conversion
+    # Mass conversion
     network.add_edge(Conversion(network.get_node('grain'), network.get_node('milligrams'), lambda w: w * 64.7989))
     network.add_edge(Conversion(network.get_node('pennyweight'), network.get_node('grain'), lambda w: w * 24))
     network.add_edge(Conversion(network.get_node('dram'), network.get_node('pound'), lambda w: w / 256))
@@ -493,7 +500,7 @@ def _load_network():
     network.add_edge(
         Conversion(network.get_node('pound'), network.get_node('kilogram'), lambda w: w * 45359237 / 100000000))
 
-    # force Conversion
+    # Force conversion
     # network.addEdge(Conversion(network.getNode('kilogram'), network.getNode('kilogram force'), lambda f: f* converter(StandardEarthGravity,'m/s2','cm/s2',False)))
     network.add_edge(Conversion(network.get_node('kilogram mass'), network.get_node('kilogram force'),
                                 lambda f: f * StandardEarthGravity))
@@ -509,10 +516,10 @@ def _load_network():
     network.add_edge(
         Conversion(network.get_node('Kilojoule'), network.get_node('British thermal unit'), lambda e: e / 1.055))
 
-    # Power Conversion
+    # Power conversion
     network.add_edge(Conversion(network.get_node('Horsepower'), network.get_node('Watt'), lambda e: e * 745.699872))
 
-    # Density Conversion
+    # Density conversion
     network.add_edge(Conversion(network.get_node('API'), network.get_node('SgO'), lambda d: 141.5 / (131.5 + d)))
     network.add_edge(Conversion(network.get_node('SgO'), network.get_node('API'), lambda d: 141.5 / d - 131.5))
     network.add_edge(Conversion(network.get_node('API'), network.get_node('g/cc'), lambda d: 141.5 / (131.5 + d)))
@@ -525,10 +532,10 @@ def _load_network():
         Conversion(network.get_node('g/cm3'), network.get_node('lb/ft3'), lambda d: d * 62.427960576144606))
     network.add_edge(Conversion(network.get_node('lb/ft3'), network.get_node('lb/stb'), lambda d: d * 5.614584))
 
-    # viscosity conversions
+    # Viscosity conversions
     network.add_edge(Conversion(network.get_node('Pa*s'), network.get_node('Poise'), lambda v: v * 10))
 
-    # data conversions
+    # Data conversions
     network.add_edge(Conversion(network.get_node('byte'), network.get_node('bit'), lambda d: d * 8))
 
     for unit_kind in list(dictionary.keys()):
