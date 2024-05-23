@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.8.9'
-__release__ = 20240521
+__version__ = '0.8.10'
+__release__ = 20240524
 __all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit',
            'set_unit', 'set_conversion', 'set_density', 'get_density'
            'save', 'start_gui', 'set_fvf']
