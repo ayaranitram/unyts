@@ -112,7 +112,7 @@ class UDigraph(object):
             return result[0]
 
     def list_nodes(self):
-        return list(set([n.get_name() for n in self.edge.keys()]))
+        return list(set([n.get_name() for n in self.edges.keys()]))
 
     def convert(self, value, src, dest):
         if type(src) != UNode:
