@@ -18,8 +18,8 @@ except ModuleNotFoundError:
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
-__version__ = '0.4.12'
-__release__ = 20240502
+__version__ = '0.4.14'
+__release__ = 20240526
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -92,8 +92,9 @@ class UDigraph(object):
         conv = edge.get_convert()
         if not (src in self.edges and dest in self.edges):
             raise ValueError('Node not in graph')
-        self.edges[src][0].append(dest)
-        self.edges[src][1].append(conv)
+        if dest not in self.edges[src][0]:  # avoid duplication
+            self.edges[src][0].append(dest)
+            self.edges[src][1].append(conv)
 
     def children_of(self, node):
         return self.edges[node][0]
