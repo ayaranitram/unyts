@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.33'
-__release__ = 20240521
+__version__ = '0.5.34'
+__release__ = 20240529
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache']
 
 import logging
@@ -97,8 +97,10 @@ def _load_network():
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for secondName in dictionary[unit_kind][unit_name]:
                     network.add_node(UNode(secondName))
-                    network.add_edge(Conversion(network.get_node(secondName), network.get_node(unit_name), lambda x: x))
-                    network.add_edge(Conversion(network.get_node(unit_name), network.get_node(secondName), lambda x: x))
+                    network.add_edge(Conversion(network.get_node(secondName), network.get_node(unit_name), lambda x: x,
+                                                alias=True))
+                    network.add_edge(Conversion(network.get_node(unit_name), network.get_node(secondName), lambda x: x,
+                                                alias=True))
                     dictionary[unit_kind.split('_')[0]].append(secondName)
         if '_SPACES' in unit_kind:
             for rep in ['-', '_']:
@@ -152,7 +154,7 @@ def _load_network():
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), SI[prefix][0]))
                     network.add_edge(
                         Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][0],
-                                   True))
+                                   reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         elif '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[1]:
             for unit_name in dictionary[unit_kind]:
@@ -164,7 +166,7 @@ def _load_network():
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), SI[prefix][1]))
                     network.add_edge(
                         Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][1],
-                                   True))
+                                   reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         elif '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[2]:
             for unit_name in dictionary[unit_kind]:
@@ -176,7 +178,7 @@ def _load_network():
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), SI[prefix][2]))
                     network.add_edge(
                         Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][2],
-                                   True))
+                                   reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         elif '_linearSI' in unit_kind and unit_kind.split('_')[0] in SI_order[2]:
             for unit_name in dictionary[unit_kind]:
@@ -188,7 +190,7 @@ def _load_network():
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), SI[prefix][0]))
                     network.add_edge(
                         Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][0],
-                                   True))
+                                   reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_DATA' in unit_kind and unit_kind.split('_')[0] in DATA_order[0]:
             for unit_name in dictionary[unit_kind]:
@@ -200,7 +202,7 @@ def _load_network():
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), DATA[prefix][0]))
                     network.add_edge(
                         Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), DATA[prefix][0],
-                                   True))
+                                   reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_DATA' in unit_kind and unit_kind.split('_')[0] in DATA_order[1]:
             for unit_name in dictionary[unit_kind]:
@@ -212,7 +214,7 @@ def _load_network():
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), DATA[prefix][1]))
                     network.add_edge(
                         Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), DATA[prefix][1],
-                                   True))
+                                   reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_OGF' in unit_kind and unit_kind.split('_')[0] in OGF_order[2]:
             for unit_name in dictionary[unit_kind]:
@@ -224,7 +226,7 @@ def _load_network():
                         Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name), OGF[prefix][2]))
                     network.add_edge(
                         Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), OGF[prefix][2],
-                                   True))
+                                   reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_PLURALwS' in unit_kind:
             if type(dictionary[unit_kind]) is dict:

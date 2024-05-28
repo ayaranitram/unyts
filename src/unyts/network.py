@@ -18,8 +18,8 @@ except ModuleNotFoundError:
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
-__version__ = '0.4.14'
-__release__ = 20240526
+__version__ = '0.4.15'
+__release__ = 20240529
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -176,14 +176,15 @@ class UDigraph(object):
 
 
 class Conversion(object):
-    __slots__ = ('src', 'dest', 'conv', 'rev')
+    __slots__ = ('src', 'dest', 'conv', 'rev', 'alias')
 
-    def __init__(self, src, dest, conv, reverse=False):
+    def __init__(self, src, dest, conv, reverse=False, alias=False):
         """Assumes src and dest are nodes"""
         self.src = src
         self.dest = dest
         self.conv = conv
         self.rev = reverse
+        self.alias = alias
 
     def get_source(self):
         return self.src

@@ -6,7 +6,7 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.8.13'
+__version__ = '0.8.14'
 __release__ = 20240526
 __all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit',
            'set_unit', 'set_conversion', 'set_density', 'get_density'
