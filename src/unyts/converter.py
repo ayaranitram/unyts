@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.5'
-__release__ = 20240521
+__version__ = '0.6.6'
+__release__ = 20240529
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -207,8 +207,8 @@ def _get_recursion_limit(recursion=None):
     if recursion is None:
         recursion = min(getrecursionlimit() - 15, unyts_parameters_.max_recursion_)
     elif recursion > 1:
-        recursion = min(getrecursionlimit() - 15, recursion)
-    elif recursion <= 1:
+        recursion = min(getrecursionlimit() - 15, recursion) - 1
+    elif recursion <= 0:
         recursion = 0
     else:
         recursion -= 1
