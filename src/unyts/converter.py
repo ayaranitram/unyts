@@ -6,7 +6,7 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.7.1'
+__version__ = '0.7.2'
 __release__ = 20240603
 __all__ = ['convert', 'convertible']
 
@@ -233,7 +233,7 @@ def _get_conversion(value, from_unit, to_unit, recursion=None):
     # get and set recursion limit
     recursion = _get_recursion_limit(recursion)
     if unyts_parameters_.verbose_ and unyts_parameters_.verbose_details_ >= 2:
-        logging.info(f"_get_conversion: {recursion=}, converting {from_unit=} {to_unit=}")
+        logging.info(f"_get_conversion: {recursion} remaining recursions, converting from {from_unit} to {to_unit}")
     if recursion < 0:
         return None, None
 
@@ -421,13 +421,13 @@ def _converter(value, from_unit, to_unit, recursion=None):
     # get and set recursion limit
     recursion = _get_recursion_limit(recursion)
     if unyts_parameters_.verbose_:
-        logging.info(f"_converter: {recursion=}, converting {from_unit=} {to_unit=}")
+        logging.info(f"_converter: {recursion} remaining recursions, converting from {from_unit} to {to_unit}")
     if recursion < 0:
         return None, None
 
     # try to convert
     if unyts_parameters_.verbose_:
-        logging.info(f"_converter: {recursion=}, attempting direct conversion")
+        logging.info(f"_converter: {recursion} remaining recursions, attempting direct conversion")
     conv, conv_path = _get_conversion(value, from_unit, to_unit, recursion=recursion)
     # if Conversion found
     if conv is not None:
@@ -435,9 +435,9 @@ def _converter(value, from_unit, to_unit, recursion=None):
     
     units_network.previous.append((from_unit, to_unit))
    
-    # look for convertions of parts in ratio or product units
+    # look for conversions of parts in ratio or product units
     if unyts_parameters_.verbose_:
-        logging.info(f"_converter: {recursion=}, attempting to convert ratio or product of units.")
+        logging.info(f"_converter: {recursion} remaining recursions, attempting to convert ratio or product of units.")
     list_conversion = []
     list_conversion_path = []
     split_from = _split_unit(from_unit)
@@ -480,7 +480,7 @@ def _converter(value, from_unit, to_unit, recursion=None):
     # look for one-to-pair conversion path
     if ('/' in to_unit or '*' in to_unit) and ('/' not in from_unit and '*' not in from_unit):
         if unyts_parameters_.verbose_:
-            logging.info(f"_converter: {recursion=}, looking for one-to-pair conversion path")
+            logging.info(f"_converter: {recursion} remaining recursions, looking for one-to-pair conversion path")
         from_unit_child = _get_pair_child(from_unit)
         if from_unit_child is not None:
             base_conversion, base_conversion_path = _converter(None, from_unit, from_unit_child, recursion=recursion)
@@ -497,7 +497,7 @@ def _converter(value, from_unit, to_unit, recursion=None):
     # look for pair-to-one conversion path
     elif ('/' in from_unit or '*' in from_unit) and ('/' not in to_unit and '*' not in to_unit):
         if unyts_parameters_.verbose_:
-            logging.info(f"_converter: {recursion=}, looking for pair-to-one conversion path")
+            logging.info(f"_converter: {recursion} remaining recursions, looking for pair-to-one conversion path")
         to_unit_child = _get_pair_child(to_unit)
         if to_unit_child is not None:
             final_conversion, final_conversion_path = _converter(None, to_unit_child, to_unit, recursion=recursion)
@@ -514,7 +514,7 @@ def _converter(value, from_unit, to_unit, recursion=None):
     # look for pair to pair conversion path considering children
     if ('/' in from_unit) and ('/' in to_unit) and len(from_unit.split('/')) == 2 and len(to_unit.split('/')) == 2:
         if unyts_parameters_.verbose_:
-            logging.info(f"_converter: {recursion=}, looking for pair-to-pair conversion path considering children")
+            logging.info(f"_converter: {recursion} remaining recursions, looking for pair-to-pair conversion path considering children")
         conversion, conversion_path = _ratio_conversion_including_children(from_unit, to_unit, recursion=recursion)
         if conversion is not None:        
             units_network.memory[(from_unit, to_unit)] = conversion, conversion_path
@@ -524,7 +524,7 @@ def _converter(value, from_unit, to_unit, recursion=None):
                 return conversion(value), conversion_path
 
     if unyts_parameters_.verbose_:
-        logging.error(f"_converter: {recursion=}, no conversion found")
+        logging.error(f"_converter: {recursion} remaining recursions, no conversion found")
     units_network.memory[(from_unit, to_unit)] = None, None
     return None, None
 
