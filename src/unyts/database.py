@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.34'
-__release__ = 20240529
+__version__ = '0.5.35'
+__release__ = 20240603
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache']
 
 import logging
@@ -735,6 +735,7 @@ def _rebuild_units():
     from .dictionaries import _load_dictionary
     dictionary, temperatureRatioConversions, unitless_names = _load_dictionary()
     units_network = _load_network()
+    _clean_network()
     unyts_parameters_.reload_ = True
     unyts_parameters_.save_params()
     return units_network, dictionary, temperatureRatioConversions, unitless_names
@@ -756,6 +757,10 @@ def network_to_frame():
     return frame.drop_duplicates(['source', 'target'])
 
 
+def _clean_network():
+    units_network.edges = {k: v for k, v in units_network.edges.items() if v != ([],[])}
+
+
 # load the network into an instance of the graph database
 if not unyts_parameters_.reload_ and \
         isfile(dir_path + 'units/units_network.cache') and \
@@ -773,7 +778,7 @@ if not unyts_parameters_.reload_ and \
         units_network, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
 else:
     units_network = _load_network()
-    # load the dictionary with ratio unis
+    # load the dictionary with ratio units
     _create_Rates()
     _create_VolumeRatio()
     _create_Density()
@@ -788,6 +793,8 @@ else:
     _create_Capacitance_Charge()
     _create_Voltage_Current_Resistance()
     _complete_products()
+    # clean empty edges
+    _clean_network()
 
     unyts_parameters_.reload_ = False
     unyts_parameters_.save_params()
