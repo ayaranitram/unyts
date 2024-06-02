@@ -6,7 +6,7 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.35'
+__version__ = '0.5.36'
 __release__ = 20240603
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache']
 
@@ -530,7 +530,11 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('SgW'), network.get_node('g/cc'), lambda d: d))
     network.add_edge(Conversion(network.get_node('SgG'), network.get_node('kg/m3'), lambda d: d * StandardAirDensity))
     network.add_edge(Conversion(network.get_node('psia/ft'), network.get_node('lb/ft3'), lambda d: d * 144))
+    network.add_edge(Conversion(network.get_node('psi/ft'), network.get_node('lb/ft3'), lambda d: d * 144))
+    network.add_edge(Conversion(network.get_node('psig/ft'), network.get_node('lb/ft3'), lambda d: d * 144))
     network.add_edge(Conversion(network.get_node('bara/m'), network.get_node('kg/m3'), lambda d: d * 100000 / StandardEarthGravity))
+    network.add_edge(Conversion(network.get_node('bar/m'), network.get_node('kg/m3'), lambda d: d * 100000 / StandardEarthGravity))
+    network.add_edge(Conversion(network.get_node('barg/m'), network.get_node('kg/m3'), lambda d: d * 100000 / StandardEarthGravity))
     network.add_edge(
         Conversion(network.get_node('g/cm3'), network.get_node('lb/ft3'), lambda d: d * 62.427960576144606))
     network.add_edge(Conversion(network.get_node('lb/ft3'), network.get_node('lb/stb'), lambda d: d * 5.614584))
