@@ -6,8 +6,8 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.3.5'
-__release__ = 20240521
+__version__ = '0.3.6'
+__release__ = 20240601
 __all__ = ['start_gui']
 
 import logging
@@ -217,10 +217,10 @@ def start_gui():
     unyts_menu.add_cascade(label='Options', menu=options_menu)
     options_menu.add_command(label="Set FVF (in CMD)", command=set_fvf)
     options_menu.add_separator()
+    options_menu.add_checkbutton(label='Reload on next start', variable=up_.reload_, command=up_.reload_next_time)
     options_menu.add_checkbutton(label='Show conversion path', variable=_print_path_, command=up_.print_path)
     options_menu.add_checkbutton(label='Verbosity', variable=_verbosity_, command=up_.verbose)
     options_menu.add_checkbutton(label='Cache', variable=_cache_, command=up_.cache)
-    options_menu.add_checkbutton(label='Reload on next start', variable=up_.reload_, command=up_.reload_next_time)
     # help menu
     help_menu = tk.Menu(unyts_menu)
     unyts_menu.add_cascade(label='Help', menu=help_menu)
