@@ -6,7 +6,7 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.9'
+__version__ = '0.5.10'
 __release__ = 20240531
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'dir_path', 'set_density', 'get_density',
            'recursion_limit', 'verbose']
@@ -47,40 +47,37 @@ class UnytsParameters(object):
             with open(ini_path, 'r') as f:
                 params = json_load(f)
         else:
-            params = {'print_path_': False,
-                      'cache_': True,
-                      'reload_': True,
-                      'raise_error_': True,
-                      'verbose_': False,
-                      'reduce_parentheses_': True,
-                      'show_version_': False,
-                      'max_recursion_': __max_recursion_default__}
+            params = {'print_path': False,
+                      'cache': True,
+                      'reload': True,
+                      'raise_error': True,
                       'verbose': False,
                       'verbose_details': 0,
+                      'reduce_parentheses': True,
+                      'show_version': False,
+                      'max_recursion': __max_recursion_default__}
             with open(ini_path, 'w') as f:
                 json_dump(params, f)
-        self.print_path_ = params['print_path_']
-        self.cache_ = params['cache_']
-        self.reload_ = params['reload_']
-        self.raise_error_ = params['raise_error_']
-        self.verbose_ = params['verbose_']
-        self.reduce_parentheses_ = params['reduce_parentheses_']
-        self.show_version_ = params['show_version_']
-        self.max_recursion_ = params['max_recursion_'] if 'max_recursion_' in params else __max_recursion_default__
+        self.print_path_ = params['print_path'] if 'print_path' in params else False
+        self.cache_ = params['cache'] if 'cache' in params else True
+        self.reload_ = params['reload'] if 'reload' in params else False
+        self.raise_error_ = params['raise_error'] if 'raise_error' in params else True
         self.verbose_ = params['verbose'] if 'verbose' in params else False
         self.verbose_details_ = params['verbose_details'] if 'verbose_details' in params else 0
+        self.reduce_parentheses_ = params['reduce_parentheses'] if 'reduce_parentheses' in params else True
+        self.show_version_ = params['show_version'] if 'show_version' in params else True
+        self.max_recursion_ = params['max_recursion'] if 'max_recursion' in params else __max_recursion_default__
 
     def save_params(self) -> None:
-        params = {'print_path_': self.print_path_,
-                  'cache_': self.cache_,
-                  'reload_': self.reload_,
-                  'raise_error_': self.raise_error_,
-                  'verbose_': self.verbose_,
-                  'reduce_parentheses_': self.verbose_,
-                  'show_version_': self.show_version_,
-                  'max_recursion_': self.max_recursion_}
+        params = {'print_path': self.print_path_,
+                  'cache': self.cache_,
+                  'reload': self.reload_,
+                  'raise_error': self.raise_error_,
                   'verbose': self.verbose_,
                   'verbose_details': self.verbose_details_,
+                  'reduce_parentheses': self.reduce_parentheses_,
+                  'show_version': self.show_version_,
+                  'max_recursion': self.max_recursion_}
         with open(ini_path, 'w') as f:
             json_dump(params, f)
 
