@@ -18,8 +18,8 @@ except ModuleNotFoundError:
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
-__version__ = '0.4.15'
-__release__ = 20240529
+__version__ = '0.4.16'
+__release__ = 20240603
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -38,10 +38,11 @@ class UNode(object):
 
 class UDigraph(object):
     """edges is a dict mapping each node to a list of its children"""
-    __slots__ = ('edges', 'previous', 'recursion_limit', 'fvf', 'memory', 'print', '_cloudpickle_')
+    __slots__ = ('edges', '_edges_str', 'previous', 'recursion_limit', 'fvf', 'memory', 'print', '_cloudpickle_')
 
     def __init__(self) -> None:
         self.edges = {}
+        self._edges_str = None
         self.previous = [(None, None)]
         self.recursion_limit = 5
         self.fvf = None
@@ -50,6 +51,11 @@ class UDigraph(object):
         self._cloudpickle_ = _cloudpickle_
         if unyts_parameters_.cache_ and unyts_parameters_.memory_:
             self.load_memory()
+
+    def get_edges_str(self) -> dict:
+        if self._edges_str is None:
+            self._edges_str = {str(k): {str(each) for each in v[0]} for k, v in self.edges.items()}
+        return self._edges_str
 
     def save_memory(self, path=None) -> None:
         if path is None:

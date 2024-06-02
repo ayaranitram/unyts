@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.7'
-__release__ = 20240531
+__version__ = '0.7.0'
+__release__ = 20240603
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -232,10 +232,11 @@ def _get_conversion(value, from_unit, to_unit, recursion=None):
     """
     # get and set recursion limit
     recursion = _get_recursion_limit(recursion)
-    if recursion == 0:
     if unyts_parameters_.verbose_ and unyts_parameters_.verbose_details_ >= 2:
         logging.info(f"_get_conversion: {recursion=}, converting {from_unit=} {to_unit=}")
+    if recursion < 0:
         return None, None
+
 
     # check if already solved and memorized
     if (from_unit, to_unit) in units_network.memory:
@@ -322,8 +323,84 @@ def _get_conversion(value, from_unit, to_unit, recursion=None):
             return _apply_conversion(value, conversion_path), conversion_path
     else:
         return None, None
+    
+
+def _get_descendants(unit:str, generations=7):
+    if generations == 0:
+        return {unit}
+    children, children_split = set(), set()
+    unit_num, unit_den = None, None
+    if units_network.has_node(unit):
+        children = {unit}
+        for g in range(generations):
+            children = children.union({each for k, v in units_network.get_edges_str().items() for each in v if k in children})
+        
+    for s in '/*':
+        if s in unit and len(unit.split(s)) == 2:
+            unit_num, unit_den = unit.split(s)
+            break
+    if unit_num is not None and unit_den is not None:
+        children_num = _get_descendants(unit_num, generations)
+        children_den = _get_descendants(unit_den, generations)
+        children_split = {f"{str(num)}/{str(den)}"
+                          for num in {unit_num}.union(children_num)
+                          for den in {unit_den}.union(children_den)
+                          if f"{str(num)}/{str(den)}" != unit}
+    descendants = children.union(children_split)
+    return {unit}.union(descendants)
 
 
+def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max_paths=25):
+    """
+    helper function of _converter function
+    
+    _pair_conversion_including_children will extend the search looking recursively 
+    for conversion from from_unit chidren to to_unit children.
+    
+    the children of from_unit and to_unit are created as the ratio of combined children from 
+    the numerator of the parent unit and the children of the denominator unit
+
+    Parameters
+    ----------
+    from_unit : str
+        unit string
+    to_unit : str
+        unit string
+    recursion : int, optional
+        limit of recursion allowed.
+
+    Returns
+    -------
+    tuple
+        (conversion, conversion_path)
+
+    """
+    # calculate the descendants of from_unit
+    from_family = _get_descendants(from_unit)
+
+    # calculate the descendants of to_unit
+    to_family = _get_descendants(to_unit)
+
+    # keep only intersection between families
+    common = from_family.intersection(to_family)
+
+    # look for conversion between children  
+    child_conversion, child_conversion_path = None, None
+    conversion, conversion_path = None, None
+    path, shortest_path = 0, 9999
+    for child in common:
+        from_child_conversion, from_child_conversion_path = _converter(None, from_unit, child, recursion=recursion)
+        child_to_conversion, child_to_conversion_path = _converter(None, child, to_unit, recursion=recursion)
+        if from_child_conversion is not None and child_to_conversion is not None:
+            if len(from_child_conversion_path + child_to_conversion_path) < shortest_path:
+                conversion_path = from_child_conversion_path + child_to_conversion_path
+                conversion = lambda x: child_to_conversion(from_child_conversion(x))
+            if path == max_paths:
+                break
+        path += 1
+    return conversion, conversion_path
+    
+    
 def _converter(value, from_unit, to_unit, recursion=None):
     """
     Transform the received value (integer, float, array, series, frame, ...)
@@ -341,25 +418,20 @@ def _converter(value, from_unit, to_unit, recursion=None):
     """
     # get and set recursion limit
     recursion = _get_recursion_limit(recursion)
-    if recursion == 0:
     if unyts_parameters_.verbose_:
         logging.info(f"_converter: {recursion=}, converting {from_unit=} {to_unit=}")
+    if recursion < 0:
         return None, None
-
-    # reset memory for this variable
-    units_network.previous = []
 
     # try to convert
     if unyts_parameters_.verbose_:
         logging.info(f"_converter: {recursion=}, attempting direct conversion")
     conv, conv_path = _get_conversion(value, from_unit, to_unit, recursion=recursion)
-
     # if Conversion found
     if conv is not None:
         return conv, conv_path
-
+    
     units_network.previous.append((from_unit, to_unit))
-
    
     # look for convertions of parts in ratio or product units
     if unyts_parameters_.verbose_:
@@ -394,7 +466,6 @@ def _converter(value, from_unit, to_unit, recursion=None):
         if not flag:
             failed = True
             break
-
     if len(list_conversion) > 0 and not failed:
         conversion_factor = reduce(lambda x, y: x * y, list_conversion)
         conversion_path = [node for path in list_conversion_path for node in path]
@@ -410,7 +481,7 @@ def _converter(value, from_unit, to_unit, recursion=None):
             logging.info(f"_converter: {recursion=}, looking for one-to-pair conversion path")
         from_unit_child = _get_pair_child(from_unit)
         if from_unit_child is not None:
-            base_conversion, base_conversion_path = _get_conversion(None, from_unit, from_unit_child, recursion=recursion)
+            base_conversion, base_conversion_path = _converter(None, from_unit, from_unit_child, recursion=recursion)
             pair_conversion, pair_conversion_path = _converter(None, from_unit_child, to_unit, recursion=recursion)
             if pair_conversion is not None and base_conversion is not None:
                 conversion_path = base_conversion_path + pair_conversion_path
@@ -427,7 +498,7 @@ def _converter(value, from_unit, to_unit, recursion=None):
             logging.info(f"_converter: {recursion=}, looking for pair-to-one conversion path")
         to_unit_child = _get_pair_child(to_unit)
         if to_unit_child is not None:
-            final_conversion, final_conversion_path = _get_conversion(None, to_unit_child, to_unit, recursion=recursion)
+            final_conversion, final_conversion_path = _converter(None, to_unit_child, to_unit, recursion=recursion)
             pair_conversion, pair_conversion_path = _converter(None, from_unit, to_unit_child, recursion=recursion)
             if pair_conversion is not None and final_conversion is not None:
                 conversion_path = pair_conversion_path + final_conversion_path
@@ -438,143 +509,12 @@ def _converter(value, from_unit, to_unit, recursion=None):
                 else:
                     return conversion(value), conversion_path
 
-    # look for pair to pair conversion path
+    # look for pair to pair conversion path considering children
     if ('/' in from_unit) and ('/' in to_unit) and len(from_unit.split('/')) == 2 and len(to_unit.split('/')) == 2:
-        # calculate the children and grandchildren of from_unit
-        from_unit_num, from_unit_den = from_unit.split('/')
-        # numerator children
-        from_unit_children_num = units_network.children_of(units_network.get_node(from_unit_num))
-        # numerator grandchildren
-        from_unit_grandchildren_num = [units_network.children_of(each)
-                                       for each in from_unit_children_num]
-        from_unit_grandchildren_num = [each
-                                       for grandchildren in from_unit_grandchildren_num
-                                       for each in grandchildren
-                                       if each not in from_unit_children_num]
-        # numerator grandgrandchildren
-        from_unit_grandgrandchildren_num = [units_network.children_of(each)
-                                       for each in from_unit_grandchildren_num]
-        from_unit_grandgrandchildren_num = [each
-                                            for grandchildren in from_unit_grandgrandchildren_num
-                                            for each in grandchildren
-                                            if each not in from_unit_children_num + from_unit_grandchildren_num]
-        # denominator children
-        from_unit_children_den = units_network.children_of(units_network.get_node(from_unit_den))
-        # denominator grandchildren
-        from_unit_grandchildren_den = [units_network.children_of(each)
-                                       for each in from_unit_children_den]
-        from_unit_grandchildren_den = [each
-                                       for grandchildren in from_unit_grandchildren_den
-                                       for each in grandchildren
-                                       if each not in from_unit_children_den]
-        # denominator grandgrandchildren
-        from_unit_grandgrandchildren_den = [units_network.children_of(each)
-                                            for each in from_unit_grandchildren_den]
-        from_unit_grandgrandchildren_den = [each
-                                            for grandchildren in from_unit_grandgrandchildren_den
-                                            for each in grandchildren
-                                            if each not in from_unit_children_den + from_unit_grandchildren_den]
-        
-        # get all the combinations of numerator/denominator
-        from_unit_children = sorted([f"{str(num)}/{str(den)}"
-                                     for num in set(from_unit_children_num)
-                                     for den in set(from_unit_children_den)],
-                                    key=len)
-        from_unit_grandchildren = sorted(list(set([f"{str(num)}/{str(den)}"
-                                                   for num in set(from_unit_children_num + from_unit_grandchildren_num)
-                                                   for den in set(from_unit_children_den + from_unit_grandchildren_den)
-                                                   if f"{str(num)}/{str(den)}" not in from_unit_children])),
-                                         key=len)  
-        from_unit_grandgrandchildren = sorted(list(set([f"{str(num)}/{str(den)}"
-                                                        for num in set(from_unit_children_num + from_unit_grandchildren_num + from_unit_grandgrandchildren_num)
-                                                        for den in set(from_unit_children_den + from_unit_grandchildren_den + from_unit_grandgrandchildren_den)
-                                                        if f"{str(num)}/{str(den)}" not in from_unit_children + from_unit_grandchildren])),
-                                              key=len) 
-
-        # calculate the children and grandchildren of to_unit
-        to_unit_num, to_unit_den = to_unit.split('/')
-        # numerator children
-        to_unit_children_num = units_network.children_of(units_network.get_node(to_unit_num))
-        # numerator grandchildren
-        to_unit_grandchildren_num = [units_network.children_of(each)
-                                     for each in to_unit_children_num]
-        to_unit_grandchildren_num = [each
-                                     for grandchildren in to_unit_grandchildren_num
-                                     for each in grandchildren
-                                     if each not in to_unit_children_num]
-        to_unit_grandgrandchildren_num = [units_network.children_of(each)
-                                          for each in to_unit_grandchildren_num]
-        to_unit_grandgrandchildren_num = [each
-                                          for grandchildren in to_unit_grandgrandchildren_num
-                                          for each in grandchildren
-                                          if each not in to_unit_children_num + to_unit_grandchildren_num]
-        # denominator children        
-        to_unit_children_den = units_network.children_of(units_network.get_node(to_unit_den))
-        # denominator grandchildren
-        to_unit_grandchildren_den = [units_network.children_of(each)
-                                     for each in to_unit_children_den]
-        to_unit_grandchildren_den = [each
-                                     for grandchildren in to_unit_grandchildren_den
-                                     for each in grandchildren
-                                     if each not in to_unit_children_den]
-        to_unit_grandgrandchildren_den = [units_network.children_of(each)
-                                          for each in to_unit_grandchildren_den]
-        to_unit_grandgrandchildren_den = [each
-                                          for grandchildren in to_unit_grandgrandchildren_den
-                                          for each in grandchildren
-                                          if each not in to_unit_children_den + to_unit_grandchildren_den]
-        # get all the combinations of numerator/denominator
-        to_unit_children = sorted([f"{str(num)}/{str(den)}"
-                                   for num in set(to_unit_children_num)
-                                   for den in set(to_unit_children_den)],
-                                  key=len)
-        to_unit_grandchildren = sorted(list(set([f"{str(num)}/{str(den)}"
-                                                 for num in set(to_unit_children_num + to_unit_grandchildren_num)
-                                                 for den in set(to_unit_children_den + to_unit_grandchildren_den)
-                                                 if f"{str(num)}/{str(den)}" not in to_unit_children])),
-                                       key=len)  
-        to_unit_grandgrandchildren = sorted(list(set([f"{str(num)}/{str(den)}"
-                                                      for num in set(to_unit_children_num + to_unit_grandchildren_num + to_unit_grandgrandchildren_num)
-                                                      for den in set(to_unit_children_den + to_unit_grandchildren_den + to_unit_grandgrandchildren_den)
-                                                      if f"{str(num)}/{str(den)}" not in to_unit_children + to_unit_grandchildren])),
-                                            key=len) 
-
-        from_family = [from_unit] + from_unit_children # + from_unit_grandchildren + from_unit_grandgrandchildren
-        to_family = [to_unit] + to_unit_children # + to_unit_grandchildren + to_unit_grandgrandchildren
-        for child_from in from_family:
-            for child_to in to_family:
-                child_conversion, child_conversion_path = _get_conversion(None, child_from, child_to, recursion=recursion)
-                # child_conversion, child_conversion_path = _converter(None, child_from, child_to, recursion=recursion)
-                if child_conversion is not None:
-                    break
-            if child_conversion is not None:
-                break
-
-        if child_conversion is not None:
-            if child_from != from_unit:
-                # base_conversion, base_conversion_path = _get_conversion(None, from_unit, child_from, recursion=recursion)
-                # if base_conversion is None:
-                base_conversion, base_conversion_path = _converter(None, from_unit, child_from, recursion=recursion)
-                if base_conversion is None:
-                    if unyts_parameters_.verbose_:
-                        logging.warning(f"<converter> failed to obtain base conversion {from_unit} {child_from}")
-                    return None, None
-                conversion_path = base_conversion_path + child_conversion_path
-                conversion_ = lambda x: child_conversion(base_conversion(x))
-            else:
-                conversion_, conversion_path = child_conversion, child_conversion_path
-            if child_to != to_unit:
-                # final_conversion, final_conversion_path = _get_conversion(None, child_to, to_unit, recursion=recursion)
-                # if final_conversion is None:
-                final_conversion, final_conversion_path = _converter(None, child_to, to_unit, recursion=recursion)
-                if final_conversion is None:
-                    if unyts_parameters_.verbose_:
-                        logging.warning(f"<converter> failed to obtain final conversion {child_to} {to_unit}")
-                    return None, None
-                conversion_path = conversion_path + final_conversion_path
-                conversion = lambda x: final_conversion(conversion_(x))
-            else:
-                conversion = conversion_
+        if unyts_parameters_.verbose_:
+            logging.info(f"_converter: {recursion=}, looking for pair-to-pair conversion path considering children")
+        conversion, conversion_path = _ratio_conversion_including_children(from_unit, to_unit, recursion=recursion)
+        if conversion is not None:        
             units_network.memory[(from_unit, to_unit)] = conversion, conversion_path
             if value is None:
                 return units_network.memory[(from_unit, to_unit)]
@@ -721,7 +661,7 @@ def _search_network(from_unit, to_unit, algorithm='BFS'):
             conversion_path = BFS(units_network,
                                   units_network.get_node(from_unit),
                                   units_network.get_node(to_unit),
-                                  unyts_parameters_.verbose_)
+                                  unyts_parameters_.verbose_ and unyts_parameters_.verbose_details_ > 1)
         else:
             raise NotImplementedError("other search algorithms different from BFS are not yet implemented.")
     else:
@@ -782,12 +722,15 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_co
     # cleaning inputs
     value, from_unit, to_unit = _clean_input(value, from_unit, to_unit)
     print_conversion_path = _clean_print_conversion_path(print_conversion_path)
+    # reset previous memory for this variable
+    units_network.previous = []
 
     # density factor, in case of conversion from volume to mass or mass to volume
     conv, conv_path = _density_conversion(value, from_unit, to_unit)
 
-    # regular conversion
-    conv, conv_path = _converter(value, from_unit, to_unit)
+    if conv is None:
+        # regular conversion
+        conv, conv_path = _converter(value, from_unit, to_unit)
 
     if conv is None:
         if unyts_parameters_.raise_error_:
