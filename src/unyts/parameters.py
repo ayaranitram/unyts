@@ -6,10 +6,10 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.7'
-__release__ = 20240521
+__version__ = '0.5.9'
+__release__ = 20240531
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'dir_path', 'set_density', 'get_density',
-           'recursion_limit']
+           'recursion_limit', 'verbose']
 
 import logging
 import os.path
@@ -33,6 +33,7 @@ class UnytsParameters(object):
         self.cache_ = True
         self.raise_error_ = True
         self.verbose_ = False
+        self.verbose_details_ = 0
         self.reduce_parentheses_ = True
         self.show_version_ = True
         self.density_ = None
@@ -54,6 +55,8 @@ class UnytsParameters(object):
                       'reduce_parentheses_': True,
                       'show_version_': False,
                       'max_recursion_': __max_recursion_default__}
+                      'verbose': False,
+                      'verbose_details': 0,
             with open(ini_path, 'w') as f:
                 json_dump(params, f)
         self.print_path_ = params['print_path_']
@@ -64,6 +67,8 @@ class UnytsParameters(object):
         self.reduce_parentheses_ = params['reduce_parentheses_']
         self.show_version_ = params['show_version_']
         self.max_recursion_ = params['max_recursion_'] if 'max_recursion_' in params else __max_recursion_default__
+        self.verbose_ = params['verbose'] if 'verbose' in params else False
+        self.verbose_details_ = params['verbose_details'] if 'verbose_details' in params else 0
 
     def save_params(self) -> None:
         params = {'print_path_': self.print_path_,
@@ -74,6 +79,8 @@ class UnytsParameters(object):
                   'reduce_parentheses_': self.verbose_,
                   'show_version_': self.show_version_,
                   'max_recursion_': self.max_recursion_}
+                  'verbose': self.verbose_,
+                  'verbose_details': self.verbose_details_,
         with open(ini_path, 'w') as f:
             json_dump(params, f)
 
@@ -117,6 +124,12 @@ class UnytsParameters(object):
         self.save_params()
 
     def verbose(self, switch=None) -> None:
+        if type(switch) is int:
+            self.verbose_details_ = switch
+            if switch <= 0:
+                switch = False
+            else:  # switch >= 1:
+                switch = True
         if switch is None:
             self.verbose_ = not self.verbose_
         elif type(switch) is str:

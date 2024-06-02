@@ -194,6 +194,8 @@ def start_gui():
     # variables
     _cache_ = tk.BooleanVar()
     _cache_.set(up_.cache_)
+    _verbosity_ = tk.BooleanVar()
+    _verbosity_.set(up_.verbose_)
     _print_path_ = tk.BooleanVar()
     _print_path_.set(up_.print_path_)
 
@@ -216,6 +218,7 @@ def start_gui():
     options_menu.add_command(label="Set FVF (in CMD)", command=set_fvf)
     options_menu.add_separator()
     options_menu.add_checkbutton(label='Show conversion path', variable=_print_path_, command=up_.print_path)
+    options_menu.add_checkbutton(label='Verbosity', variable=_verbosity_, command=up_.verbose)
     options_menu.add_checkbutton(label='Cache', variable=_cache_, command=up_.cache)
     options_menu.add_checkbutton(label='Reload on next start', variable=up_.reload_, command=up_.reload_next_time)
     # help menu

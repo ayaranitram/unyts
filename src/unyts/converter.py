@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.6'
-__release__ = 20240529
+__version__ = '0.6.7'
+__release__ = 20240531
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -233,8 +233,9 @@ def _get_conversion(value, from_unit, to_unit, recursion=None):
     # get and set recursion limit
     recursion = _get_recursion_limit(recursion)
     if recursion == 0:
+    if unyts_parameters_.verbose_ and unyts_parameters_.verbose_details_ >= 2:
+        logging.info(f"_get_conversion: {recursion=}, converting {from_unit=} {to_unit=}")
         return None, None
-    # print(f"_get_conversion: {from_unit=}, {to_unit=}")
 
     # check if already solved and memorized
     if (from_unit, to_unit) in units_network.memory:
@@ -242,7 +243,7 @@ def _get_conversion(value, from_unit, to_unit, recursion=None):
         return (conversion_lambda, conversion_path) if (conversion_lambda is None or value is None) \
             else (conversion_lambda(value), conversion_path)
 
-    # specific cases for quick conversions
+    ## specific cases for quick conversions ##
     # no conversion required if 'from' and 'to' units are the same units
     if from_unit == to_unit:
         if value is None:
@@ -341,12 +342,16 @@ def _converter(value, from_unit, to_unit, recursion=None):
     # get and set recursion limit
     recursion = _get_recursion_limit(recursion)
     if recursion == 0:
+    if unyts_parameters_.verbose_:
+        logging.info(f"_converter: {recursion=}, converting {from_unit=} {to_unit=}")
         return None, None
 
     # reset memory for this variable
     units_network.previous = []
 
     # try to convert
+    if unyts_parameters_.verbose_:
+        logging.info(f"_converter: {recursion=}, attempting direct conversion")
     conv, conv_path = _get_conversion(value, from_unit, to_unit, recursion=recursion)
 
     # if Conversion found
@@ -355,6 +360,10 @@ def _converter(value, from_unit, to_unit, recursion=None):
 
     units_network.previous.append((from_unit, to_unit))
 
+   
+    # look for convertions of parts in ratio or product units
+    if unyts_parameters_.verbose_:
+        logging.info(f"_converter: {recursion=}, attempting to convert ratio or product of units.")
     list_conversion = []
     list_conversion_path = []
     split_from = _split_unit(from_unit)
@@ -397,6 +406,8 @@ def _converter(value, from_unit, to_unit, recursion=None):
 
     # look for one-to-pair conversion path
     if ('/' in to_unit or '*' in to_unit) and ('/' not in from_unit and '*' not in from_unit):
+        if unyts_parameters_.verbose_:
+            logging.info(f"_converter: {recursion=}, looking for one-to-pair conversion path")
         from_unit_child = _get_pair_child(from_unit)
         if from_unit_child is not None:
             base_conversion, base_conversion_path = _get_conversion(None, from_unit, from_unit_child, recursion=recursion)
@@ -412,6 +423,8 @@ def _converter(value, from_unit, to_unit, recursion=None):
 
     # look for pair-to-one conversion path
     elif ('/' in from_unit or '*' in from_unit) and ('/' not in to_unit and '*' not in to_unit):
+        if unyts_parameters_.verbose_:
+            logging.info(f"_converter: {recursion=}, looking for pair-to-one conversion path")
         to_unit_child = _get_pair_child(to_unit)
         if to_unit_child is not None:
             final_conversion, final_conversion_path = _get_conversion(None, to_unit_child, to_unit, recursion=recursion)
@@ -568,6 +581,8 @@ def _converter(value, from_unit, to_unit, recursion=None):
             else:
                 return conversion(value), conversion_path
 
+    if unyts_parameters_.verbose_:
+        logging.error(f"_converter: {recursion=}, no conversion found")
     units_network.memory[(from_unit, to_unit)] = None, None
     return None, None
 
@@ -762,6 +777,8 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_co
     converted_value : int, float, array, Series, DataFrame ...
         the converted value if input value is not None
     """
+    if unyts_parameters_.verbose_:
+        logging.info("convert: STARTING...")
     # cleaning inputs
     value, from_unit, to_unit = _clean_input(value, from_unit, to_unit)
     print_conversion_path = _clean_print_conversion_path(print_conversion_path)

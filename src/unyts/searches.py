@@ -6,9 +6,11 @@ Created on Sat Oct 24 17:52:34 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.0'
-__release__ = 20231222
+__version__ = '0.5.1'
+__release__ = 20240531
 __all__ = ['BFS', 'print_path']
+
+import logging
 
 
 def BFS(graph, start, end, verbose=False) -> list:
@@ -35,9 +37,7 @@ def BFS(graph, start, end, verbose=False) -> list:
         conv_path = path_queue.pop(0)
         if conv_path in visited:
             if verbose:
-                print(f"<UnitsConv> {len(path_queue)} paths in queue. Already visited BFS path:",
-                      print_path(conv_path),
-                      sep='\n')
+                logging.info(f"""BFS: {len(path_queue)} paths in queue. Already visited BFS path:\n{print_path(conv_path)}""")
         else:
             if verbose:
                 print(f"<UnitsConv> {len(path_queue)} paths in queue. Current BFS path:",
