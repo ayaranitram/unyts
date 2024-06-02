@@ -6,7 +6,7 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.7.0'
+__version__ = '0.7.1'
 __release__ = 20240603
 __all__ = ['convert', 'convertible']
 
@@ -350,7 +350,7 @@ def _get_descendants(unit:str, generations=7):
     return {unit}.union(descendants)
 
 
-def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max_paths=25):
+def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max_paths=12):
     """
     helper function of _converter function
     
@@ -392,9 +392,11 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
         from_child_conversion, from_child_conversion_path = _converter(None, from_unit, child, recursion=recursion)
         child_to_conversion, child_to_conversion_path = _converter(None, child, to_unit, recursion=recursion)
         if from_child_conversion is not None and child_to_conversion is not None:
-            if len(from_child_conversion_path + child_to_conversion_path) < shortest_path:
+            this_path_len = len([step for step in (from_child_conversion_path + child_to_conversion_path) if step != '1/'])
+            if this_path_len < shortest_path:
                 conversion_path = from_child_conversion_path + child_to_conversion_path
                 conversion = lambda x: child_to_conversion(from_child_conversion(x))
+                shortest_path = this_path_len
             if path == max_paths:
                 break
         path += 1
