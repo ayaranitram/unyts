@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.1'
-__release__ = 20231230
+__version__ = '0.6.2'
+__release__ = 20240606
 __all__ = ['Unit', 'is_Unit']
 
 import logging
@@ -216,8 +216,8 @@ class Unit(object, metaclass=UnytType):
             elif _convertible(self.unit, other.unit):
                 return units(other.value * _convert(self.value, self.unit, other.unit),
                              _unit_product(other.unit, self.unit))
-            elif _convertible(_unit_base_power(self.unit)[0], _unit_base_power(other.unit)[0]):
-                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0])
+            elif _convertible(_unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0]):
+                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0]) ** _unit_base_power(other.unit)[1]
                 return units(self.value * other.value * factor, _unit_product(self.unit, other.unit))
             else:
                 return units(self.value * other.value, _unit_product(self.unit, other.unit))
@@ -252,8 +252,8 @@ class Unit(object, metaclass=UnytType):
                 return units(self.value ** other.value, self.unit + '^' + other.unit)
             elif _convertible(other.unit, self.unit):
                 return units(self.value ** _convert(other.value, other.unit, self.unit), self.unit + '^' + self.unit)
-            elif _convertible(_unit_base_power(self.unit)[0], _unit_base_power(other.unit)[0]):
-                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0])
+            elif _convertible(_unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0]):
+                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0]) ** _unit_base_power(other.unit)[1]
                 return units(self.value ** (other.value * factor), self.unit + '^' + other.unit)
             else:
                 return units(self.value ** other.value, self.unit + '^' + other.unit)
@@ -345,8 +345,8 @@ class Unit(object, metaclass=UnytType):
             elif _convertible(other.unit, self.unit):
                 return units(self.value / _convert(other.value, other.unit, self.unit),
                              _unit_division(self.unit, other.unit))
-            elif _convertible(_unit_base_power(self.unit)[0], _unit_base_power(other.unit)[0]):
-                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0])
+            elif _convertible(_unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0]):
+                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0]) ** _unit_base_power(other.unit)[1]
                 return units(self.value / (other.value * factor), _unit_division(self.unit, other.unit))
             else:
                 return units(self.value / other.value, _unit_division(self.unit, other.unit))
@@ -391,8 +391,8 @@ class Unit(object, metaclass=UnytType):
             elif _convertible(other.unit, self.unit):
                 return units(self.value // _convert(other.value, other.unit, self.unit),
                              _unit_division(self.unit, other.unit))
-            elif _convertible(_unit_base_power(self.unit)[0], _unit_base_power(other.unit)[0]):
-                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0])
+            elif _convertible(_unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0]):
+                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0]) ** _unit_base_power(other.unit)[1]
                 return units(self.value // (other.value * factor), _unit_division(self.unit, other.unit))
             else:
                 return units(self.value // other.value, _unit_division(self.unit, other.unit))
@@ -462,8 +462,8 @@ class Unit(object, metaclass=UnytType):
                 return units(self.value % other.value, self.unit)
             elif _convertible(other.unit, self.unit):
                 return units(self.value % _convert(other.value, other.unit, self.unit), self.unit)
-            elif _convertible(_unit_base_power(self.unit)[0], _unit_base_power(other.unit)[0]):
-                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0])
+            elif _convertible(_unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0]):
+                factor = _convert(1, _unit_base_power(other.unit)[0], _unit_base_power(self.unit)[0]) ** _unit_base_power(other.unit)[1]
                 return units(self.value % (other.value * factor), self.unit)
             else:
                 return units(self.value % other.value, self.unit)

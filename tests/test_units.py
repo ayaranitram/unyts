@@ -118,3 +118,5 @@ assert units(6, 'ft') / units(12, 'in') == units(6, 'ft/ft')
 assert (units(6, 'ft') / units(12, 'in')).units == 'ft/ft'
 assert units(6, 'ft') @ units(12, 'in') == units(0.5, 'ft/in')
 assert (units(6, 'ft') @ units(12, 'in')).units == 'ft/in'
+
+assert round((units(12, 'in')**2 * units(7, 'm')).to('m3'), 6) == round((units(7, 'm') * units(12, 'in')**2), 6)
