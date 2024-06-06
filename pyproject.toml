@@ -7,11 +7,11 @@ where = ["src"]
 
 [project]
 name = "unyts"
-version = "0.8.20"
+version = "0.8.23"
 authors = [
   { name="Martin Carlos Araya", email="martinaraya@gmail.com" },
 ]
-description = "a unit converter based on graph network and classes to operate with units."
+description = "an unit converter based on graph network and classes to operate with units."
 readme = "README.md"
 license = { file="LICENSE" }
 requires-python = ">=3.7"
