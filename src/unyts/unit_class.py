@@ -6,7 +6,7 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.2'
+__version__ = '0.6.3'
 __release__ = 20240606
 __all__ = ['Unit', 'is_Unit']
 
@@ -562,6 +562,20 @@ class Unit(object, metaclass=UnytType):
         else:
             return self.value.__iter__()
 
+    def equals(self, other, precision:int=None):
+        if precision is None:
+            self.__eq__(other)
+        if not isinstance(other, Unit):
+            return self.round(precision).__eq__(self.round(precision, value=other))
+        elif type(self) is type(other):
+            return self.round(precision).__eq__(other.convert(self.unit).round(precision))
+        else:
+            msg = f"'==' not supported between instances of '{type(self)}' and '{type(other)}'."
+            raise TypeError(msg)
+
+    def eq(self, other, precision: int = None):
+        return self.equals(other, precision)
+
     def get_unit(self):
         return self.unit
 
@@ -586,6 +600,27 @@ class Unit(object, metaclass=UnytType):
     @values.setter
     def values(self, value):
         self.value = value
+
+    def round(self, precision:int=0, *, value=None):
+        value_ = self.value if value is None else value
+        significants = lambda v, i: float(f"{v:.{abs(i)}g}")
+        from .units.define import units
+        precision = int(precision)
+        if precision >= 0 and hasattr(value_, 'round'):
+            if _numpy_:
+                value_ = value_.round(precision)
+            else:
+                raise NotImplementedError(f"operations on arrays without Numpy are not implemented.")
+        elif precision >= 0:
+            value_ = round(value_, precision)
+        elif precision < 0 and hasattr(self.value, '__iter__'):
+            if _numpy_:
+                value_ = np.array([significants(each, precision) for each in value_])
+            else:
+                raise NotImplementedError(f"operations on arrays without Numpy are not implemented.")
+        else:
+            value_ = significants(value_, precision)
+        return units(value_, self.units) if value is None else value_
 
     def check_value(self, value):
         if type(value) in (list, tuple):

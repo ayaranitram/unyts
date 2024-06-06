@@ -120,3 +120,11 @@ assert units(6, 'ft') @ units(12, 'in') == units(0.5, 'ft/in')
 assert (units(6, 'ft') @ units(12, 'in')).units == 'ft/in'
 
 assert round((units(12, 'in')**2 * units(7, 'm')).to('m3'), 6) == round((units(7, 'm') * units(12, 'in')**2), 6)
+
+assert units(0.0172, 'm').round(2).value == 0.02
+assert units(0.0172, 'm').round(-1).value == 0.02
+assert units(0.0172, 'm').round(-2).value == 0.017
+assert units(1.0172, 'm').round(-1).value == 1
+assert units(1.0172, 'm').round(-3).value == 1.02
+
+assert units(1.01, 'm').equals(units(1.02, 'm'), 1) is True
