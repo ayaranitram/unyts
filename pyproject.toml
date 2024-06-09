@@ -7,7 +7,7 @@ where = ["src"]
 
 [project]
 name = "unyts"
-version = "0.8.23"
+version = "0.9.0"
 authors = [
   { name="Martin Carlos Araya", email="martinaraya@gmail.com" },
 ]
