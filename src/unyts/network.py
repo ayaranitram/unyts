@@ -37,7 +37,11 @@ class UNode(object):
 
 
 class UDigraph(object):
-    """edges is a dict mapping each node to a list of its children"""
+    """
+    A class to store the digraph containing the units network and methods to facilitate its use.
+    The `edges` attribute is a dict mapping each node to a list of its children
+    The `children_of` method returns the list of nodes with direct relation to the key node. This method will be used by the search algorithms.
+    """
     __slots__ = ('edges', '_edges_str', 'previous', 'recursion_limit', 'fvf', 'memory', 'print', '_cloudpickle_')
 
     def __init__(self) -> None:

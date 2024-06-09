@@ -6,17 +6,18 @@ Created on Sat Oct 24 17:52:34 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.1'
-__release__ = 20240531
 __all__ = ['BFS', 'print_path']
+__version__ = '0.5.2'
+__release__ = 20240608
 
 import logging
 
 
 def BFS(graph, start, end, verbose=False) -> list:
     """
-    Assumes graph is a Digraph; start and end are nodes.
-    Returns a shortest path from start to end in graph.
+    Implementation of Breadth-First Search algorithm.
+    Assumes graph is a digraph; `start` and `end` are nodes in the graph network.
+    Returns a shortest path from `start` to `end` in graph.
 
     Parameters
     ----------
@@ -31,24 +32,20 @@ def BFS(graph, start, end, verbose=False) -> list:
     """
     init_path = [start]
     path_queue = [init_path]
-    visited = []
+    visited = list()
     while len(path_queue) != 0:
         # get and remove oldest element in path_queue
         conv_path = path_queue.pop(0)
         if conv_path in visited:
             if verbose:
-                logging.info(f"""BFS: {len(path_queue)} paths in queue. Already visited BFS path:\n{print_path(conv_path)}""")
+                logging.info(f"""<BFS>: {len(path_queue)} paths in queue. Already visited BFS path:\n{print_path(conv_path)}""")
         else:
             if verbose:
-                print(f"<UnitsConv> {len(path_queue)} paths in queue. Current BFS path:",
-                      print_path(conv_path),
-                      sep='\n')
+                logging.info(f"""<BFS> {len(path_queue)} paths in queue. Current BFS path:\n{print_path(conv_path)}""")
             last_node = conv_path[-1]
             if last_node is end:
                 if verbose:
-                    print(f"<UnitsConv> Found end node {end.get_name()} in the path:",
-                          print_path(conv_path),
-                          sep='\n')
+                    logging.info(f"""<BFS> Found end node {end.get_name()} in the path:\n{print_path(conv_path)}""")
                 return conv_path
             path_queue += [conv_path + [next_node]
                            for next_node in graph.children_of(last_node) 
