@@ -6,10 +6,10 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.10'
-__release__ = 20240531
+__version__ = '0.6.0'
+__release__ = 20240609
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'dir_path', 'set_density', 'get_density',
-           'recursion_limit', 'verbose']
+           'recursion_limit', 'verbose', 'set_algorithm']
 
 import logging
 import os.path
@@ -22,6 +22,7 @@ ini_path = Path(__file__).with_name('parameters.ini').absolute()
 dir_path = os.path.dirname(ini_path) + '/'
 off_switches = ('off', 'no', 'not', '')
 __max_recursion_default__ = 25
+__max_generations_default__ = 15
 
 class UnytsParameters(object):
     """
@@ -38,9 +39,12 @@ class UnytsParameters(object):
         self.show_version_ = True
         self.density_ = None
         self.max_recursion_ = __max_recursion_default__
+        self.algorithm_ = 'BFS'
+        self.max_generations_ = __max_generations_default__
         self.load_params()
         self.reload_ = self.reload_ if reload is None else bool(reload)
         self.memory_ = not self.reload_
+        self.last_path_str = ""
 
     def load_params(self) -> None:
         if isfile(ini_path):
@@ -55,7 +59,9 @@ class UnytsParameters(object):
                       'verbose_details': 0,
                       'reduce_parentheses': True,
                       'show_version': False,
-                      'max_recursion': __max_recursion_default__}
+                      'max_recursion': __max_recursion_default__,
+                      'algorithm': 'BFS',
+                      'max_generations': __max_generations_default__}
             with open(ini_path, 'w') as f:
                 json_dump(params, f)
         self.print_path_ = params['print_path'] if 'print_path' in params else False
@@ -67,6 +73,8 @@ class UnytsParameters(object):
         self.reduce_parentheses_ = params['reduce_parentheses'] if 'reduce_parentheses' in params else True
         self.show_version_ = params['show_version'] if 'show_version' in params else True
         self.max_recursion_ = params['max_recursion'] if 'max_recursion' in params else __max_recursion_default__
+        self.algorithm_ = params['algorithm'] if 'algorithm' in params else 'BFS'
+        self.max_generations_ = params['max_generations'] if 'max_generations' in params else __max_generations_default__
 
     def save_params(self) -> None:
         params = {'print_path': self.print_path_,
@@ -77,7 +85,9 @@ class UnytsParameters(object):
                   'verbose_details': self.verbose_details_,
                   'reduce_parentheses': self.reduce_parentheses_,
                   'show_version': self.show_version_,
-                  'max_recursion': self.max_recursion_}
+                  'max_recursion': self.max_recursion_,
+                  'algorithm': self.algorithm_,
+                  'max_generations': self.max_generations_}
         with open(ini_path, 'w') as f:
             json_dump(params, f)
 
@@ -158,16 +168,41 @@ class UnytsParameters(object):
     def recursion_limit(self, limit=None):
         if limit is None:
             return self.max_recursion_
-        elif limit.lower() == 'max' or limit is False:
+        elif (type(limit) is str and limit.lower() == 'max') or limit is False:
             self.max_recursion_ = getrecursionlimit() - 15
-            return self.max_recursion_
         elif limit is True:
             self.max_recursion_ = __max_recursion_default__
-            return self.max_recursion_
         elif type(limit) is int:
             self.max_recursion_ = min(limit, getrecursionlimit() - 15)
         else:
-            raise ValueError(f"not valid recursion limit, must be an integer of False.")
+            raise ValueError(f"not valid recursion limit, must be an integer or boolean.")
+        self.save_params()
+        return self.max_recursion_
+
+    def generations_limit(self, limit=None):
+        if limit is None:
+            return self.max_generations_
+        elif (type(limit) is str and limit.lower() == 'max') or limit is False:
+            self.max_generations_ = __max_generations_default__
+        elif limit is True:
+            self.max_generations_ = __max_generations_default__
+        elif type(limit) is int:
+            self.max_generations_ = limit
+        else:
+            raise ValueError(f"not valid generations limit, must be an integer or boolean.")
+        self.save_params()
+        return self.max_generations_
+
+    def get_algorithm(self):
+        return self.algorithm_
+
+    def set_algorithm(self, algorithm:str):
+        if algorithm not in ['BFS', 'lean_BFS', 'DFS']:
+            logging.error(f"valid algorithms are 'BFS', 'lean_BFS' and 'DFS' not {algorithm}.")
+        else:
+            self.algorithm_ = algorithm
+            logging.info(f"{algorithm} set as search algorithm.")
+            self.save_params()
 
 
 unyts_parameters_ = UnytsParameters()
@@ -234,3 +269,8 @@ def reload() -> None:
     unyts_parameters_.reload_ = True
     unyts_parameters_.save_params()
     logging.info("On next 'import unyts', the dictionary and network will be re-created.\n It might be required to restart the Python kernel.")
+
+def set_algorithm(algorithm:str):
+    if algorithm not in ['BFS', 'lean_BFS', 'DFS']:
+        raise ValueError(f"valid algorithms are 'BFS', 'lean_BFS' and 'DFS' not {algorithm}.")
+    unyts_parameters_.set_algorithm(algorithm)

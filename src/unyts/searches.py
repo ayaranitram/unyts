@@ -6,11 +6,12 @@ Created on Sat Oct 24 17:52:34 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__all__ = ['BFS', 'print_path']
-__version__ = '0.5.2'
-__release__ = 20240608
+__version__ = '0.6.0'
+__release__ = 20240609
+__all__ = ['BFS', 'lean_BFS', 'DFS', 'print_path']
 
 import logging
+from unyts import unyts_parameters_
 
 
 def BFS(graph, start, end, verbose=False) -> list:
@@ -51,6 +52,100 @@ def BFS(graph, start, end, verbose=False) -> list:
                            for next_node in graph.children_of(last_node) 
                            if next_node not in conv_path]
             visited.append(conv_path)
+
+
+def DFS(graph, start, end, verbose=False, branch_depht=25) -> list:
+    """
+    Implementation of Depth-First Search algorithm.
+    Assumes graph is a digraph; `start` and `end` are nodes in the graph network.
+    Returns a first found path from `start` to `end` in graph.
+
+    Parameters
+    ----------
+    graph: Digraph
+    start: node
+    end: node
+    verbose: bool
+        to print or not print messages.
+    Returns
+    -------
+    shortest_path: list
+    """
+    from unyts.converter import _get_descendants
+    branch_depht = unyts_parameters_.generations_limit() if branch_depht is None else branch_depht
+    def dfs_(graph, node, visited, path_queue):
+        visited.add(node)
+        for child in graph.children_of(node):
+            this_path = []
+            if child in visited:
+                continue
+            if end.get_name() not in _get_descendants(child.get_name(), branch_depht):
+                continue
+            else:
+                this_path.append(child)
+                if child is end:
+                    return path_queue + this_path
+                else:
+                    this_path = dfs_(graph, child, visited, this_path)
+                    if end in this_path:
+                        path_queue += this_path
+                        break
+        return path_queue
+    path_queue = [start]
+    visited = set()
+    path_queue = dfs_(graph, start, visited, path_queue)
+    if end in path_queue:
+        return path_queue
+
+
+class SlimUDigraph(object):
+    """
+    A simplified class, from the UDgraph class, to store a slimmed digraph dictionary containing only units related to the start and end of the search.
+    The `edges` attribute is a dict mapping each node to a list of its children.
+    The `children_of` method returns the list of nodes with direct relation to the key node. This method will be used by the search algorithms.
+    """
+    def __init__(self, edges:dict={}):
+        self.edges = edges
+
+    def children_of(self, node):
+        return self.edges[node][0] if node in self.edges else []
+
+
+def lean_BFS(graph, start, end, verbose=False, max_generations_screening=25) -> list:
+    """
+    Runs BFS algorithm on a lean digraph network, where only the nodes related to the `start` and `end` nodes are kept.
+    Assumes graph is a digraph; `start` and `end` are nodes in the graph network.
+    Returns a shortest path from `start` to `end` in graph.
+
+    Parameters
+    ----------
+    graph: Digraph
+    start: node
+    end: node
+    verbose: bool
+        to print or not print messages.
+    Returns
+    -------
+    shortest_path: list
+    """
+    from unyts.converter import _get_descendants
+    max_generations_screening = unyts_parameters_.generations_limit() if max_generations_screening is None else max_generations_screening
+    generations = 0
+    selection = set()
+    while len(selection) == 0 and generations < max_generations_screening:
+        generations += 1
+        start_descendants = _get_descendants(start.get_name(), generations)
+        end_descendants = _get_descendants(end.get_name(), generations)
+        selection = start_descendants.intersection(end_descendants)
+    selection = selection.union({node for each in selection for node in _get_descendants(each, generations, get_combinations=False)})
+    selected_edges = {k: v for k, v in graph.edges.items() if k.get_name() in selection}
+    if len(selected_edges) > 0:
+        if verbose:
+            logging.info(f"<lean BFS> search graph slimmed from {len(graph.edges)} to {len(selected_edges)} nodes, in {generations} generations.")
+    else:
+        return None
+    slim_graph = SlimUDigraph(selected_edges)
+    return BFS(slim_graph, start, end, verbose=verbose and unyts_parameters_.verbose_details_ > 0)
 
 
 def print_path(path: list) -> str:

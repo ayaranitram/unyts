@@ -6,14 +6,14 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.7.2'
-__release__ = 20240603
+__version__ = '0.8.0'
+__release__ = 20240609
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
 from .dictionaries import dictionary, temperatureRatioConversions, uncertain_names
 from .Empty import Empty, str_Empty
-from .searches import BFS, print_path
+from .searches import BFS, lean_BFS, DFS, print_path
 from .errors import NoConversionFoundError
 from .parameters import unyts_parameters_, _get_density
 from .helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
@@ -325,7 +325,8 @@ def _get_conversion(value, from_unit, to_unit, recursion=None):
         return None, None
     
 
-def _get_descendants(unit:str, generations=7):
+def _get_descendants(unit:str, generations=None, get_combinations=True):
+    generations = unyts_parameters_.max_generations_ if generations is None else generations
     if generations == 0:
         return {unit}
     children, children_split = set(), set()
@@ -334,19 +335,22 @@ def _get_descendants(unit:str, generations=7):
         children = {unit}
         for g in range(generations):
             children = children.union({each for k, v in units_network.get_edges_str().items() for each in v if k in children})
-        
-    for s in '/*':
-        if s in unit and len(unit.split(s)) == 2:
-            unit_num, unit_den = unit.split(s)
-            break
-    if unit_num is not None and unit_den is not None:
-        children_num = _get_descendants(unit_num, generations)
-        children_den = _get_descendants(unit_den, generations)
-        children_split = {f"{str(num)}/{str(den)}"
-                          for num in {unit_num}.union(children_num)
-                          for den in {unit_den}.union(children_den)
-                          if f"{str(num)}/{str(den)}" != unit}
-    descendants = children.union(children_split)
+
+    if get_combinations:
+        for s in '/*':
+            if s in unit and len(unit.split(s)) == 2:
+                unit_num, unit_den = unit.split(s)
+                break
+        if unit_num is not None and unit_den is not None:
+            children_num = _get_descendants(unit_num, generations)
+            children_den = _get_descendants(unit_den, generations)
+            children_split = {f"{str(num)}/{str(den)}"
+                              for num in {unit_num}.union(children_num)
+                              for den in {unit_den}.union(children_den)
+                              if f"{str(num)}/{str(den)}" != unit}
+        descendants = children.union(children_split)
+    else:
+        descendants = children
     return {unit}.union(descendants)
 
 
@@ -641,7 +645,7 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str):
     return conv, conv_path
 
 
-def _search_network(from_unit, to_unit, algorithm='BFS'):
+def _search_network(from_unit, to_unit, algorithm:str=None):
     """
     Searches for a path from `from_units` through the units network to `to_units`.
 
@@ -651,21 +655,36 @@ def _search_network(from_unit, to_unit, algorithm='BFS'):
         the starting point of the search.
     to_unit: str
         the target to be found in the network.
-    algorithm: str, "BFS"
-        the algorithm to use for searching the network.
+    algorithm: str
+        the algorithm to use for searching the network, the implemented alternatives are:
+        - 'BFS': Breadth-First Search algorithm, will return the shortest path searching through the entire network one level at a time.
+        - 'lean_BFS': will return the shortest path searching through a slimmed network of preselected nodes.
+        - 'DFS': Depth-First Search algorithm, will return the first found path searching through the network one branch at a time.
     Returns
     -------
         conversion_path: list
             the list of steps to go from `from_unit` until `to_unit`.
     """
+    if algorithm is None:
+        algorithm = unyts_parameters_.algorithm_
     if units_network.has_node(from_unit) and units_network.has_node(to_unit):
         if algorithm == 'BFS':
             conversion_path = BFS(units_network,
                                   units_network.get_node(from_unit),
                                   units_network.get_node(to_unit),
-                                  unyts_parameters_.verbose_ and unyts_parameters_.verbose_details_ > 1)
+                                  verbose=unyts_parameters_.verbose_ and unyts_parameters_.verbose_details_ > 1)
+        elif algorithm == 'lean_BFS':
+            conversion_path = lean_BFS(units_network, units_network.get_node(from_unit),
+                                       units_network.get_node(to_unit),
+                                       verbose=unyts_parameters_.verbose_ and unyts_parameters_.verbose_details_ > 1,
+                                       max_generations_screening=unyts_parameters_.generations_limit() + 1)
+        elif algorithm == 'DFS':
+            conversion_path = DFS(units_network, units_network.get_node(from_unit),
+                                  units_network.get_node(to_unit),
+                                  verbose=unyts_parameters_.verbose_ and unyts_parameters_.verbose_details_ > 1,
+                                  branch_depht=unyts_parameters_.generations_limit())
         else:
-            raise NotImplementedError("other search algorithms different from BFS are not yet implemented.")
+            raise NotImplementedError("other search algorithms different from BFS and DFS are not yet implemented.")
     else:
         conversion_path = None
     return conversion_path
@@ -740,8 +759,9 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_co
         else:
             return None
 
+    unyts_parameters_.last_path_str = print_path(conv_path)
     if print_conversion_path:
-        logging.info(f"converting from '{from_unit}' to '{to_unit}':\n {print_path(conv_path)}")
+        logging.info(f"converting from '{from_unit}' to '{to_unit}':\n {unyts_parameters_.last_path_str}")
 
     return conv
 
