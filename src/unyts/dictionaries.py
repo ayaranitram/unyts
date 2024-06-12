@@ -6,10 +6,10 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.42'
-__release__ = 20240521
-__all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'unitless_names',
-           'uncertain_names']
+__version__ = '0.5.43'
+__release__ = 20240610
+__all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'StandardWaterDensity',
+           'unitless_names', 'uncertain_names']
 
 import logging
 from json import load as json_load
@@ -19,6 +19,7 @@ from .parameters import unyts_parameters_, dir_path
 
 StandardAirDensity = 1.225  # Kg/m3 or g/cc
 StandardEarthGravity = 9.80665  # m/s2 or 980.665 cm/s2 from
+StandardWaterDensity = 1.00  # g/cm3 because the size of the gram was originally based on the mass of a cubic centimetre of water.
 uncertain_names = ['oz', 'ounce', 'ounces', 'OZ', 'OUNCE', 'OUNCES']
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
@@ -126,8 +127,8 @@ def _load_dictionary() -> (dict, dict):
 
     # Volume
     dictionary['Volume'] = []
-    dictionary['Volume_SI_UPPER'] = (
-        'm3',)  # 'l', 'sm3', 'rm3' are Volume but the conversion of SI prefixes is linear
+    dictionary['Volume_SI_UPPER'] = ('m3', 'm³')  # 'l', 'sm3', 'rm3' are Volume but the conversion of SI prefixes is linear
+    dictionary['Volume_linearSI'] = ('sm3', 'sm³', 'Sm3', 'Sm³', 'rm3', 'rm³' 'l')  # litre, sm3 and rm3 are Volume but the conversion of SI prefixes is linear
     dictionary['Volume_UK_NAMES_REVERSE'] = {
         'fluid ounce': ('fl oz', 'oz', 'ounce', 'ozUS'),
         'gill': ('gi', 'gillUS', 'giUS', 'USgill'),
@@ -189,12 +190,11 @@ def _load_dictionary() -> (dict, dict):
         'ft3': ('ft³', 'ft2*ft', 'ft*ft2', 'ft²ft', 'ft*ft²'),
         'in3': ('in³', 'in2*in', 'in*in2', 'in²*in', 'in*in²'),
     }
-    dictionary['Volume_linearSI'] = ('sm3', 'rm3',)
 
     # Length
     dictionary['Length'] = []
     dictionary['Length_NAMES_REVERSE_UPPER'] = {'meter': ('m', 'meter', 'metro')}
-    dictionary['Length_SI'] = ('m', 'l',)  # litre, sm3 and rm3 are Volume but the conversion of SI prefixes is linear
+    dictionary['Length_SI'] = ('m',)
     dictionary['Length_UK_NAMES_REVERSE'] = {
         'thou': ('th',),
         'tenth': ('te', '0.1 in', '0.1in', '.1in'),
@@ -218,16 +218,16 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Area_SI'] = ('m2', 'm²',)
     dictionary['Area_UK_NAMES_REVERSE_UPPER'] = {
         'acre': tuple(),
-        'square thou': ('sq th', 'sqth', 'th2', 'th²', 'th*th', 'th3/th'),
-        'square tenth': ('sq te', 'sqte', 'te2', 'te²', 'te*te', 'te3/te'),
-        'square inch': ('sq in', 'sqin', 'in2', 'in²', 'in*in', 'in3/in'),
-        'square foot': ('sq ft', 'sqft', 'ft2', 'ft²', 'ft*ft', 'ft3/ft'),
-        'square yard': ('sq yd', 'sqyd', 'yd2', 'yd²', 'yd*yd', 'yd3/yd'),
-        'square chain': ('sq ch', 'sqch', 'ch2', 'ch²', 'ch*ch', 'ch3/ch'),
-        'square rod': ('sq rd', 'sqrd', 'rd2', 'rd²', 'rd*rd', 'rd3/rd'),
-        'square furlong': ('sq fur', 'sqfur', 'fur2', 'fur²', 'fur*fur', 'fur3/fur'),
-        'square mile': ('sq mi', 'mi2', 'mi²', 'sqmile', 'mi*mi', 'mi3/mi'),
-        'square league': ('sq lea', 'sqlea', 'lea2', 'lea²', 'lea*lea', 'lea3/lea'),
+        'square thou': ('sq th', 'sqth', 'th2', 'th²', 'th*th', 'th3/th', 'th³/th'),
+        'square tenth': ('sq te', 'sqte', 'te2', 'te²', 'te*te', 'te3/te', 'te³/te'),
+        'square inch': ('sq in', 'sqin', 'in2', 'in²', 'in*in', 'in3/in', 'in³/in'),
+        'square foot': ('sq ft', 'sqft', 'ft2', 'ft²', 'ft*ft', 'ft3/ft', 'ft³/ft'),
+        'square yard': ('sq yd', 'sqyd', 'yd2', 'yd²', 'yd*yd', 'yd3/yd', 'yd³/yd'),
+        'square chain': ('sq ch', 'sqch', 'ch2', 'ch²', 'ch*ch', 'ch3/ch', 'ch³/ch'),
+        'square rod': ('sq rd', 'sqrd', 'rd2', 'rd²', 'rd*rd', 'rd3/rd', 'rd³/rd'),
+        'square furlong': ('sq fur', 'sqfur', 'fur2', 'fur²', 'fur*fur', 'fur3/fur', 'fur³/fur'),
+        'square mile': ('sq mi', 'mi2', 'mi²', 'sqmile', 'mi*mi', 'mi3/mi', 'mi³/mi'),
+        'square league': ('sq lea', 'sqlea', 'lea2', 'lea²', 'lea*lea', 'lea3/lea', 'lea³/lea'),
     }
 
     # Pressure
