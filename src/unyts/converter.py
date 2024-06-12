@@ -656,23 +656,31 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str):
     if from_unit not in uncertain_names and to_unit not in uncertain_names and \
             from_unit in dictionary['Volume'] and to_unit in dictionary['Weight']:
         density = _get_density()
-        conv1, conv_path1 = _converter(value, from_unit, 'cc')
-        conv2, conv_path2 = _converter(value, 'g', to_unit)
+        # conv1, conv_path1 = _converter(1, from_unit, 'cc')
+        # conv2, conv_path2 = _converter(value, 'g', to_unit)
+        this_units_density, _ = _converter(density, 'g/cm3', f"{to_unit}/{from_unit}")
         if value is None:
-            conv = lambda x: conv2(conv1(x) * density)
+            # conv = lambda x: conv2(conv1(x) * density)
+            conv = lambda x: x * this_units_density
         else:
-            conv = conv1 * density * conv2
-        conv_path = conv_path1 + ['*', density, '*'] + conv_path2
+            # conv = conv1 * density * conv2
+            conv = value * this_units_density
+        # conv_path = conv_path1 + ['*', density, '*'] + conv_path2
+        conv_path = ['*', this_units_density]
     elif from_unit not in uncertain_names and to_unit not in uncertain_names and \
             to_unit in dictionary['Volume'] and from_unit in dictionary['Weight']:
         density = _get_density()
-        conv1, conv_path1 = _converter(value, from_unit, 'g')
-        conv2, conv_path2 = _converter(value, 'cc', to_unit)
+        this_units_density = _converter(density, 'g/cm3', f"{from_unit}/{to_unit}")
+        # conv1, conv_path1 = _converter(value, from_unit, 'g')
+        # conv2, conv_path2 = _converter(value, 'cc', to_unit)
         if value is None:
-            conv = lambda x: conv2(conv1(x) / density)
+            # conv = lambda x: conv2(conv1(x) / density)
+            conv = lambda x: x / this_units_density
         else:
-            conv = conv1 / density * conv2
-        conv_path = conv_path1 + ['/', density, '*'] + conv_path2
+            # conv = conv1 / density * conv2
+            conv = value / this_units_density
+        # conv_path = conv_path1 + ['/', density, '*'] + conv_path2
+        conv_path = ['/', this_units_density]
     else:
         conv, conv_path = None, None
 
