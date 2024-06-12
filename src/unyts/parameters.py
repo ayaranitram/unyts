@@ -22,7 +22,7 @@ ini_path = Path(__file__).with_name('parameters.ini').absolute()
 dir_path = os.path.dirname(ini_path) + '/'
 off_switches = ('off', 'no', 'not', '')
 __max_recursion_default__ = 12
-__max_generations_default__ = 17
+__max_generations_default__ = 25
 
 class UnytsParameters(object):
     """
