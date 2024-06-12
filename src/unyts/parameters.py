@@ -237,13 +237,18 @@ def set_density(density: float = None, units: str = 'g/cm3') -> None:
     from .units.ratios import Density
     if density is None:
         print('Please enter density g/cm³ or enter a tuple density, units like: 997, kg/m³ :')
-    while fvf is None:
-        fvf = input(' density (g/cm³) = ')
-        if not valid_fvf(fvf):
-            fvf = None
-        else:
-            fvf = valid_fvf(fvf)
-
+        while density is None:
+            density = input(' density (g/cm³) = ')
+            if ',' in density and len(density.split(',')) == 2:
+                density, units = density.strip('()').split(',')
+                density, units = float(density), units.strip(' ()')
+            elif ',' not in density:
+                try:
+                    density = float(density)
+                except:
+                    density = None
+            else:
+                density = None
     if not isinstance(density, (int, float)) and not type(density) is Density:
         raise ValueError("'density' must be a float or int.")
     elif type(density) is Density:
@@ -259,6 +264,8 @@ def set_density(density: float = None, units: str = 'g/cm3') -> None:
         if density is None:
             raise ValueError("density 'units' are not valid.")
     unyts_parameters_.density_ = density
+    logging.info(f"density set to {density} g/cm³")
+    unyts_parameters_.save_params()
 
 
 def _get_density() -> float:
