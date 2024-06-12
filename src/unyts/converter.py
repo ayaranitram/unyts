@@ -452,6 +452,10 @@ def _converter(value, from_unit, to_unit, recursion=None):
     -------
         (conversion, conversion_path)
     """
+    # avoid infinite looping, do not repeat searches
+    if (from_unit, to_unit) in units_network.previous:
+        return None, None
+    
     # get and set recursion limit
     recursion = _get_recursion_limit(recursion)
     if unyts_parameters_.verbose_:
