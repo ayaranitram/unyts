@@ -209,7 +209,7 @@ def _get_recursion_limit(recursion=None):
     elif recursion > 1:
         recursion = min(getrecursionlimit() - 15, recursion) - 1
     elif recursion <= 0:
-        recursion = 0
+        recursion = -1
     else:
         recursion -= 1
     return recursion
