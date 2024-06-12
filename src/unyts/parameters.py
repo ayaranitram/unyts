@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.0'
-__release__ = 20240609
+__version__ = '0.6.1'
+__release__ = 20240612
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'dir_path', 'set_density', 'get_density',
            'recursion_limit', 'verbose', 'set_algorithm']
 
@@ -21,8 +21,8 @@ from sys import getrecursionlimit
 ini_path = Path(__file__).with_name('parameters.ini').absolute()
 dir_path = os.path.dirname(ini_path) + '/'
 off_switches = ('off', 'no', 'not', '')
-__max_recursion_default__ = 25
-__max_generations_default__ = 15
+__max_recursion_default__ = 12
+__max_generations_default__ = 17
 
 class UnytsParameters(object):
     """
@@ -37,7 +37,7 @@ class UnytsParameters(object):
         self.verbose_details_ = 0
         self.reduce_parentheses_ = True
         self.show_version_ = True
-        self.density_ = None
+        self.density_ = 1.0  # g/cm3
         self.max_recursion_ = __max_recursion_default__
         self.algorithm_ = 'BFS'
         self.max_generations_ = __max_generations_default__
@@ -59,6 +59,7 @@ class UnytsParameters(object):
                       'verbose_details': 0,
                       'reduce_parentheses': True,
                       'show_version': False,
+                      'density': 1.0, # g/cm3
                       'max_recursion': __max_recursion_default__,
                       'algorithm': 'BFS',
                       'max_generations': __max_generations_default__}
@@ -72,6 +73,7 @@ class UnytsParameters(object):
         self.verbose_details_ = params['verbose_details'] if 'verbose_details' in params else 0
         self.reduce_parentheses_ = params['reduce_parentheses'] if 'reduce_parentheses' in params else True
         self.show_version_ = params['show_version'] if 'show_version' in params else True
+        self.density_ = params['density'] if 'density' in params else 1.0  # g/cm3
         self.max_recursion_ = params['max_recursion'] if 'max_recursion' in params else __max_recursion_default__
         self.algorithm_ = params['algorithm'] if 'algorithm' in params else 'BFS'
         self.max_generations_ = params['max_generations'] if 'max_generations' in params else __max_generations_default__
@@ -85,6 +87,7 @@ class UnytsParameters(object):
                   'verbose_details': self.verbose_details_,
                   'reduce_parentheses': self.reduce_parentheses_,
                   'show_version': self.show_version_,
+                  'density': self.density_,
                   'max_recursion': self.max_recursion_,
                   'algorithm': self.algorithm_,
                   'max_generations': self.max_generations_}
@@ -204,6 +207,9 @@ class UnytsParameters(object):
             logging.info(f"{algorithm} set as search algorithm.")
             self.save_params()
 
+    def get_algorithm(self):
+        return self.algorithm_
+
 
 unyts_parameters_ = UnytsParameters()
 
@@ -227,18 +233,27 @@ def recursion_limit(limit=None) -> int:
     return unyts_parameters_.recursion_limit(limit)
 
 
-def set_density(density: float, units: str = 'g/cc') -> None:
+def set_density(density: float = None, units: str = 'g/cm3') -> None:
     from .units.ratios import Density
+    if density is None:
+        print('Please enter density g/cm³ or enter a tuple density, units like: 997, kg/m³ :')
+    while fvf is None:
+        fvf = input(' density (g/cm³) = ')
+        if not valid_fvf(fvf):
+            fvf = None
+        else:
+            fvf = valid_fvf(fvf)
+
     if not isinstance(density, (int, float)) and not type(density) is Density:
         raise ValueError("'density' must be a float or int.")
     elif type(density) is Density:
-        density = density.to('g/cc')
+        density = density.to('g/cm3')
         density, units = density.value, density.unit
-    if units.lower() not in ('g/cc', 'g/cm3'):
+    if units.lower() not in ('g/cc', 'g/cm3', 'g/cm³'):
         from .converter import convert
         from .errors import NoConversionFoundError
         try:
-            density = convert(density, units, 'g/cc')
+            density = convert(density, units, 'g/cm3')
         except NoConversionFoundError:
             raise ValueError("density 'units' are not valid.")
         if density is None:
@@ -270,7 +285,12 @@ def reload() -> None:
     unyts_parameters_.save_params()
     logging.info("On next 'import unyts', the dictionary and network will be re-created.\n It might be required to restart the Python kernel.")
 
+
 def set_algorithm(algorithm:str):
     if algorithm not in ['BFS', 'lean_BFS', 'DFS']:
         raise ValueError(f"valid algorithms are 'BFS', 'lean_BFS' and 'DFS' not {algorithm}.")
     unyts_parameters_.set_algorithm(algorithm)
+
+
+def get_algorithm():
+    return unyts_parameters_.algorithm_
