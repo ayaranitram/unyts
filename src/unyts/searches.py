@@ -6,8 +6,8 @@ Created on Sat Oct 24 17:52:34 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.0'
-__release__ = 20240609
+__version__ = '0.6.1'
+__release__ = 20240612
 __all__ = ['BFS', 'lean_BFS', 'DFS', 'print_path']
 
 import logging
@@ -130,13 +130,15 @@ def lean_BFS(graph, start, end, verbose=False, max_generations_screening=25) -> 
     """
     from unyts.converter import _get_descendants
     max_generations_screening = unyts_parameters_.generations_limit() if max_generations_screening is None else max_generations_screening
-    generations = 0
+    generations_list = [g for g in [0, 1, 2, 3, 4, 5, 7, 10, 13, 16, 20, 25, 30, 40, 50] if g < max_generations_screening] + [max_generations_screening]
     selection = set()
-    while len(selection) == 0 and generations < max_generations_screening:
+    for generations in generations_list:
         generations += 1
         start_descendants = _get_descendants(start.get_name(), generations)
         end_descendants = _get_descendants(end.get_name(), generations)
         selection = start_descendants.intersection(end_descendants)
+        if len(selection) > 0:
+            break
     selection = selection.union({node for each in selection for node in _get_descendants(each, generations, get_combinations=False)})
     selected_edges = {k: v for k, v in graph.edges.items() if k.get_name() in selection}
     if len(selected_edges) > 0:
