@@ -6,7 +6,7 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.38'
+__version__ = '0.5.39'
 __release__ = 20240612
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf']
 
@@ -421,6 +421,7 @@ def _load_network():
 
 
     # Volume conversions
+    network.add_edge(Conversion(network.get_node('litre'), network.get_node('cubic centimeter'), lambda v: v * 1000))
     network.add_edge(Conversion(network.get_node('gill'), network.get_node('fluid ounce'), lambda v: v * 4))
     network.add_edge(Conversion(network.get_node('pint'), network.get_node('gill'), lambda v: v * 4))
     network.add_edge(Conversion(network.get_node('quart'), network.get_node('pint'), lambda v: v * 2))
