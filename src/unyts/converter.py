@@ -718,8 +718,8 @@ def _search_network(from_unit, to_unit, algorithm:str=None):
         elif algorithm == 'lean_BFS':
             conversion_path = lean_BFS(units_network, units_network.get_node(from_unit),
                                        units_network.get_node(to_unit),
-                                       verbose=unyts_parameters_.verbose_ and unyts_parameters_.verbose_details_ > 1,
-                                       max_generations_screening=unyts_parameters_.generations_limit() + 1)
+                                       verbose=unyts_parameters_.verbose_,
+                                       max_generations_screening=unyts_parameters_.generations_limit())
         elif algorithm == 'DFS':
             conversion_path = DFS(units_network, units_network.get_node(from_unit),
                                   units_network.get_node(to_unit),
