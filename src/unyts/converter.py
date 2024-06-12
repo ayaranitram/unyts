@@ -417,12 +417,18 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
 
     # keep only intersection between families
     common = from_family.intersection(to_family)
+    
+    total_generations = lambda u: generations_until_common(from_unit, u) + generations_until_common(u, to_unit)
+    from_to_generations = [total_generations(u) for u in common]
+    min_generations = min(from_to_generations)
+    common_sorted = {child: gens for gens, child in sorted(zip(from_to_generations, common))}
 
     # look for conversion between children  
-    child_conversion, child_conversion_path = None, None
     conversion, conversion_path = None, None
     path, shortest_path = 0, 9999
-    for child in common:
+    for child in common_sorted:
+        if conversion_path is not None and common_sorted[child] > min_generations:
+            break
         from_child_conversion, from_child_conversion_path = _converter(None, from_unit, child, recursion=recursion)
         child_to_conversion, child_to_conversion_path = _converter(None, child, to_unit, recursion=recursion)
         if from_child_conversion is not None and child_to_conversion is not None:
