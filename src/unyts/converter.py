@@ -325,6 +325,36 @@ def _get_conversion(value, from_unit, to_unit, recursion=None):
         return None, None
     
 
+def generations_until_common(start, end, verbose=False, max_generations_screening=25) -> list:
+    """
+    Finds the number of generations requiered to get a common unit between `start` and `end`, 
+    where `start` and `end` are nodes in the graph network.
+    Returns a smaller number of generations to connect `start` to `end` in graph.
+
+    Parameters
+    ----------
+    start: node
+    end: node
+    verbose: bool
+        to print or not print messages.
+    Returns
+    -------
+    shortest_path: list
+    """
+    from unyts.converter import _get_descendants
+    max_generations_screening = unyts_parameters_.generations_limit() if max_generations_screening is None else max_generations_screening
+    generations = 0
+    selection = set()
+    start = start.get_name() if hasattr(start, 'get_name') else start
+    end = end.get_name() if hasattr(end, 'get_name') else end
+    while len(selection) == 0 and generations < max_generations_screening:
+        generations += 1
+        start_descendants = _get_descendants(start, generations)
+        end_descendants = _get_descendants(end, generations)
+        selection = start_descendants.intersection(end_descendants)
+    return generations if len(selection) > 0 else (np.inf if _numpy_ else 9999)
+
+
 def _get_descendants(unit:str, generations=None, get_combinations=True):
     generations = unyts_parameters_.max_generations_ if generations is None else generations
     if generations == 0:
