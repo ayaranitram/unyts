@@ -9,11 +9,11 @@ Created on Sat Oct 24 18:24:20 2020
 __version__ = '0.9.0'
 __release__ = 20240609
 __all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit',
-           'set_unit', 'set_conversion', 'set_density',
+           'set_unit', 'set_conversion', 'set_density', 'get_density'
            'save', 'start_gui', 'set_fvf', 'set_algorithm']
 
-from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density, recursion_limit, verbose, set_algorithm
-from .database import network_to_frame, save_memory, load_memory, set_fvf
+from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density, recursion_limit, verbose, set_algorithm, get_algorithm
+from .database import network_to_frame, save_memory, load_memory, clean_memory, set_fvf, get_fvf
 from .units.define import units
 from .converter import convert, convertible
 from .Empty import Empty

@@ -128,7 +128,7 @@ def _load_dictionary() -> (dict, dict):
     # Volume
     dictionary['Volume'] = []
     dictionary['Volume_SI_UPPER'] = ('m3', 'm³')  # 'l', 'sm3', 'rm3' are Volume but the conversion of SI prefixes is linear
-    dictionary['Volume_linearSI'] = ('sm3', 'sm³', 'Sm3', 'Sm³', 'rm3', 'rm³' 'l')  # litre, sm3 and rm3 are Volume but the conversion of SI prefixes is linear
+    dictionary['Volume_linearSI'] = ('sm3', 'sm³', 'Sm3', 'Sm³', 'rm3', 'rm³', 'l')  # litre, sm3 and rm3 are Volume but the conversion of SI prefixes is linear
     dictionary['Volume_UK_NAMES_REVERSE'] = {
         'fluid ounce': ('fl oz', 'oz', 'ounce', 'ozUS'),
         'gill': ('gi', 'gillUS', 'giUS', 'USgill'),

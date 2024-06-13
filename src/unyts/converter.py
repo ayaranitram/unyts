@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.8.0'
-__release__ = 20240609
+__version__ = '0.8.3'
+__release__ = 20240612
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
