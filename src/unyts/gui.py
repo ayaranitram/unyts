@@ -220,7 +220,6 @@ class UnytsApp(tk.Frame):
         elif total_time > 60:  # 1 minute
             minutes = total_time // 60
             seconds = round(total_time - minutes, 0)
-            print(f"{minutes=} {seconds=}")
             total_time = f"{minutes}:{seconds}"
             time_units = 'minutes:seconds'
         elif total_time > 3600:  # 1 hour
