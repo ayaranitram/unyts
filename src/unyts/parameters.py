@@ -40,7 +40,7 @@ class UnytsParameters(object):
         self.density_ = 1.0  # g/cm3
         self.fvf_ = 1.0  # res_vol/std_vol
         self.max_recursion_ = __max_recursion_default__
-        self.algorithm_ = 'BFS'
+        self.algorithm_ = 'lean_BFS'
         self.max_generations_ = __max_generations_default__
         self.load_params()
         self.reload_ = self.reload_ if reload is None else bool(reload)
@@ -62,8 +62,10 @@ class UnytsParameters(object):
                       'show_version': False,
                       'density': 1.0, # g/cm3
                       'max_recursion': __max_recursion_default__,
-                      'algorithm': 'BFS',
-                      'max_generations': __max_generations_default__}
+                      'algorithm': 'lean_BFS',
+                      'max_generations': __max_generations_default__,
+                      'fvf': 1.0,
+                      'config_files_folder': None}
             with open(ini_path, 'w') as f:
                 json_dump(params, f)
         self.print_path_ = params['print_path'] if 'print_path' in params else False
