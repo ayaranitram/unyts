@@ -214,7 +214,8 @@ def _load_dictionary() -> (dict, dict):
 
     # Area
     dictionary['Area'] = []
-    dictionary['Area_NAMES_REVERSE_UPPER'] = {'square meter': ('sq m', 'm2', 'm²', 'sqmeter', 'm*m', 'm3/m')}
+    dictionary['Area_NAMES_REVERSE_UPPER'] = {'square meter': ('sq m', 'sqm', 'm2', 'm²', 'sqmeter', 'm*m', 'm3/m'),
+                                              'square kilometer': ('sqkm', 'sq km', 'km2', 'km²')}
     dictionary['Area_SI'] = ('m2', 'm²',)
     dictionary['Area_UK_NAMES_REVERSE_UPPER'] = {
         'acre': tuple(),

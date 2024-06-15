@@ -404,10 +404,10 @@ def _load_network():
                                 lambda v: v * 8 * 10 * 22 * 9144 / 10000 / 1000))
 
     # Area conversions
+    network.add_edge(Conversion(network.get_node('square kilometer'), network.get_node('square meter'), lambda d: d * 1000000))
     network.add_edge(Conversion(network.get_node('square mile'), network.get_node('acre'), lambda d: d * 640))
     network.add_edge(Conversion(network.get_node('acre'), network.get_node('square yard'), lambda d: d * 4840))
-    network.add_edge(
-        Conversion(network.get_node('square rod'), network.get_node('square yard'), lambda d: d * 3025 / 100))
+    network.add_edge(Conversion(network.get_node('square rod'), network.get_node('square yard'), lambda d: d * 3025 / 100))
     network.add_edge(Conversion(network.get_node('square yard'), network.get_node('square foot'), lambda d: d * 9))
     network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square inch'), lambda d: d * 144))
     network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square meter'),
