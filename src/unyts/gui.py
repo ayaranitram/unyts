@@ -6,12 +6,13 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.0'
-__release__ = 20240609
+__version__ = '0.4.1'
+__release__ = 20240616
 __all__ = ['start_gui']
 
 import logging
 import tkinter as tk
+from tkinter import filedialog
 from time import process_time
 from tkinter import ttk
 from stringthings import get_number, is_numeric
@@ -270,7 +271,6 @@ class UnytsApp(tk.Frame):
             else:
                 self._msg_len.set(len(up_.last_path_str))
                 self.path_str.set(up_.last_path_str[:self._max_len])
-                print(up_.last_path_str[:self._max_len])
                 self._path_marquee = self.path.after(2000, self._partial_msg)
         else:
             self.path_str.set("")
@@ -322,7 +322,38 @@ def start_gui():
         unyts_gui.input.pack()
         fvf = unyts_gui.input_value.get().strip()
         fvf = get_number(fvf)
-
+    def export_memory():
+        cache_path = filedialog.asksaveasfilename(
+            title='Save',
+            filetypes=(('Cache files', '*.cache'),('All Files', '*.*')),
+            initialfile='unyts_memory.cache'
+        )
+        if cache_path:
+            try:
+                save_memory(cache_path)
+            except:
+                logging.error(f"Failed to save memory to file {cache_path}")
+        else:
+            pass
+    def load_memory_file():
+        cache_path = filedialog.askopenfilename(
+            title='Load',
+            filetypes=(('Cache files', '*.cache'),('All Files', '*.*')))
+        if cache_path:
+            if os.path.isfile(cache_path):
+                try:
+                    load_memory(cache_path)
+                    unyts_gui._display_path()
+                except:
+                    msg = f"Not able to load memory from file {cache_path}"
+                    logging.error(msg)
+                    unyts_gui._display_path(error=msg)
+            else:
+                msg = f"The file {cache_path} doesn't exists."
+                logging.error(msg)
+                unyts_gui._display_path(error=msg)
+        else:
+            pass
 
     def set_cache_folder():
         cache_path = up_.get_user_folder()
@@ -368,10 +399,15 @@ def start_gui():
     # File menu
     file_menu = tk.Menu(unyts_menu)
     unyts_menu.add_cascade(label='File', menu=file_menu)
-    file_menu.add_command(label='Save memory', command=save_memory)
-    file_menu.add_command(label='Reload memory', command=load_memory)
-    file_menu.add_command(label='Clean memory', command=clean_memory)
-    file_menu.add_command(label='Delete cache', command=delete_cache)
+    # File menu > Memory menu
+    memory_menu = tk.Menu(unyts_menu)
+    memory_menu.add_command(label='Save memory', command=save_memory)
+    memory_menu.add_command(label='Clean memory', command=clean_memory)
+    memory_menu.add_command(label='Reload memory', command=load_memory)
+    memory_menu.add_command(label='Export memory', command=export_memory)
+    memory_menu.add_command(label='Import memory', command=load_memory_file)
+    file_menu.add_cascade(label='Conversions memory', menu=memory_menu)
+    file_menu.add_command(label='Delete cache files', command=delete_cache)
     file_menu.add_separator()
     file_menu.add_command(label='Exit', command=close_gui)
     # Options menu
@@ -380,10 +416,12 @@ def start_gui():
     options_menu.add_command(label="Set FVF (in CMD)", command=set_fvf)
     options_menu.add_command(label="Set density (in CMD)", command=set_density)
     options_menu.add_separator()
-    options_menu.add_checkbutton(label='Reload on next start', variable=up_.reload_, command=up_.reload_next_time)
+    options_menu.add_checkbutton(label='Rebuild on next start', variable=up_.reload_, command=up_.reload_next_time)
     options_menu.add_checkbutton(label='Show conversion path', variable=_print_path_, command=print_path)
-    options_menu.add_checkbutton(label='Verbosity', variable=_verbosity_, command=up_.verbose)
-    options_menu.add_checkbutton(label='Cache', variable=_cache_, command=up_.cache)
+    options_menu.add_checkbutton(label='Verbose', variable=_verbosity_, command=up_.verbose)
+    options_menu.add_checkbutton(label='Use cache', variable=_cache_, command=up_.cache)
+    options_menu.add_separator()
+    options_menu.add_command(label='Set cache folder', command=set_cache_folder)
     # Search algorith menu
     search_menu = tk.Menu(unyts_menu)
     search_menu.add_checkbutton(label='BFS', variable=_bfs_, command=_set_bfs)
