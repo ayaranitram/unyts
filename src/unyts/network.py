@@ -84,7 +84,7 @@ class UDigraph(object):
                 with open(path, 'rb') as f:
                     cached_memory = cloudpickle_load(f)
                     self.memory.update(cached_memory)
-                    msg = f"{len(self.memory)} conversion path{'s' if len(self.memory) > 0 else ''} in memory."
+                    msg = f"{len(self.memory)} conversion path{'' if len(self.memory) == 1 else 's'} in memory."
                     logging.info(msg)
             except:
                 msg = 'Failed to load memory from cache.'

@@ -90,7 +90,6 @@ class UnytsParameters(object):
         if self.show_version_ and isfile(ini_backup):
             with open(ini_backup, 'r') as f:
                 params = json_load(f)
-                print(params)
             logging.info("Restoring configuration from previous installation...")
             self.print_path_ = params['print_path'] if 'print_path' in params else False
             self.cache_ = params['cache'] if 'cache' in params else True
@@ -121,7 +120,7 @@ class UnytsParameters(object):
                   'algorithm': self.algorithm_,
                   'max_generations': self.max_generations_,
                   'fvf': self.fvf_,
-                  'config_files_folder': self.config_files_folder_}
+                  'config_files_folder': self.config_files_folder_ if self.config_files_folder_ != dir_path else None}
         with open(ini_path, 'w') as f:
             json_dump(params, f)
         with open(ini_backup, 'w') as f:
