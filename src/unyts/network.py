@@ -7,7 +7,7 @@ Created on Sat Oct 24 12:36:48 2020
 """
 import logging
 from os.path import isfile
-from .parameters import unyts_parameters_, dir_path
+from .parameters import unyts_parameters_
 
 try:
     from cloudpickle import dump as cloudpickle_dump, load as cloudpickle_load
@@ -63,7 +63,7 @@ class UDigraph(object):
 
     def save_memory(self, path=None) -> None:
         if path is None:
-            path = dir_path + 'units/search_memory.cache'
+            path = unyts_parameters_.get_user_folder() + 'search_memory.cache'
         if self._cloudpickle_:
             logging.info('saving search memory to cache...')
             with open(path, 'wb') as f:
@@ -73,10 +73,10 @@ class UDigraph(object):
 
     def load_memory(self, path=None) -> None:
         if path is None:
-            path = dir_path + 'units/search_memory.cache'
+            path = unyts_parameters_.get_user_folder() + 'search_memory.cache'
         if not self._cloudpickle_:
             logging.warning("Missing `cloudpickle` package. Not able to cache search memory.")
-        if not isfile(dir_path + 'units/search_memory.cache'):
+        if not isfile(unyts_parameters_.get_user_folder() + 'search_memory.cache'):
             logging.info("starting clean memory...")
         else:
             logging.info('loading memory from cache...')
@@ -84,8 +84,12 @@ class UDigraph(object):
                 with open(path, 'rb') as f:
                     cached_memory = cloudpickle_load(f)
                     self.memory.update(cached_memory)
+                    msg = f"{len(self.memory)} conversion path{'s' if len(self.memory) > 0 else ''} in memory."
+                    logging.info(msg)
             except:
-                logging.error('not able to load memory from cache.')
+                msg = 'Failed to load memory from cache.'
+                logging.error(msg)
+        unyts_parameters_.last_path_str = msg
 
     def clean_memory(self):
         self.memory = {}

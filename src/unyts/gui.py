@@ -324,6 +324,18 @@ def start_gui():
         fvf = get_number(fvf)
 
 
+    def set_cache_folder():
+        cache_path = up_.get_user_folder()
+        cache_path = filedialog.askdirectory(initialdir=cache_path, title='Cache Folder')
+        if cache_path:
+            if os.path.isdir(cache_path):
+                up_.set_user_folder(cache_path)
+            else:
+                msg = f"The file {cache_path} doesn't exists."
+                logging.error(msg)
+                unyts_gui._display_path(error=msg)
+        else:
+            pass
 
     logging.info("starting Unyts GUI...")
     w, h = 325, 230  # 185

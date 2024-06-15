@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.43'
-__release__ = 20240610
+__version__ = '0.5.45'
+__release__ = 20240616
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'StandardWaterDensity',
            'unitless_names', 'uncertain_names']
 
@@ -15,7 +15,7 @@ import logging
 from json import load as json_load
 from pickle import load as pickle_load, dump as pickle_dump
 from os.path import isfile
-from .parameters import unyts_parameters_, dir_path
+from .parameters import unyts_parameters_
 
 StandardAirDensity = 1.225  # Kg/m3 or g/cc
 StandardEarthGravity = 9.80665  # m/s2 or 980.665 cm/s2 from
@@ -534,25 +534,26 @@ def _load_dictionary() -> (dict, dict):
     unitless_names = list(set(unitless_names)) + [None]
 
     if unyts_parameters_.cache_:
-        with open(dir_path + 'units/temperature_ratio_conversions.cache', 'wb') as f:
+        with open(unyts_parameters_.get_user_folder() + 'temperature_ratio_conversions.cache', 'wb') as f:
             pickle_dump(temperature_ratio_conversions, f)
-        with open(dir_path + 'units/unitless_names.cache', 'wb') as f:
+        with open(unyts_parameters_.get_user_folder() + 'unitless_names.cache', 'wb') as f:
             pickle_dump(unitless_names, f)
 
     return dictionary, temperature_ratio_conversions, unitless_names
 
 
 if not unyts_parameters_.reload_ and \
-        isfile(dir_path + 'units/units_dictionary.cache') and \
-        isfile(dir_path + 'units/units_network.cache') and \
-        isfile(dir_path + 'units/temperature_ratio_conversions.cache') and \
-        isfile(dir_path + 'units/unitless_names.cache'):
+        isfile(unyts_parameters_.get_user_folder() + 'units_dictionary.cache') and \
+        isfile(unyts_parameters_.get_user_folder() + 'units_network.cache') and \
+        isfile(unyts_parameters_.get_user_folder() + 'temperature_ratio_conversions.cache') and \
+        isfile(unyts_parameters_.get_user_folder() + 'unitless_names.cache'):
+
     try:
-        with open(dir_path + 'units/units_dictionary.cache', 'r') as f:
+        with open(unyts_parameters_.get_user_folder() + 'units_dictionary.cache', 'r') as f:
             dictionary = json_load(f)
-        with open(dir_path + 'units/temperature_ratio_conversions.cache', 'rb') as f:
+        with open(unyts_parameters_.get_user_folder() + 'temperature_ratio_conversions.cache', 'rb') as f:
             temperatureRatioConversions = pickle_load(f)
-        with open(dir_path + 'units/unitless_names.cache', 'rb') as f:
+        with open(unyts_parameters_.get_user_folder() + 'unitless_names.cache', 'rb') as f:
             unitless_names = pickle_load(f)
         logging.info('units dictionary loaded from cache...')
     except:

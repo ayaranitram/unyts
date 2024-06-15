@@ -6,19 +6,20 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.1'
-__release__ = 20240612
-__all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'dir_path', 'set_density', 'get_density',
+__version__ = '0.6.3'
+__release__ = 20240616
+__all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'set_density', 'get_density',
            'recursion_limit', 'verbose', 'set_algorithm']
 
 import logging
 import os.path
 from json import load as json_load, dump as json_dump
-from os.path import isfile
+from os.path import isfile, isdir
 from pathlib import Path
 from sys import getrecursionlimit
 
 ini_path = Path(__file__).with_name('parameters.ini').absolute()
+ini_backup = Path(__file__).with_name('parameters.backup').absolute()
 dir_path = os.path.dirname(ini_path) + '/'
 off_switches = ('off', 'no', 'not', '')
 __max_recursion_default__ = 12
@@ -30,6 +31,7 @@ class UnytsParameters(object):
     """
 
     def __init__(self, reload=None) -> None:
+        self.config_files_folder_ = dir_path
         self.print_path_ = False
         self.cache_ = True
         self.raise_error_ = True
@@ -80,6 +82,30 @@ class UnytsParameters(object):
         self.max_recursion_ = params['max_recursion'] if 'max_recursion' in params else __max_recursion_default__
         self.algorithm_ = params['algorithm'] if 'algorithm' in params else 'BFS'
         self.max_generations_ = params['max_generations'] if 'max_generations' in params else __max_generations_default__
+        self.fvf_ = params['fvf'] if 'fvf' in params else 1.0
+        self.config_files_folder_ = dir_path if ('config_files_folder' not in params or params['config_files_folder'] is None) \
+            else params['config_files_folder'] if ('config_files_folder' in params and isdir(params['config_files_folder'])) \
+            else self.config_files_folder_
+
+        if self.show_version_ and isfile(ini_backup):
+            with open(ini_backup, 'r') as f:
+                params = json_load(f)
+                print(params)
+            logging.info("Restoring configuration from previous installation...")
+            self.print_path_ = params['print_path'] if 'print_path' in params else False
+            self.cache_ = params['cache'] if 'cache' in params else True
+            self.raise_error_ = params['raise_error'] if 'raise_error' in params else True
+            self.verbose_ = params['verbose'] if 'verbose' in params else False
+            self.verbose_details_ = params['verbose_details'] if 'verbose_details' in params else 0
+            self.reduce_parentheses_ = params['reduce_parentheses'] if 'reduce_parentheses' in params else True
+            self.density_ = params['density'] if 'density' in params else 1.0  # g/cm3
+            self.max_recursion_ = params['max_recursion'] if 'max_recursion' in params else __max_recursion_default__
+            self.algorithm_ = params['algorithm'] if 'algorithm' in params else 'BFS'
+            self.max_generations_ = params['max_generations'] if 'max_generations' in params else __max_generations_default__
+            self.fvf_ = params['fvf'] if 'fvf' in params else 1.0
+            self.config_files_folder_ = dir_path if ('config_files_folder' not in params or params['config_files_folder'] is None) \
+                else params['config_files_folder'] if ('config_files_folder' in params and isdir(params['config_files_folder'])) \
+                else self.config_files_folder_
 
     def save_params(self) -> None:
         params = {'print_path': self.print_path_,
@@ -93,8 +119,12 @@ class UnytsParameters(object):
                   'density': self.density_,
                   'max_recursion': self.max_recursion_,
                   'algorithm': self.algorithm_,
-                  'max_generations': self.max_generations_}
+                  'max_generations': self.max_generations_,
+                  'fvf': self.fvf_,
+                  'config_files_folder': self.config_files_folder_}
         with open(ini_path, 'w') as f:
+            json_dump(params, f)
+        with open(ini_backup, 'w') as f:
             json_dump(params, f)
 
     def print_path(self, switch=None) -> None:
@@ -204,7 +234,7 @@ class UnytsParameters(object):
 
     def set_algorithm(self, algorithm:str):
         if algorithm not in ['BFS', 'lean_BFS', 'DFS']:
-            logging.error(f"valid algorithms are 'BFS', 'lean_BFS' and 'DFS' not {algorithm}.")
+            logging.error(f"Valid algorithms are 'BFS', 'lean_BFS' and 'DFS' not {algorithm}.")
         else:
             self.algorithm_ = algorithm
             logging.info(f"{algorithm} set as search algorithm.")
@@ -212,6 +242,17 @@ class UnytsParameters(object):
 
     def get_algorithm(self):
         return self.algorithm_
+
+    def set_user_folder(self, path=None):
+        if path is None:
+            self.config_files_folder_ = dir_path
+        elif isdir(path):
+            self.config_files_folder_ = path + '' if not path.endswith('/') and not path.endswith('\\') else '/'
+        else:
+            logging.warning(f"Folder {path} doesn't exists, user folder not changed.")
+
+    def get_user_folder(self):
+        return self.config_files_folder_
 
 
 unyts_parameters_ = UnytsParameters()

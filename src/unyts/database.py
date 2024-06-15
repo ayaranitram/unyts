@@ -16,7 +16,7 @@ import os
 from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
     StandardEarthGravity
 from .network import UDigraph, UNode, Conversion
-from .parameters import unyts_parameters_, dir_path
+from .parameters import unyts_parameters_
 from os.path import isfile
 from json import dump as json_dump
 
@@ -44,9 +44,9 @@ def clean_memory(path=None) -> None:
 
 
 def delete_cache() -> None:
-    for each in ('units/search_memory.cache', 'units/units_network.cache', 'units/units_dictionary.cache',
-                 'units/temperature_ratio_conversions.cache', 'units/unitless_names.cache'):
-        path = dir_path + each
+    for each in ('search_memory.cache', 'units_network.cache', 'units_dictionary.cache',
+                 'temperature_ratio_conversions.cache', 'unitless_names.cache'):
+        path = unyts_parameters_.get_user_folder() + each
         if os.path.exists(path):
             os.remove(path)
 
@@ -772,12 +772,12 @@ def _clean_network():
 
 # load the network into an instance of the graph database
 if not unyts_parameters_.reload_ and \
-        isfile(dir_path + 'units/units_network.cache') and \
-        (not _cloudpickle_ or (_cloudpickle_ and isfile(dir_path + 'units/units_dictionary.cache'))) and \
-        isfile(dir_path + 'units/temperature_ratio_conversions.cache') and \
-        isfile(dir_path + 'units/unitless_names.cache'):
+        isfile(unyts_parameters_.get_user_folder() + 'units_network.cache') and \
+        (not _cloudpickle_ or (_cloudpickle_ and isfile(unyts_parameters_.get_user_folder() + 'units_dictionary.cache'))) and \
+        isfile(unyts_parameters_.get_user_folder() + 'temperature_ratio_conversions.cache') and \
+        isfile(unyts_parameters_.get_user_folder() + 'unitless_names.cache'):
     try:
-        with open(dir_path + 'units/units_network.cache', 'rb') as f:
+        with open(unyts_parameters_.get_user_folder() + 'units_network.cache', 'rb') as f:
             units_network = cloudpickle_load(f)
         logging.info('units network loaded from cache...')
         unyts_parameters_.reload_ = False
@@ -810,7 +810,7 @@ else:
     if unyts_parameters_.cache_:
         logging.info('saving units network and dictionary to cache...')
         if _cloudpickle_:
-            with open(dir_path + 'units/units_network.cache', 'wb') as f:
+            with open(unyts_parameters_.get_user_folder() + 'units_network.cache', 'wb') as f:
                 cloudpickle_dump(units_network, f)
-        with open(dir_path + 'units/units_dictionary.cache', 'w') as f:
+        with open(unyts_parameters_.get_user_folder() + 'units_dictionary.cache', 'w') as f:
             json_dump(dictionary, f)
