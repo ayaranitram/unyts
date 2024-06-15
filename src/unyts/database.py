@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.39'
-__release__ = 20240612
+__version__ = '0.5.40'
+__release__ = 20240613
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf']
 
 import logging
@@ -74,12 +74,15 @@ def set_fvf(fvf=None) -> None:
             else:
                 fvf = valid_fvf(fvf)
     units_network.set_fvf(fvf)
+    unyts_parameters_.fvf_ = fvf
     logging.info(f"FVF set to {fvf} rV/stV")
 
 
 def get_fvf() -> None:
     if units_network.fvf is not None:
         return str(round(units_network.fvf, 3))
+    elif unyts_parameters_.fvf:
+        set_fvf(unyts_parameters_.fvf)
     else:
         return ""
 

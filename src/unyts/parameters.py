@@ -38,6 +38,7 @@ class UnytsParameters(object):
         self.reduce_parentheses_ = True
         self.show_version_ = True
         self.density_ = 1.0  # g/cm3
+        self.fvf_ = 1.0  # res_vol/std_vol
         self.max_recursion_ = __max_recursion_default__
         self.algorithm_ = 'BFS'
         self.max_generations_ = __max_generations_default__
