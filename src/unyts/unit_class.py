@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.3'
-__release__ = 20240606
+__version__ = '0.6.4'
+__release__ = 20240807
 __all__ = ['Unit', 'is_Unit']
 
 import logging
@@ -76,6 +76,7 @@ class Unit(object, metaclass=UnytType):
     operations and conversions.
     """
     class_units = []
+    _all_units_str = _all_units()
     __slots__ = ('unit', 'value', 'name', 'kind')
 
     def __init__(self, value: numeric, unit=None, name=None):
@@ -86,7 +87,7 @@ class Unit(object, metaclass=UnytType):
                 value = value.value
         if unit is None:
             unit = 'dimensionless'
-        elif type(unit) is str and unit.strip() in _all_units():
+        elif type(unit) is str and unit.strip() in Unit._all_units_str:
             self.unit = unit.strip()
         elif unyts_parameters_.raise_error:
             raise WrongUnitsError("'" + str(unit) + "' is not a valid units name.")

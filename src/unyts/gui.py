@@ -6,8 +6,8 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.1'
-__release__ = 20240616
+__version__ = '0.4.2'
+__release__ = 20240807
 __all__ = ['start_gui']
 
 import logging
@@ -26,10 +26,8 @@ import pathlib, os
 import webbrowser
 
 
-_all_units_str = _all_units()
-
-
 class UnytsApp(tk.Frame):
+    _all_units_str = _all_units()
 
     def __init__(self, master=None):
         super().__init__(master)
@@ -110,13 +108,13 @@ class UnytsApp(tk.Frame):
         self.input_button.bind('<ButtonRelease>', self._get_input)
 
     def _validate_from_units(self, *args):
-        if self.from_unit_val.get() not in _all_units_str and not is_numeric(self.from_unit_val.get()):
+        if self.from_unit_val.get() not in UnytsApp._all_units_str and not is_numeric(self.from_unit_val.get()):
             return False
         else:
             return True
 
     def _validate_to_units(self, *args):
-        if self.to_unit_val.get() not in _all_units_str and not is_numeric(self.to_unit_val.get()):
+        if self.to_unit_val.get() not in UnytsApp._all_units_str and not is_numeric(self.to_unit_val.get()):
             return False
         else:
             return True
