@@ -14,7 +14,7 @@ import logging
 import os
 
 from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
-    StandardEarthGravity
+    StandardEarthGravity, SpeedOfLight
 from .network import UDigraph, UNode, Conversion
 from .parameters import unyts_parameters_
 from os.path import isfile
@@ -398,6 +398,9 @@ def _load_network():
         Conversion(network.get_node('nautical league'), network.get_node('nautical mile'), lambda d: d * 3))
     network.add_edge(Conversion(network.get_node('nautical mile'), network.get_node('meter'), lambda d: d * 1852))
     network.add_edge(Conversion(network.get_node('rod'), network.get_node('yard'), lambda d: d * 55 / 10))
+    network.add_edge(Conversion(network.get_node('astronomical unit'), network.get_node('meter'), lambda d: d * 149597870700))
+    network.add_edge(Conversion(network.get_node('parsec'), network.get_node('astronomical unit'), lambda d: d * 206265))
+    network.add_edge(Conversion(network.get_node('light-year'), network.get_node('meter'), lambda d: d * SpeedOfLight * 365.25 * 24 * 60))
 
     # Velocity conversion
     network.add_edge(Conversion(network.get_node('mile per hour'), network.get_node('kilometer per hour'),

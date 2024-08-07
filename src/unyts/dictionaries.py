@@ -20,6 +20,7 @@ from .parameters import unyts_parameters_
 StandardAirDensity = 1.225  # Kg/m3 or g/cc
 StandardEarthGravity = 9.80665  # m/s2 or 980.665 cm/s2 from
 StandardWaterDensity = 1.00  # g/cm3 because the size of the gram was originally based on the mass of a cubic centimetre of water.
+SpeedOfLight = 299792458  # m/s
 uncertain_names = ['oz', 'ounce', 'ounces', 'OZ', 'OUNCE', 'OUNCES']
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
@@ -197,7 +198,10 @@ def _load_dictionary() -> (dict, dict):
 
     # Length
     dictionary['Length'] = []
-    dictionary['Length_NAMES_REVERSE_UPPER'] = {'meter': ('m', 'meter', 'metro')}
+    dictionary['Length_NAMES_REVERSE_UPPER'] = {'meter': ('m', 'metre', 'metro'),
+                                                'astronomical unit': ('au',),
+                                                'parsec': ('pc',),
+                                                'light-year': ('light year', 'ly', 'lyr')}
     dictionary['Length_SI'] = ('m',)
     dictionary['Length_UK_NAMES_REVERSE'] = {
         'thou': ('th',),
