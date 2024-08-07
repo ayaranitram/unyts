@@ -652,5 +652,13 @@ class Unit(object, metaclass=UnytType):
             raise WrongUnitsError(f"'{units}' for '{type(self)}'.")
 
 
+
 def is_Unit(obj) -> bool:
     return isinstance(obj, Unit)
+
+
+def valid_unit(unit_name:str) -> bool:
+    if unit_name is None or (type(unit_name) is str and unit_name.strip() in Unit._all_units_str):
+        return True
+    else:
+        return False
