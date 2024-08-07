@@ -486,6 +486,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('absolute psi'), network.get_node('psi'), lambda p: p))
     network.add_edge(Conversion(network.get_node('bar gauge'), network.get_node('bar'), lambda p: p))
     network.add_edge(Conversion(network.get_node('psi gauge'), network.get_node('psi'), lambda p: p))
+    network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('kilogram/square centimeter'), lambda p: p))
 
     # Mass conversion
     network.add_edge(Conversion(network.get_node('grain'), network.get_node('milligrams'), lambda w: w * 64.7989))
@@ -695,6 +696,13 @@ def _create_Voltage_Current_Resistance() -> None:
     dictionary['Resistance'] = tuple(set(resistance))
 
 
+def _create_Pressure() -> None:
+    # Weight / Area
+    pressure = list(dictionary['Pressure']) if 'Pressure' in dictionary else []
+    pressure += [weight + '/' + area for weight in dictionary['Weight'] for area in dictionary['Area']]
+    dictionary['Pressure'] = tuple(set(pressure))
+
+
 def _create_ProductivityIndex() -> None:
     # Volume / Time / Pressure
     productivityIndex = list(dictionary['ProductivityIndex']) if 'ProductivityIndex' in dictionary else []
@@ -795,6 +803,7 @@ else:
     _create_Acceleration()
     _create_ProductivityIndex()
     _create_PressureGradient()
+    _create_Pressure()
     _create_TemperatureGradient()
     _create_Power()
     _create_Frequency()
