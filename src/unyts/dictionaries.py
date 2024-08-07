@@ -39,6 +39,7 @@ SI = {
     'K': (lambda X: X * 1E+03,) * 3,  # with uppercase K is commonly used to express x1000
     'k': (lambda X: X * 1E+03, lambda X: X * 1E+06, lambda X: X * 1E+09),  # kilo
     'h': (lambda X: X * 1E+02, lambda X: X * 1E+04, lambda X: X * 1E+06),  # hecto
+   'da': (lambda X: X * 1E+01, lambda X: X * 1E+02, lambda X: X * 1E+03),  # deca
     'd': (lambda X: X * 1E-01, lambda X: X * 1E-02, lambda X: X * 1E-03),  # deci
     'c': (lambda X: X * 1E-02, lambda X: X * 1E-04, lambda X: X * 1E-06),  # centi
     'm': (lambda X: X * 1E-03, lambda X: X * 1E-06, lambda X: X * 1E-09),  # mili
@@ -222,8 +223,12 @@ def _load_dictionary() -> (dict, dict):
 
     # Area
     dictionary['Area'] = []
-    dictionary['Area_NAMES_REVERSE_UPPER'] = {'square meter': ('sq m', 'sqm', 'm2', 'm²', 'sqmeter', 'm*m', 'm3/m'),
-                                              'square kilometer': ('sqkm', 'sq km', 'km2', 'km²')}
+    dictionary['Area_NAMES_REVERSE_UPPER'] = {'square centimeter': ('square centimetre', 'sq cm', 'sqcm', 'cm2', 'cm²', 'sqcentimeter', 'cm*cm', 'cm3/cm'),
+                                              'square meter': ('square metre', 'centiare', 'sq m', 'sqm', 'm2', 'm²', 'sqmeter', 'm*m', 'm3/m'),
+                                              'square decameter': ('square decametre', 'are', 'sq dam', 'sqdam', 'dam2', 'dam²', 'sqdecameter', 'dam*dam',
+                                              'dam3/dam'),
+                                              'square hectometer': ('square hectometre', 'hectare', 'sq hm', 'sqhm', 'hm2', 'hm²', 'sqhectometer', 'hm*hm', 'hm3/hm'),
+                                              'square kilometer': ('square kilometre', 'sqkm', 'sq km', 'km2', 'km²')}
     dictionary['Area_SI'] = ('m2', 'm²',)
     dictionary['Area_UK_NAMES_REVERSE_UPPER'] = {
         'acre': tuple(),
