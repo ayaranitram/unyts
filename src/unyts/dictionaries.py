@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.45'
-__release__ = 20240616
+__version__ = '0.5.48'
+__release__ = 20240807
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'StandardWaterDensity',
            'unitless_names', 'uncertain_names']
 
@@ -578,4 +578,4 @@ else:
 
 
 def _all_units():
-    return tuple(set([each for units in dictionary.values() for each in units]))
+    return set([each for units in dictionary.values() for each in units])
