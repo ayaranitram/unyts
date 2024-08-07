@@ -29,7 +29,7 @@ SI = {
     'Y': (lambda X: X * 1E+24, lambda X: X * 1E+48, lambda X: X * 1E+72),  # yotta
     'Z': (lambda X: X * 1E+21, lambda X: X * 1E+42, lambda X: X * 1E+63),  # zetta
     'E': (lambda X: X * 1E+18, lambda X: X * 1E+36, lambda X: X * 1E+54),  # exa
-    'P': (lambda X: X * 1E+15, lambda X: X * 1E+30, lambda X: X * 1E+46),  # peta
+    'P': (lambda X: X * 1E+15, lambda X: X * 1E+30, lambda X: X * 1E+45),  # peta
     'T': (lambda X: X * 1E+12, lambda X: X * 1E+24, lambda X: X * 1E+36),  # tera
     'G': (lambda X: X * 1E+09, lambda X: X * 1E+18, lambda X: X * 1E+27),  # giga
     'M': (lambda X: X * 1E+06, lambda X: X * 1E+12, lambda X: X * 1E+18),  # mega
