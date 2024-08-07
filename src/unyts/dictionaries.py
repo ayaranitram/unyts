@@ -26,6 +26,8 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 # Sistema Internacional
 SI = {
+    'Q': (lambda X: X * 1E+30, lambda X: X * 1E+60, lambda X: X * 1E+90),  # quetta
+    'R': (lambda X: X * 1E+27, lambda X: X * 1E+54, lambda X: X * 1E+81),  # ronna
     'Y': (lambda X: X * 1E+24, lambda X: X * 1E+48, lambda X: X * 1E+72),  # yotta
     'Z': (lambda X: X * 1E+21, lambda X: X * 1E+42, lambda X: X * 1E+63),  # zetta
     'E': (lambda X: X * 1E+18, lambda X: X * 1E+36, lambda X: X * 1E+54),  # exa
@@ -47,6 +49,8 @@ SI = {
     'a': (lambda X: X * 1E-18, lambda X: X * 1E-36, lambda X: X * 1E-54),  # atto
     'z': (lambda X: X * 1E-21, lambda X: X * 1E-42, lambda X: X * 1E-63),  # zepto
     'y': (lambda X: X * 1E-24, lambda X: X * 1E-48, lambda X: X * 1E-72),  # yocto
+    'r': (lambda X: X * 1E-27, lambda X: X * 1E-54, lambda X: X * 1E-81),  # ronto
+    'q': (lambda X: X * 1E-30, lambda X: X * 1E-60, lambda X: X * 1E-90),  # quecto
 }
 
 SI_order = (('Length', 'Pressure', 'Weight', 'Mass', 'Time', 'Frequency', 'Power', 'Voltage', 'Current', 'Resistance',
