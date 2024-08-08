@@ -200,9 +200,9 @@ def _load_dictionary() -> (dict, dict):
     # Length
     dictionary['Length'] = []
     dictionary['Length_NAMES_REVERSE_UPPER'] = {'meter': ('m', 'metre', 'metro'),
-                                                'astronomical unit': ('au',),
-                                                'parsec': tuple(), #  ('pc',),  "pc" is used also for "pie cúbico"
-                                                'light-year': ('light year', 'ly', 'lyr')}
+                                                'parsec': tuple()}  # ('pc',),  "pc" is used also for "pie cúbico"
+    dictionary['Length_NAMES_REVERSE_UPPER_SPACES'] = {'astronomical unit': ('au',),
+                                                       'light year': ('ly', 'lyr')}
     dictionary['Length_SI'] = ('m',)
     dictionary['Length_UK_NAMES_REVERSE'] = {
         'thou': ('th',),
@@ -246,7 +246,7 @@ def _load_dictionary() -> (dict, dict):
 
     # Pressure
     dictionary['Pressure'] = []
-    dictionary['Pressure_NAMES_REVERSE_SPACES'] = {
+    dictionary['Pressure_NAMES_REVERSE'] = {
         'Pascal': ('Pa',),
     }
     dictionary['Pressure_NAMES_REVERSE_UPPER_SPACES'] = {
