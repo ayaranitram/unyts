@@ -200,8 +200,8 @@ def _load_dictionary() -> (dict, dict):
     # Length
     dictionary['Length'] = []
     dictionary['Length_NAMES_REVERSE_UPPER'] = {'meter': ('m', 'metre', 'metro'),
-                                                'parsec': tuple()}  # ('pc',),  "pc" is used also for "pie cúbico"
-    dictionary['Length_NAMES_REVERSE_UPPER'] = {'astronomical unit': ('au',),
+                                                'parsec': tuple(),  # ('pc',),  "pc" is used also for "pie cúbico"
+                                                'astronomical unit': ('au',),
                                                 'light year': ('ly', 'lyr')}
     dictionary['Length_SI'] = ('m',)
     dictionary['Length_UK_NAMES_REVERSE'] = {

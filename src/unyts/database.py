@@ -400,7 +400,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('rod'), network.get_node('yard'), lambda d: d * 55 / 10))
     network.add_edge(Conversion(network.get_node('astronomical unit'), network.get_node('meter'), lambda d: d * 149597870700))
     network.add_edge(Conversion(network.get_node('parsec'), network.get_node('astronomical unit'), lambda d: d * 206265))
-    network.add_edge(Conversion(network.get_node('light-year'), network.get_node('meter'), lambda d: d * SpeedOfLight * 365.25 * 24 * 60))
+    network.add_edge(Conversion(network.get_node('light year'), network.get_node('meter'), lambda d: d * SpeedOfLight * 365.25 * 24 * 60))
 
     # Velocity conversion
     network.add_edge(Conversion(network.get_node('mile per hour'), network.get_node('kilometer per hour'),
