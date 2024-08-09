@@ -6,7 +6,7 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.43'
+__version__ = '0.5.44'
 __release__ = 20240807
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf']
 
@@ -489,7 +489,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('absolute psi'), network.get_node('psi'), lambda p: p))
     network.add_edge(Conversion(network.get_node('bar gauge'), network.get_node('bar'), lambda p: p))
     network.add_edge(Conversion(network.get_node('psi gauge'), network.get_node('psi'), lambda p: p))
-    network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('kilogram/square centimeter'), lambda p: p))
+    network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('kilogram/square centimeter'), lambda p: p * 10 / StandardEarthGravity))
 
     # Mass conversion
     network.add_edge(Conversion(network.get_node('grain'), network.get_node('milligrams'), lambda w: w * 64.7989))
