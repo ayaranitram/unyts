@@ -6,9 +6,9 @@ Created on Sat Oct 24 12:10:14 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.7'
-__release__ = 20221229
-__all__ = ['WrongUnitsError', 'WrongValueError', 'NoConversionFoundError']
+__version__ = '0.4.8'
+__release__ = 20240811
+__all__ = ['WrongUnitsError', 'WrongValueError', 'NoConversionFoundError', 'NoFVFError']
 
 
 class WrongUnitsError(Exception):
