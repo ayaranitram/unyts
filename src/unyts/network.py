@@ -7,6 +7,8 @@ Created on Sat Oct 24 12:36:48 2020
 """
 import logging
 from os.path import isfile
+
+from .errors import NoFVFError
 from .parameters import unyts_parameters_
 
 try:
@@ -18,8 +20,8 @@ except ModuleNotFoundError:
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
-__version__ = '0.4.16'
-__release__ = 20240603
+__version__ = '0.4.17'
+__release__ = 20240811
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
