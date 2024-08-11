@@ -78,9 +78,9 @@ def set_fvf(fvf=None) -> None:
     logging.info(f"FVF set to {fvf} rV/stV")
 
 
-def get_fvf() -> None:
+def get_fvf() -> str:
     if units_network.fvf is not None:
-        return str(round(units_network.fvf, 3))
+        return str(round(units_network.fvf, 4))
     elif unyts_parameters_.fvf:
         set_fvf(unyts_parameters_.fvf)
     else:
