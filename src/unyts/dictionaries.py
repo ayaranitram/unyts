@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.48'
-__release__ = 20240807
+__version__ = '0.5.49'
+__release__ = 20240811
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'StandardWaterDensity',
            'unitless_names', 'uncertain_names']
 
@@ -134,7 +134,7 @@ def _load_dictionary() -> (dict, dict):
     # Volume
     dictionary['Volume'] = []
     dictionary['Volume_SI_UPPER'] = ('m3', 'm³')  # 'l', 'sm3', 'rm3' are Volume but the conversion of SI prefixes is linear
-    dictionary['Volume_linearSI'] = ('sm3', 'sm³', 'Sm3', 'Sm³', 'rm3', 'rm³', 'l')  # litre, sm3 and rm3 are Volume but the conversion of SI prefixes is linear
+    dictionary['Volume_linearSI'] = ('sm3', 'sm³', 'Sm3', 'Sm³', 'stm3', 'stm³', 'STm3', 'STm³', 'rem3', 'rem³', 'l')  # litre, sm3 and rem3 are Volume but the conversion of SI prefixes is linear
     dictionary['Volume_UK_NAMES_REVERSE'] = {
         'fluid ounce': ('fl oz', 'oz', 'ounce', 'ozUS'),
         'gill': ('gi', 'gillUS', 'giUS', 'USgill'),
@@ -156,8 +156,8 @@ def _load_dictionary() -> (dict, dict):
         'standard cubic meter': ('scm', 'sm3', 'stm3', 'm3', 'Sm3', 'sm³'),
         'cubic centimeter': ('cc', 'cm3', 'standard cubic centimeter', 'cm³'),
         'standard cubic centimeter': ('scc', 'scm3', 'scm³'),
-        'reservoir cubic meter': ('rm3', 'Rm3', 'rm³'),
-        'reservoir cubic centimeter': ('rcc', 'rcm3', 'rcm³'),
+        'reservoir cubic meter': ('rem3', 'REm3', 'Rem3', 'rem³'),
+        'reservoir cubic centimeter': ('recc', 'recm3', 'recm³'),
         'cubic thou': ('th3', 'th2*th', 'th*th2', 'th³'),
         'cubic tenth': ('te3', 'te2*te', 'te*te2', 'te³'),
         'cubic inch': ('cubic inches', 'in3', 'in2*in', 'in*in2', 'in³'),
@@ -171,10 +171,10 @@ def _load_dictionary() -> (dict, dict):
         'cubic league': ('lea3', 'lea³', 'lea2*lea', 'lea*lea2'),
         'standard cubic foot': ('scf', 'cf'),
         'barrel': ('bbl', 'stb', 'oil barrel'),
-        'reservoir barrel': ('rb',),
+        'reservoir barrel': ('rb', 'reb'),
         'standard barrel': ('stb', 'stbo', 'stbw', 'stbl', 'oil barrel'),
     }
-    dictionary['Volume_UPPER'] = ('sm3', 'sm³', 'rm3', 'rm³', 'kstm3', 'kstm³', 'Mstm3', 'Mstm³')
+    dictionary['Volume_UPPER'] = ('sm3', 'sm³', 'stm3', 'stm³', 'rem3', 'rem³', 'kstm3', 'kstm³', 'Mstm3', 'Mstm³')
     dictionary['Volume_PLURALwS_UPPER_LOWER'] = tuple(dictionary['Volume_NAMES_SPACES_REVERSE'].keys()) + \
                                                 tuple(dictionary['Volume_UK_NAMES_REVERSE'].keys()) + \
                                                 ('fl oz', 'oz', 'ounce', 'gallon', 'imperial gallon', 'barrel', 'gal',
@@ -182,12 +182,13 @@ def _load_dictionary() -> (dict, dict):
                                                  'USgallon', 'UKgallon', 'USounce', 'UKounce',
                                                  'cubic centimeter', 'standard cubic centimeter',
                                                  'liter', 'milliliter', 'centiliter', 'deciliter')
-    dictionary['Volume_OGF'] = ('scf', 'cf', 'ft3', 'ft³', 'stb', 'bbl', 'rb', 'stbo', 'stbw', 'stbl')
+    dictionary['Volume_OGF'] = ('scf', 'cf', 'ft3', 'ft³', 'stb', 'bbl', 'rb', 'reb', 'stbo', 'stbw', 'stbl')
     # dictionary['Volume_oilgas_NAMES'] = ('scf','cf','ft3','stb','bbl','rb','stbo','stbw','stbl')
-    dictionary['Volume_oilgas_UPPER'] = ('sm3', 'Sm3', 'm3', 'rm3', 'Rm3', 'ksm3', 'Msm3', 'Gsm3',
+    dictionary['Volume_oilgas_UPPER'] = ('sm3', 'Sm3', 'stm3', 'STm3', 'm3', 'rem3', 'REm3', 'ksm3', 'Msm3', 'Gsm3',
+                                         'sm³', 'Sm³', 'stm³', 'STm³', 'm³', 'rem³', 'REm³', 'ksm³', 'Msm³', 'Gsm³',
                                          'scf', 'cf', 'ft3', 'Mscf', 'MMscf', 'Bscf', 'Tscf', 'Mcf', 'MMcf', 'Bcf',
                                          'Tcf',
-                                         'stb', 'bbl', 'rb', 'Mstb', 'MMstb', 'Bstb', 'Tstb', 'Mbbl', 'MMbbl', 'Mrb',
+                                         'stb', 'bbl', 'rb', 'reb', 'Mstb', 'MMstb', 'Bstb', 'Tstb', 'Mbbl', 'MMbbl', 'Mrb',
                                          'MMrb')
     dictionary['Volume_product_NAMES_REVERSE'] = {
         'm3': ('m³', 'm2*m', 'm*m2', 'm²*m', 'm*m²'),
@@ -250,17 +251,18 @@ def _load_dictionary() -> (dict, dict):
         'Pascal': ('Pa',),
     }
     dictionary['Pressure_NAMES_REVERSE_UPPER_SPACES'] = {
-        'absolute psi': ('psia', 'lb/in2', 'absolute pound/square inch', 'psi absolute',
+        'absolute psi': ('psia', 'lb/in2', 'lb/in²', 'absolute pound/square inch', 'psi absolute',
                          'lpca', 'libras/pulgada cuadrada absoluta'),
         'psi gauge': ('psi', 'pound/square inch', 'psig', 'gauge psi', 'lpc', 'lpcm', 'libras/pulgada cuadrada'),
         'absolute bar': ('bara', 'barsa', 'abs bar', 'bar absolute'),
         'bar gauge': ('bar', 'barg', 'gauge bar', 'bars', 'barsg'),
         'atmosphere': ('atm', 'atma'),
-        'Pascal': ('Newton/m2',),
+        'Pascal': ('Newton/m2', 'Newton/m²'),
         'kPa': ('KPa', 'kilopascal'),
         'hPa': ('hectopascal',),
         'Torr': ('millimeters of mercury',),
         'millimeters of mercury': ('mmHg',),
+        'kilogram/square centimeter' : ('kg/cm2', 'Kg/cm2', 'kg/cm²', 'kg/cm²')
     }
     dictionary['Pressure_SI'] = ('Pa', 'bara', 'barsa', 'bar', 'barg')
 
@@ -322,8 +324,8 @@ def _load_dictionary() -> (dict, dict):
         'lb/ft3': tuple(),
         'lb/yd3': tuple(),
         'psi/ft': tuple(),
-        'kJ/rm3': ('KJ/rm3', 'kJ/rm³'),
-        'kJ/sm3': ('KJ/sm3', 'kJ/sm³'),
+        'kJ/rem3': ('KJ/rem3', 'kJ/rem³'),
+        'kJ/sm3': ('KJ/sm3', 'kJ/sm³', 'KJ/stm3', 'kJ/stm³'),
         'kJ/m3': ('KJ/m3', 'kJ/m³'),
         'lb/stb': tuple(),
         'psia/ft': ('psi/ft', 'psig/ft'),
@@ -348,8 +350,8 @@ def _load_dictionary() -> (dict, dict):
         'cubic meter per day': ('m3/day',),
         'cubic foot per day': ('ft3/day',),
         'cubic yard per day': ('yd3/day',),
-        'reservoir barrel per day': ('rb/day',),
-        'reservoir cubic meter per day': ('rm3/day',),
+        'reservoir barrel per day': ('rb/day', 'reb/day'),
+        'reservoir cubic meter per day': ('rem3/day', 'rem3/day', 'rem³/day'),
     }
     dictionary['Rate_NAMES_REVERSE_UPPER_SPACES'] = {
         'stb/day': ('stbd',),
