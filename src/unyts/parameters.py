@@ -48,6 +48,7 @@ class UnytsParameters(object):
         self.reload_ = self.reload_ if reload is None else bool(reload)
         self.memory_ = not self.reload_
         self.last_path_str = ""
+        self.gui = False
 
     def load_params(self) -> None:
         if isfile(ini_path):

@@ -24,3 +24,8 @@ class WrongValueError(Exception):
 class NoConversionFoundError(Exception):
     def __init__(self, message='for the provided units.'):
         self.message = 'ERROR: Conversion path not found ' + message
+
+
+class NoFVFError(Exception):
+    def __init__(self):
+        self.message = 'ERROR: FVF constant not defined'

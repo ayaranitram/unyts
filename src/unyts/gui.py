@@ -6,22 +6,23 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.2'
-__release__ = 20240807
+__version__ = '0.4.3'
+__release__ = 20240811
 __all__ = ['start_gui']
 
 import logging
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import simpledialog
 from time import process_time
 from tkinter import ttk
 from stringthings import get_number, is_numeric
 from unyts import __version__ as unyts_version
 from .converter import convert
 from .dictionaries import _all_units
-from .errors import NoConversionFoundError
-from .database import save_memory, load_memory, clean_memory, delete_cache, unyts_parameters_ as up_, set_fvf
-from .parameters import set_density
+from .errors import NoConversionFoundError, NoFVFError
+from .database import save_memory, load_memory, clean_memory, delete_cache, units_network  # set_fvf
+from .parameters import unyts_parameters_  # set_density
 import pathlib, os
 import webbrowser
 
@@ -79,7 +80,7 @@ class UnytsApp(tk.Frame):
         self._first_char = tk.IntVar()
         self._first_char.set(0)
         self._msg_len = tk.IntVar()
-        self._msg_len.set(len(up_.last_path_str))
+        self._msg_len.set(len(unyts_parameters_.last_path_str))
         self._msg_dir = tk.BooleanVar()
         self._msg_dir.set(True)
         self._max_len = 53
@@ -87,25 +88,25 @@ class UnytsApp(tk.Frame):
 
         path_frame = ttk.Frame(padding=0)
         self.path = path_frame
-        if up_.print_path_:
+        if unyts_parameters_.print_path_:
             self.path.pack()
         self.path_str = tk.StringVar()
         self.path_str.set("")
         self.path_msg = ttk.Label(path_frame, textvariable=self.path_str)
         self.path_msg.grid(column=0, row=0)
 
-        # user input row
-        user_input = ttk.Frame(padding=0)
-        self.input = user_input
-        self.input_label_str = tk.StringVar()
-        self.input_label = ttk.Label(textvariable=self.input_label_str)
-        # self.input_label.grid(column=0, row=0)
-        self.input_value_str = tk.StringVar()
-        self.input_value = ttk.Entry(user_input, textvariable=self.input_value_str)
-        # self.input_value.grid(column=1, row=0)
-        self.input_button = ttk.Button(user_input, text='set')
-        # self.input_button.grid(columnspan=3, row=0)
-        self.input_button.bind('<ButtonRelease>', self._get_input)
+        # # user input row
+        # user_input = ttk.Frame(padding=0)
+        # self.input = user_input
+        # self.input_label_str = tk.StringVar()
+        # self.input_label = ttk.Label(textvariable=self.input_label_str)
+        # # self.input_label.grid(column=0, row=0)
+        # self.input_value_str = tk.StringVar()
+        # self.input_value = ttk.Entry(user_input, textvariable=self.input_value_str)
+        # # self.input_value.grid(column=1, row=0)
+        # self.input_button = ttk.Button(user_input, text='set')
+        # # self.input_button.grid(columnspan=3, row=0)
+        # self.input_button.bind('<ButtonRelease>', self._get_input)
 
     def _validate_from_units(self, *args):
         if self.from_unit_val.get() not in UnytsApp._all_units_str and not is_numeric(self.from_unit_val.get()):
@@ -171,7 +172,7 @@ class UnytsApp(tk.Frame):
             return self._rcalculate()
         try:
             to_value = convert(from_value, from_unit, to_unit,
-                               print_conversion_path=up_.print_path_)
+                               print_conversion_path=unyts_parameters_.print_path_)
             self.to_value_val.set(str(to_value))
             end_time = process_time()
             self._calculation_time(start_time, end_time)
@@ -181,6 +182,9 @@ class UnytsApp(tk.Frame):
             end_time = process_time()
             self._calculation_time(start_time, end_time)
             self._display_path("no conversion found!")
+            return
+        except NoFVFError:
+            self._display_path(error="Please set FVF constant from Options menu.")
             return
 
     def _rcalculate(self, *args):
@@ -199,7 +203,7 @@ class UnytsApp(tk.Frame):
             return self._calculate()
         try:
             to_value = convert(from_value, from_unit, to_unit,
-                               print_conversion_path=up_.print_path_)
+                               print_conversion_path=unyts_parameters_.print_path_)
             self.from_value_val.set(str(to_value))
             end_time = process_time()
             self._calculation_time(start_time, end_time)
@@ -209,6 +213,9 @@ class UnytsApp(tk.Frame):
             end_time = process_time()
             self._calculation_time(start_time, end_time)
             self._display_path("no conversion found!")
+            return
+        except NoFVFError:
+            self._display_path(error="Please set FVF constant from Options menu.")
             return
 
     def _calculation_time(self, start_time, end_time):
@@ -233,13 +240,13 @@ class UnytsApp(tk.Frame):
         self.result_str.set(total_time)
 
     def _partial_msg(self):
-        if len(up_.last_path_str) < self._max_len:
+        if len(unyts_parameters_.last_path_str) < self._max_len:
             self.path.after_cancel(self._path_marquee)
-            self.path_str.set(up_.last_path_str)
+            self.path_str.set(unyts_parameters_.last_path_str)
             return
         _last_char = self._first_char.get() + self._max_len
         speed = 100
-        msg = up_.last_path_str[self._first_char.get(): _last_char]
+        msg = unyts_parameters_.last_path_str[self._first_char.get(): _last_char]
         self.path_str.set(msg)
         if self._msg_dir.get():
             if _last_char < self._msg_len.get():
@@ -263,12 +270,12 @@ class UnytsApp(tk.Frame):
             self.path_msg.config(foreground='red')
             return
         self.path_msg.config(foreground='#3d3d3d')
-        if up_.last_path_str != "" and up_.print_path_:
-            if len(up_.last_path_str) < self._max_len:
-                self.path_str.set(up_.last_path_str)
+        if unyts_parameters_.last_path_str != "" and unyts_parameters_.print_path_:
+            if len(unyts_parameters_.last_path_str) < self._max_len:
+                self.path_str.set(unyts_parameters_.last_path_str)
             else:
-                self._msg_len.set(len(up_.last_path_str))
-                self.path_str.set(up_.last_path_str[:self._max_len])
+                self._msg_len.set(len(unyts_parameters_.last_path_str))
+                self.path_str.set(unyts_parameters_.last_path_str[:self._max_len])
                 self._path_marquee = self.path.after(2000, self._partial_msg)
         else:
             self.path_str.set("")
@@ -278,13 +285,14 @@ class UnytsApp(tk.Frame):
 
 
 def start_gui():
+    unyts_parameters_.gui = True
     def close_gui():
         logging.info("INFO:shutting down Unyts.")
-        if up_.cache_:
+        if unyts_parameters_.cache_:
             logging.info("saving memory...")
             save_memory()
         root.destroy()
-    if up_.memory_:
+    if unyts_parameters_.memory_:
         load_memory()
     else:
         delete_cache()
@@ -293,33 +301,113 @@ def start_gui():
     def open_git():
         webbrowser.open('https://github.com/ayaranitram/unyts')
     def print_path():
-        up_.print_path()
-        if up_.print_path_:
+        unyts_parameters_.print_path()
+        if unyts_parameters_.print_path_:
             unyts_gui.path.pack()
             unyts_gui._display_path()
         else:
             unyts_gui._display_path(" ")
             unyts_gui.path.pack_forget()
     def _set_bfs():
-        up_.set_algorithm('BFS')
+        unyts_parameters_.set_algorithm('BFS')
         _bfs_.set(True)
         _lean_bfs_.set(False)
         _dfs_.set(False)
     def _set_lean_bfs():
-        up_.set_algorithm('lean_BFS')
+        unyts_parameters_.set_algorithm('lean_BFS')
         _bfs_.set(False)
         _lean_bfs_.set(True)
         _dfs_.set(False)
     def _set_dfs():
-        up_.set_algorithm('DFS')
+        unyts_parameters_.set_algorithm('DFS')
         _bfs_.set(False)
         _lean_bfs_.set(False)
         _dfs_.set(True)
     def _set_fvf():
-        unyts_gui.path.pack_forget()
-        unyts_gui.input.pack()
-        fvf = unyts_gui.input_value.get().strip()
-        fvf = get_number(fvf)
+        if unyts_parameters_.fvf_ is not None:
+            current_value = f"{unyts_parameters_.fvf_} vol/vol"
+            prev_fvf_ = unyts_parameters_.fvf_
+        else:
+            current_value = None
+            prev_fvf_ = None
+        fvf = None
+        while fvf is None:
+            user_input = simpledialog.askstring("formation volume factor",
+                                     "Enter FVF in vol/vol or type the value followed by the units, like 1.5 rb/MMscf",
+                                                initialvalue=current_value)
+            if user_input is None or len(user_input) == 0:
+                fvf = False
+            elif len(user_input.split()) == 1:
+                try:
+                    user_input = get_number(user_input)
+                    if user_input > 0:
+                        fvf = user_input
+                except:
+                    pass
+            elif len(user_input.split()) == 2:
+                user_input, unit = user_input.split()
+                if unit.lower() == 'vol/vol':
+                    unit = 'sm3/sm3'
+                try:
+                    user_input = get_number(user_input)
+                    if user_input > 0:
+                        try:
+                            units_network.set_fvf(1)
+                            unyts_parameters_.fvf_ = 1
+                            fvf = convert(user_input, unit, 'sm3/sm3')
+                        except NoConversionFoundError:
+                            unyts_gui._display_path(error="FVF units {unit} are not valid.")
+                            units_network.set_fvf(prev_fvf_)
+                            unyts_parameters_.fvf_ = prev_fvf_
+                except:
+                    pass
+        units_network.set_fvf(fvf)
+        unyts_parameters_.fvf_ = fvf
+        unyts_parameters_.save_params()
+        if user_input == fvf:
+            unyts_parameters_.last_path_str = f"FVF set as {fvf} vol/vol."
+        else:
+            unyts_parameters_.last_path_str = f"FVF {user_input} {unit} converted to {fvf} vol/vol"
+        unyts_gui._display_path()
+    def _set_density():
+        if unyts_parameters_.density_ is not None:
+            current_value = f"{unyts_parameters_.density_} g/cm³"
+        else:
+            current_value = None
+        density = None
+        while density is None:
+            user_input = simpledialog.askstring("constant density to convert between volume and mass",
+                                     "Enter density in g/cm³ or type the value followed by the units, like: 997 kg/m³",
+                                                initialvalue=current_value)
+            print(user_input)
+            if user_input is None or len(user_input) == 0:
+                density = False
+            elif len(user_input.split()) == 1:
+                try:
+                    user_input = get_number(user_input)
+                    if user_input > 0:
+                        density = user_input
+                except:
+                    pass
+            elif len(user_input.split()) == 2:
+                user_input, unit = user_input.split()
+                try:
+                    user_input = get_number(user_input)
+                    if user_input > 0:
+                        try:
+                            density = convert(user_input, unit, 'g/cm3')
+                        except NoConversionFoundError:
+                            unyts_gui._display_path(error=f"density units {unit} are not valid.")
+                except:
+                    pass
+        unyts_parameters_.density_ = density
+        unyts_parameters_.save_params()
+        if user_input == density:
+            unyts_parameters_.last_path_str = f"density set as {density} g/cm³."
+        else:
+            unyts_parameters_.last_path_str = f"density {user_input} {unit} converted to {density} g/cm³"
+        unyts_gui._display_path()
+
     def export_memory():
         cache_path = filedialog.asksaveasfilename(
             title='Save',
@@ -354,11 +442,11 @@ def start_gui():
             pass
 
     def set_cache_folder():
-        cache_path = up_.get_user_folder()
+        cache_path = unyts_parameters_.get_user_folder()
         cache_path = filedialog.askdirectory(initialdir=cache_path, title='Cache Folder')
         if cache_path:
             if os.path.isdir(cache_path):
-                up_.set_user_folder(cache_path)
+                unyts_parameters_.set_user_folder(cache_path)
             else:
                 msg = f"The file {cache_path} doesn't exists."
                 logging.error(msg)
@@ -367,7 +455,7 @@ def start_gui():
             pass
 
     logging.info("starting Unyts GUI...")
-    w, h = 325, 230  # 185
+    w, h = 325, 215
     root = tk.Tk(screenName='Unyts')
     root.geometry(f"{w}x{h}")
     root.maxsize(w, h)
@@ -376,19 +464,19 @@ def start_gui():
     icon_file = 'unyts_icon.ico'
     current_dir = pathlib.Path(__file__).parent.resolve()
     icon_path = os.path.join(current_dir, icon_file)
-    root.iconbitmap(icon_path)
+    root.iconbitmap(default=icon_path)
 
     # variables
     _cache_ = tk.BooleanVar()
-    _cache_.set(up_.cache_)
+    _cache_.set(unyts_parameters_.cache_)
     _verbosity_ = tk.BooleanVar()
-    _verbosity_.set(up_.verbose_)
+    _verbosity_.set(unyts_parameters_.verbose_)
     _print_path_ = tk.BooleanVar()
-    _print_path_.set(up_.print_path_)
+    _print_path_.set(unyts_parameters_.print_path_)
     _bfs_, _lean_bfs_, _dfs_ = tk.BooleanVar(), tk.BooleanVar(), tk.BooleanVar()
-    _bfs_.set(up_.algorithm_ == 'BFS')
-    _lean_bfs_.set(up_.algorithm_ == 'lean_BFS')
-    _dfs_.set(up_.algorithm_ == 'DFS')
+    _bfs_.set(unyts_parameters_.algorithm_ == 'BFS')
+    _lean_bfs_.set(unyts_parameters_.algorithm_ == 'lean_BFS')
+    _dfs_.set(unyts_parameters_.algorithm_ == 'DFS')
 
     # setting menu
     root.option_add('*tearOff', False)
@@ -411,13 +499,16 @@ def start_gui():
     # Options menu
     options_menu = tk.Menu(unyts_menu)
     unyts_menu.add_cascade(label='Options', menu=options_menu)
-    options_menu.add_command(label="Set FVF (in CMD)", command=set_fvf)
-    options_menu.add_command(label="Set density (in CMD)", command=set_density)
+    # options_menu.add_command(label="Set FVF (in CMD)", command=set_fvf)
+    options_menu.add_command(label="Set FVF", command=_set_fvf)
+    options_menu.add_command(label="Set density", command=_set_density)
+    #options_menu.add_command(label="Set density (in CMD)", command=set_density)
     options_menu.add_separator()
-    options_menu.add_checkbutton(label='Rebuild on next start', variable=up_.reload_, command=up_.reload_next_time)
+    options_menu.add_checkbutton(label='Rebuild on next start', variable=unyts_parameters_.reload_,
+                                 command=unyts_parameters_.reload_next_time)
     options_menu.add_checkbutton(label='Show conversion path', variable=_print_path_, command=print_path)
-    options_menu.add_checkbutton(label='Verbose', variable=_verbosity_, command=up_.verbose)
-    options_menu.add_checkbutton(label='Use cache', variable=_cache_, command=up_.cache)
+    options_menu.add_checkbutton(label='Verbose', variable=_verbosity_, command=unyts_parameters_.verbose)
+    options_menu.add_checkbutton(label='Use cache', variable=_cache_, command=unyts_parameters_.cache)
     options_menu.add_separator()
     options_menu.add_command(label='Set cache folder', command=set_cache_folder)
     # Search algorith menu
