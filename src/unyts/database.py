@@ -489,7 +489,8 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('absolute psi'), network.get_node('psi'), lambda p: p))
     network.add_edge(Conversion(network.get_node('bar gauge'), network.get_node('bar'), lambda p: p))
     network.add_edge(Conversion(network.get_node('psi gauge'), network.get_node('psi'), lambda p: p))
-    network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('kilogram/square centimeter'), lambda p: p * 10 / StandardEarthGravity))
+    network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('kilogram/square centimeter'),
+                                lambda p: p * (10.0 / StandardEarthGravity)))
 
     # Mass conversion
     network.add_edge(Conversion(network.get_node('grain'), network.get_node('milligrams'), lambda w: w * 64.7989))

@@ -253,7 +253,7 @@ def _load_dictionary() -> (dict, dict):
         'absolute psi': ('psia', 'lb/in2', 'absolute pound/square inch', 'psi absolute',
                          'lpca', 'libras/pulgada cuadrada absoluta'),
         'psi gauge': ('psi', 'pound/square inch', 'psig', 'gauge psi', 'lpc', 'lpcm', 'libras/pulgada cuadrada'),
-        'absolute bar': ('bara', 'barsa', 'abs bar', 'bar absolute', 'kilogram/square centimeter'),
+        'absolute bar': ('bara', 'barsa', 'abs bar', 'bar absolute'),
         'bar gauge': ('bar', 'barg', 'gauge bar', 'bars', 'barsg'),
         'atmosphere': ('atm', 'atma'),
         'Pascal': ('Newton/m2',),
