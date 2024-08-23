@@ -5,7 +5,7 @@
 
 # `unyts`
 <p align="center"><img src="unyts_icon_web.png" /></p>  
-  
+
 I saw the opportunity to use a *digraph network* to build a units converter able to convert from any units to any units without the need to populate an endless table of possible conversions. Powered by the _Breadth First Search_, or _BFS_, algorithm to search through the network, this converter can find conversions from a particular Unit (or ratio of units) to any other Unit (or ratio) as long as a path connecting them exists.  
 This package is under development and is regularly updated. Back compatibility is intended to be maintained when possible.
   

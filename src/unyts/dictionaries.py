@@ -343,6 +343,7 @@ def _load_dictionary() -> (dict, dict):
     # Rate
     dictionary['Rate'] = []
     dictionary['Rate_NAMES_REVERSE_UPPER_SPACES'] = {
+        'litre per minute': ('lpm', 'litre/minute', 'l/min'),
         'standard barrel per day': ('stb/day',),
         'standard cubic foot per day': ('scf/day', 'cf/day', 'scfd'),
         'standard cubic meter per day': ('sm3/day',),

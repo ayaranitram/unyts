@@ -20,8 +20,8 @@ except ModuleNotFoundError:
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
-__version__ = '0.4.17'
-__release__ = 20240811
+__version__ = '0.4.18'
+__release__ = 20240823
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -79,7 +79,8 @@ class UDigraph(object):
         if not self._cloudpickle_:
             logging.warning("Missing `cloudpickle` package. Not able to cache search memory.")
         if not isfile(unyts_parameters_.get_user_folder() + 'search_memory.cache'):
-            logging.info("starting clean memory...")
+            msg = "starting clean memory..."
+            logging.info(msg)
         else:
             logging.info('loading memory from cache...')
             try:
