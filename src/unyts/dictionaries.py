@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.49'
-__release__ = 20240811
+__version__ = '0.5.50'
+__release__ = 20241020
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'StandardWaterDensity',
            'unitless_names', 'uncertain_names']
 
@@ -258,7 +258,7 @@ def _load_dictionary() -> (dict, dict):
         'bar gauge': ('bar', 'barg', 'gauge bar', 'bars', 'barsg'),
         'atmosphere': ('atm', 'atma'),
         'Pascal': ('Newton/m2', 'Newton/m²'),
-        'kPa': ('KPa', 'kilopascal'),
+        'kPa': ('KPa', 'kilopascal', 'kpa'),
         'hPa': ('hectopascal',),
         'Torr': ('millimeters of mercury',),
         'millimeters of mercury': ('mmHg',),
