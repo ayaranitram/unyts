@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.4'
-__release__ = 20240811
+__version__ = '0.6.5'
+__release__ = 20241121
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'set_density', 'get_density',
            'recursion_limit', 'verbose', 'set_algorithm']
 
@@ -238,6 +238,7 @@ class UnytsParameters(object):
         else:
             self.algorithm_ = algorithm
             logging.info(f"{algorithm} set as search algorithm.")
+            logging.warning("The search memory must be cleansed if intended to repeat searches with a different algorithm.")
             self.save_params()
 
     def get_algorithm(self):

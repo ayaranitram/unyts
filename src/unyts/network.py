@@ -20,8 +20,8 @@ except ModuleNotFoundError:
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
-__version__ = '0.4.18'
-__release__ = 20240823
+__version__ = '0.4.19'
+__release__ = 20241121
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -96,6 +96,8 @@ class UDigraph(object):
 
     def clean_memory(self):
         self.memory = {}
+        msg = f"memory cleaned."
+        logging.info(msg)
 
     def add_node(self, node) -> None:
         if node in self.edges:

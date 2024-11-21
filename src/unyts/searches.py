@@ -6,8 +6,8 @@ Created on Sat Oct 24 17:52:34 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.1'
-__release__ = 20240612
+__version__ = '0.6.2'
+__release__ = 20241121
 __all__ = ['BFS', 'lean_BFS', 'DFS', 'print_path']
 
 import logging
@@ -144,10 +144,8 @@ def lean_BFS(graph, start, end, verbose=False, max_generations_screening=25) -> 
     if len(selected_edges) > 0:
         if verbose:
             logging.info(f"<lean BFS> search graph slimmed from {len(graph.edges)} to {len(selected_edges)} nodes, in {generations} generations.")
-    else:
-        return None
-    slim_graph = SlimUDigraph(selected_edges)
-    return BFS(slim_graph, start, end, verbose=verbose and unyts_parameters_.verbose_details_ > 0)
+        slim_graph = SlimUDigraph(selected_edges)
+        return BFS(slim_graph, start, end, verbose=verbose and unyts_parameters_.verbose_details_ > 0)
 
 
 def print_path(path: list) -> str:
