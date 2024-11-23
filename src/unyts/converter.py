@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.8.4'
-__release__ = 20241121
+__version__ = '0.8.3'
+__release__ = 20240612
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -165,15 +165,8 @@ def _lambda_loop(x, lambda_list):
     lambda_sequence : lambda
         all the lambdas in the list applied in sequence
     """
-    lambda_0 = None
     for lambda_i in lambda_list:
-        if lambda_0 is None:
-            x = lambda_i(x)
-        elif lambda_0.__code__.co_code == lambda_i.__code__.co_code:
-            pass
-        else:
-            x = lambda_i(x)
-        lambda_0 = lambda_i
+        x = lambda_i(x)
     return x
 
 
