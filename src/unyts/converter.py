@@ -6,14 +6,14 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.8.4'
-__release__ = 20241123
+__version__ = '0.8.6'
+__release__ = 20241124
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
 from .dictionaries import dictionary, temperatureRatioConversions, uncertain_names
 from .Empty import Empty, str_Empty
-from .searches import BFS, lean_BFS, DFS, both_BFS, print_path
+from .searches import BFS, lean_BFS, DFS, hybrid_BFS, print_path
 from .errors import NoConversionFoundError
 from .parameters import unyts_parameters_, _get_density
 from .helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
@@ -708,6 +708,7 @@ def _search_network(from_unit, to_unit, algorithm:str=None):
         - 'BFS': Breadth-First Search algorithm, will return the shortest path searching through the entire network one level at a time.
         - 'lean_BFS': will return the shortest path searching through a slimmed network of preselected nodes.
         - 'DFS': Depth-First Search algorithm, will return the first found path searching through the network one branch at a time.
+        - 'hybrid_BFS': launch together BFS and lean_BFS searches, and returns the first valid result.
     Returns
     -------
         conversion_path: list
@@ -731,11 +732,10 @@ def _search_network(from_unit, to_unit, algorithm:str=None):
                                   units_network.get_node(to_unit),
                                   verbose=unyts_parameters_.verbose_ and unyts_parameters_.verbose_details_ > 1,
                                   branch_depht=unyts_parameters_.generations_limit())
-        elif algorithm == 'both_BFS':
-            conversion_path = both_BFS(units_network, units_network.get_node(from_unit),
-                                       units_network.get_node(to_unit),
-                                       verbose=unyts_parameters_.verbose_,
-                                       max_generations_screening=unyts_parameters_.generations_limit())
+        elif algorithm == 'hybrid_BFS':
+            conversion_path = hybrid_BFS(units_network, units_network.get_node(from_unit),
+                                         units_network.get_node(to_unit), verbose=unyts_parameters_.verbose_,
+                                         max_generations_screening=unyts_parameters_.generations_limit())
         else:
             raise NotImplementedError("other search algorithms different from BFS and DFS are not yet implemented.")
     else:

@@ -327,25 +327,31 @@ def start_gui():
         _bfs_.set(True)
         _lean_bfs_.set(False)
         _dfs_.set(False)
-        _both_BFS_.set(False)
+        _hybrid_BFS_.set(False)
     def _set_lean_bfs():
+        if unyts_parameters_.get_algorithm() != 'lean_BFS':
+            unyts_gui.repeat_search.select()
         unyts_parameters_.set_algorithm('lean_BFS')
         _bfs_.set(False)
         _lean_bfs_.set(True)
         _dfs_.set(False)
-        _both_BFS_.set(False)
+        _hybrid_BFS_.set(False)
     def _set_dfs():
+        if unyts_parameters_.get_algorithm() != 'DFS':
+            unyts_gui.repeat_search.select()
         unyts_parameters_.set_algorithm('DFS')
         _bfs_.set(False)
         _lean_bfs_.set(False)
         _dfs_.set(True)
-        _both_BFS_.set(False)
-    def _set_both_BFS():
-        unyts_parameters_.set_algorithm('both_BFS')
+        _hybrid_BFS_.set(False)
+    def _set_hybrid_BFS():
+        if unyts_parameters_.get_algorithm() != 'hybrid_BFS':
+            unyts_gui.repeat_search.select()
+        unyts_parameters_.set_algorithm('hybrid_BFS')
         _bfs_.set(False)
         _lean_bfs_.set(False)
         _dfs_.set(False)
-        _both_BFS_.set(True)
+        _hybrid_BFS_.set(True)
     def _set_par_th():
         unyts_parameters_.set_parallel('t')
         _par_th_.set(True)
@@ -521,11 +527,11 @@ def start_gui():
     _verbosity_.set(unyts_parameters_.verbose_)
     _print_path_ = tk.BooleanVar()
     _print_path_.set(unyts_parameters_.print_path_)
-    _bfs_, _lean_bfs_, _dfs_, _both_BFS_ = tk.BooleanVar(), tk.BooleanVar(), tk.BooleanVar(), tk.BooleanVar()
+    _bfs_, _lean_bfs_, _dfs_, _hybrid_BFS_ = tk.BooleanVar(), tk.BooleanVar(), tk.BooleanVar(), tk.BooleanVar()
     _bfs_.set(unyts_parameters_.algorithm_ == 'BFS')
     _lean_bfs_.set(unyts_parameters_.algorithm_ == 'lean_BFS')
     _dfs_.set(unyts_parameters_.algorithm_ == 'DFS')
-    _both_BFS_.set(unyts_parameters_.algorithm_ == 'both_BFS')
+    _hybrid_BFS_.set(unyts_parameters_.algorithm_ == 'hybrid_BFS')
     _par_th_, _par_mp_, _par_off_, _par_auto_ = tk.BooleanVar(), tk.BooleanVar(), tk.BooleanVar(), tk.BooleanVar()
     _par_th_.set(unyts_parameters_.parallel_ and unyts_parameters_.threading_ and not unyts_parameters_.multiprocessing_)
     _par_mp_.set(unyts_parameters_.parallel_ and unyts_parameters_.multiprocessing_)
@@ -569,7 +575,7 @@ def start_gui():
     search_menu = tk.Menu(unyts_menu)
     search_menu.add_checkbutton(label='BFS', variable=_bfs_, command=_set_bfs)
     search_menu.add_checkbutton(label='lean BFS', variable=_lean_bfs_, command=_set_lean_bfs)
-    search_menu.add_checkbutton(label='both BFS', variable=_both_BFS_, command=_set_both_BFS)
+    search_menu.add_checkbutton(label='hybrid BFS', variable=_hybrid_BFS_, command=_set_hybrid_BFS)
     search_menu.add_checkbutton(label='DFS', variable=_dfs_, command=_set_dfs)
     options_menu.add_cascade(label='Search algorithm', menu=search_menu)
     # Parallel menu

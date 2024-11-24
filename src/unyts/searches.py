@@ -7,8 +7,8 @@ Created on Sat Oct 24 17:52:34 2020
 """
 
 __version__ = '0.6.5'
-__release__ = 20241123
-__all__ = ['BFS', 'lean_BFS', 'DFS', 'print_path']
+__release__ = 20241124
+__all__ = ['BFS', 'lean_BFS', 'DFS', 'hybrid_BFS', 'print_path']
 
 
 import logging
@@ -179,7 +179,7 @@ def _lean_bfs(results, graph, start, end, verbose=False, max_generations_screeni
                                    max_generations_screening=max_generations_screening)
     return results['lean_bfs']
 
-def both_BFS(graph, start, end, verbose=False, max_generations_screening=25) -> list:
+def hybrid_BFS(graph, start, end, verbose=False, max_generations_screening=25) -> list:
     """
     Runs lean_BFS and BFS searches in two independent threads, and returns the first obtained result.
     Returns a shortest path from `start` to `end` in graph.

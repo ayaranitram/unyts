@@ -7,7 +7,7 @@ Created on Sat Oct 24 18:24:20 2020
 """
 
 __version__ = '0.6.7'
-__release__ = 20241123
+__release__ = 20241124
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'set_density', 'get_density',
            'recursion_limit', 'verbose', 'set_algorithm', 'set_parallel']
 
@@ -259,11 +259,11 @@ class UnytsParameters(object):
         return self.algorithm_
 
     def set_algorithm(self, algorithm:str):
-        if algorithm not in ['BFS', 'lean_BFS', 'DFS', 'both_BFS']:
-            logging.error(f"Valid algorithms are 'BFS', 'lean_BFS', both_BFS, and 'DFS' not {algorithm}.")
-        elif algorithm == 'both_BFS' and not self.threading_:
+        if algorithm not in ['BFS', 'lean_BFS', 'DFS', 'hybrid_BFS']:
+            logging.error(f"Valid algorithms are 'BFS', 'lean_BFS', 'hybrid_BFS', and 'DFS' not {algorithm}.")
+        elif algorithm == 'hybrid_BFS' and not self.threading_:
             logging.critical("threading module not available in this Python installation.")
-            if self.get_algorithm() == 'both_BFS':
+            if self.get_algorithm() == 'hybrid_BFS':
                 _ = set_algorithm('lean_BFS')
             else:
                 logging.info(f"keeping {self.get_algorithm()} as search algorithm.")
@@ -405,8 +405,8 @@ def reload() -> None:
 
 
 def set_algorithm(algorithm:str):
-    if algorithm not in ['BFS', 'lean_BFS', 'DFS', 'both_BFS']:
-        raise ValueError(f"valid algorithms are 'BFS', 'lean_BFS', both_BFS, and 'DFS' not {algorithm}.")
+    if algorithm not in ['BFS', 'lean_BFS', 'DFS', 'hybrid_BFS']:
+        raise ValueError(f"valid algorithms are 'BFS', 'lean_BFS', 'hybrid_BFS', and 'DFS' not {algorithm}.")
     unyts_parameters_.set_algorithm(algorithm)
 
 
