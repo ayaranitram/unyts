@@ -221,7 +221,7 @@ def hybrid_BFS(graph, start, end, verbose=False, max_generations_screening=25) -
                              args=(results_, units_network, start, end, verbose_, max_generations_screening))
     runner_bfs = runner(target=_bfs, args=(results_, units_network, start, end, verbose_))
     if verbose:
-        logging.info(f"<lean BFS> starting BFS and lean_BFS threads, from {start} to {end}")
+        logging.info(f"<hybrid BFS> starting BFS and lean_BFS threads, from {start} to {end}")
     _ = runner_lean_bfs.start()
     _ = runner_bfs.start()
 
