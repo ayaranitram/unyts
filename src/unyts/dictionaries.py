@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.50'
-__release__ = 20241020
+__version__ = '0.5.51'
+__release__ = 20241123
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'StandardWaterDensity',
            'unitless_names', 'uncertain_names']
 
@@ -269,8 +269,14 @@ def _load_dictionary() -> (dict, dict):
     dictionary['PressureGradient'] = []
     dictionary['PressureGradient'] = ('psi/ft', 'psia/ft', 'psig/ft',
                                       'psi/m', 'psia/m', 'psig/m',
-                                      'bar/m', 'bars/m', 'barsa/m', 'bara/m', 'barg/m',
-                                      'bar/ft', 'bars/ft', 'barsa/ft', 'bara/ft', 'barg/ft')
+                                      'bar/m', 'bars/m', 'barsa/m', 'bara/m', 'barsg/m', 'barg/m',
+                                      'bar/ft', 'bars/ft', 'barsa/ft', 'bara/ft', 'barsg/ft', 'barg/ft')
+    dictionary['PressureGradient_NAMES_REVERSE'] = {
+        'psi/ft': ('psia/ft', 'psig/ft'),
+        'psi/m': ('psia/m', 'psig/m'),
+        'bar/m': ('bars/m', 'barsa/m', 'bara/m', 'barsg/m', 'barg/m'),
+        'bar/ft': ('bars/ft', 'barsa/ft', 'bara/ft', 'barsg/ft', 'barg/ft')
+    }
 
     # Weight
     dictionary['Weight'] = []
