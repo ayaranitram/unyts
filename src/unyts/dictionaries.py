@@ -267,10 +267,7 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Pressure_SI'] = ('Pa', 'bara', 'barsa', 'bar', 'barg')
 
     dictionary['PressureGradient'] = []
-    dictionary['PressureGradient'] = ('psi/ft', 'psia/ft', 'psig/ft',
-                                      'psi/m', 'psia/m', 'psig/m',
-                                      'bar/m', 'bars/m', 'barsa/m', 'bara/m', 'barsg/m', 'barg/m',
-                                      'bar/ft', 'bars/ft', 'barsa/ft', 'bara/ft', 'barsg/ft', 'barg/ft')
+    dictionary['PressureGradient'] = ['psi/ft', 'psi/m', 'bar/m', 'bar/ft']
     dictionary['PressureGradient_NAMES_REVERSE'] = {
         'psi/ft': ('psia/ft', 'psig/ft'),
         'psi/m': ('psia/m', 'psig/m'),
@@ -512,7 +509,7 @@ def _load_dictionary() -> (dict, dict):
     }
 
     # acceleration
-    dictionary['Acceleration'] = ('m/s2', 'ft/s2',)
+    dictionary['Acceleration'] = ['m/s2', 'ft/s2',]
 
     # Dimensionless
     dictionary['Dimensionless'] = []
@@ -534,6 +531,26 @@ def _load_dictionary() -> (dict, dict):
         'sec/day': ('sec/d',),
         's2': ('s*s',)
     }
+
+    # validate dictionary
+    wrong_definitions = {k: v
+                         for k, v in dictionary.items()
+                         if type(v) is tuple and (
+                                 '_NAMES' not in k
+                             and '_REVERSE' not in k
+                             and '_UPPER' not in k
+                             and '_LOWER' not in k
+                             and '_PLURALwS' not in k
+                             and '_SPACES' not in k
+                             and '_RECURSIVE' not in k
+                             and '_SI' not in k
+                             and '_UK' not in k
+                             and '_OGF' not in k)
+                         }
+    for k, v in wrong_definitions.items():
+        msg = f"dictionary key '{k}' has a value defined as tuple but it must be a list!"
+        logging.debug(msg)
+        dictionary[k] = list(v)
 
     temperature_ratio_factors = {'Celsius': 9,
                                  'Fahrenheit': 5,
