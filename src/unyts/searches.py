@@ -162,6 +162,7 @@ class SerialRun(object):
         self.target = target
         self.args = args
     def start(self):
+        # check if other run has finished already
         for each in self.args[0].values():
             if each != '' and each is not None:
                 return each
