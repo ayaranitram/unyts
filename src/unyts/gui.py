@@ -7,7 +7,7 @@ Created on Sat Feb 11 10:38:47 2024
 """
 
 __version__ = '0.4.5'
-__release__ = 20241123
+__release__ = 20241124
 __all__ = ['start_gui']
 
 import logging
@@ -68,13 +68,20 @@ class UnytsApp(tk.Frame):
         self.convert_button = ttk.Button(frame, textvariable=self.button_text)
         self.convert_button.grid(columnspan=3, row=3, pady=7)
         self.convert_button.bind('<ButtonRelease>', self._calculate)
+
+        self.repeat_search_ = tk.BooleanVar()
+        self.repeat_search_.set(False)
+        self.repeat_search = tk.Checkbutton(frame, text='repeat search', variable=self.repeat_search_, onvalue=True, offvalue=False)
+        self.repeat_search.grid(columnspan=3, row=4, pady=0)
+        self.repeat_search.deselect()
+
         self.frame.bind('<Motion>', lambda x: self.button_text.set("convert"))
 
         self.result_str = tk.StringVar()
         self.result_str.set("")
         self.result_msg = ttk.Label(frame, textvariable=self.result_str)
         self.result_msg.config(foreground='#5f5f5f')
-        self.result_msg.grid(column=0, columnspan=3, row=4)
+        self.result_msg.grid(column=0, columnspan=3, row=5)
 
         # conversion path marquee
         self._first_char = tk.IntVar()
@@ -173,11 +180,13 @@ class UnytsApp(tk.Frame):
         self.to_value_val.set("")
         try:
             to_value = convert(from_value, from_unit, to_unit,
-                               print_conversion_path=unyts_parameters_.print_path_)
+                               print_conversion_path=unyts_parameters_.print_path_,
+                               use_cache=False if self.repeat_search_.get() else None)
             self.to_value_val.set(str(to_value))
             end_time = process_time()
             self._calculation_time(start_time, end_time)
             self._display_path()
+            self.repeat_search.deselect()
         except NoConversionFoundError:
             end_time = process_time()
             self._calculation_time(start_time, end_time)
@@ -187,11 +196,13 @@ class UnytsApp(tk.Frame):
             end_time = process_time()
             self._calculation_time(start_time, end_time)
             self._display_path(error="Please set FVF constant from Options menu.")
+            self.repeat_search.select()
             return
         except:
             end_time = process_time()
             self._calculation_time(start_time, end_time)
             self._display_path(error="Unknown error.")
+            self.repeat_search.select()
             return
 
     def _rcalculate(self, *args):
@@ -211,11 +222,13 @@ class UnytsApp(tk.Frame):
         self.from_value_val.set("")
         try:
             to_value = convert(from_value, from_unit, to_unit,
-                               print_conversion_path=unyts_parameters_.print_path_)
+                               print_conversion_path=unyts_parameters_.print_path_,
+                               use_cache=False if self.repeat_search_.get() else None)
             self.from_value_val.set(str(to_value))
             end_time = process_time()
             self._calculation_time(start_time, end_time)
             self._display_path()
+            self.repeat_search.deselect()
         except NoConversionFoundError:
             end_time = process_time()
             self._calculation_time(start_time, end_time)
@@ -225,11 +238,13 @@ class UnytsApp(tk.Frame):
             end_time = process_time()
             self._calculation_time(start_time, end_time)
             self._display_path(error="Please set FVF constant from Options menu.")
+            self.repeat_search.select()
             return
         except:
             end_time = process_time()
             self._calculation_time(start_time, end_time)
             self._display_path(error="Unknown error.")
+            self.repeat_search.select()
             return
 
     def _calculation_time(self, start_time, end_time):
@@ -323,6 +338,8 @@ def start_gui():
             unyts_gui._display_path(" ")
             unyts_gui.path.pack_forget()
     def _set_bfs():
+        if unyts_parameters_.get_algorithm() != 'BFS':
+            unyts_gui.repeat_search.select()
         unyts_parameters_.set_algorithm('BFS')
         _bfs_.set(True)
         _lean_bfs_.set(False)
@@ -422,6 +439,7 @@ def start_gui():
             unyts_parameters_.last_path_str = f"FVF set as {fvf} vol/vol."
         else:
             unyts_parameters_.last_path_str = f"FVF {user_input} {unit} converted to {fvf} vol/vol"
+        unyts_gui.repeat_search.select()
         unyts_gui._display_path()
     def _set_density():
         if unyts_parameters_.density_ is not None:
@@ -460,6 +478,7 @@ def start_gui():
             unyts_parameters_.last_path_str = f"density set as {density} g/cm³."
         else:
             unyts_parameters_.last_path_str = f"density {user_input} {unit} converted to {density} g/cm³"
+        unyts_gui.repeat_search.select()
         unyts_gui._display_path()
 
     def export_memory():
@@ -509,7 +528,7 @@ def start_gui():
             pass
 
     logging.info("starting Unyts GUI...")
-    w, h = 325, 215
+    w, h = 325, 235
     root = tk.Tk(screenName='Unyts')
     root.geometry(f"{w}x{h}")
     root.maxsize(w, h)

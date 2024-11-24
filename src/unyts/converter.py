@@ -215,7 +215,7 @@ def _get_recursion_limit(recursion=None):
     return recursion
 
 
-def _get_conversion(value, from_unit, to_unit, recursion=None):
+def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     """
     Helper function to handle looking for the conversion factor of special cases and through the units network.
 
@@ -224,6 +224,10 @@ def _get_conversion(value, from_unit, to_unit, recursion=None):
     value: numeric or None
     from_unit: str
     to_unit: str
+    recursion: int
+        The limit of recursive calls to this function
+    use_cache: bool
+        Set to False to ignore searches in memory, and repeat the search.
 
     Returns
     -------
@@ -239,7 +243,8 @@ def _get_conversion(value, from_unit, to_unit, recursion=None):
 
 
     # check if already solved and memorized
-    if (from_unit, to_unit) in units_network.memory:
+    use_cache = unyts_parameters_.cache_ if use_cache is None else use_cache
+    if use_cache and (from_unit, to_unit) in units_network.memory:
         conversion_lambda, conversion_path = units_network.memory[(from_unit, to_unit)]
         return (conversion_lambda, conversion_path) if (conversion_lambda is None or value is None) \
             else (conversion_lambda(value), conversion_path)
@@ -281,7 +286,7 @@ def _get_conversion(value, from_unit, to_unit, recursion=None):
         t1, d1 = from_unit.split('/')
         t2, d2 = to_unit.split('/')
         num = temperatureRatioConversions[(t1, t2)]
-        den, den_path = _get_conversion(1, d1, d2, recursion=recursion)
+        den, den_path = _get_conversion(1, d1, d2, recursion=recursion, use_cache=use_cache)
         if num is None or den is None:
             if unyts_parameters_.raise_error_:
                 raise NoConversionFoundError("from '" + str(d1) + "' to '" + str(d2) + "'")
@@ -384,7 +389,7 @@ def _get_descendants(unit:str, generations=None, get_combinations=True):
     return {unit}.union(descendants)
 
 
-def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max_paths=12):
+def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max_paths=12, use_cache:bool=None):
     """
     helper function of _converter function
     
@@ -429,8 +434,8 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
     for child in common_sorted:
         if conversion_path is not None and common_sorted[child] > min_generations:
             break
-        from_child_conversion, from_child_conversion_path = _converter(None, from_unit, child, recursion=recursion)
-        child_to_conversion, child_to_conversion_path = _converter(None, child, to_unit, recursion=recursion)
+        from_child_conversion, from_child_conversion_path = _converter(None, from_unit, child, recursion=recursion, use_cache=use_cache)
+        child_to_conversion, child_to_conversion_path = _converter(None, child, to_unit, recursion=recursion, use_cache=use_cache)
         if from_child_conversion is not None and child_to_conversion is not None:
             this_path_len = len([step for step in (from_child_conversion_path + child_to_conversion_path) if step != '1/'])
             if this_path_len < shortest_path:
@@ -443,7 +448,7 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
     return conversion, conversion_path
     
     
-def _converter(value, from_unit, to_unit, recursion=None):
+def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     """
     Transform the received value (integer, float, array, series, frame, ...)
     from the units `from_unit` to the units `to_units` and report the conversion path used.
@@ -453,6 +458,11 @@ def _converter(value, from_unit, to_unit, recursion=None):
     value: numeric or None
     from_unit: str
     to_unit: str
+    recursion: int
+        Limit the number of recursive calls to this function
+    use_cache: bool
+        Set to False to ignore cached searches, and repeat the search.
+
 
     Returns
     -------
@@ -472,7 +482,7 @@ def _converter(value, from_unit, to_unit, recursion=None):
     # try to convert
     if unyts_parameters_.verbose_:
         logging.info(f"_converter: {recursion} remaining recursions, attempting direct conversion")
-    conv, conv_path = _get_conversion(value, from_unit, to_unit, recursion=recursion)
+    conv, conv_path = _get_conversion(value, from_unit, to_unit, recursion=recursion, use_cache=use_cache)
     # if Conversion found
     if conv is not None:
         return conv, conv_path
@@ -497,7 +507,7 @@ def _converter(value, from_unit, to_unit, recursion=None):
                 continue
             if split_to[t] in '*/':
                 continue
-            conv, conv_path = _get_conversion(1, split_from[f], split_to[t], recursion=recursion)
+            conv, conv_path = _get_conversion(1, split_from[f], split_to[t], recursion=recursion, use_cache=use_cache)
             if conv is not None:
                 flag = True
                 if len(list_conversion_path) > 0:
@@ -527,8 +537,8 @@ def _converter(value, from_unit, to_unit, recursion=None):
             logging.info(f"_converter: {recursion} remaining recursions, looking for one-to-pair conversion path")
         from_unit_child = _get_pair_child(from_unit)
         if from_unit_child is not None:
-            base_conversion, base_conversion_path = _converter(None, from_unit, from_unit_child, recursion=recursion)
-            pair_conversion, pair_conversion_path = _converter(None, from_unit_child, to_unit, recursion=recursion)
+            base_conversion, base_conversion_path = _converter(None, from_unit, from_unit_child, recursion=recursion, use_cache=use_cache)
+            pair_conversion, pair_conversion_path = _converter(None, from_unit_child, to_unit, recursion=recursion, use_cache=use_cache)
             if pair_conversion is not None and base_conversion is not None:
                 conversion_path = base_conversion_path + pair_conversion_path
                 conversion = lambda x: pair_conversion(base_conversion(x))
@@ -544,8 +554,8 @@ def _converter(value, from_unit, to_unit, recursion=None):
             logging.info(f"_converter: {recursion} remaining recursions, looking for pair-to-one conversion path")
         to_unit_child = _get_pair_child(to_unit)
         if to_unit_child is not None:
-            final_conversion, final_conversion_path = _converter(None, to_unit_child, to_unit, recursion=recursion)
-            pair_conversion, pair_conversion_path = _converter(None, from_unit, to_unit_child, recursion=recursion)
+            final_conversion, final_conversion_path = _converter(None, to_unit_child, to_unit, recursion=recursion, use_cache=use_cache)
+            pair_conversion, pair_conversion_path = _converter(None, from_unit, to_unit_child, recursion=recursion, use_cache=use_cache)
             if pair_conversion is not None and final_conversion is not None:
                 conversion_path = pair_conversion_path + final_conversion_path
                 conversion = lambda x: final_conversion(pair_conversion(x))
@@ -644,7 +654,7 @@ def _clean_verbose(verbose) -> bool:
     return unyts_parameters_.verbose_ if verbose is None else bool(verbose)
 
 
-def _density_conversion(value: numeric, from_unit: str, to_unit: str):
+def _density_conversion(value: numeric, from_unit: str, to_unit: str, use_cache:bool=None):
     """
     Helper function to deal with conversion between weight and volume, using density.
 
@@ -653,6 +663,7 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str):
     value: numeric
     from_unit: str
     to_unit: str
+    use_cache: bool
 
     Returns
     -------
@@ -662,30 +673,20 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str):
     if from_unit not in uncertain_names and to_unit not in uncertain_names and \
             from_unit in dictionary['Volume'] and to_unit in dictionary['Weight']:
         density = _get_density()
-        # conv1, conv_path1 = _converter(1, from_unit, 'cc')
-        # conv2, conv_path2 = _converter(value, 'g', to_unit)
-        this_units_density, _ = _converter(density, 'g/cm3', f"{to_unit}/{from_unit}")
+        this_units_density, _ = _converter(density, 'g/cm3', f"{to_unit}/{from_unit}", use_cache=use_cache)
         if value is None:
-            # conv = lambda x: conv2(conv1(x) * density)
             conv = lambda x: x * this_units_density
         else:
-            # conv = conv1 * density * conv2
             conv = value * this_units_density
-        # conv_path = conv_path1 + ['*', density, '*'] + conv_path2
         conv_path = ['*', this_units_density]
     elif from_unit not in uncertain_names and to_unit not in uncertain_names and \
             to_unit in dictionary['Volume'] and from_unit in dictionary['Weight']:
         density = _get_density()
-        this_units_density = _converter(density, 'g/cm3', f"{from_unit}/{to_unit}")
-        # conv1, conv_path1 = _converter(value, from_unit, 'g')
-        # conv2, conv_path2 = _converter(value, 'cc', to_unit)
+        this_units_density = _converter(density, 'g/cm3', f"{from_unit}/{to_unit}", use_cache=use_cache)
         if value is None:
-            # conv = lambda x: conv2(conv1(x) / density)
             conv = lambda x: x / this_units_density
         else:
-            # conv = conv1 / density * conv2
             conv = value / this_units_density
-        # conv_path = conv_path1 + ['/', density, '*'] + conv_path2
         conv_path = ['/', this_units_density]
     else:
         conv, conv_path = None, None
@@ -743,7 +744,7 @@ def _search_network(from_unit, to_unit, algorithm:str=None):
     return conversion_path
 
 
-def convertible(from_unit: str, to_unit: str) -> bool:
+def convertible(from_unit: str, to_unit: str, use_cache:bool=None) -> bool:
     """
     Returns True if a conversion path from `from_unit` to `to_unit` is found, otherwise returns True.
 
@@ -751,6 +752,8 @@ def convertible(from_unit: str, to_unit: str) -> bool:
     ----------
     from_unit: str, Unit or None
     to_unit: str, Unit or None
+    use_cache: bool
+        Set to False to ignore cached searches, and repeat the search.
 
     Returns
     -------
@@ -763,13 +766,14 @@ def convertible(from_unit: str, to_unit: str) -> bool:
         to_unit = to_unit.get_unit()
 
     try:
-        conv, conv_path = _converter(1, from_unit, to_unit)
+        conv, conv_path = _converter(1, from_unit, to_unit, use_cache=use_cache)
         return False if conv is None else True
     except NoConversionFoundError:
         return False
 
 
-def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_conversion_path: bool = None):
+def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty,
+            print_conversion_path: bool = None, use_cache:bool=None):
     """
     Converts the received value (integer, float, array, Series, Frame, ...) from the units 'from_unit' to the units 'to_units'.
 
@@ -783,6 +787,8 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_co
         the units to convert the value.
     print_conversion_path : bool, optional
         Set to True to show the path used for Conversion. The default is False.
+    use_cache: bool
+        Set to False to ignore cached searches, and repeat the search.
 
     Returns
     -------
@@ -800,11 +806,11 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_co
     units_network.previous = []
 
     # density factor, in case of conversion from volume to mass or mass to volume
-    conv, conv_path = _density_conversion(value, from_unit, to_unit)
+    conv, conv_path = _density_conversion(value, from_unit, to_unit, use_cache=use_cache)
 
     if conv is None:
         # regular conversion
-        conv, conv_path = _converter(value, from_unit, to_unit)
+        conv, conv_path = _converter(value, from_unit, to_unit, use_cache=use_cache)
 
     if conv is None:
         if unyts_parameters_.raise_error_:
@@ -819,7 +825,8 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty, print_co
     return conv
 
 
-def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str, print_conversion_path: bool = False):
+def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str,
+                          print_conversion_path:bool=False, use_cache:bool=None):
     """
     Particular implementation of `convert` function, specially set for SimDataFrames and SimSeries.
     If possible to convert the units, the returns the received value (integer, float, array, Series, Frame, ...)
@@ -836,6 +843,8 @@ def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str, print_co
         the units to convert the value.
     print_conversion_path : bool, optional
         Set to True to show the path used for Conversion. The default is False.
+    use_cache: bool
+        Set to False to ignore cached searches, and repeat the search.
 
     Returns
     -------
@@ -845,7 +854,7 @@ def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str, print_co
     conv = None
     print_conversion_path = bool(print_conversion_path)
     if convertible(from_unit, to_unit):
-        conv, conv_path = _converter(value, from_unit, to_unit)
+        conv, conv_path = _converter(value, from_unit, to_unit, use_cache=use_cache)
     if print_conversion_path and conv is not None:
         logging.info("converting from '{from_unit}' to '{to_unit}':\n {print_path(conv_path)}")
     elif print_conversion_path and conv is not None:
