@@ -6,8 +6,8 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.3'
-__release__ = 20240811
+__version__ = '0.4.5'
+__release__ = 20241123
 __all__ = ['start_gui']
 
 import logging
@@ -170,6 +170,7 @@ class UnytsApp(tk.Frame):
             return
         if from_value == "" and is_numeric(to_value):
             return self._rcalculate()
+        self.to_value_val.set("")
         try:
             to_value = convert(from_value, from_unit, to_unit,
                                print_conversion_path=unyts_parameters_.print_path_)
@@ -178,13 +179,19 @@ class UnytsApp(tk.Frame):
             self._calculation_time(start_time, end_time)
             self._display_path()
         except NoConversionFoundError:
-            self.to_value_val.set("")
             end_time = process_time()
             self._calculation_time(start_time, end_time)
             self._display_path("no conversion found!")
             return
         except NoFVFError:
+            end_time = process_time()
+            self._calculation_time(start_time, end_time)
             self._display_path(error="Please set FVF constant from Options menu.")
+            return
+        except:
+            end_time = process_time()
+            self._calculation_time(start_time, end_time)
+            self._display_path(error="Unknown error.")
             return
 
     def _rcalculate(self, *args):
@@ -201,6 +208,7 @@ class UnytsApp(tk.Frame):
             return
         if from_value == "" and is_numeric(to_value):
             return self._calculate()
+        self.from_value_val.set("")
         try:
             to_value = convert(from_value, from_unit, to_unit,
                                print_conversion_path=unyts_parameters_.print_path_)
@@ -209,13 +217,19 @@ class UnytsApp(tk.Frame):
             self._calculation_time(start_time, end_time)
             self._display_path()
         except NoConversionFoundError:
-            self.from_value_val.set("")
             end_time = process_time()
             self._calculation_time(start_time, end_time)
             self._display_path("no conversion found!")
             return
         except NoFVFError:
+            end_time = process_time()
+            self._calculation_time(start_time, end_time)
             self._display_path(error="Please set FVF constant from Options menu.")
+            return
+        except:
+            end_time = process_time()
+            self._calculation_time(start_time, end_time)
+            self._display_path(error="Unknown error.")
             return
 
     def _calculation_time(self, start_time, end_time):
@@ -313,16 +327,50 @@ def start_gui():
         _bfs_.set(True)
         _lean_bfs_.set(False)
         _dfs_.set(False)
+        _both_BFS_.set(False)
     def _set_lean_bfs():
         unyts_parameters_.set_algorithm('lean_BFS')
         _bfs_.set(False)
         _lean_bfs_.set(True)
         _dfs_.set(False)
+        _both_BFS_.set(False)
     def _set_dfs():
         unyts_parameters_.set_algorithm('DFS')
         _bfs_.set(False)
         _lean_bfs_.set(False)
         _dfs_.set(True)
+        _both_BFS_.set(False)
+    def _set_both_BFS():
+        unyts_parameters_.set_algorithm('both_BFS')
+        _bfs_.set(False)
+        _lean_bfs_.set(False)
+        _dfs_.set(False)
+        _both_BFS_.set(True)
+    def _set_par_th():
+        unyts_parameters_.set_parallel('t')
+        _par_th_.set(True)
+        _par_mp_.set(False)
+        _par_off_.set(False)
+        _par_auto_.set(False)
+    def _set_par_mp():
+        unyts_parameters_.set_parallel('p')
+        _par_th_.set(False)
+        _par_mp_.set(True)
+        _par_off_.set(False)
+        _par_auto_.set(False)
+    def _set_par_off():
+        unyts_parameters_.set_parallel(False)
+        _par_th_.set(False)
+        _par_mp_.set(False)
+        _par_off_.set(True)
+        _par_auto_.set(False)
+    def _set_par_auto():
+        unyts_parameters_.set_parallel(None)
+        _par_th_.set(unyts_parameters_.threading_)
+        _par_mp_.set(unyts_parameters_.multiprocessing_)
+        _par_off_.set(not unyts_parameters_.threading_ and not unyts_parameters_.multiprocessing_)
+        _par_auto_.set(True)
+
     def _set_fvf():
         if unyts_parameters_.fvf_ is not None:
             current_value = f"{unyts_parameters_.fvf_} vol/vol"
@@ -473,10 +521,16 @@ def start_gui():
     _verbosity_.set(unyts_parameters_.verbose_)
     _print_path_ = tk.BooleanVar()
     _print_path_.set(unyts_parameters_.print_path_)
-    _bfs_, _lean_bfs_, _dfs_ = tk.BooleanVar(), tk.BooleanVar(), tk.BooleanVar()
+    _bfs_, _lean_bfs_, _dfs_, _both_BFS_ = tk.BooleanVar(), tk.BooleanVar(), tk.BooleanVar(), tk.BooleanVar()
     _bfs_.set(unyts_parameters_.algorithm_ == 'BFS')
     _lean_bfs_.set(unyts_parameters_.algorithm_ == 'lean_BFS')
     _dfs_.set(unyts_parameters_.algorithm_ == 'DFS')
+    _both_BFS_.set(unyts_parameters_.algorithm_ == 'both_BFS')
+    _par_th_, _par_mp_, _par_off_, _par_auto_ = tk.BooleanVar(), tk.BooleanVar(), tk.BooleanVar(), tk.BooleanVar()
+    _par_th_.set(unyts_parameters_.parallel_ and unyts_parameters_.threading_ and not unyts_parameters_.multiprocessing_)
+    _par_mp_.set(unyts_parameters_.parallel_ and unyts_parameters_.multiprocessing_)
+    _par_off_.set(not unyts_parameters_.parallel_)
+    _par_auto_.set(unyts_parameters_.parallel_)
 
     # setting menu
     root.option_add('*tearOff', False)
@@ -515,9 +569,19 @@ def start_gui():
     search_menu = tk.Menu(unyts_menu)
     search_menu.add_checkbutton(label='BFS', variable=_bfs_, command=_set_bfs)
     search_menu.add_checkbutton(label='lean BFS', variable=_lean_bfs_, command=_set_lean_bfs)
+    search_menu.add_checkbutton(label='both BFS', variable=_both_BFS_, command=_set_both_BFS)
     search_menu.add_checkbutton(label='DFS', variable=_dfs_, command=_set_dfs)
     options_menu.add_cascade(label='Search algorithm', menu=search_menu)
-    # help menu
+    # Parallel menu
+    if unyts_parameters_.threading_ or unyts_parameters_.multiprocessing or unyts_parameters_.parallel_:
+        parallel_menu = tk.Menu(unyts_menu)
+        parallel_menu.add_checkbutton(label='threading', variable=_par_th_, command=_set_par_th)
+        if unyts_parameters_.multiprocessing_:
+            parallel_menu.add_checkbutton(label='multiprocessing', variable=_par_mp_, command=_set_par_mp)
+        parallel_menu.add_checkbutton(label='off', variable=_par_off_, command=_set_par_off)
+        parallel_menu.add_checkbutton(label='auto', variable=_par_auto_, command=_set_par_auto)
+        options_menu.add_cascade(label='Parallel', menu=parallel_menu)
+        # help menu
     help_menu = tk.Menu(unyts_menu)
     unyts_menu.add_cascade(label='Help', menu=help_menu)
     help_menu.add_command(label='Help', command=open_help)

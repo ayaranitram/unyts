@@ -6,13 +6,21 @@ Created on Sat Oct 24 17:52:34 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.2'
-__release__ = 20241121
+__version__ = '0.6.5'
+__release__ = 20241123
 __all__ = ['BFS', 'lean_BFS', 'DFS', 'print_path']
 
+
 import logging
+
 from unyts import unyts_parameters_
 
+if unyts_parameters_.multiprocessing_:
+    import os
+    from multiprocessing import Process
+if unyts_parameters_.threading_:
+    import os
+    from threading import Thread
 
 def BFS(graph, start, end, verbose=False) -> list:
     """
@@ -124,6 +132,8 @@ def lean_BFS(graph, start, end, verbose=False, max_generations_screening=25) -> 
     end: node
     verbose: bool
         to print or not print messages.
+    max_generations_screening: int
+        maximum number of descendants generations, from the start and end unyts, that could be included in the slimmed network.
     Returns
     -------
     shortest_path: list
@@ -146,6 +156,96 @@ def lean_BFS(graph, start, end, verbose=False, max_generations_screening=25) -> 
             logging.info(f"<lean BFS> search graph slimmed from {len(graph.edges)} to {len(selected_edges)} nodes, in {generations} generations.")
         slim_graph = SlimUDigraph(selected_edges)
         return BFS(slim_graph, start, end, verbose=verbose and unyts_parameters_.verbose_details_ > 0)
+
+class SerialRun(object):
+    def __init__(self, target, args):
+        self.target = target
+        self.args = args
+    def start(self):
+        for each in self.args[0].values():
+            if each != '' and each is not None:
+                return each
+        try:
+            return self.target(*self.args)
+        except:
+            return None
+
+def _bfs(results, graph, start, end, verbose=False):
+    results['bfs'] = BFS(graph, start, end, verbose=verbose)
+    return results['bfs']
+
+def _lean_bfs(results, graph, start, end, verbose=False, max_generations_screening=25):
+    results['lean_bfs'] = lean_BFS(graph, start, end, verbose=verbose,
+                                   max_generations_screening=max_generations_screening)
+    return results['lean_bfs']
+
+def both_BFS(graph, start, end, verbose=False, max_generations_screening=25) -> list:
+    """
+    Runs lean_BFS and BFS searches in two independent threads, and returns the first obtained result.
+    Returns a shortest path from `start` to `end` in graph.
+
+    Parameters
+    ----------
+    graph: Digraph
+    start: node
+    end: node
+    verbose: bool
+        to print or not print messages.
+    max_generations_screening: int
+        maximum number of descendants generations, from the start and end unyts, that could be included in the slimmed network of the lean_BFS.
+    Returns
+    -------
+    shortest_path: list
+    """
+
+    if unyts_parameters_.parallel_ and unyts_parameters_.multiprocessing_:
+        runner = Process
+    elif unyts_parameters_.parallel_ and unyts_parameters_.threading_:
+        runner = Thread
+    elif not unyts_parameters_.parallel_:
+        runner = SerialRun
+    elif unyts_parameters_.parallel_ and not unyts_parameters_.threading_ and not unyts_parameters_.multiprocessing_:
+        raise ModuleNotFoundError("Neither threading or multiprocessing modules are available.")
+    else:
+        raise NotImplementedError("No option defined for parallel processing.")
+
+    from .database import units_network
+
+    verbose_ = verbose and unyts_parameters_.verbose_details_ > 0
+    results_ = {'bfs': '', 'lean_bfs': ''}
+    pythonwarnings = os.environ["PYTHONWARNINGS"] if "PYTHONWARNINGS" in os.environ else "default"
+    os.environ["PYTHONWARNINGS"] = "ignore"
+
+    runner_lean_bfs = runner(target=_lean_bfs,
+                             args=(results_, units_network, start, end, verbose_, max_generations_screening))
+    runner_bfs = runner(target=_bfs, args=(results_, units_network, start, end, verbose_))
+    if verbose:
+        logging.info(f"<lean BFS> starting BFS and lean_BFS threads, from {start} to {end}")
+    _ = runner_lean_bfs.start()
+    _ = runner_bfs.start()
+
+    _running = True
+    while _running:
+        if results_['lean_bfs'] != '' and results_['lean_bfs'] is not None:
+            _running = False
+            _return = results_['lean_bfs']
+            if verbose:
+                logging.info(f"<lean BFS> lean_BFS has found a path.")
+        elif results_['bfs'] != '' and results_['bfs'] is not None:
+            _running = False
+            _return = results_['bfs']
+            if verbose:
+                logging.info(f"<lean BFS> BFS has found a path.")
+        elif results_['bfs'] is None and results_['lean_bfs'] is None:
+            _running = False
+            _return = None
+
+    if unyts_parameters_.parallel_ and unyts_parameters_.multiprocessing_:
+        runner_bfs.terminate()
+        runner_lean_bfs.terminate()
+
+    os.environ["PYTHONWARNINGS"] = pythonwarnings
+    return _return
 
 
 def print_path(path: list) -> str:

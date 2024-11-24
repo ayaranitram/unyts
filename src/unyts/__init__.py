@@ -7,12 +7,14 @@ Created on Sat Oct 24 18:24:20 2020
 """
 
 __version__ = '0.9.10'
-__release__ = 20241121
+__release__ = 20241123
 __all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit', 'valid_unit',
            'set_unit', 'set_conversion', 'set_density', 'get_density'
-           'save', 'start_gui', 'set_fvf', 'set_algorithm']
+           'save', 'start_gui', 'set_fvf', 'set_algorithm', 'set_parallel',
+           'verbose']
 
-from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density, recursion_limit, verbose, set_algorithm, get_algorithm
+from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density,\
+    recursion_limit, verbose, set_algorithm, get_algorithm, set_parallel, get_parallel
 from .database import network_to_frame, save_memory, load_memory, clean_memory, set_fvf, get_fvf
 from .units.define import units
 from .converter import convert, convertible

@@ -6,10 +6,10 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.5'
-__release__ = 20241121
+__version__ = '0.6.7'
+__release__ = 20241123
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'set_density', 'get_density',
-           'recursion_limit', 'verbose', 'set_algorithm']
+           'recursion_limit', 'verbose', 'set_algorithm', 'set_parallel']
 
 import logging
 import os.path
@@ -49,6 +49,28 @@ class UnytsParameters(object):
         self.memory_ = not self.reload_
         self.last_path_str = ""
         self.gui = False
+        self.threading_ = self.threading_available()
+        self.multiprocessing_ = self.multiprocessing_available()
+        self.parallel_ = (self.threading_ or self.multiprocessing_) and self.parallel_
+        self._warnings = []
+
+    def threading_available(self):
+        try:
+            import threading
+            threading_ = True
+        except ModuleNotFoundError:
+            threading_ = False
+        return threading_
+
+    def multiprocessing_available(self):
+        # multiprocessing set to False, because it is not possible to pickle unyts
+        multiprocessing_ = False
+        # try:
+        #     import multiprocessing
+        #     multiprocessing_ = True
+        # except ModuleNotFoundError:
+        #     multiprocessing_ = False
+        return multiprocessing_
 
     def load_params(self) -> None:
         if isfile(ini_path):
@@ -68,6 +90,7 @@ class UnytsParameters(object):
                       'algorithm': 'lean_BFS',
                       'max_generations': __max_generations_default__,
                       'fvf': 1.0,
+                      'parallel': True,
                       'config_files_folder': None}
             with open(ini_path, 'w') as f:
                 json_dump(params, f)
@@ -84,6 +107,7 @@ class UnytsParameters(object):
         self.algorithm_ = params['algorithm'] if 'algorithm' in params else 'BFS'
         self.max_generations_ = params['max_generations'] if 'max_generations' in params else __max_generations_default__
         self.fvf_ = params['fvf'] if 'fvf' in params else 1.0
+        self.parallel_ = params['parallel'] if 'parallel' in params else True
         self.config_files_folder_ = dir_path if ('config_files_folder' not in params or params['config_files_folder'] is None) \
             else params['config_files_folder'] if ('config_files_folder' in params and isdir(params['config_files_folder'])) \
             else self.config_files_folder_
@@ -103,6 +127,7 @@ class UnytsParameters(object):
             self.algorithm_ = params['algorithm'] if 'algorithm' in params else 'BFS'
             self.max_generations_ = params['max_generations'] if 'max_generations' in params else __max_generations_default__
             self.fvf_ = params['fvf'] if 'fvf' in params else 1.0
+            self.parallel_ = params['parallel'] if 'parallel' in params else True
             self.config_files_folder_ = dir_path if ('config_files_folder' not in params or params['config_files_folder'] is None) \
                 else params['config_files_folder'] if ('config_files_folder' in params and isdir(params['config_files_folder'])) \
                 else self.config_files_folder_
@@ -121,6 +146,7 @@ class UnytsParameters(object):
                   'algorithm': self.algorithm_,
                   'max_generations': self.max_generations_,
                   'fvf': self.fvf_,
+                  'parallel': self.parallel_,
                   'config_files_folder': self.config_files_folder_ if self.config_files_folder_ != dir_path else None}
         with open(ini_path, 'w') as f:
             json_dump(params, f)
@@ -233,16 +259,56 @@ class UnytsParameters(object):
         return self.algorithm_
 
     def set_algorithm(self, algorithm:str):
-        if algorithm not in ['BFS', 'lean_BFS', 'DFS']:
-            logging.error(f"Valid algorithms are 'BFS', 'lean_BFS' and 'DFS' not {algorithm}.")
+        if algorithm not in ['BFS', 'lean_BFS', 'DFS', 'both_BFS']:
+            logging.error(f"Valid algorithms are 'BFS', 'lean_BFS', both_BFS, and 'DFS' not {algorithm}.")
+        elif algorithm == 'both_BFS' and not self.threading_:
+            logging.critical("threading module not available in this Python installation.")
+            if self.get_algorithm() == 'both_BFS':
+                _ = set_algorithm('lean_BFS')
+            else:
+                logging.info(f"keeping {self.get_algorithm()} as search algorithm.")
         else:
             self.algorithm_ = algorithm
-            logging.info(f"{algorithm} set as search algorithm.")
-            logging.warning("The search memory must be cleansed if intended to repeat searches with a different algorithm.")
+            if self.verbose_:
+                logging.info(f"{algorithm} set as search algorithm.")
+            msg = "The search memory must be cleansed if intended to repeat searches with a different algorithm."
+            if msg not in self._warnings:
+                logging.warning(msg)
+                self._warnings.append(msg)
             self.save_params()
 
     def get_algorithm(self):
         return self.algorithm_
+
+    def set_parallel(self, method:str):
+        if method is None:
+            self.parallel_ = True
+            self.threading_ = self.threading_available()
+            self.multiprocessing_ = self.multiprocessing_available()
+        elif type(method) is bool:
+            self.parallel_ = method
+            self.threading_ = self.threading_available()
+            self.multiprocessing_ = self.multiprocessing_available()
+        elif type(method) is str and len(method.strip()) > 0:
+            if method.lower().strip()[0] == 't':
+                self.parallel_ = True
+                self.threading_ = True
+                self.multiprocessing_ = False
+            elif method.lower().strip()[0] in 'mp':
+                self.parallel_ = True
+                self.threading_ = False
+                self.multiprocessing_ = True
+            else:
+                self.parallel_ = False
+                self.threading_ = self.threading_available()
+                self.multiprocessing_ = self.multiprocessing_available()
+        else:
+            raise ValueError(f"method argument should be set to 'threading' of 'multiprocessing', False to deactivate, or None for automatic detection.")
+        msg = f"Parallel processing {'activated' if self.parallel_ else 'deactivated'}{', using ' if self.parallel_ else ''}{('multiprocessing' if self.multiprocessing_ else 'threading' if self.threading_ else '') if self.parallel_ else ''}."
+        logging.info(msg)
+
+    def get_parallel(self):
+        return self.parallel_
 
     def set_user_folder(self, path=None):
         if path is None:
@@ -339,10 +405,18 @@ def reload() -> None:
 
 
 def set_algorithm(algorithm:str):
-    if algorithm not in ['BFS', 'lean_BFS', 'DFS']:
-        raise ValueError(f"valid algorithms are 'BFS', 'lean_BFS' and 'DFS' not {algorithm}.")
+    if algorithm not in ['BFS', 'lean_BFS', 'DFS', 'both_BFS']:
+        raise ValueError(f"valid algorithms are 'BFS', 'lean_BFS', both_BFS, and 'DFS' not {algorithm}.")
     unyts_parameters_.set_algorithm(algorithm)
 
 
 def get_algorithm():
     return unyts_parameters_.algorithm_
+
+
+def set_parallel(method:str):
+    unyts_parameters_.set_parallel(method)
+
+
+def get_parallel():
+    return unyts_parameters_.get_parallel()
