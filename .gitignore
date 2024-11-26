@@ -14,3 +14,5 @@ build
 *.cache
 venv
 /src/unyts/parameters.backup
+gallery/*
+experiments/*
