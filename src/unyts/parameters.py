@@ -21,7 +21,7 @@ from sys import getrecursionlimit
 ini_path = Path(__file__).with_name('parameters.ini').absolute()
 ini_backup = Path(__file__).with_name('parameters.backup').absolute()
 dir_path = os.path.dirname(ini_path) + '/'
-off_switches = ('off', 'no', 'not', '')
+off_switches = ('false', 'off', 'no', 'none', 'null', 'not', '')
 __max_recursion_default__ = 12
 __max_generations_default__ = 25
 
@@ -63,7 +63,7 @@ class UnytsParameters(object):
         return threading_
 
     def multiprocessing_available(self):
-        # multiprocessing set to False, because it is not possible to pickle unyts
+        # multiprocessing set to False, because it is not possible to pickle unyts due to lambda
         multiprocessing_ = False
         # try:
         #     import multiprocessing
