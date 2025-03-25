@@ -20,6 +20,13 @@ def equality(x):
     """
     return x
 
+def inverse(x):
+    """"
+        conversion of lambda:
+          x: 1 / x
+        """
+    return 1 / x
+
 def fraction__to__percentage(fraction):
     """"
     conversion of lambda: 
@@ -39,10 +46,10 @@ def percentage__to__fraction(percentage):
 def second__to__millisecond(second):
     """"
     conversion of lambda: 
-      t: t*1000
+      t: t * 1000
     """
     t = second
-    return t*1000
+    return t * 1000
 
 def minute__to__second(minute):
     """"
@@ -195,6 +202,14 @@ def yard__to__meter(yard):
     """
     d = yard
     return d * 9144 / 10000
+
+def foot__to__meter(yard):
+    """"
+    conversion of lambda:
+      d: d * 3048 / 10000
+    """
+    d = yard
+    return d * 3048 / 10000
 
 def inch__to__thou(inch):
     """"
@@ -556,6 +571,15 @@ def standard_cubic_foot__to__standard_cubic_meter(standard_cubic_foot):
     v = standard_cubic_foot
     return v * (3048 ** 3) / (10000 ** 3)
 
+def standard_cubic_meter__to__standard_cubic_foot(standard_cubic_meter):
+    """"
+    conversion of lambda:
+      v: v / (3048 ** 3) * (10000 ** 3)
+    """
+    v = standard_cubic_meter
+    return v / (3048 ** 3) * (10000 ** 3)
+
+
 def standard_barrel__to__USgal(standard_barrel):
     """"
     conversion of lambda: 
@@ -748,6 +772,14 @@ def atmosphere__to__Torr(atmosphere):
     p = atmosphere
     return p * 760
 
+def atmosphere__to__absolute_bar(atmosphere):
+    """"
+    conversion of lambda:
+      p: p * 101325 / 100000
+    """
+    p = atmosphere
+    return p * 101325 / 100000
+
 def absolute_bar__to__kilogram_slash_square_centimeter(absolute_bar):
     """"
     conversion of lambda: 
@@ -867,6 +899,14 @@ def pound__to__kilogram(pound):
     """
     w = pound
     return w * 45359237 / 100000000
+
+def pound__to__gram(pound):
+    """"
+    conversion of lambda:
+      w: w * 45359237 / 100000
+    """
+    w = pound
+    return w * 45359237 / 100000
 
 def kilogram_mass__to__kilogram_force(kilogram_mass):
     """"

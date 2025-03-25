@@ -20,8 +20,8 @@ except ModuleNotFoundError:
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
-__version__ = '0.4.20'
-__release__ = 20241123
+__version__ = '0.4.21'
+__release__ = 20241214
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -223,7 +223,8 @@ class Conversion(object):
 
     def get_convert(self):
         if self.rev and self.conv is not None:
-            return lambda x: x / self.conv(1)
+            # return lambda x: x / self.conv(1)
+            return self.reverse
         else:
             return self.conv
 

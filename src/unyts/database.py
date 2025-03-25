@@ -6,8 +6,8 @@ Created on Tue Dec 03 23:15:37 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.0'
-__release__ = 20241203
+__version__ = '0.6.1'
+__release__ = 20241214
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf']
 
 import logging
@@ -383,7 +383,7 @@ def _load_network():
 
     # Length conversions
     network.add_edge(Conversion(network.get_node('yard'), network.get_node('meter'), yard__to__meter))
-    # network.addEdge(Conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048))
+    # network.addEdge(Conversion(network.getNode('foot'), network.getNode('meter'), foot__to__meter))
     network.add_edge(Conversion(network.get_node('inch'), network.get_node('thou'), inch__to__thou))
     network.add_edge(Conversion(network.get_node('inch'), network.get_node('tenth'), inch__to__tenth))
     network.add_edge(Conversion(network.get_node('foot'), network.get_node('inch'), foot__to__inch))
@@ -412,7 +412,6 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('square yard'), network.get_node('square foot'), square_yard__to__square_foot))
     network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square inch'), square_foot__to__square_inch))
     network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square meter'), square_foot__to__square_meter))
-    # network.addEdge(Conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048))
     network.add_edge(Conversion(network.get_node('square inch'), network.get_node('square thou'), square_inch__to__square_thou))
     network.add_edge(Conversion(network.get_node('square inch'), network.get_node('square tenth'), square_inch__to__square_tenth))
     network.add_edge(Conversion(network.get_node('square chain'), network.get_node('square yard'), square_chain__to__square_yard))
@@ -454,7 +453,7 @@ def _load_network():
                                 reservoir_cubic_meter__to__reservoir_barrel))
     network.add_edge(Conversion(network.get_node('reservoir cubic meter'), network.get_node('standard cubic meter'),
                                 reservoir_cubic_meter__to__standard_cubic_meter))
-    # network.addEdge(Conversion(network.getNode('standard cubic meter'), network.getNode('standard cubic foot'), lambda v: v/5.614584))
+    # network.addEdge(Conversion(network.getNode('standard cubic meter'), network.getNode('standard cubic foot'), standard_cubic_meter__to__standard_cubic_foot))
 
     network.add_edge(Conversion(network.get_node('cubic inch'), network.get_node('cubic thou'), cubic_inch__to__cubic_thou))
     network.add_edge(Conversion(network.get_node('cubic inch'), network.get_node('cubic tenth'), cubic_inch__to__cubic_tenth))
@@ -478,7 +477,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('bar'), network.get_node('psi'), bar__to__psi))
     network.add_edge(Conversion(network.get_node('psi'), network.get_node('bar'), psi__to__bar))
     network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('Pascal'), absolute_bar__to__Pascal))
-    # network.addEdge(Conversion(network.getNode('atmosphere'), network.getNode('absolute bar'), lambda p: p*1.01325))
+    # network.addEdge(Conversion(network.getNode('atmosphere'), network.getNode('absolute bar'), atmosphere__to__absolute_bar))
     network.add_edge(Conversion(network.get_node('atmosphere'), network.get_node('Pascal'), atmosphere__to__Pascal))
     network.add_edge(Conversion(network.get_node('atmosphere'), network.get_node('Torr'), atmosphere__to__Torr))
     network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('bar'), equality))
@@ -504,12 +503,11 @@ def _load_network():
 
     network.add_edge(Conversion(network.get_node('metric ton'), network.get_node('kilogram'), metric_ton__to__kilogram))
     network.add_edge(Conversion(network.get_node('kilogram'), network.get_node('gram'), kilogram__to__gram))
-    # network.addEdge(Conversion(network.getNode('pound'), network.getNode('gram'), lambda w: w*453.59237))
+    # network.addEdge(Conversion(network.getNode('pound'), network.getNode('gram'), pound__to__gram))
     network.add_edge(
         Conversion(network.get_node('pound'), network.get_node('kilogram'), pound__to__kilogram))
 
     # Force conversion
-    # network.addEdge(Conversion(network.getNode('kilogram'), network.getNode('kilogram force'), lambda f: f* converter(StandardEarthGravity,'m/s2','cm/s2',False)))
     network.add_edge(Conversion(network.get_node('kilogram mass'), network.get_node('kilogram force'),
                                 kilogram_mass__to__kilogram_force))
     network.add_edge(Conversion(network.get_node('kilogram force'), network.get_node('kilogram mass'),

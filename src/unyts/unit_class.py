@@ -604,7 +604,8 @@ class Unit(object, metaclass=UnytType):
 
     def round(self, precision:int=0, *, value=None):
         value_ = self.value if value is None else value
-        significants = lambda v, i: float(f"{v:.{abs(i)}g}")
+        def significants(v, i):
+            return float(f"{v:.{abs(i)}g}")
         from .units.define import units
         precision = int(precision)
         if precision >= 0 and hasattr(value_, 'round'):
