@@ -63,13 +63,11 @@ class UnytsParameters(object):
         return threading_
 
     def multiprocessing_available(self):
-        # multiprocessing set to False, because it is not possible to pickle unyts due to lambda
-        multiprocessing_ = False
-        # try:
-        #     import multiprocessing
-        #     multiprocessing_ = True
-        # except ModuleNotFoundError:
-        #     multiprocessing_ = False
+        try:
+            import multiprocessing
+            multiprocessing_ = True
+        except ModuleNotFoundError:
+            multiprocessing_ = False
         return multiprocessing_
 
     def load_params(self) -> None:

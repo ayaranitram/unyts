@@ -17,10 +17,10 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 class Data(Unit):
     class_units = _dictionary['Data']
-    __slots__ = ('unit', 'value', 'name', 'kind')
+    __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
-        self.name = 'data' if name is None else name
+        name = 'data' if name is None else name
+        super().__init__(value, units, name)
         self.kind = Data
-        self.value = self.check_value(value)
-        self.unit = self.check_unit(units)
+        self.__unit = self.check_unit(units)

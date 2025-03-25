@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.30'
-__release__ = 20230724
+__version__ = '0.5.31'
+__release__ = 20250323
 __all__ = ['CustomUnits', 'UserUnits', 'OtherUnits', 'set_unit', 'set_conversion']
 
 from ..unit_class import Unit
@@ -25,10 +25,11 @@ def OtherUnits(value: numeric, units: unit_or_str, name=None) -> Unit:
 
 class UserUnits(Unit):
     class_units = dictionary['UserUnits']
-    __slots__ = ('unit', 'value', 'name', 'kind')
+    __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
-        self.name = 'user_units' if name is None else name
+        name = 'user_units' if name is None else name
+        super().__init__(value, None, name)
         self.kind = UserUnits
         units = units.strip()
         if isinstance(units, Unit):
@@ -37,7 +38,6 @@ class UserUnits(Unit):
             if type(dictionary['UserUnits']) is tuple:
                 dictionary['UserUnits'] = list(dictionary['UserUnits'])
             dictionary['UserUnits'].append(units)
-        self.value = self.check_value(value)
         self.unit = units  # self.check_unit(units)
 
 
