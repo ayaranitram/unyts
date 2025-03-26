@@ -27,7 +27,7 @@ from ..unit_class import Unit
 from ..helpers.common_classes import unit_or_str as unit_or_str, numeric as numeric, numeric_ as _numeric
 
 
-def units(value: numeric, unit: unit_or_str = None, name=None) -> Unit:
+def units(value: numeric, unit: unit_or_str=None, name=None) -> Unit:
     """
     return an instance of units with the provided value and units.
 
@@ -57,13 +57,15 @@ def units(value: numeric, unit: unit_or_str = None, name=None) -> Unit:
         unit = 'Dimensionless'
     if type(unit) is not str:
         raise TypeError("'units' must be a string or Unit instance.")
-    if not isinstance(value, _numeric):
+    if not isinstance(value, _numeric) and not ((type(unit) is str and unit == 'date') or type(unit) is Date):
         raise TypeError("'value' parameter must be numeric.")
 
     unit = unit.strip()
 
     if unit in uncertain_names:
         return Unit(value, unit, name)
+    if (type(unit) is str and unit == 'date') or type(unit) is Date:
+        return Date(value, 'date', name)
 
     for kind in _dictionary:
         if unit in _dictionary[kind]:

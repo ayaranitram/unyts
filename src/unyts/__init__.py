@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.9.10'
-__release__ = 20241124
+__version__ = '0.9.12'
+__release__ = 20250324
 __all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit', 'valid_unit',
            'set_unit', 'set_conversion', 'set_density', 'get_density'
            'save', 'start_gui', 'set_fvf', 'set_algorithm', 'set_parallel',
@@ -25,7 +25,7 @@ from .gui import start_gui
 
 
 if unyts_parameters_.show_version_:
-    print(f"loaded unyts version {str(__version__)}")
+    print(f"loaded unyts version {__version__}")
     unyts_parameters_.show_version_ = False
     unyts_parameters_.save_params()
 

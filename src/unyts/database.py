@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sat Oct 24 12:36:48 2020
+Created on Tue Dec 03 23:15:37 2024
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.45'
-__release__ = 20240811
+__version__ = '0.6.1'
+__release__ = 20241214
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf']
 
 import logging
 import os
 
-from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, StandardAirDensity, \
-    StandardEarthGravity, SpeedOfLight
+from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary
+from .units.def_conversions import *
 from .network import UDigraph, UNode, Conversion
 from .parameters import unyts_parameters_
 from os.path import isfile
@@ -101,10 +101,8 @@ def _load_network():
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for secondName in dictionary[unit_kind][unit_name]:
                     network.add_node(UNode(secondName))
-                    network.add_edge(Conversion(network.get_node(secondName), network.get_node(unit_name), lambda x: x,
-                                                alias=True))
-                    network.add_edge(Conversion(network.get_node(unit_name), network.get_node(secondName), lambda x: x,
-                                                alias=True))
+                    network.add_edge(Conversion(network.get_node(secondName), network.get_node(unit_name), equality, alias=True))
+                    network.add_edge(Conversion(network.get_node(unit_name), network.get_node(secondName), equality, alias=True))
                     dictionary[unit_kind.split('_')[0]].append(secondName)
         if '_SPACES' in unit_kind:
             for rep in ['-', '_']:
@@ -116,10 +114,10 @@ def _load_network():
                         dictionary[unit_kind.split('_')[0]].append(unit_name.replace(' ', rep))
                         network.add_edge(
                             Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', rep)),
-                                       lambda x: x))
+                                       equality))
                         network.add_edge(
                             Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', rep)),
-                                       lambda x: x))
+                                       equality))
                         if type(dictionary[unit_kind]) is dict:
                             for secondName in dictionary[unit_kind][unit_name]:
                                 if ' ' in secondName:
@@ -127,10 +125,10 @@ def _load_network():
                                     network.add_node(UNode(secondName.replace(' ', rep)))
                                     network.add_edge(
                                         Conversion(network.get_node(secondName.replace(' ', rep)), network.get_node(secondName),
-                                                   lambda x: x))
+                                                   equality))
                                     network.add_edge(
                                         Conversion(network.get_node(secondName), network.get_node(secondName.replace(' ', rep)),
-                                                   lambda x: x))
+                                                   equality))
                                     dictionary[unit_kind.split('_')[0]].append(secondName)
                                     dictionary[unit_kind.split('_')[0]].append(secondName.replace(' ', rep))
                     else:
@@ -141,10 +139,10 @@ def _load_network():
                                     network.add_node(UNode(secondName.replace(' ', rep)))
                                     network.add_edge(
                                         Conversion(network.get_node(secondName.replace(' ', rep)), network.get_node(secondName),
-                                                   lambda x: x))
+                                                   equality))
                                     network.add_edge(
                                         Conversion(network.get_node(secondName), network.get_node(secondName.replace(' ', rep)),
-                                                   lambda x: x))
+                                                   equality))
                                     dictionary[unit_kind.split('_')[0]].append(secondName)
                                     dictionary[unit_kind.split('_')[0]].append(secondName.replace(' ', rep))
 
@@ -238,18 +236,18 @@ def _load_network():
                     network.add_node(UNode(unit_name))
                     network.add_node(UNode(unit_name + 's'))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(unit_name + 's'), lambda x: x))
+                        Conversion(network.get_node(unit_name), network.get_node(unit_name + 's'), equality))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name + 's'), network.get_node(unit_name), lambda x: x))
+                        Conversion(network.get_node(unit_name + 's'), network.get_node(unit_name), equality))
                     dictionary[unit_kind.split('_')[0]].append(unit_name + 's')
             else:
                 for unit_name in dictionary[unit_kind]:
                     network.add_node(UNode(unit_name))
                     network.add_node(UNode(unit_name + 's'))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(unit_name + 's'), lambda x: x))
+                        Conversion(network.get_node(unit_name), network.get_node(unit_name + 's'), equality))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name + 's'), network.get_node(unit_name), lambda x: x))
+                        Conversion(network.get_node(unit_name + 's'), network.get_node(unit_name), equality))
                     dictionary[unit_kind.split('_')[0]].append(unit_name + 's')
             if '_UPPER' in unit_kind:
                 if type(dictionary[unit_kind]) is dict:
@@ -258,10 +256,10 @@ def _load_network():
                         network.add_node(UNode(unit_name.upper() + 'S'))
                         network.add_edge(
                             Conversion(network.get_node(unit_name), network.get_node(unit_name.upper() + 'S'),
-                                       lambda x: x))
+                                       equality))
                         network.add_edge(
                             Conversion(network.get_node(unit_name.upper() + 'S'), network.get_node(unit_name),
-                                       lambda x: x))
+                                       equality))
                         dictionary[unit_kind.split('_')[0]].append(unit_name.upper() + 'S')
                 else:
                     for unit_name in dictionary[unit_kind]:
@@ -269,10 +267,10 @@ def _load_network():
                         network.add_node(UNode(unit_name.upper() + 'S'))
                         network.add_edge(
                             Conversion(network.get_node(unit_name), network.get_node(unit_name.upper() + 'S'),
-                                       lambda x: x))
+                                       equality))
                         network.add_edge(
                             Conversion(network.get_node(unit_name.upper() + 'S'), network.get_node(unit_name),
-                                       lambda x: x))
+                                       equality))
                         dictionary[unit_kind.split('_')[0]].append(unit_name.upper() + 'S')
             if '_LOWER' in unit_kind:
                 if type(dictionary[unit_kind]) is dict:
@@ -282,10 +280,10 @@ def _load_network():
                         network.add_node(UNode(unit_name.lower() + 's'))
                         network.add_edge(
                             Conversion(network.get_node(unit_name), network.get_node(unit_name.lower() + 's'),
-                                       lambda x: x))
+                                       equality))
                         network.add_edge(
                             Conversion(network.get_node(unit_name.lower() + 's'), network.get_node(unit_name),
-                                       lambda x: x))
+                                       equality))
                         dictionary[unit_kind.split('_')[0]].append(unit_name.lower() + 's')
                 else:
                     for unit_name in dictionary[unit_kind]:
@@ -293,10 +291,10 @@ def _load_network():
                         network.add_node(UNode(unit_name.lower() + 's'))
                         network.add_edge(
                             Conversion(network.get_node(unit_name), network.get_node(unit_name.lower() + 's'),
-                                       lambda x: x))
+                                       equality))
                         network.add_edge(
                             Conversion(network.get_node(unit_name.lower() + 's'), network.get_node(unit_name),
-                                       lambda x: x))
+                                       equality))
                         dictionary[unit_kind.split('_')[0]].append(unit_name.lower() + 's')
         if '_UPPER' in unit_kind:
             if type(dictionary[unit_kind]) is dict:
@@ -304,26 +302,26 @@ def _load_network():
                     network.add_node(UNode(unit_name))
                     network.add_node(UNode(unit_name.upper()))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(unit_name.upper()), lambda x: x))
+                        Conversion(network.get_node(unit_name), network.get_node(unit_name.upper()), equality))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name.upper()), network.get_node(unit_name), lambda x: x))
+                        Conversion(network.get_node(unit_name.upper()), network.get_node(unit_name), equality))
                     dictionary[unit_kind.split('_')[0]].append(unit_name.upper())
                     for secondName in dictionary[unit_kind][unit_name]:
                         network.add_node(UNode(secondName))
                         network.add_node(UNode(secondName.upper()))
                         network.add_edge(
-                            Conversion(network.get_node(secondName), network.get_node(secondName.upper()), lambda x: x))
+                            Conversion(network.get_node(secondName), network.get_node(secondName.upper()), equality))
                         network.add_edge(
-                            Conversion(network.get_node(secondName.upper()), network.get_node(secondName), lambda x: x))
+                            Conversion(network.get_node(secondName.upper()), network.get_node(secondName), equality))
                         dictionary[unit_kind.split('_')[0]].append(secondName.upper())
             else:
                 for unit_name in dictionary[unit_kind]:
                     network.add_node(UNode(unit_name))
                     network.add_node(UNode(unit_name.upper()))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(unit_name.upper()), lambda x: x))
+                        Conversion(network.get_node(unit_name), network.get_node(unit_name.upper()), equality))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name.upper()), network.get_node(unit_name), lambda x: x))
+                        Conversion(network.get_node(unit_name.upper()), network.get_node(unit_name), equality))
                     dictionary[unit_kind.split('_')[0]].append(unit_name.upper())
         if '_LOWER' in unit_kind:
             if type(dictionary[unit_kind]) is dict:
@@ -331,229 +329,225 @@ def _load_network():
                     network.add_node(UNode(unit_name))
                     network.add_node(UNode(unit_name.lower()))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(unit_name.lower()), lambda x: x))
+                        Conversion(network.get_node(unit_name), network.get_node(unit_name.lower()), equality))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name.lower()), network.get_node(unit_name), lambda x: x))
+                        Conversion(network.get_node(unit_name.lower()), network.get_node(unit_name), equality))
                     dictionary[unit_kind.split('_')[0]].append(unit_name.lower())
                     for secondName in dictionary[unit_kind][unit_name]:
                         network.add_node(UNode(secondName))
                         network.add_node(UNode(secondName.lower()))
                         network.add_edge(
-                            Conversion(network.get_node(secondName), network.get_node(secondName.lower()), lambda x: x))
+                            Conversion(network.get_node(secondName), network.get_node(secondName.lower()), equality))
                         network.add_edge(
-                            Conversion(network.get_node(secondName.lower()), network.get_node(secondName), lambda x: x))
+                            Conversion(network.get_node(secondName.lower()), network.get_node(secondName), equality))
                         dictionary[unit_kind.split('_')[0]].append(secondName.lower())
             else:
                 for unit_name in dictionary[unit_kind]:
                     network.add_node(UNode(unit_name))
                     network.add_node(UNode(unit_name.lower()))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name), network.get_node(unit_name.lower()), lambda x: x))
+                        Conversion(network.get_node(unit_name), network.get_node(unit_name.lower()), equality))
                     network.add_edge(
-                        Conversion(network.get_node(unit_name.lower()), network.get_node(unit_name), lambda x: x))
+                        Conversion(network.get_node(unit_name.lower()), network.get_node(unit_name), equality))
                     dictionary[unit_kind.split('_')[0]].append(unit_name.lower())
         if '_INVERSE' in unit_kind:
             pass
 
     # Percentage & fraction :
-    network.add_edge(Conversion(network.get_node('fraction'), network.get_node('percentage'), lambda x: x * 100))
-    network.add_edge(Conversion(network.get_node('percentage'), network.get_node('fraction'), lambda p: p / 100))
+    network.add_edge(Conversion(network.get_node('fraction'), network.get_node('percentage'), fraction__to__percentage))
+    network.add_edge(Conversion(network.get_node('percentage'), network.get_node('fraction'), percentage__to__fraction))
 
     # Time conversions
-    network.add_edge(Conversion(network.get_node('second'), network.get_node('millisecond'), lambda t: t*1000))
-    network.add_edge(Conversion(network.get_node('minute'), network.get_node('second'), lambda t: t * 60))
-    network.add_edge(Conversion(network.get_node('hour'), network.get_node('minute'), lambda t: t * 60))
-    network.add_edge(Conversion(network.get_node('day'), network.get_node('hour'), lambda t: t * 24))
-    network.add_edge(Conversion(network.get_node('day'), network.get_node('month'), lambda t: t / 365.25 * 12))
-    network.add_edge(Conversion(network.get_node('week'), network.get_node('day'), lambda t: t * 7))
-    network.add_edge(Conversion(network.get_node('year'), network.get_node('month'), lambda t: t * 12))
-    network.add_edge(Conversion(network.get_node('year'), network.get_node('day'), lambda t: t * 36525 / 100))
-    network.add_edge(Conversion(network.get_node('lustrum'), network.get_node('year'), lambda t: t * 5))
-    network.add_edge(Conversion(network.get_node('decade'), network.get_node('year'), lambda t: t * 10))
-    network.add_edge(Conversion(network.get_node('century'), network.get_node('year'), lambda t: t * 100))
+    network.add_edge(Conversion(network.get_node('second'), network.get_node('millisecond'), second__to__millisecond))
+    network.add_edge(Conversion(network.get_node('minute'), network.get_node('second'), minute__to__second))
+    network.add_edge(Conversion(network.get_node('hour'), network.get_node('minute'), hour__to__minute))
+    network.add_edge(Conversion(network.get_node('day'), network.get_node('hour'), day__to__hour))
+    network.add_edge(Conversion(network.get_node('day'), network.get_node('month'), day__to__month))
+    network.add_edge(Conversion(network.get_node('week'), network.get_node('day'), week__to__day))
+    network.add_edge(Conversion(network.get_node('year'), network.get_node('month'), year__to__month))
+    network.add_edge(Conversion(network.get_node('year'), network.get_node('day'), year__to__day))
+    network.add_edge(Conversion(network.get_node('lustrum'), network.get_node('year'), lustrum__to__year))
+    network.add_edge(Conversion(network.get_node('decade'), network.get_node('year'), decade__to__year))
+    network.add_edge(Conversion(network.get_node('century'), network.get_node('year'), century__to__year))
 
     # Temperature conversions
-    network.add_edge(Conversion(network.get_node('Celsius'), network.get_node('Kelvin'), lambda t: t + 273.15))
-    network.add_edge(Conversion(network.get_node('Kelvin'), network.get_node('Celsius'), lambda t: t - 273.15))
-    network.add_edge(Conversion(network.get_node('Celsius'), network.get_node('Fahrenheit'), lambda t: t * 9 / 5 + 32))
+    network.add_edge(Conversion(network.get_node('Celsius'), network.get_node('Kelvin'), Celsius__to__Kelvin))
+    network.add_edge(Conversion(network.get_node('Kelvin'), network.get_node('Celsius'), Kelvin__to__Celsius))
+    network.add_edge(Conversion(network.get_node('Celsius'), network.get_node('Fahrenheit'), Celsius__to__Fahrenheit))
     network.add_edge(
-        Conversion(network.get_node('Fahrenheit'), network.get_node('Celsius'), lambda t: (t - 32) * 5 / 9))
-    network.add_edge(Conversion(network.get_node('Fahrenheit'), network.get_node('Rankine'), lambda t: t + 459.67))
-    network.add_edge(Conversion(network.get_node('Rankine'), network.get_node('Fahrenheit'), lambda t: t - 459.67))
-    network.add_edge(Conversion(network.get_node('Rankine'), network.get_node('Kelvin'), lambda t: t * 5 / 9))
-    network.add_edge(Conversion(network.get_node('Kelvin'), network.get_node('Rankine'), lambda t: t * 9 / 5))
+        Conversion(network.get_node('Fahrenheit'), network.get_node('Celsius'), Fahrenheit__to__Celsius))
+    network.add_edge(Conversion(network.get_node('Fahrenheit'), network.get_node('Rankine'), Fahrenheit__to__Rankine))
+    network.add_edge(Conversion(network.get_node('Rankine'), network.get_node('Fahrenheit'), Rankine__to__Fahrenheit))
+    network.add_edge(Conversion(network.get_node('Rankine'), network.get_node('Kelvin'), Rankine__to__Kelvin))
+    network.add_edge(Conversion(network.get_node('Kelvin'), network.get_node('Rankine'), Kelvin__to__Rankine))
 
     # Length conversions
-    network.add_edge(Conversion(network.get_node('yard'), network.get_node('meter'), lambda d: d * 9144 / 10000))
-    # network.addEdge(Conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048))
-    network.add_edge(Conversion(network.get_node('inch'), network.get_node('thou'), lambda d: d * 1000))
-    network.add_edge(Conversion(network.get_node('inch'), network.get_node('tenth'), lambda d: d * 10))
-    network.add_edge(Conversion(network.get_node('foot'), network.get_node('inch'), lambda d: d * 12))
-    network.add_edge(Conversion(network.get_node('yard'), network.get_node('foot'), lambda d: d * 3))
-    network.add_edge(Conversion(network.get_node('chain'), network.get_node('yard'), lambda d: d * 22))
-    network.add_edge(Conversion(network.get_node('furlong'), network.get_node('chain'), lambda d: d * 10))
-    network.add_edge(Conversion(network.get_node('mile'), network.get_node('furlong'), lambda d: d * 8))
-    network.add_edge(Conversion(network.get_node('league'), network.get_node('mile'), lambda d: d * 3))
+    network.add_edge(Conversion(network.get_node('yard'), network.get_node('meter'), yard__to__meter))
+    # network.addEdge(Conversion(network.getNode('foot'), network.getNode('meter'), foot__to__meter))
+    network.add_edge(Conversion(network.get_node('inch'), network.get_node('thou'), inch__to__thou))
+    network.add_edge(Conversion(network.get_node('inch'), network.get_node('tenth'), inch__to__tenth))
+    network.add_edge(Conversion(network.get_node('foot'), network.get_node('inch'), foot__to__inch))
+    network.add_edge(Conversion(network.get_node('yard'), network.get_node('foot'), yard__to__foot))
+    network.add_edge(Conversion(network.get_node('chain'), network.get_node('yard'), chain__to__yard))
+    network.add_edge(Conversion(network.get_node('furlong'), network.get_node('chain'), furlong__to__chain))
+    network.add_edge(Conversion(network.get_node('mile'), network.get_node('furlong'), mile__to__furlong))
+    network.add_edge(Conversion(network.get_node('league'), network.get_node('mile'), league__to__mile))
     network.add_edge(
-        Conversion(network.get_node('nautical league'), network.get_node('nautical mile'), lambda d: d * 3))
-    network.add_edge(Conversion(network.get_node('nautical mile'), network.get_node('meter'), lambda d: d * 1852))
-    network.add_edge(Conversion(network.get_node('rod'), network.get_node('yard'), lambda d: d * 55 / 10))
-    network.add_edge(Conversion(network.get_node('astronomical unit'), network.get_node('meter'), lambda d: d * 149597870700))
-    network.add_edge(Conversion(network.get_node('parsec'), network.get_node('astronomical unit'), lambda d: d * 206265))
-    network.add_edge(Conversion(network.get_node('light year'), network.get_node('meter'), lambda d: d * SpeedOfLight * 365.25 * 24 * 60))
+        Conversion(network.get_node('nautical league'), network.get_node('nautical mile'), nautical_league__to__nautical_mile))
+    network.add_edge(Conversion(network.get_node('nautical mile'), network.get_node('meter'), nautical_mile__to__meter))
+    network.add_edge(Conversion(network.get_node('rod'), network.get_node('yard'), rod__to__yard))
+    network.add_edge(Conversion(network.get_node('astronomical unit'), network.get_node('meter'), astronomical_unit__to__meter))
+    network.add_edge(Conversion(network.get_node('parsec'), network.get_node('astronomical unit'), parsec__to__astronomical_unit))
+    network.add_edge(Conversion(network.get_node('light year'), network.get_node('meter'), light_year__to__meter))
 
     # Velocity conversion
     network.add_edge(Conversion(network.get_node('mile per hour'), network.get_node('kilometer per hour'),
-                                lambda v: v * 8 * 10 * 22 * 9144 / 10000 / 1000))
+                                mile_per_hour__to__kilometer_per_hour))
 
     # Area conversions
-    network.add_edge(Conversion(network.get_node('square kilometer'), network.get_node('square meter'), lambda d: d * 1000000))
-    network.add_edge(Conversion(network.get_node('square mile'), network.get_node('acre'), lambda d: d * 640))
-    network.add_edge(Conversion(network.get_node('acre'), network.get_node('square yard'), lambda d: d * 4840))
-    network.add_edge(Conversion(network.get_node('square rod'), network.get_node('square yard'), lambda d: d * 3025 / 100))
-    network.add_edge(Conversion(network.get_node('square yard'), network.get_node('square foot'), lambda d: d * 9))
-    network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square inch'), lambda d: d * 144))
-    network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square meter'),
-                                lambda d: d * (3048 ** 2) / (10000 ** 2)))
-    # network.addEdge(Conversion(network.getNode('foot'), network.getNode('meter'), lambda d: d*0.3048))
-    network.add_edge(Conversion(network.get_node('square inch'), network.get_node('square thou'), lambda d: d * (1000 ** 2)))
-    network.add_edge(Conversion(network.get_node('square inch'), network.get_node('square tenth'), lambda d: d * (10 ** 2)))
-    network.add_edge(Conversion(network.get_node('square chain'), network.get_node('square yard'), lambda d: d * (22 ** 2)))
-    network.add_edge(Conversion(network.get_node('square furlong'), network.get_node('square chain'), lambda d: d * (10 ** 2)))
-    network.add_edge(Conversion(network.get_node('square mile'), network.get_node('square furlong'), lambda d: d * (8 ** 2)))
-    network.add_edge(Conversion(network.get_node('square league'), network.get_node('square mile'), lambda d: d * (3 ** 2)))
+    network.add_edge(Conversion(network.get_node('square kilometer'), network.get_node('square meter'), square_kilometer__to__square_meter))
+    network.add_edge(Conversion(network.get_node('square mile'), network.get_node('acre'), square_mile__to__acre))
+    network.add_edge(Conversion(network.get_node('acre'), network.get_node('square yard'), acre__to__square_yard))
+    network.add_edge(Conversion(network.get_node('square rod'), network.get_node('square yard'), square_rod__to__square_yard))
+    network.add_edge(Conversion(network.get_node('square yard'), network.get_node('square foot'), square_yard__to__square_foot))
+    network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square inch'), square_foot__to__square_inch))
+    network.add_edge(Conversion(network.get_node('square foot'), network.get_node('square meter'), square_foot__to__square_meter))
+    network.add_edge(Conversion(network.get_node('square inch'), network.get_node('square thou'), square_inch__to__square_thou))
+    network.add_edge(Conversion(network.get_node('square inch'), network.get_node('square tenth'), square_inch__to__square_tenth))
+    network.add_edge(Conversion(network.get_node('square chain'), network.get_node('square yard'), square_chain__to__square_yard))
+    network.add_edge(Conversion(network.get_node('square furlong'), network.get_node('square chain'), square_furlong__to__square_chain))
+    network.add_edge(Conversion(network.get_node('square mile'), network.get_node('square furlong'), square_mile__to__square_furlong))
+    network.add_edge(Conversion(network.get_node('square league'), network.get_node('square mile'), square_league__to__square_mile))
 
-    network.add_edge(Conversion(network.get_node('Darcy'), network.get_node('µm2'), lambda d: d * 0.9869233))
+    network.add_edge(Conversion(network.get_node('Darcy'), network.get_node('µm2'), Darcy__to__µm2))
 
 
     # Volume conversions
-    network.add_edge(Conversion(network.get_node('litre'), network.get_node('cubic centimeter'), lambda v: v * 1000))
-    network.add_edge(Conversion(network.get_node('gill'), network.get_node('fluid ounce'), lambda v: v * 4))
-    network.add_edge(Conversion(network.get_node('pint'), network.get_node('gill'), lambda v: v * 4))
-    network.add_edge(Conversion(network.get_node('quart'), network.get_node('pint'), lambda v: v * 2))
-    network.add_edge(Conversion(network.get_node('gallonUS'), network.get_node('fluid ounce'), lambda v: v * 128))
-    network.add_edge(Conversion(network.get_node('gallonUS'), network.get_node('quart'), lambda v: v * 4))
-    network.add_edge(Conversion(network.get_node('gallonUS'), network.get_node('cubic inch'), lambda v: v * 231))
+    network.add_edge(Conversion(network.get_node('litre'), network.get_node('cubic centimeter'), litre__to__cubic_centimeter))
+    network.add_edge(Conversion(network.get_node('gill'), network.get_node('fluid ounce'), gill__to__fluid_ounce))
+    network.add_edge(Conversion(network.get_node('pint'), network.get_node('gill'), pint__to__gill))
+    network.add_edge(Conversion(network.get_node('quart'), network.get_node('pint'), quart__to__pint))
+    network.add_edge(Conversion(network.get_node('gallonUS'), network.get_node('fluid ounce'), gallonUS__to__fluid_ounce))
+    network.add_edge(Conversion(network.get_node('gallonUS'), network.get_node('quart'), gallonUS__to__quart))
+    network.add_edge(Conversion(network.get_node('gallonUS'), network.get_node('cubic inch'), gallonUS__to__cubic_inch))
 
-    network.add_edge(Conversion(network.get_node('gallonUK'), network.get_node('quartUK'), lambda v: v * 4))
-    network.add_edge(Conversion(network.get_node('gallonUK'), network.get_node('fluid ounce UK'), lambda v: v * 160))
-    network.add_edge(Conversion(network.get_node('gallonUK'), network.get_node('litre'), lambda v: v * 4.54609))
-    network.add_edge(Conversion(network.get_node('gillUK'), network.get_node('fluid ounce UK'), lambda v: v * 4))
-    network.add_edge(Conversion(network.get_node('pintUK'), network.get_node('gillUK'), lambda v: v * 4))
-    network.add_edge(Conversion(network.get_node('quartUK'), network.get_node('pintUK'), lambda v: v * 2))
+    network.add_edge(Conversion(network.get_node('gallonUK'), network.get_node('quartUK'), gallonUK__to__quartUK))
+    network.add_edge(Conversion(network.get_node('gallonUK'), network.get_node('fluid ounce UK'), gallonUK__to__fluid_ounce_UK))
+    network.add_edge(Conversion(network.get_node('gallonUK'), network.get_node('litre'), gallonUK__to__litre))
+    network.add_edge(Conversion(network.get_node('gillUK'), network.get_node('fluid ounce UK'), gillUK__to__fluid_ounce_UK))
+    network.add_edge(Conversion(network.get_node('pintUK'), network.get_node('gillUK'), pintUK__to__gillUK))
+    network.add_edge(Conversion(network.get_node('quartUK'), network.get_node('pintUK'), quartUK__to__pintUK))
 
-    network.add_edge(Conversion(network.get_node('gallonUK'), network.get_node('liter'), lambda v: v * 4.54609))
-    network.add_edge(Conversion(network.get_node('cubic foot'), network.get_node('cubic meter'),
-                                lambda v: v * (3048 ** 3) / (10000 ** 3)))
+    network.add_edge(Conversion(network.get_node('gallonUK'), network.get_node('liter'), gallonUK__to__liter))
+    network.add_edge(Conversion(network.get_node('cubic foot'), network.get_node('cubic meter'), cubic_foot__to__cubic_meter))
     network.add_edge(Conversion(network.get_node('standard cubic foot'), network.get_node('standard cubic meter'),
-                                lambda v: v * (3048 ** 3) / (10000 ** 3)))
-    network.add_edge(Conversion(network.get_node('standard barrel'), network.get_node('USgal'), lambda v: v * 42))
+                                standard_cubic_foot__to__standard_cubic_meter))
+    network.add_edge(Conversion(network.get_node('standard barrel'), network.get_node('USgal'), standard_barrel__to__USgal))
     network.add_edge(
         Conversion(network.get_node('standard cubic meter'), network.get_node('standard barrel'),
-                   lambda v: v * 6.289814))
+                   standard_cubic_meter__to__standard_barrel))
     network.add_edge(
         Conversion(network.get_node('standard barrel'), network.get_node('standard cubic foot'),
-                   lambda v: v * 5.614584))
+                   standard_barrel__to__standard_cubic_foot))
     network.add_edge(Conversion(network.get_node('reservoir cubic meter'), network.get_node('reservoir barrel'),
-                                lambda v: v * 6.289814))
+                                reservoir_cubic_meter__to__reservoir_barrel))
     network.add_edge(Conversion(network.get_node('reservoir cubic meter'), network.get_node('standard cubic meter'),
-                                lambda v: v / network.get_fvf()))
-    # network.addEdge(Conversion(network.getNode('standard cubic meter'), network.getNode('standard cubic foot'), lambda v: v/5.614584))
+                                reservoir_cubic_meter__to__standard_cubic_meter))
+    # network.addEdge(Conversion(network.getNode('standard cubic meter'), network.getNode('standard cubic foot'), standard_cubic_meter__to__standard_cubic_foot))
 
-    network.add_edge(Conversion(network.get_node('cubic inch'), network.get_node('cubic thou'), lambda d: d * (1000 ** 3)))
-    network.add_edge(Conversion(network.get_node('cubic inch'), network.get_node('cubic tenth'), lambda d: d * (10 ** 3)))
-    network.add_edge(Conversion(network.get_node('cubic foot'), network.get_node('cubic inch'), lambda d: d * (12 ** 3)))
-    network.add_edge(Conversion(network.get_node('cubic yard'), network.get_node('cubic foot'), lambda d: d * (3 ** 3)))
-    network.add_edge(Conversion(network.get_node('cubic chain'), network.get_node('cubic yard'), lambda d: d * (22 ** 3)))
-    network.add_edge(Conversion(network.get_node('cubic furlong'), network.get_node('cubic chain'), lambda d: d * (10 ** 3)))
-    network.add_edge(Conversion(network.get_node('cubic mile'), network.get_node('cubic furlong'), lambda d: d * (8 ** 3)))
-    network.add_edge(Conversion(network.get_node('cubic league'), network.get_node('cubic mile'), lambda d: d * (3 ** 3)))
+    network.add_edge(Conversion(network.get_node('cubic inch'), network.get_node('cubic thou'), cubic_inch__to__cubic_thou))
+    network.add_edge(Conversion(network.get_node('cubic inch'), network.get_node('cubic tenth'), cubic_inch__to__cubic_tenth))
+    network.add_edge(Conversion(network.get_node('cubic foot'), network.get_node('cubic inch'), cubic_foot__to__cubic_inch))
+    network.add_edge(Conversion(network.get_node('cubic yard'), network.get_node('cubic foot'), cubic_yard__to__cubic_foot))
+    network.add_edge(Conversion(network.get_node('cubic chain'), network.get_node('cubic yard'), cubic_chain__to__cubic_yard))
+    network.add_edge(Conversion(network.get_node('cubic furlong'), network.get_node('cubic chain'), cubic_furlong__to__cubic_chain))
+    network.add_edge(Conversion(network.get_node('cubic mile'), network.get_node('cubic furlong'), cubic_mile__to__cubic_furlong))
+    network.add_edge(Conversion(network.get_node('cubic league'), network.get_node('cubic mile'), cubic_league__to__cubic_mile))
 
     # Pressure conversions
-    network.add_edge(Conversion(network.get_node('psi gauge'), network.get_node('absolute psi'), lambda p: p + 14.6959))
-    network.add_edge(Conversion(network.get_node('absolute psi'), network.get_node('psi gauge'), lambda p: p - 14.6959))
-    network.add_edge(Conversion(network.get_node('bar gauge'), network.get_node('absolute bar'), lambda p: p + 1.01325))
-    network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('bar gauge'), lambda p: p - 1.01325))
+    network.add_edge(Conversion(network.get_node('psi gauge'), network.get_node('absolute psi'), psi_gauge__to__absolute_psi))
+    network.add_edge(Conversion(network.get_node('absolute psi'), network.get_node('psi gauge'), absolute_psi__to__psi_gauge))
+    network.add_edge(Conversion(network.get_node('bar gauge'), network.get_node('absolute bar'), bar_gauge__to__absolute_bar))
+    network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('bar gauge'), absolute_bar__to__bar_gauge))
 
     network.add_edge(
-        Conversion(network.get_node('absolute bar'), network.get_node('absolute psi'), lambda p: p * 14.50377377322))
+        Conversion(network.get_node('absolute bar'), network.get_node('absolute psi'), absolute_bar__to__absolute_psi))
     network.add_edge(
-        Conversion(network.get_node('bar gauge'), network.get_node('psi gauge'), lambda p: p * 14.50377377322))
-    network.add_edge(Conversion(network.get_node('bar'), network.get_node('psi'), lambda p: p * 14.50377377322))
-    network.add_edge(Conversion(network.get_node('psi'), network.get_node('bar'), lambda p: p / 14.50377377322))
-    network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('Pascal'), lambda p: p * 100000))
-    # network.addEdge(Conversion(network.getNode('atmosphere'), network.getNode('absolute bar'), lambda p: p*1.01325))
-    network.add_edge(Conversion(network.get_node('atmosphere'), network.get_node('Pascal'), lambda p: p * 101325))
-    network.add_edge(Conversion(network.get_node('atmosphere'), network.get_node('Torr'), lambda p: p * 760))
-    network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('bar'), lambda p: p))
-    network.add_edge(Conversion(network.get_node('absolute psi'), network.get_node('psi'), lambda p: p))
-    network.add_edge(Conversion(network.get_node('bar gauge'), network.get_node('bar'), lambda p: p))
-    network.add_edge(Conversion(network.get_node('psi gauge'), network.get_node('psi'), lambda p: p))
+        Conversion(network.get_node('bar gauge'), network.get_node('psi gauge'), bar_gauge__to__psi_gauge))
+    network.add_edge(Conversion(network.get_node('bar'), network.get_node('psi'), bar__to__psi))
+    network.add_edge(Conversion(network.get_node('psi'), network.get_node('bar'), psi__to__bar))
+    network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('Pascal'), absolute_bar__to__Pascal))
+    # network.addEdge(Conversion(network.getNode('atmosphere'), network.getNode('absolute bar'), atmosphere__to__absolute_bar))
+    network.add_edge(Conversion(network.get_node('atmosphere'), network.get_node('Pascal'), atmosphere__to__Pascal))
+    network.add_edge(Conversion(network.get_node('atmosphere'), network.get_node('Torr'), atmosphere__to__Torr))
+    network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('bar'), equality))
+    network.add_edge(Conversion(network.get_node('absolute psi'), network.get_node('psi'), equality))
+    network.add_edge(Conversion(network.get_node('bar gauge'), network.get_node('bar'), equality))
+    network.add_edge(Conversion(network.get_node('psi gauge'), network.get_node('psi'), equality))
     network.add_edge(Conversion(network.get_node('absolute bar'), network.get_node('kilogram/square centimeter'),
-                                lambda p: p * (10.0 / StandardEarthGravity)))
+                                absolute_bar__to__kilogram_slash_square_centimeter))
 
     # Mass conversion
-    network.add_edge(Conversion(network.get_node('grain'), network.get_node('milligrams'), lambda w: w * 64.7989))
-    network.add_edge(Conversion(network.get_node('pennyweight'), network.get_node('grain'), lambda w: w * 24))
-    network.add_edge(Conversion(network.get_node('dram'), network.get_node('pound'), lambda w: w / 256))
-    network.add_edge(Conversion(network.get_node('stone'), network.get_node('pound'), lambda w: w * 14))
-    network.add_edge(Conversion(network.get_node('quarter'), network.get_node('stone'), lambda w: w * 2))
-    network.add_edge(Conversion(network.get_node('weight ounce'), network.get_node('dram'), lambda w: w * 16))
-    network.add_edge(Conversion(network.get_node('pound'), network.get_node('weight ounce'), lambda w: w * 16))
-    network.add_edge(Conversion(network.get_node('long hundredweight'), network.get_node('quarter'), lambda w: w * 4))
-    network.add_edge(Conversion(network.get_node('short hundredweight'), network.get_node('pound'), lambda w: w * 100))
+    network.add_edge(Conversion(network.get_node('grain'), network.get_node('milligrams'), grain__to__milligrams))
+    network.add_edge(Conversion(network.get_node('pennyweight'), network.get_node('grain'), pennyweight__to__grain))
+    network.add_edge(Conversion(network.get_node('dram'), network.get_node('pound'), dram__to__pound))
+    network.add_edge(Conversion(network.get_node('stone'), network.get_node('pound'), stone__to__pound))
+    network.add_edge(Conversion(network.get_node('quarter'), network.get_node('stone'), quarter__to__stone))
+    network.add_edge(Conversion(network.get_node('weight ounce'), network.get_node('dram'), weight_ounce__to__dram))
+    network.add_edge(Conversion(network.get_node('pound'), network.get_node('weight ounce'), pound__to__weight_ounce))
+    network.add_edge(Conversion(network.get_node('long hundredweight'), network.get_node('quarter'), long_hundredweight__to__quarter))
+    network.add_edge(Conversion(network.get_node('short hundredweight'), network.get_node('pound'), short_hundredweight__to__pound))
     network.add_edge(
-        Conversion(network.get_node('short ton'), network.get_node('short hundredweight'), lambda w: w * 20))
-    network.add_edge(Conversion(network.get_node('long ton'), network.get_node('long hundredweight'), lambda w: w * 20))
+        Conversion(network.get_node('short ton'), network.get_node('short hundredweight'), short_ton__to__short_hundredweight))
+    network.add_edge(Conversion(network.get_node('long ton'), network.get_node('long hundredweight'), long_ton__to__long_hundredweight))
 
-    network.add_edge(Conversion(network.get_node('metric ton'), network.get_node('kilogram'), lambda w: w * 1000))
-    network.add_edge(Conversion(network.get_node('kilogram'), network.get_node('gram'), lambda w: w * 1000))
-    # network.addEdge(Conversion(network.getNode('pound'), network.getNode('gram'), lambda w: w*453.59237))
+    network.add_edge(Conversion(network.get_node('metric ton'), network.get_node('kilogram'), metric_ton__to__kilogram))
+    network.add_edge(Conversion(network.get_node('kilogram'), network.get_node('gram'), kilogram__to__gram))
+    # network.addEdge(Conversion(network.getNode('pound'), network.getNode('gram'), pound__to__gram))
     network.add_edge(
-        Conversion(network.get_node('pound'), network.get_node('kilogram'), lambda w: w * 45359237 / 100000000))
+        Conversion(network.get_node('pound'), network.get_node('kilogram'), pound__to__kilogram))
 
     # Force conversion
-    # network.addEdge(Conversion(network.getNode('kilogram'), network.getNode('kilogram force'), lambda f: f* converter(StandardEarthGravity,'m/s2','cm/s2',False)))
     network.add_edge(Conversion(network.get_node('kilogram mass'), network.get_node('kilogram force'),
-                                lambda f: f * StandardEarthGravity))
+                                kilogram_mass__to__kilogram_force))
     network.add_edge(Conversion(network.get_node('kilogram force'), network.get_node('kilogram mass'),
-                                lambda f: f / StandardEarthGravity))
-    network.add_edge(Conversion(network.get_node('Dyne'), network.get_node('Newton'), lambda f: f * 1E-5))
-    network.add_edge(Conversion(network.get_node('Newton'), network.get_node('Dyne'), lambda f: f * 1E5))
+                                kilogram_force__to__kilogram_mass))
+    network.add_edge(Conversion(network.get_node('Dyne'), network.get_node('Newton'), Dyne__to__Newton))
+    network.add_edge(Conversion(network.get_node('Newton'), network.get_node('Dyne'), Newton__to__Dyne))
 
     # Energy Conversion
-    network.add_edge(Conversion(network.get_node('Joule'), network.get_node('gram calorie'), lambda e: e / 4.184))
-    network.add_edge(Conversion(network.get_node('Kilojoule'), network.get_node('Joule'), lambda e: e * 1000))
-    network.add_edge(Conversion(network.get_node('Kilojoule'), network.get_node('kilowatt hour'), lambda e: e / 3600))
+    network.add_edge(Conversion(network.get_node('Joule'), network.get_node('gram calorie'), Joule__to__gram_calorie))
+    network.add_edge(Conversion(network.get_node('Kilojoule'), network.get_node('Joule'), Kilojoule__to__Joule))
+    network.add_edge(Conversion(network.get_node('Kilojoule'), network.get_node('kilowatt hour'), Kilojoule__to__kilowatt_hour))
     network.add_edge(
-        Conversion(network.get_node('Kilojoule'), network.get_node('British thermal unit'), lambda e: e / 1.055))
+        Conversion(network.get_node('Kilojoule'), network.get_node('British thermal unit'), Kilojoule__to__British_thermal_unit))
 
     # Power conversion
-    network.add_edge(Conversion(network.get_node('Horsepower'), network.get_node('Watt'), lambda e: e * 745.699872))
+    network.add_edge(Conversion(network.get_node('Horsepower'), network.get_node('Watt'), Horsepower__to__Watt))
 
     # Density conversion
-    network.add_edge(Conversion(network.get_node('API'), network.get_node('SgO'), lambda d: 141.5 / (131.5 + d)))
-    network.add_edge(Conversion(network.get_node('SgO'), network.get_node('API'), lambda d: 141.5 / d - 131.5))
-    network.add_edge(Conversion(network.get_node('API'), network.get_node('g/cc'), lambda d: 141.5 / (131.5 + d)))
-    network.add_edge(Conversion(network.get_node('g/cc'), network.get_node('API'), lambda d: 141.5 / d - 131.5))
-    network.add_edge(Conversion(network.get_node('SgO'), network.get_node('g/cc'), lambda d: d))
-    network.add_edge(Conversion(network.get_node('SgW'), network.get_node('g/cc'), lambda d: d))
-    network.add_edge(Conversion(network.get_node('SgG'), network.get_node('kg/m3'), lambda d: d * StandardAirDensity))
-    network.add_edge(Conversion(network.get_node('psia/ft'), network.get_node('lb/ft3'), lambda d: d * 144))
-    network.add_edge(Conversion(network.get_node('psi/ft'), network.get_node('lb/ft3'), lambda d: d * 144))
-    network.add_edge(Conversion(network.get_node('psig/ft'), network.get_node('lb/ft3'), lambda d: d * 144))
-    network.add_edge(Conversion(network.get_node('bara/m'), network.get_node('kg/m3'), lambda d: d * 100000 / StandardEarthGravity))
-    network.add_edge(Conversion(network.get_node('bar/m'), network.get_node('kg/m3'), lambda d: d * 100000 / StandardEarthGravity))
-    network.add_edge(Conversion(network.get_node('barg/m'), network.get_node('kg/m3'), lambda d: d * 100000 / StandardEarthGravity))
+    network.add_edge(Conversion(network.get_node('API'), network.get_node('SgO'), API__to__SgO))
+    network.add_edge(Conversion(network.get_node('SgO'), network.get_node('API'), SgO__to__API))
+    network.add_edge(Conversion(network.get_node('API'), network.get_node('g/cc'), API__to__g_slash_cc))
+    network.add_edge(Conversion(network.get_node('g/cc'), network.get_node('API'), g_slash_cc__to__API))
+    network.add_edge(Conversion(network.get_node('SgO'), network.get_node('g/cc'), equality))
+    network.add_edge(Conversion(network.get_node('SgW'), network.get_node('g/cc'), equality))
+    network.add_edge(Conversion(network.get_node('SgG'), network.get_node('kg/m3'), SgG__to__kg_slash_m3))
+    network.add_edge(Conversion(network.get_node('psia/ft'), network.get_node('lb/ft3'), psia_slash_ft__to__lb_slash_ft3))
+    network.add_edge(Conversion(network.get_node('psi/ft'), network.get_node('lb/ft3'), psi_slash_ft__to__lb_slash_ft3))
+    network.add_edge(Conversion(network.get_node('psig/ft'), network.get_node('lb/ft3'), psig_slash_ft__to__lb_slash_ft3))
+    network.add_edge(Conversion(network.get_node('bara/m'), network.get_node('kg/m3'), bara_slash_m__to__kg_slash_m3))
+    network.add_edge(Conversion(network.get_node('bar/m'), network.get_node('kg/m3'), bar_slash_m__to__kg_slash_m3))
+    network.add_edge(Conversion(network.get_node('barg/m'), network.get_node('kg/m3'), barg_slash_m__to__kg_slash_m3))
     network.add_edge(
-        Conversion(network.get_node('g/cm3'), network.get_node('lb/ft3'), lambda d: d * 62.427960576144606))
-    network.add_edge(Conversion(network.get_node('lb/ft3'), network.get_node('lb/stb'), lambda d: d * 5.614584))
+        Conversion(network.get_node('g/cm3'), network.get_node('lb/ft3'), g_slash_cm3__to__lb_slash_ft3))
+    network.add_edge(Conversion(network.get_node('lb/ft3'), network.get_node('lb/stb'), lb_slash_ft3__to__lb_slash_stb))
 
     # Viscosity conversions
-    network.add_edge(Conversion(network.get_node('Pa*s'), network.get_node('Poise'), lambda v: v * 10))
+    network.add_edge(Conversion(network.get_node('Pa*s'), network.get_node('Poise'), Pa_star_s__to__Poise))
 
     # Data conversions
-    network.add_edge(Conversion(network.get_node('byte'), network.get_node('bit'), lambda d: d * 8))
+    network.add_edge(Conversion(network.get_node('byte'), network.get_node('bit'), byte__to__bit))
 
     for unit_kind in list(dictionary.keys()):
         if '_REVERSE' in unit_kind:

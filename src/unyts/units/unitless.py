@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.30'
-__release__ = 20230724
+__version__ = '0.5.31'
+__release__ = 20250320
 __all__ = ['Dimensionless', 'Percentage', 'unitless_names']
 
 from ..dictionaries import dictionary as _dictionary
@@ -19,15 +19,15 @@ from ..dictionaries import unitless_names
 
 class Dimensionless(Unit):
     class_units = _dictionary['Dimensionless']
-    __slots__ = ('unit', 'value', 'name', 'kind')
+    __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str = None, name=None):
-        self.name = 'dimensionless' if name is None else name
+        name = 'dimensionless' if name is None else name
+        super().__init__(value, units, name)
         self.kind = Dimensionless
-        self.value = self.check_value(value)
         if units is None:
             units = 'dimensionless'
-        self.unit = self.check_unit(units)
+        self.__unit = self.check_unit(units)
 
     def convert(self, new_unit: unit_or_str = None) -> Unit:
         if new_unit is not None and type(new_unit) is not str:
@@ -51,10 +51,11 @@ class Dimensionless(Unit):
 
 class Percentage(Dimensionless):
     class_units = _dictionary['Percentage']
-    __slots__ = ('unit', 'value', 'name', 'kind')
+    __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str = None, name=None):
-        self.name = 'percentage' if name is None else name
+        name = 'percentage' if name is None else name
+        super().__init__(0, None, name)
         self.kind = Percentage
         self.value = self.check_value(value) / 100
         if units is None:
@@ -62,10 +63,10 @@ class Percentage(Dimensionless):
         self.unit = self.check_unit(units)
 
     def __repr__(self) -> str:
-        return str(self.value * 100) + '_' + str(self.unit)
+        return f"{self.value * 100}_{self.unit}"
 
     def __str__(self) -> str:
-        return str(self.value * 100) + '_' + str(self.unit)
+        return f"{self.value * 100}_{self.unit}"
 
     def __neg__(self) -> Unit:
         return self.kind(self.value * -100, self.unit)
