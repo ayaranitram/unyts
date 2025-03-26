@@ -119,23 +119,23 @@ def unit_product(unit_string1: str, unit_string2: str) -> str:
         elif u_pow == 1:
             result = u1bas
         elif u_pow == 0:
-            result = u1bas + '/' + u1bas
+            result = f"{u1bas}/{u1bas}"
         else:
             for c in ['+', '-', '^']:  # '*','/'
                 if c in u1bas:
                     u1bas = f"({u1bas})"
                     break
-            result = f"{u1bas}{u_pow)}"
+            result = f"{u1bas}{u_pow}"
     else:
         for c in ['+', '-', '^']:  # '*','/'
             if c in unit_string1:
-                unit_string1 = '(' + unit_string1 + ')'
+                unit_string1 = f"({unit_string1})"
                 break
         for c in ['+', '-', '^']:  # '*','/'
             if c in unit_string2:
-                unit_string2 = '(' + unit_string2 + ')'
+                unit_string2 = f"({unit_string2})"
                 break
-        result = unit_string1 + '*' + unit_string2
+        result = f"{unit_string1}*{unit_string2}"
     return reduce_units(result, raise_error=False)
 
 
@@ -184,13 +184,13 @@ def unit_division(unit_string1: str, unit_string2: str) -> str:
         elif u_pow == 1:
             result = u1bas
         elif u_pow == 0:
-            result = u1bas + '/' + u1bas
+            result = f"{u1bas}/{u1bas}"
         else:
             for c in ['+', '-', '^']:  # '*','/'
                 if c in u1bas:
                     u1bas = f"({u1bas})"
                     break
-            result = f"u1bas{u_pow}"
+            result = f"{u1bas}{u_pow}"
 
     elif ('+' not in unit_string1 and '-' not in unit_string1 and '^' not in unit_string1) and (
             '+' not in unit_string2 and '-' not in unit_string2 and '^' not in unit_string2) and (
@@ -202,7 +202,7 @@ def unit_division(unit_string1: str, unit_string2: str) -> str:
             elif unit_base(unit_string2) == unit_base(u):
                 result = (result + '*' + unit_division(u, unit_string2).strip('*')).strip('*')
             else:
-                result = (f"{result}*{u}).strip('*')
+                result = f"{result}*{u}".strip('*')
     else:
         for c in ['+', '-', '^']:  # '*','/'
             if c in unit_string1:
