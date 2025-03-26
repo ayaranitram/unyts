@@ -163,7 +163,7 @@ class UDigraph(object):
             try:
                 FVF = float(FVF)
             except ValueError:
-                print(f'received FVF value is not a number: {str(FVF)}')
+                print(f'received FVF value is not a number: {FVF}')
         if type(FVF) in (int, float):
             if FVF <= 0:
                 logging.error('FVF should be a positive number...')

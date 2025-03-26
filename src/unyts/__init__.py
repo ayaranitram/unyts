@@ -25,7 +25,7 @@ from .gui import start_gui
 
 
 if unyts_parameters_.show_version_:
-    print(f"loaded unyts version {str(__version__)}")
+    print(f"loaded unyts version {__version__}")
     unyts_parameters_.show_version_ = False
     unyts_parameters_.save_params()
 

@@ -271,9 +271,9 @@ def print_path(path: list) -> str:
                     result = result[:-3]
                 result = result + ' ' + path[i] + ' '
             elif type(path[i]) in (int, float, complex):
-                result = result + str(path[i]) + ' '
+                result = f"{result}{path[i]} "
             else:
-                result = result + str(path[i])
+                result = f"{result}{path[i]}"
                 if i != len(path) - 1:
-                    result = result + ' > '
+                    result = f"{result} > "
     return result.strip()

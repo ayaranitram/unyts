@@ -137,7 +137,6 @@ class Unit(object, metaclass=UnytType):
         return self.value
 
     def __repr__(self) -> str:
-        # return str(self.value) + '_' + str(self.unit)
         return f"{self.value}_{self.unit}"
 
     def __str__(self) -> str:

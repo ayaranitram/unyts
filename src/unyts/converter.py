@@ -302,7 +302,7 @@ def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=No
         den, den_path = _get_conversion(1, d1, d2, recursion=recursion, use_cache=use_cache)
         if num is None or den is None:
             if unyts_parameters_.raise_error_:
-                raise NoConversionFoundError("from '" + str(d1) + "' to '" + str(d2) + "'")
+                raise NoConversionFoundError(f"from '{d1}' to '{d2}'")
             else:
                 return None, None
         den_path = [1] + den_path
@@ -392,10 +392,10 @@ def _get_descendants(unit:str, generations=None, get_combinations=True):
         if unit_num is not None and unit_den is not None:
             children_num = _get_descendants(unit_num, generations)
             children_den = _get_descendants(unit_den, generations)
-            children_split = {f"{str(num)}/{str(den)}"
+            children_split = {f"{num}/{den}"
                               for num in {unit_num}.union(children_num)
                               for den in {unit_den}.union(children_den)
-                              if f"{str(num)}/{str(den)}" != unit}
+                              if f"{num}/{den}" != unit}
         descendants = children.union(children_split)
     else:
         descendants = children
