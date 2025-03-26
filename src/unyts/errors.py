@@ -21,6 +21,11 @@ class WrongValueError(Exception):
         self.message = 'ERROR: Wrong Value, ' + message
 
 
+class WrongDateFormatError(Exception):
+    def __init__(self, message='value must be (single value or array) number or string representing a date.'):
+        self.message = 'ERROR: Wrong Value, ' + message
+
+
 class NoConversionFoundError(Exception):
     def __init__(self, message='for the provided units.'):
         self.message = 'ERROR: Conversion path not found ' + message

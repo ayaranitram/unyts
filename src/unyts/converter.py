@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.8.6'
-__release__ = 20241124
+__version__ = '0.8.7'
+__release__ = 20241214
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
@@ -17,6 +17,7 @@ from .searches import BFS, lean_BFS, DFS, hybrid_BFS, print_path
 from .errors import NoConversionFoundError
 from .parameters import unyts_parameters_, _get_density
 from .helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
+from .units.def_conversions import equality, percentage__to__fraction, fraction__to__percentage, inverse
 from functools import reduce
 from typing import Union
 from sys import getrecursionlimit
@@ -53,9 +54,9 @@ else:
     numeric = Union[int, float, complex]
 
 
-def _str2lambda(string: str):
+def _str2function(string: str):
     """
-    Returns a lambda with a multiplication or division operation, depending on the received string.
+    Returns a function with a multiplication or division operation, depending on the received string.
 
     Parameters
     ----------
@@ -63,12 +64,16 @@ def _str2lambda(string: str):
 
     Returns
     -------
-    lambda
+    function
     """
+    def _div(x,y):
+        return x / y
+    def _prod(x,y):
+        return x * y
     if string == '/':
-        return lambda x, y: x / y
+        return _div
     if string == '*':
-        return lambda x, y: x * y
+        return _prod
 
 
 def _apply_conversion(value, conversion_path):
@@ -93,9 +98,9 @@ def _apply_conversion(value, conversion_path):
         if type(this_step) is str:
             if len(this_step) == 1:
                 if type(next_step) in (int, float, complex):
-                    value = _str2lambda(this_step)(value, _apply_conversion(next_step, conversion_path[i + 2:]))
+                    value = _str2function(this_step)(value, _apply_conversion(next_step, conversion_path[i + 2:]))
                 else:
-                    value = _str2lambda(this_step)(value, _apply_conversion(value, conversion_path[i + 1:]))
+                    value = _str2function(this_step)(value, _apply_conversion(value, conversion_path[i + 1:]))
                 break
             elif this_step == '1/':
                 value = 1 / _apply_conversion(value, conversion_path[i + 1:])
@@ -104,7 +109,7 @@ def _apply_conversion(value, conversion_path):
                 raise ValueError("string operation in conversion_path must be '/' or '*'")
         elif type(this_step) in (int, float, complex):
             if type(next_step) is str:
-                value = _str2lambda(next_step)(value, _apply_conversion(this_step, conversion_path[i + 2:]))
+                value = _str2function(next_step)(value, _apply_conversion(this_step, conversion_path[i + 2:]))
                 break
             else:
                 value = _apply_conversion(this_step, conversion_path[i + 1:])
@@ -114,16 +119,16 @@ def _apply_conversion(value, conversion_path):
                 if len(conversion_path) == i + 2:
                     further_step = conversion_path[i + 2]
                     if type(further_step) in (int, float, complex):
-                        value = _str2lambda(next_step)(value, further_step)
+                        value = _str2function(next_step)(value, further_step)
                     else:
-                        value = _str2lambda(next_step)(value, _apply_conversion(value, further_step))
+                        value = _str2function(next_step)(value, _apply_conversion(value, further_step))
                     break
                 elif len(conversion_path) > i + 2:
                     further_step = conversion_path[i + 2]
                     if type(further_step) in (int, float, complex):
-                        value = _str2lambda(next_step)(value, _apply_conversion(further_step, conversion_path[i + 3:]))
+                        value = _str2function(next_step)(value, _apply_conversion(further_step, conversion_path[i + 3:]))
                     else:
-                        value = _str2lambda(next_step)(value, _apply_conversion(value, further_step))
+                        value = _str2function(next_step)(value, _apply_conversion(value, further_step))
                     break
         else:
             value = units_network.convert(value, this_step, next_step)
@@ -131,9 +136,9 @@ def _apply_conversion(value, conversion_path):
     return value
 
 
-def _lambda_conversion(conversion_path):
+def _function_conversion(conversion_path):
     """
-    Helper function to make a lambda applying in sequence all the conversions listed in the conversion_path.
+    Helper function to make a function applying in sequence all the conversions listed in the conversion_path.
 
     Parameters
     ----------
@@ -141,32 +146,34 @@ def _lambda_conversion(conversion_path):
         sequence of the conversions to be applied
     Returns
     -------
-    conversion_lambda: lambda
+    conversion_function: function
         to apply the conversion path
     """
-    big_lambda = [units_network.conversion(conversion_path[i], conversion_path[i + 1])
+    big_conversion = [units_network.conversion(conversion_path[i], conversion_path[i + 1])
                   for i in range(len(conversion_path) - 1)]
-    return lambda x: _lambda_loop(x, big_lambda[:])
+    def _looped_conversion(x):
+        return _conversion_loop(x, big_conversion[:])
+    return _looped_conversion
 
 
-def _lambda_loop(x, lambda_list):
+def _conversion_loop(x, conversion_list):
     """
-    Helper function to apply lambda functions in sequence.
+    Helper function to apply conversion functions in sequence.
 
     Parameters
     ----------
     x: numeric
         the value to apply the conversion sequence
-    lambda_list : list
+    conversion_list : list
         a list of the conversions that should be applied in sequence
 
     Returns
     -------
-    lambda_sequence : lambda
-        all the lambdas in the list applied in sequence
+    conversion_sequence : function
+        all the conversions in the list applied in sequence
     """
-    for lambda_i in lambda_list:
-        x = lambda_i(x)
+    for conversion_i in conversion_list:
+        x = conversion_i(x)
     return x
 
 
@@ -181,11 +188,14 @@ def _get_pair_child(unit: str):
     -------
         unit_node
     """
+    def _operation_filter(u):
+        return '/' in u or '*' in u
+
     # get the Unit node if the name received is string
     unit = units_network.get_node(unit) if type(unit) is str else unit
 
     # get a pair of units children
-    pair_child = list(filter(lambda u: '/' in u or '*' in u, [u.get_name() for u in units_network.children_of(unit)]))
+    pair_child = list(filter(_operation_filter, [u.get_name() for u in units_network.children_of(unit)]))
 
     # if a pair of units child is found, return the one with the shorter name
     if len(pair_child) > 0:
@@ -194,7 +204,7 @@ def _get_pair_child(unit: str):
     else:
         for child in units_network.children_of(unit):
             pair_grandchild = list(
-                filter(lambda u: '/' in u or '*' in u, [u.get_name() for u in units_network.children_of(child)]))
+                filter(_operation_filter, [u.get_name() for u in units_network.children_of(child)]))
             if len(pair_grandchild) > 0:
                 pair_child = sorted(pair_grandchild, key=len)[0]
                 break
@@ -234,6 +244,9 @@ def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=No
         (conversion, conversion_path)
 
     """
+    def _multiply_by_fraction(x):
+        return x * num / den
+
     # get and set recursion limit
     recursion = _get_recursion_limit(recursion)
     if unyts_parameters_.verbose_ and unyts_parameters_.verbose_details_ >= 2:
@@ -245,22 +258,22 @@ def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=No
     # check if already solved and memorized
     use_cache = unyts_parameters_.cache_ if use_cache is None else use_cache
     if use_cache and (from_unit, to_unit) in units_network.memory:
-        conversion_lambda, conversion_path = units_network.memory[(from_unit, to_unit)]
-        return (conversion_lambda, conversion_path) if (conversion_lambda is None or value is None) \
-            else (conversion_lambda(value), conversion_path)
+        conversion_function, conversion_path = units_network.memory[(from_unit, to_unit)]
+        return (conversion_function, conversion_path) if (conversion_function is None or value is None) \
+            else (conversion_function(value), conversion_path)
 
     ## specific cases for quick conversions ##
     # no conversion required if 'from' and 'to' units are the same units
     if from_unit == to_unit:
         if value is None:
-            return lambda x: x, [units_network.get_node(from_unit) if units_network.has_node(from_unit) else from_unit]
+            return equality, [units_network.get_node(from_unit) if units_network.has_node(from_unit) else from_unit]
         else:
             return value, [units_network.get_node(from_unit) if units_network.has_node(from_unit) else from_unit]
 
     # no conversion required if 'from' and 'to' units are dates
     if from_unit in dictionary['Date'] and to_unit in dictionary['Date']:
         if value is None:
-            return lambda x: x, [units_network.get_node(from_unit) if units_network.has_node(from_unit) else from_unit,
+            return equality, [units_network.get_node(from_unit) if units_network.has_node(from_unit) else from_unit,
                                  units_network.get_node(to_unit) if units_network.has_node(to_unit) else to_unit]
         else:
             return value, [units_network.get_node(from_unit) if units_network.has_node(from_unit) else from_unit,
@@ -268,17 +281,17 @@ def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=No
 
     # from None to some units or vice-versa
     if from_unit is None or to_unit is None:
-        return (lambda x: x, []) if value is None else (value, [])
+        return (equality, []) if value is None else (value, [])
 
     # from Dimensionless to Percentage or vice-versa
     if (from_unit.lower() in dictionary['Dimensionless']) and to_unit.lower() in dictionary['Percentage']:
-        return (lambda x: x * 100, ['*', 100]) if value is None else (value * 100, ['*', 100])
+        return (fraction__to__percentage, ['*', 100]) if value is None else (value * 100, ['*', 100])
     if from_unit.lower() in dictionary['Percentage'] and to_unit.lower() in dictionary['Dimensionless']:
-        return (lambda x: x / 100, ['/', 100]) if value is None else (value / 100, ['/', 100])
+        return (percentage__to__fraction, ['/', 100]) if value is None else (value / 100, ['/', 100])
 
     # from Dimensionless to some units (not ratios), to allow assign units to Dimensionless numbers
     if from_unit.lower() in dictionary['Dimensionless'] and '/' not in to_unit:
-        return (lambda x: x, []) if value is None else (value, [])
+        return (equality, []) if value is None else (value, [])
 
     # special case for Temperature ratios
     if '/' in from_unit and len(from_unit.split('/')) == 2 and from_unit.split('/')[0] in dictionary['Temperature'] \
@@ -294,26 +307,26 @@ def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=No
                 return None, None
         den_path = [1] + den_path
         if value is None:
-            return lambda x: x * num / den, ['*', num, '/'] + den_path
+            return _multiply_by_fraction, ['*', num, '/'] + den_path
         else:
             return value * num / den, ['*', num, '/'] + den_path
 
     # from Dimensionless to ratio of same units
     if from_unit.lower() in dictionary['Dimensionless'] and '/' in to_unit and len(to_unit.split('/')) == 2 and \
             to_unit.lower().split('/')[0].strip(' ()') == to_unit.lower().split('/')[1].strip(' ()'):
-        return (lambda x: x, []) if value is None else (value, [])
+        return (equality, []) if value is None else (value, [])
 
     # from ratio of same units to Dimensionless
     if to_unit.lower() in dictionary['Dimensionless'] and '/' in from_unit and len(from_unit.split('/')) == 2 and \
             from_unit.lower().split('/')[0].strip(' ()') == from_unit.lower().split('/')[1].strip(' ()'):
-        return (lambda x: x, []) if value is None else (value, [])
+        return (equality, []) if value is None else (value, [])
 
     # if inverted ratios
     if ('/' in from_unit and len(from_unit.split('/')) == 2) and ('/' in to_unit and len(to_unit.split('/')) == 2) and (
             from_unit.split('/')[0].strip() == to_unit.split('/')[1].strip()) and (
             from_unit.split('/')[1].strip() == to_unit.split('/')[0].strip()):
         if value is None:
-            return lambda x: 1 / x, ['1/']
+            return inverse, ['1/']
         else:
             return 1 / value, ['1/']
 
@@ -321,7 +334,7 @@ def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=No
     conversion_path = _search_network(from_unit, to_unit)
     # return Conversion if found in network
     if conversion_path is not None:
-        units_network.memory[(from_unit, to_unit)] = (_lambda_conversion(conversion_path), conversion_path)
+        units_network.memory[(from_unit, to_unit)] = (_function_conversion(conversion_path), conversion_path)
         if value is None:
             return units_network.memory[(from_unit, to_unit)]
         else:
@@ -423,7 +436,8 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
     # keep only intersection between families
     common = from_family.intersection(to_family)
     
-    total_generations = lambda u: generations_until_common(from_unit, u) + generations_until_common(u, to_unit)
+    def total_generations(u):
+        return generations_until_common(from_unit, u) + generations_until_common(u, to_unit)
     from_to_generations = [total_generations(u) for u in common]
     min_generations = min(from_to_generations)
     common_sorted = {child: gens for gens, child in sorted(zip(from_to_generations, common))}
@@ -440,7 +454,8 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
             this_path_len = len([step for step in (from_child_conversion_path + child_to_conversion_path) if step != '1/'])
             if this_path_len < shortest_path:
                 conversion_path = from_child_conversion_path + child_to_conversion_path
-                conversion = lambda x: child_to_conversion(from_child_conversion(x))
+                def conversion(x):
+                    return child_to_conversion(from_child_conversion(x))
                 shortest_path = this_path_len
             if path == max_paths:
                 break
@@ -468,6 +483,9 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     -------
         (conversion, conversion_path)
     """
+    def _product(x, y):
+        return x * y
+
     # avoid infinite looping, do not repeat searches
     if (from_unit, to_unit) in units_network.previous:
         return None, None
@@ -523,9 +541,11 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
             failed = True
             break
     if len(list_conversion) > 0 and not failed:
-        conversion_factor = reduce(lambda x, y: x * y, list_conversion)
+        conversion_factor = reduce(_product, list_conversion)
         conversion_path = [node for path in list_conversion_path for node in path]
-        units_network.memory[(from_unit, to_unit)] = lambda x: x * conversion_factor, conversion_path
+        def conversion(x):
+            return x * conversion_factor
+        units_network.memory[(from_unit, to_unit)] = conversion, conversion_path
         if value is None:
             return units_network.memory[(from_unit, to_unit)]
         else:
@@ -541,7 +561,8 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
             pair_conversion, pair_conversion_path = _converter(None, from_unit_child, to_unit, recursion=recursion, use_cache=use_cache)
             if pair_conversion is not None and base_conversion is not None:
                 conversion_path = base_conversion_path + pair_conversion_path
-                conversion = lambda x: pair_conversion(base_conversion(x))
+                def conversion(x):
+                    return pair_conversion(base_conversion(x))
                 units_network.memory[(from_unit, to_unit)] = conversion, conversion_path
                 if value is None:
                     return units_network.memory[(from_unit, to_unit)]
@@ -558,7 +579,8 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
             pair_conversion, pair_conversion_path = _converter(None, from_unit, to_unit_child, recursion=recursion, use_cache=use_cache)
             if pair_conversion is not None and final_conversion is not None:
                 conversion_path = pair_conversion_path + final_conversion_path
-                conversion = lambda x: final_conversion(pair_conversion(x))
+                def conversion(x):
+                    return final_conversion(pair_conversion(x))
                 units_network.memory[(from_unit, to_unit)] = conversion, conversion_path
                 if value is None:
                     return units_network.memory[(from_unit, to_unit)]
@@ -667,7 +689,7 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str, use_cache:
 
     Returns
     -------
-    (conv, conv_path): (numeric or lambda, list) or (None, None)
+    (conv, conv_path): (numeric or function, list) or (None, None)
         a conversion and the conversion path, if found.
     """
     if from_unit not in uncertain_names and to_unit not in uncertain_names and \
@@ -675,7 +697,8 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str, use_cache:
         density = _get_density()
         this_units_density, _ = _converter(density, 'g/cm3', f"{to_unit}/{from_unit}", use_cache=use_cache)
         if value is None:
-            conv = lambda x: x * this_units_density
+            def conv(x):
+                return x * this_units_density
         else:
             conv = value * this_units_density
         conv_path = ['*', this_units_density]
@@ -684,7 +707,8 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str, use_cache:
         density = _get_density()
         this_units_density = _converter(density, 'g/cm3', f"{from_unit}/{to_unit}", use_cache=use_cache)
         if value is None:
-            conv = lambda x: x / this_units_density
+            def conv(x):
+                return x / this_units_density
         else:
             conv = value / this_units_density
         conv_path = ['/', this_units_density]
@@ -792,7 +816,7 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty,
 
     Returns
     -------
-    lambda_conversion : lambda
+    conversion_function : function
         if input value is None, or
     converted_value : int, float, array, Series, DataFrame ...
         the converted value if input value is not None

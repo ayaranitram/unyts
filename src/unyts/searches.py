@@ -15,12 +15,10 @@ import logging
 
 from unyts import unyts_parameters_
 
-if unyts_parameters_.multiprocessing_:
-    import os
-    from multiprocessing import Process
-if unyts_parameters_.threading_:
-    import os
-    from threading import Thread
+import os
+from multiprocessing import Process
+from threading import Thread
+
 
 def BFS(graph, start, end, verbose=False) -> list:
     """
@@ -222,6 +220,7 @@ def hybrid_BFS(graph, start, end, verbose=False, max_generations_screening=25) -
     runner_bfs = runner(target=_bfs, args=(results_, units_network, start, end, verbose_))
     if verbose:
         logging.info(f"<hybrid BFS> starting BFS and lean_BFS threads, from {start} to {end}")
+
     _ = runner_lean_bfs.start()
     _ = runner_bfs.start()
 

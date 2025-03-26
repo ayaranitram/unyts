@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.4'
-__release__ = 20240807
+__version__ = '0.6.5'
+__release__ = 20250323
 __all__ = ['Unit', 'is_Unit']
 
 import logging
@@ -77,38 +77,74 @@ class Unit(object, metaclass=UnytType):
     """
     class_units = []
     _all_units_str = _all_units()
-    __slots__ = ('unit', 'value', 'name', 'kind')
+    __slots__ = ('__unit', '__value', 'name', 'kind')
 
-    def __init__(self, value: numeric, unit=None, name=None):
+    def __init__(self, value: numeric, units=None, name=None):
         if isinstance(value, Unit):
-            if unit is None:
-                value, unit = value.value, value.unit
+            if units is None:
+                value, units = value.value, value.unit
             else:
                 value = value.value
-        if unit is None:
-            unit = 'dimensionless'
-        elif type(unit) is str and unit.strip() in Unit._all_units_str:
-            self.unit = unit.strip()
+        if units is None:
+            units = 'dimensionless'
+        elif type(units) is str and units.strip() in Unit._all_units_str:
+            units = units.strip()
         elif unyts_parameters_.raise_error:
-            raise WrongUnitsError("'" + str(unit) + "' is not a valid units name.")
+            raise WrongUnitsError(f"'{units}' is not a valid units name. Valid are: {self.kind.class_units}")
         elif not unyts_parameters_.raise_error:
-            logging.error("'" + str(unit) + "' is not a valid units name.")
-        self.value = self.check_value(value)
-        self.unit = unit
+            logging.error(f"'{units}' is not a valid units name.")
         self.name = 'unit' if name is None else name
         self.kind = Unit
+        self.__value = self.check_value(value)
+        self.__unit = units
+
+    @property
+    def unit(self):
+        return self.__unit
+
+    @unit.setter
+    def unit(self, units):
+        self.__unit = units
+
+    @property
+    def units(self):
+        return self.__unit
+
+    @units.setter
+    def units(self, units):
+        self.__unit = units
+
+    def get_value(self):
+        return self.value
+
+    @property
+    def value(self):
+        return self.__value
+
+    @value.setter
+    def value(self, value):
+        self.__value = self.check_value(value)
+
+    @property
+    def values(self):
+        return self.__value
+
+    @values.setter
+    def values(self, value):
+        self.__value = self.check_value(value)
 
     def __call__(self) -> numeric:
         return self.value
 
     def __repr__(self) -> str:
-        return str(self.value) + '_' + str(self.unit)
+        # return str(self.value) + '_' + str(self.unit)
+        return f"{self.value}_{self.unit}"
 
     def __str__(self) -> str:
         if self.unit is None or len(str(self.unit).strip()) == 0:
             return str(self.value)
         else:
-            return str(self.value) + '_' + str(self.unit)
+            return f"{self.value}_{self.unit}"
 
     @property
     def dtype(self):
@@ -138,9 +174,9 @@ class Unit(object, metaclass=UnytType):
                 raise WrongUnitsError("'" + str(new_unit) + "' is not valid units for " + str(type(self)) + ".")
         if type(self) is Unit:
             from .units.define import units
-            return units(_convert(self.value, self.unit, new_unit), new_unit)
+            return units(_convert(self.__value, self.unit, new_unit), new_unit)
         else:
-            return self.kind(_convert(self.value, self.unit, new_unit), new_unit)
+            return self.kind(_convert(self.__value, self.unit, new_unit), new_unit)
 
     def to(self, new_unit):
         return self.convert(new_unit)
@@ -583,42 +619,24 @@ class Unit(object, metaclass=UnytType):
     def get_units(self):
         return self.get_unit()
 
-    @property
-    def units(self):
-        return self.unit
-
-    @units.setter
-    def units(self, units):
-        self.unit = units
-
-    def get_value(self):
-        return self.value
-
-    @property
-    def values(self):
-        return self.value
-
-    @values.setter
-    def values(self, value):
-        self.value = value
-
     def round(self, precision:int=0, *, value=None):
         value_ = self.value if value is None else value
-        significants = lambda v, i: float(f"{v:.{abs(i)}g}")
+        def significants(v, i):
+            return float(f"{v:.{abs(i)}g}")
         from .units.define import units
         precision = int(precision)
         if precision >= 0 and hasattr(value_, 'round'):
             if _numpy_:
                 value_ = value_.round(precision)
             else:
-                raise NotImplementedError(f"operations on arrays without Numpy are not implemented.")
+                raise NotImplementedError("operations on arrays without Numpy are not implemented.")
         elif precision >= 0:
             value_ = round(value_, precision)
         elif precision < 0 and hasattr(self.value, '__iter__'):
             if _numpy_:
                 value_ = np.array([significants(each, precision) for each in value_])
             else:
-                raise NotImplementedError(f"operations on arrays without Numpy are not implemented.")
+                raise NotImplementedError("operations on arrays without Numpy are not implemented.")
         else:
             value_ = significants(value_, precision)
         return units(value_, self.units) if value is None else value_
