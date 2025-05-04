@@ -22,6 +22,7 @@ from .Empty import Empty
 from .unit_class import Unit, is_Unit, valid_unit
 from .units.custom import set_unit, set_conversion
 from .gui import start_gui
+from .helpers.logger import logger
 
 
 if unyts_parameters_.show_version_:
