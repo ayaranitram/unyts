@@ -10,18 +10,17 @@ from os.path import isfile
 
 from .errors import NoFVFError
 from .parameters import unyts_parameters_
+from .helpers.logger import logger
 
 try:
     from cloudpickle import dump as cloudpickle_dump, load as cloudpickle_load
-
     _cloudpickle_ = True
 except ModuleNotFoundError:
     _cloudpickle_ = False
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
-__version__ = '0.4.21'
-__release__ = 20241214
+__version__ = '0.4.22'
+__release__ = 20250504
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -67,38 +66,38 @@ class UDigraph(object):
         if path is None:
             path = unyts_parameters_.get_user_folder() + 'search_memory.cache'
         if self._cloudpickle_:
-            logging.info('saving search memory to cache...')
+            logger.info('saving search memory to cache...')
             with open(path, 'wb') as f:
                 cloudpickle_dump(self.memory, f)
         else:
-            logging.warning("Missing `cloudpickle` package. Not able to cache search memory.")
+            logger.warning("Missing `cloudpickle` package. Not able to cache search memory.")
 
     def load_memory(self, path=None) -> None:
         if path is None:
             path = unyts_parameters_.get_user_folder() + 'search_memory.cache'
         if not self._cloudpickle_:
-            logging.warning("Missing `cloudpickle` package. Not able to cache search memory.")
+            logger.warning("Missing `cloudpickle` package. Not able to cache search memory.")
         if not isfile(unyts_parameters_.get_user_folder() + 'search_memory.cache'):
             msg = "starting clean memory..."
-            logging.info(msg)
+            logger.info(msg)
         else:
-            logging.info('loading memory from cache...')
+            logger.info('loading memory from cache...')
             try:
                 with open(path, 'rb') as f:
                     cached_memory = cloudpickle_load(f)
                     self.memory.update(cached_memory)
                     msg = f"{len(self.memory)} conversion path{'' if len(self.memory) == 1 else 's'} in memory."
-                    logging.info(msg)
+                    logger.info(msg)
             except:
                 msg = 'Failed to load memory from cache.'
-                logging.error(msg)
+                logger.error(msg)
         unyts_parameters_.last_path_str = msg
 
     def clean_memory(self):
         self.memory = {}
         msg = f"memory cleaned."
         if unyts_parameters_.verbose_:
-            logging.info(msg)
+            logger.info(msg)
 
     def add_node(self, node) -> None:
         if node in self.edges:
@@ -166,7 +165,7 @@ class UDigraph(object):
                 print(f'received FVF value is not a number: {FVF}')
         if type(FVF) in (int, float):
             if FVF <= 0:
-                logging.error('FVF should be a positive number...')
+                logger.error('FVF should be a positive number...')
             self.fvf = FVF
 
     def get_fvf(self):

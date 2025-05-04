@@ -6,8 +6,8 @@ Created on Tue Dec 03 23:15:37 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.1.0'
-__release__ = 20241203
+__version__ = '0.1.1'
+__release__ = 20250502
 
 from unyts import network
 from ..dictionaries import SpeedOfLight, StandardEarthGravity, StandardAirDensity
@@ -322,6 +322,14 @@ def light_year__to__meter(light_year):
     """
     d = light_year
     return d * SpeedOfLight * 365.25 * 24 * 60
+
+def scandinavian_mile__to__kilometer(scandinavian_mile):
+    """
+    conversion of lambda:
+        d: d * 10
+    """
+    d = scandinavian_mile
+    return d * 10
 
 def mile_per_hour__to__kilometer_per_hour(mile_per_hour):
     """"

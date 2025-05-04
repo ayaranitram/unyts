@@ -6,17 +6,18 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.7'
-__release__ = 20241124
+__version__ = '0.6.8'
+__release__ = 20250504
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'set_density', 'get_density',
            'recursion_limit', 'verbose', 'set_algorithm', 'set_parallel']
 
-import logging
 import os.path
 from json import load as json_load, dump as json_dump
 from os.path import isfile, isdir
 from pathlib import Path
 from sys import getrecursionlimit
+from time import time
+from .helpers.logger import logger
 
 ini_path = Path(__file__).with_name('parameters.ini').absolute()
 ini_backup = Path(__file__).with_name('parameters.backup').absolute()
@@ -24,6 +25,10 @@ dir_path = os.path.dirname(ini_path) + '/'
 off_switches = ('false', 'off', 'no', 'none', 'null', 'not', '')
 __max_recursion_default__ = 12
 __max_generations_default__ = 25
+__timeout__ = 30
+__default_density__ = 0.997
+__default_fvf__ = 1.0
+
 
 class UnytsParameters(object):
     """
@@ -39,11 +44,12 @@ class UnytsParameters(object):
         self.verbose_details_ = 0
         self.reduce_parentheses_ = True
         self.show_version_ = True
-        self.density_ = 1.0  # g/cm3
-        self.fvf_ = 1.0  # res_vol/std_vol
+        self.density_ = __default_density__  # g/cm3
+        self.fvf_ = __default_fvf__  # res_vol/std_vol
         self.max_recursion_ = __max_recursion_default__
         self.algorithm_ = 'lean_BFS'
         self.max_generations_ = __max_generations_default__
+        self.timeout_ = __timeout__
         self.load_params()
         self.reload_ = self.reload_ if reload is None else bool(reload)
         self.memory_ = not self.reload_
@@ -52,7 +58,9 @@ class UnytsParameters(object):
         self.threading_ = self.threading_available()
         self.multiprocessing_ = self.multiprocessing_available()
         self.parallel_ = (self.threading_ or self.multiprocessing_) and self.parallel_
+        self._deactivate_parallel = True  # to hide the Parallel menu in the GUI
         self._warnings = []
+        self._start_time = 0
 
     def threading_available(self):
         try:
@@ -83,12 +91,13 @@ class UnytsParameters(object):
                       'verbose_details': 0,
                       'reduce_parentheses': True,
                       'show_version': False,
-                      'density': 1.0, # g/cm3
+                      'density': __default_density__, # g/cm3
+                      'fvf': __default_fvf__,
                       'max_recursion': __max_recursion_default__,
                       'algorithm': 'lean_BFS',
                       'max_generations': __max_generations_default__,
-                      'fvf': 1.0,
-                      'parallel': True,
+                      'timeout': __timeout__,
+                      'parallel': False,
                       'config_files_folder': None}
             with open(ini_path, 'w') as f:
                 json_dump(params, f)
@@ -100,12 +109,13 @@ class UnytsParameters(object):
         self.verbose_details_ = params['verbose_details'] if 'verbose_details' in params else 0
         self.reduce_parentheses_ = params['reduce_parentheses'] if 'reduce_parentheses' in params else True
         self.show_version_ = params['show_version'] if 'show_version' in params else True
-        self.density_ = params['density'] if 'density' in params else 1.0  # g/cm3
+        self.density_ = params['density'] if 'density' in params else __default_density__  # g/cm3
+        self.fvf_ = params['fvf'] if 'fvf' in params else __default_fvf__
         self.max_recursion_ = params['max_recursion'] if 'max_recursion' in params else __max_recursion_default__
         self.algorithm_ = params['algorithm'] if 'algorithm' in params else 'BFS'
         self.max_generations_ = params['max_generations'] if 'max_generations' in params else __max_generations_default__
-        self.fvf_ = params['fvf'] if 'fvf' in params else 1.0
-        self.parallel_ = params['parallel'] if 'parallel' in params else True
+        self.timeout_ = params['timeout'] if 'timeout' in params else __timeout__
+        self.parallel_ = params['parallel'] if 'parallel' in params else False
         self.config_files_folder_ = dir_path if ('config_files_folder' not in params or params['config_files_folder'] is None) \
             else params['config_files_folder'] if ('config_files_folder' in params and isdir(params['config_files_folder'])) \
             else self.config_files_folder_
@@ -113,18 +123,19 @@ class UnytsParameters(object):
         if self.show_version_ and isfile(ini_backup):
             with open(ini_backup, 'r') as f:
                 params = json_load(f)
-            logging.info("Restoring configuration from previous installation...")
+            logger.info("Restoring configuration from previous installation...")
             self.print_path_ = params['print_path'] if 'print_path' in params else False
             self.cache_ = params['cache'] if 'cache' in params else True
             self.raise_error_ = params['raise_error'] if 'raise_error' in params else True
             self.verbose_ = params['verbose'] if 'verbose' in params else False
             self.verbose_details_ = params['verbose_details'] if 'verbose_details' in params else 0
             self.reduce_parentheses_ = params['reduce_parentheses'] if 'reduce_parentheses' in params else True
-            self.density_ = params['density'] if 'density' in params else 1.0  # g/cm3
+            self.density_ = params['density'] if 'density' in params else __default_density__  # g/cm3
+            self.fvf_ = params['fvf'] if 'fvf' in params else __default_fvf__
             self.max_recursion_ = params['max_recursion'] if 'max_recursion' in params else __max_recursion_default__
             self.algorithm_ = params['algorithm'] if 'algorithm' in params else 'BFS'
             self.max_generations_ = params['max_generations'] if 'max_generations' in params else __max_generations_default__
-            self.fvf_ = params['fvf'] if 'fvf' in params else 1.0
+            self.timeout_ = params['timeout'] if 'timeout' in params else __timeout__
             self.parallel_ = params['parallel'] if 'parallel' in params else True
             self.config_files_folder_ = dir_path if ('config_files_folder' not in params or params['config_files_folder'] is None) \
                 else params['config_files_folder'] if ('config_files_folder' in params and isdir(params['config_files_folder'])) \
@@ -140,10 +151,11 @@ class UnytsParameters(object):
                   'reduce_parentheses': self.reduce_parentheses_,
                   'show_version': self.show_version_,
                   'density': self.density_,
+                  'fvf': self.fvf_,
                   'max_recursion': self.max_recursion_,
                   'algorithm': self.algorithm_,
                   'max_generations': self.max_generations_,
-                  'fvf': self.fvf_,
+                  'timeout': self.timeout_,
                   'parallel': self.parallel_,
                   'config_files_folder': self.config_files_folder_ if self.config_files_folder_ != dir_path else None}
         with open(ini_path, 'w') as f:
@@ -152,6 +164,7 @@ class UnytsParameters(object):
             json_dump(params, f)
 
     def print_path(self, switch=None) -> None:
+        _prev = self.print_path_
         if switch is None:
             self.print_path_ = not self.print_path_
         elif type(switch) is str:
@@ -161,7 +174,8 @@ class UnytsParameters(object):
                 self.print_path_ = True
         else:
             self.print_path_ = bool(switch)
-        logging.info(f"print path {'ON' if self.print_path_ else 'OFF'}")
+        if _prev != self.print_path_:
+            logger.info(f"print path {'ON' if self.print_path_ else 'OFF'}")
         self.save_params()
 
     def cache(self, switch=None) -> None:
@@ -174,7 +188,7 @@ class UnytsParameters(object):
                 self.cache_ = True
         else:
             self.cache_ = bool(switch)
-        logging.info(f"cache {'ON' if self.cache_ else 'OFF'}")
+        logger.info(f"cache {'ON' if self.cache_ else 'OFF'}")
         self.save_params()
 
     def raise_error(self, switch=None) -> None:
@@ -187,10 +201,11 @@ class UnytsParameters(object):
                 self.raise_error_ = True
         else:
             self.raise_error_ = bool(switch)
-        logging.info(f"raise_error {'ON' if self.raise_error_ else 'OFF'}")
+        logger.info(f"raise_error {'ON' if self.raise_error_ else 'OFF'}")
         self.save_params()
 
     def verbose(self, switch=None) -> None:
+        _prev = self.verbose_
         if type(switch) is int:
             self.verbose_details_ = switch
             if switch <= 0:
@@ -206,8 +221,13 @@ class UnytsParameters(object):
                 self.verbose_ = True
         else:
             self.verbose_ = bool(switch)
-        logging.info(f"verbose {'ON' if self.verbose_ else 'OFF'}")
+        if _prev != self.verbose_:
+            logger.info(f"verbose {'ON' if self.verbose_ else 'OFF'}")
         self.save_params()
+
+    def set_logger_level(self, level:str="INFO") -> None:
+        if type(level) is str and level.upper() in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
+            logger.set_level(level)
 
     def reload_next_time(self, switch=None):
         if switch is None:
@@ -220,9 +240,9 @@ class UnytsParameters(object):
         else:
             self.reload_ = bool(switch)
         if self.reload_:
-            logging.info("Unyts will recreate dictionaries next time.")
+            logger.info("Unyts will recreate dictionaries next time.")
         else:
-            logging.info("Unyts will try to load dictionaries from cache next time.")
+            logger.info("Unyts will try to load dictionaries from cache next time.")
         self.save_params()
 
     def recursion_limit(self, limit=None):
@@ -258,20 +278,20 @@ class UnytsParameters(object):
 
     def set_algorithm(self, algorithm:str):
         if algorithm not in ['BFS', 'lean_BFS', 'DFS', 'hybrid_BFS']:
-            logging.error(f"Valid algorithms are 'BFS', 'lean_BFS', 'hybrid_BFS', and 'DFS' not {algorithm}.")
+            logger.error(f"Valid algorithms are 'BFS', 'lean_BFS', 'hybrid_BFS', and 'DFS' not '{algorithm}'.")
         elif algorithm == 'hybrid_BFS' and not self.threading_:
-            logging.critical("threading module not available in this Python installation.")
+            logger.critical("threading module not available in this Python installation.")
             if self.get_algorithm() == 'hybrid_BFS':
                 _ = set_algorithm('lean_BFS')
             else:
-                logging.info(f"keeping {self.get_algorithm()} as search algorithm.")
+                logger.info(f"keeping {self.get_algorithm()} as search algorithm.")
         else:
             self.algorithm_ = algorithm
             if self.verbose_:
-                logging.info(f"{algorithm} set as search algorithm.")
+                logger.info(f"{algorithm} set as search algorithm.")
             msg = "The search memory must be cleansed if intended to repeat searches with a different algorithm."
             if msg not in self._warnings:
-                logging.warning(msg)
+                logger.warning(msg)
                 self._warnings.append(msg)
             self.save_params()
 
@@ -303,10 +323,35 @@ class UnytsParameters(object):
         else:
             raise ValueError(f"method argument should be set to 'threading' of 'multiprocessing', False to deactivate, or None for automatic detection.")
         msg = f"Parallel processing {'activated' if self.parallel_ else 'deactivated'}{', using ' if self.parallel_ else ''}{('multiprocessing' if self.multiprocessing_ else 'threading' if self.threading_ else '') if self.parallel_ else ''}."
-        logging.info(msg)
+        logger.info(msg)
 
     def get_parallel(self):
         return self.parallel_
+
+    def set_timeout(self, timeout:int=120):
+        if type(timeout) is not int:
+            raise TypeError("´timeout´ must be entered in seconds, as integer")
+        self.timeout_ = timeout
+        if timeout > 0:
+            logger.info(f"path searches limited to {timeout} seconds.")
+        else:
+            logger.warning(f"path searches may run for unlimited time.")
+        self.save_params()
+
+    def get_timeout(self):
+        return self.timeout_
+
+    def is_intime(self):
+        if self._start_time == 0:
+            self._start_time = time()
+            return True
+        elif time() - self._start_time <= self.timeout_:
+            return True
+        else:
+            return False
+
+    def reset_start_time(self):
+        self._start_time = 0
 
     def set_user_folder(self, path=None):
         if path is None:
@@ -314,7 +359,7 @@ class UnytsParameters(object):
         elif isdir(path):
             self.config_files_folder_ = path + '' if not path.endswith('/') and not path.endswith('\\') else '/'
         else:
-            logging.warning(f"Folder {path} doesn't exists, user folder not changed.")
+            logger.warning(f"Folder {path} doesn't exists, user folder not changed.")
 
     def get_user_folder(self):
         return self.config_files_folder_
@@ -373,7 +418,7 @@ def set_density(density: float = None, units: str = 'g/cm3') -> None:
         if density is None:
             raise ValueError("density 'units' are not valid.")
     unyts_parameters_.density_ = density
-    logging.info(f"density set to {density} g/cm³")
+    logger.info(f"density set to {density} g/cm³")
     unyts_parameters_.save_params()
 
 
@@ -399,7 +444,7 @@ def get_density():
 def reload() -> None:
     unyts_parameters_.reload_ = True
     unyts_parameters_.save_params()
-    logging.info("On next 'import unyts', the dictionary and network will be re-created.\n It might be required to restart the Python kernel.")
+    logger.info("On next 'import unyts', the dictionary and network will be re-created.\n It might be required to restart the Python kernel.")
 
 
 def set_algorithm(algorithm:str):
@@ -418,3 +463,24 @@ def set_parallel(method:str):
 
 def get_parallel():
     return unyts_parameters_.get_parallel()
+
+
+def set_timeout(timeout:int=None):
+    if timeout is None:
+        timeout = __timeout__
+    if timeout is False:
+        timeout = -1
+    elif timeout is True:
+        timeout = __timeout__
+    if type(timeout) is not int:
+        raise TypeError("´timeout´ must be entered in seconds, as integer")
+    return unyts_parameters_.set_timeout(timeout)
+
+
+def get_timeout():
+    return unyts_parameters_.get_timeout()
+
+
+def set_logging_level(level:str="WARNING"):
+    unyts_parameters_.set_logger_level(level)
+

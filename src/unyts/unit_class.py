@@ -6,11 +6,10 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.5'
-__release__ = 20250323
+__version__ = '0.6.6'
+__release__ = 20250504
 __all__ = ['Unit', 'is_Unit']
 
-import logging
 from .errors import WrongUnitsError, WrongValueError, NoConversionFoundError
 from .operations import unit_product as _unit_product, unit_division as _unit_division, \
     unit_base_power as _unit_base_power
@@ -18,10 +17,10 @@ from .helpers.unit_string_tools import reduce_units as _reduce_units
 from .converter import convert as _convert, convertible as _convertible
 from .dictionaries import _all_units
 from .parameters import unyts_parameters_
+from .helpers.logger import logger
 from numbers import Number
 from typing import Union
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 try:
     import numpy as np
@@ -92,7 +91,7 @@ class Unit(object, metaclass=UnytType):
         elif unyts_parameters_.raise_error:
             raise WrongUnitsError(f"'{units}' is not a valid units name. Valid are: {self.kind.class_units}")
         elif not unyts_parameters_.raise_error:
-            logging.error(f"'{units}' is not a valid units name.")
+            logger.error(f"'{units}' is not a valid units name.")
         self.name = 'unit' if name is None else name
         self.kind = Unit
         self.__value = self.check_value(value)
@@ -167,7 +166,7 @@ class Unit(object, metaclass=UnytType):
         if not _convertible(self.unit, new_unit):
             from .units.custom import UserUnits
             if self.kind is UserUnits:
-                logging.warning("'" + str(new_unit) + "' is not valid units for " + str(type(self)) + ".")
+                logger.warning("'" + str(new_unit) + "' is not valid units for " + str(type(self)) + ".")
                 return self
             else:
                 raise WrongUnitsError("'" + str(new_unit) + "' is not valid units for " + str(type(self)) + ".")

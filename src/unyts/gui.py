@@ -6,11 +6,10 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.5'
-__release__ = 20241124
+__version__ = '0.4.6'
+__release__ = 20250502
 __all__ = ['start_gui']
 
-import logging
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import simpledialog
@@ -20,9 +19,10 @@ from stringthings import get_number, is_numeric
 from unyts import __version__ as unyts_version
 from .converter import convert
 from .dictionaries import _all_units
-from .errors import NoConversionFoundError, NoFVFError
+from .errors import NoConversionFoundError, NoFVFError, SearchTimeoutError
 from .database import save_memory, load_memory, clean_memory, delete_cache, units_network  # set_fvf
 from .parameters import unyts_parameters_  # set_density
+from .helpers.logger import logger
 import pathlib, os
 import webbrowser
 
@@ -32,6 +32,7 @@ class UnytsApp(tk.Frame):
 
     def __init__(self, master=None):
         super().__init__(master)
+        self.user_print_path_ = bool(unyts_parameters_.print_path_)
         self.pack()
 
         ttk.Label(text="Unyts converter", font=(None, 16, 'bold'), padding=5).pack()
@@ -187,6 +188,11 @@ class UnytsApp(tk.Frame):
             self._calculation_time(start_time, end_time)
             self._display_path()
             self.repeat_search.deselect()
+        except SearchTimeoutError:
+            end_time = process_time()
+            self._calculation_time(start_time, end_time)
+            self._display_path(error="search timeout!")
+            return
         except NoConversionFoundError:
             end_time = process_time()
             self._calculation_time(start_time, end_time)
@@ -229,6 +235,11 @@ class UnytsApp(tk.Frame):
             self._calculation_time(start_time, end_time)
             self._display_path()
             self.repeat_search.deselect()
+        except SearchTimeoutError:
+            end_time = process_time()
+            self._calculation_time(start_time, end_time)
+            self._display_path(error="search timeout!")
+            return
         except NoConversionFoundError:
             end_time = process_time()
             self._calculation_time(start_time, end_time)
@@ -293,11 +304,13 @@ class UnytsApp(tk.Frame):
 
     def _display_path(self, error:str=""):
         if bool(error):
+            self.show_temporary_message()
             if self._path_marquee is not None:
                 self.path.after_cancel(self._path_marquee)
             self.path_str.set(error)
             self.path_msg.config(foreground='red')
             return
+        self.check_temporary_message()
         self.path_msg.config(foreground='#3d3d3d')
         if unyts_parameters_.last_path_str != "" and unyts_parameters_.print_path_:
             if len(unyts_parameters_.last_path_str) < self._max_len:
@@ -309,16 +322,29 @@ class UnytsApp(tk.Frame):
         else:
             self.path_str.set("")
 
+    def check_temporary_message(self):
+        if self.user_print_path_ is not unyts_parameters_.print_path_:
+            unyts_parameters_.print_path_ = bool(self.user_print_path_)
+            if self.user_print_path_:
+                self.path.pack()
+            else:
+                self.path.pack_forget()
+
+    def show_temporary_message(self):
+        if not unyts_parameters_.print_path_:
+            self.user_print_path_ = bool(unyts_parameters_.print_path_)
+            self.path.pack()
     def _get_input(self):
         self.input_value_str = self.input_value.get().strip()
 
 
 def start_gui():
     unyts_parameters_.gui = True
+
     def close_gui():
-        logging.info("INFO:shutting down Unyts.")
+        logger.info("INFO:shutting down Unyts.")
         if unyts_parameters_.cache_:
-            logging.info("saving memory...")
+            logger.info("saving memory...")
             save_memory()
         root.destroy()
     if unyts_parameters_.memory_:
@@ -406,7 +432,9 @@ def start_gui():
             user_input = simpledialog.askstring("formation volume factor",
                                      "Enter FVF in vol/vol or type the value followed by the units, like 1.5 rb/MMscf",
                                                 initialvalue=current_value)
-            if user_input is None or len(user_input) == 0:
+            if user_input is None:
+                break
+            if len(user_input) == 0:
                 fvf = False
             elif len(user_input.split()) == 1:
                 try:
@@ -432,15 +460,19 @@ def start_gui():
                             unyts_parameters_.fvf_ = prev_fvf_
                 except:
                     pass
-        units_network.set_fvf(fvf)
-        unyts_parameters_.fvf_ = fvf
-        unyts_parameters_.save_params()
-        if user_input == fvf:
-            unyts_parameters_.last_path_str = f"FVF set as {fvf} vol/vol."
+        if fvf is not None:
+            units_network.set_fvf(fvf)
+            unyts_parameters_.fvf_ = fvf
+            unyts_parameters_.save_params()
+            if user_input == fvf:
+                unyts_parameters_.last_path_str = f"FVF set as {fvf} vol/vol."
+            else:
+                unyts_parameters_.last_path_str = f"FVF {user_input} {unit} converted to {fvf} vol/vol"
+            unyts_gui.repeat_search.select()
         else:
-            unyts_parameters_.last_path_str = f"FVF {user_input} {unit} converted to {fvf} vol/vol"
-        unyts_gui.repeat_search.select()
+            unyts_parameters_.last_path_str = "nothing changed"
         unyts_gui._display_path()
+
     def _set_density():
         if unyts_parameters_.density_ is not None:
             current_value = f"{unyts_parameters_.density_} g/cm³"
@@ -451,8 +483,9 @@ def start_gui():
             user_input = simpledialog.askstring("constant density to convert between volume and mass",
                                      "Enter density in g/cm³ or type the value followed by the units, like: 997 kg/m³",
                                                 initialvalue=current_value)
-            print(user_input)
-            if user_input is None or len(user_input) == 0:
+            if user_input is None:
+                break
+            if len(user_input) == 0:
                 density = False
             elif len(user_input.split()) == 1:
                 try:
@@ -472,13 +505,67 @@ def start_gui():
                             unyts_gui._display_path(error=f"density units {unit} are not valid.")
                 except:
                     pass
-        unyts_parameters_.density_ = density
-        unyts_parameters_.save_params()
-        if user_input == density:
-            unyts_parameters_.last_path_str = f"density set as {density} g/cm³."
+        if density is not None:
+            unyts_parameters_.density_ = density
+            unyts_parameters_.save_params()
+            if user_input == density:
+                unyts_parameters_.last_path_str = f"density set as {density} g/cm³."
+            else:
+                unyts_parameters_.last_path_str = f"density {user_input} {unit} converted to {density} g/cm³"
+            unyts_gui.repeat_search.select()
         else:
-            unyts_parameters_.last_path_str = f"density {user_input} {unit} converted to {density} g/cm³"
-        unyts_gui.repeat_search.select()
+            unyts_parameters_.last_path_str = "nothing changed"
+        unyts_gui._display_path()
+
+    def _set_timeout():
+        if unyts_parameters_.timeout_ is not None:
+            current_value = f"{unyts_parameters_.timeout_} seconds"
+            prev_timeout_ = unyts_parameters_.timeout_
+        else:
+            current_value = None
+            prev_timeout_ = None
+        timeout = None
+        while timeout is None:
+            user_input = simpledialog.askstring("conversion timeout limit",
+                                     "Enter timeout in seconds or type the value followed by the units, like 1 minute",
+                                                initialvalue=current_value)
+            if user_input is None:
+                break
+            if len(user_input) == 0 or user_input.lower() in ('none', 'false', 'unlimited'):
+                timeout = -1
+            elif len(user_input.split()) == 1:
+                try:
+                    user_input = get_number(user_input)
+                    if user_input > 0:
+                        timeout = user_input
+                except:
+                    pass
+            elif len(user_input.split()) == 2:
+                user_input, unit = user_input.split()
+                try:
+                    user_input = get_number(user_input)
+                except:
+                    pass
+                if user_input <= 0 or unit.lower() in ('second', 's', 'ss', 'sec', 'seconds', 'secs'):
+                    unit = 'second'
+                    timeout = user_input
+                else:
+                    try:
+                        timeout = convert(user_input, unit, 'second')
+                    except NoConversionFoundError:
+                        unyts_gui._display_path(error="timeout units {unit} are not valid.")
+
+        if timeout is not None:
+            _ = unyts_parameters_.set_timeout(timeout)
+            unyts_parameters_.save_params()
+            if user_input <= 0:
+                unyts_parameters_.last_path_str = f"search time set unlimited."
+            elif user_input == timeout:
+                unyts_parameters_.last_path_str = f"timeout set as {timeout} seconds."
+            else:
+                unyts_parameters_.last_path_str = f"timeout {user_input} {unit} converted to {timeout} seconds"
+        else:
+            unyts_parameters_.last_path_str = "nothing changed"
         unyts_gui._display_path()
 
     def export_memory():
@@ -491,7 +578,7 @@ def start_gui():
             try:
                 save_memory(cache_path)
             except:
-                logging.error(f"Failed to save memory to file {cache_path}")
+                logger.error(f"Failed to save memory to file {cache_path}")
         else:
             pass
     def load_memory_file():
@@ -505,11 +592,11 @@ def start_gui():
                     unyts_gui._display_path()
                 except:
                     msg = f"Not able to load memory from file {cache_path}"
-                    logging.error(msg)
+                    logger.error(msg)
                     unyts_gui._display_path(error=msg)
             else:
                 msg = f"The file {cache_path} doesn't exists."
-                logging.error(msg)
+                logger.error(msg)
                 unyts_gui._display_path(error=msg)
         else:
             pass
@@ -522,12 +609,12 @@ def start_gui():
                 unyts_parameters_.set_user_folder(cache_path)
             else:
                 msg = f"The file {cache_path} doesn't exists."
-                logging.error(msg)
+                logger.error(msg)
                 unyts_gui._display_path(error=msg)
         else:
             pass
 
-    logging.info("starting Unyts GUI...")
+    logger.info("starting Unyts GUI...")
     w, h = 325, 235
     root = tk.Tk(screenName='Unyts')
     root.geometry(f"{w}x{h}")
@@ -556,6 +643,10 @@ def start_gui():
     _par_mp_.set(unyts_parameters_.parallel_ and unyts_parameters_.multiprocessing_)
     _par_off_.set(not unyts_parameters_.parallel_)
     _par_auto_.set(unyts_parameters_.parallel_)
+
+    # deactivate the experimental parallel mode
+    if unyts_parameters_._deactivate_parallel and unyts_parameters_.parallel_:
+        _set_par_off()
 
     # setting menu
     root.option_add('*tearOff', False)
@@ -594,11 +685,15 @@ def start_gui():
     search_menu = tk.Menu(unyts_menu)
     search_menu.add_checkbutton(label='BFS', variable=_bfs_, command=_set_bfs)
     search_menu.add_checkbutton(label='lean BFS', variable=_lean_bfs_, command=_set_lean_bfs)
-    search_menu.add_checkbutton(label='hybrid BFS', variable=_hybrid_BFS_, command=_set_hybrid_BFS)
+    if not unyts_parameters_._deactivate_parallel and (
+            unyts_parameters_.threading_ or unyts_parameters_.multiprocessing or unyts_parameters_.parallel_):
+        search_menu.add_checkbutton(label='hybrid BFS', variable=_hybrid_BFS_, command=_set_hybrid_BFS)
     search_menu.add_checkbutton(label='DFS', variable=_dfs_, command=_set_dfs)
+    search_menu.add_command(label="Set timeout", command=_set_timeout)
     options_menu.add_cascade(label='Search algorithm', menu=search_menu)
     # Parallel menu
-    if unyts_parameters_.threading_ or unyts_parameters_.multiprocessing or unyts_parameters_.parallel_:
+    if not unyts_parameters_._deactivate_parallel and (
+            unyts_parameters_.threading_ or unyts_parameters_.multiprocessing or unyts_parameters_.parallel_):
         parallel_menu = tk.Menu(unyts_menu)
         parallel_menu.add_checkbutton(label='threading', variable=_par_th_, command=_set_par_th)
         if unyts_parameters_.multiprocessing_:

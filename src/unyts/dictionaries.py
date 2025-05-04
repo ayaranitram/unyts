@@ -6,17 +6,17 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.52'
-__release__ = 20250320
+__version__ = '0.5.53'
+__release__ = 20250504
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'StandardWaterDensity',
            'unitless_names', 'uncertain_names']
 
-import logging
 from json import load as json_load
 from pickle import load as pickle_load, dump as pickle_dump
 from os.path import isfile
 from .parameters import unyts_parameters_
 from .units.def_prefixes import *
+from .helpers.logger import logger
 
 StandardAirDensity = 1.225  # Kg/m3 or g/cc
 StandardEarthGravity = 9.80665  # m/s2 or 980.665 cm/s2 from
@@ -24,7 +24,6 @@ StandardWaterDensity = 1.00  # g/cm3 because the size of the gram was originally
 SpeedOfLight = 299792458  # m/s
 uncertain_names = ['oz', 'ounce', 'ounces', 'OZ', 'OUNCE', 'OUNCES']
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 # Sistema Internacional
 SI = {
@@ -85,7 +84,7 @@ OGF_order = (tuple(), tuple, ('Volume', 'Rate',))
 
 
 def _load_dictionary() -> (dict, dict):
-    logging.info('preparing units dictionary...')
+    logger.info('preparing units dictionary...')
 
     # the dictionary that contains all the units definitions
     dictionary = {}
@@ -206,9 +205,11 @@ def _load_dictionary() -> (dict, dict):
     # Length
     dictionary['Length'] = []
     dictionary['Length_NAMES_REVERSE_UPPER'] = {'meter': ('m', 'metre', 'metro'),
+                                                'kilometre': ('kilometer', 'km'),
                                                 'parsec': tuple(),  # ('pc',),  "pc" is used also for "pie cúbico"
                                                 'astronomical unit': ('au',),
-                                                'light year': ('ly', 'lyr')}
+                                                'light year': ('ly', 'lyr'),
+                                                'scandinavian mile': ('mil', 'scandinavian_mile', 'Scandinavian mile')}
     dictionary['Length_SI'] = ('m',)
     dictionary['Length_UK_NAMES_REVERSE'] = {
         'thou': ('th',),
@@ -578,7 +579,7 @@ def _load_dictionary() -> (dict, dict):
                          }
     for k, v in wrong_definitions.items():
         msg = f"dictionary key '{k}' has a value defined as tuple but it must be a list!"
-        logging.debug(msg)
+        logger.debug(msg)
         dictionary[k] = list(v)
 
     temperature_ratio_factors = {'Celsius': 9,
@@ -624,7 +625,7 @@ if not unyts_parameters_.reload_ and \
             temperatureRatioConversions = pickle_load(f)
         with open(unyts_parameters_.get_user_folder() + 'unitless_names.cache', 'rb') as f:
             unitless_names = pickle_load(f)
-        logging.info('units dictionary loaded from cache...')
+        logger.info('units dictionary loaded from cache...')
     except:
         unyts_parameters_.reload_ = True
         dictionary, temperatureRatioConversions, unitless_names = _load_dictionary()

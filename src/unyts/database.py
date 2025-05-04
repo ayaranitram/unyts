@@ -6,17 +6,18 @@ Created on Tue Dec 03 23:15:37 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.1'
-__release__ = 20241214
+__version__ = '0.6.2'
+__release__ = 20250504
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf']
 
-import logging
+
 import os
 
 from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary
 from .units.def_conversions import *
 from .network import UDigraph, UNode, Conversion
 from .parameters import unyts_parameters_
+from .helpers.logger import logger
 from os.path import isfile
 from json import dump as json_dump
 
@@ -25,10 +26,8 @@ try:
     _cloudpickle_ = True
 except ModuleNotFoundError:
     if unyts_parameters_.cache_:
-        logging.warning("Missing `cloudpickle` package. Not able to cache network dictionary.")
+        logger.warning("Missing `cloudpickle` package. Not able to cache network dictionary.")
     _cloudpickle_ = False
-
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 
 def save_memory(path=None) -> None:
@@ -75,7 +74,7 @@ def set_fvf(fvf=None) -> None:
                 fvf = valid_fvf(fvf)
     units_network.set_fvf(fvf)
     unyts_parameters_.fvf_ = fvf
-    logging.info(f"FVF set to {fvf} rV/stV")
+    logger.info(f"FVF set to {fvf} rV/stV")
 
 
 def get_fvf() -> str:
@@ -88,7 +87,7 @@ def get_fvf() -> str:
 
 
 def _load_network():
-    logging.info('preparing units network...')
+    logger.info('preparing units network...')
     network = UDigraph()
 
     for unit_kind in dictionary:
@@ -399,6 +398,8 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('astronomical unit'), network.get_node('meter'), astronomical_unit__to__meter))
     network.add_edge(Conversion(network.get_node('parsec'), network.get_node('astronomical unit'), parsec__to__astronomical_unit))
     network.add_edge(Conversion(network.get_node('light year'), network.get_node('meter'), light_year__to__meter))
+    network.add_edge(
+        Conversion(network.get_node('scandinavian mile'), network.get_node('kilometer'), scandinavian_mile__to__kilometer))
 
     # Velocity conversion
     network.add_edge(Conversion(network.get_node('mile per hour'), network.get_node('kilometer per hour'),
@@ -570,7 +571,7 @@ def _load_network():
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for otherName in network.children_of(network.get_node(unit_name.split('/')[0])):
                     if network.get_node(unit_name.split('/')[0]) != otherName:
-                        logging.warning('R   3: ' + unit_name, otherName.get_name())
+                        logger.warning('R   3: ' + unit_name, otherName.get_name())
                         otherRate = otherName.get_name() + '/' + unit_name.split('/')[1]
                         network.add_node(UNode(otherRate))
                         network.add_edge(Conversion(network.get_node(unit_name), otherRate,
@@ -746,7 +747,7 @@ def _complete_products() -> None:
 
 
 def _rebuild_units():
-    logging.warning('Rebuilding units dictionary...')
+    logger.warning('Rebuilding units dictionary...')
     from .dictionaries import _load_dictionary
     dictionary, temperatureRatioConversions, unitless_names = _load_dictionary()
     units_network = _load_network()
@@ -785,11 +786,11 @@ if not unyts_parameters_.reload_ and \
     try:
         with open(unyts_parameters_.get_user_folder() + 'units_network.cache', 'rb') as f:
             units_network = cloudpickle_load(f)
-        logging.info('units network loaded from cache...')
+        logger.info('units network loaded from cache...')
         unyts_parameters_.reload_ = False
         unyts_parameters_.save_params()
     except:
-        logging.error("Failed to load from cache. Creating new dictionaries and saving them to cache...")
+        logger.error("Failed to load from cache. Creating new dictionaries and saving them to cache...")
         units_network, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
 else:
     units_network = _load_network()
@@ -815,7 +816,7 @@ else:
     unyts_parameters_.reload_ = False
     unyts_parameters_.save_params()
     if unyts_parameters_.cache_:
-        logging.info('saving units network and dictionary to cache...')
+        logger.info('saving units network and dictionary to cache...')
         if _cloudpickle_:
             with open(unyts_parameters_.get_user_folder() + 'units_network.cache', 'wb') as f:
                 cloudpickle_dump(units_network, f)

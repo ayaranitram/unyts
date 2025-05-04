@@ -6,14 +6,14 @@ Created on Sat Oct 24 17:52:34 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.5'
-__release__ = 20241124
+__version__ = '0.6.6'
+__release__ = 20250504
 __all__ = ['BFS', 'lean_BFS', 'DFS', 'hybrid_BFS', 'print_path']
 
 
-import logging
-
 from unyts import unyts_parameters_
+from .Empty import Empty
+from .helpers.logger import logger
 
 import os
 from multiprocessing import Process
@@ -41,18 +41,20 @@ def BFS(graph, start, end, verbose=False) -> list:
     path_queue = [init_path]
     visited = list()
     while len(path_queue) != 0:
+        if not unyts_parameters_.is_intime():
+            return Empty
         # get and remove oldest element in path_queue
         conv_path = path_queue.pop(0)
         if conv_path in visited:
             if verbose:
-                logging.info(f"""<BFS>: {len(path_queue)} paths in queue. Already visited BFS path:\n{print_path(conv_path)}""")
+                logger.info(f"""<BFS>: {len(path_queue)} paths in queue. Already visited BFS path:\n{print_path(conv_path)}""")
         else:
             if verbose:
-                logging.info(f"""<BFS> {len(path_queue)} paths in queue. Current BFS path:\n{print_path(conv_path)}""")
+                logger.info(f"""<BFS> {len(path_queue)} paths in queue. Current BFS path:\n{print_path(conv_path)}""")
             last_node = conv_path[-1]
             if last_node is end:
                 if verbose:
-                    logging.info(f"""<BFS> Found end node {end.get_name()} in the path:\n{print_path(conv_path)}""")
+                    logger.info(f"""<BFS> Found end node {end.get_name()} in the path:\n{print_path(conv_path)}""")
                 return conv_path
             path_queue += [conv_path + [next_node]
                            for next_node in graph.children_of(last_node) 
@@ -82,6 +84,9 @@ def DFS(graph, start, end, verbose=False, branch_depht=25) -> list:
     def dfs_(graph, node, visited, path_queue):
         visited.add(node)
         for child in graph.children_of(node):
+            if not unyts_parameters_.is_intime():
+                path_queue.append(Empty)
+                break
             this_path = []
             if child in visited:
                 continue
@@ -102,6 +107,8 @@ def DFS(graph, start, end, verbose=False, branch_depht=25) -> list:
     path_queue = dfs_(graph, start, visited, path_queue)
     if end in path_queue:
         return path_queue
+    if Empty in path_queue:
+        return Empty
 
 
 class SlimUDigraph(object):
@@ -151,7 +158,7 @@ def lean_BFS(graph, start, end, verbose=False, max_generations_screening=25) -> 
     selected_edges = {k: v for k, v in graph.edges.items() if k.get_name() in selection}
     if len(selected_edges) > 0:
         if verbose:
-            logging.info(f"<lean BFS> search graph slimmed from {len(graph.edges)} to {len(selected_edges)} nodes, in {generations} generations.")
+            logger.info(f"<lean BFS> search graph slimmed from {len(graph.edges)} to {len(selected_edges)} nodes, in {generations} generations.")
         slim_graph = SlimUDigraph(selected_edges)
         return BFS(slim_graph, start, end, verbose=verbose and unyts_parameters_.verbose_details_ > 0)
 
@@ -219,7 +226,7 @@ def hybrid_BFS(graph, start, end, verbose=False, max_generations_screening=25) -
                              args=(results_, units_network, start, end, verbose_, max_generations_screening))
     runner_bfs = runner(target=_bfs, args=(results_, units_network, start, end, verbose_))
     if verbose:
-        logging.info(f"<hybrid BFS> starting BFS and lean_BFS threads, from {start} to {end}")
+        logger.info(f"<hybrid BFS> starting BFS and lean_BFS threads, from {start} to {end}")
 
     _ = runner_lean_bfs.start()
     _ = runner_bfs.start()
@@ -230,12 +237,12 @@ def hybrid_BFS(graph, start, end, verbose=False, max_generations_screening=25) -
             _running = False
             _return = results_['lean_bfs']
             if verbose:
-                logging.info(f"<lean BFS> lean_BFS has found a path.")
+                logger.info(f"<lean BFS> lean_BFS has found a path.")
         elif results_['bfs'] != '' and results_['bfs'] is not None:
             _running = False
             _return = results_['bfs']
             if verbose:
-                logging.info(f"<lean BFS> BFS has found a path.")
+                logger.info(f"<lean BFS> BFS has found a path.")
         elif results_['bfs'] is None and results_['lean_bfs'] is None:
             _running = False
             _return = None

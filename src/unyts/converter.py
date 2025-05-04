@@ -6,22 +6,23 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.8.7'
-__release__ = 20241214
+__version__ = '0.8.8'
+__release__ = 20250504
 __all__ = ['convert', 'convertible']
 
 from .database import units_network
 from .dictionaries import dictionary, temperatureRatioConversions, uncertain_names
 from .Empty import Empty, str_Empty
 from .searches import BFS, lean_BFS, DFS, hybrid_BFS, print_path
-from .errors import NoConversionFoundError
+from .errors import NoConversionFoundError, SearchTimeoutError
 from .parameters import unyts_parameters_, _get_density
 from .helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
 from .units.def_conversions import equality, percentage__to__fraction, fraction__to__percentage, inverse
 from functools import reduce
 from typing import Union
 from sys import getrecursionlimit
-import logging
+from .helpers.logger import logger
+
 
 try:
     import numpy as np
@@ -30,15 +31,13 @@ try:
     _numpy_ = True
 except ModuleNotFoundError:
     _numpy_ = False
-    logging.warning("Missing NumPy package, operations with `list` of values will fail.")
+    logger.warning("Missing NumPy package, operations with `list` of values will fail.")
 try:
     from pandas import Series, DataFrame
 
     _pandas_ = True
 except ModuleNotFoundError:
     _pandas_ = False
-
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 if _numpy_ and _pandas_:
     _numeric = (int, float, complex, ndarray, Series, DataFrame)
@@ -250,7 +249,7 @@ def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=No
     # get and set recursion limit
     recursion = _get_recursion_limit(recursion)
     if unyts_parameters_.verbose_ and unyts_parameters_.verbose_details_ >= 2:
-        logging.info(f"_get_conversion: {recursion} remaining recursions, converting from {from_unit} to {to_unit}")
+        logger.info(f"_get_conversion: {recursion} remaining recursions, converting from {from_unit} to {to_unit}")
     if recursion < 0:
         return None, None
 
@@ -300,7 +299,14 @@ def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=No
         t2, d2 = to_unit.split('/')
         num = temperatureRatioConversions[(t1, t2)]
         den, den_path = _get_conversion(1, d1, d2, recursion=recursion, use_cache=use_cache)
-        if num is None or den is None:
+        if den is Empty:
+            msg = f"The conversion has already exceeded the timeout limit of {unyts_parameters_.get_timeout()} seconds."
+            if unyts_parameters_.raise_error_:
+                raise SearchTimeoutError(msg)
+            else:
+                logger.error(msg)
+                return Empty, None
+        elif num is None or den is None:
             if unyts_parameters_.raise_error_:
                 raise NoConversionFoundError(f"from '{d1}' to '{d2}'")
             else:
@@ -333,7 +339,9 @@ def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=No
     # check if path is already defined in network
     conversion_path = _search_network(from_unit, to_unit)
     # return Conversion if found in network
-    if conversion_path is not None:
+    if conversion_path is Empty:
+        return Empty, None
+    elif conversion_path is not None:
         units_network.memory[(from_unit, to_unit)] = (_function_conversion(conversion_path), conversion_path)
         if value is None:
             return units_network.memory[(from_unit, to_unit)]
@@ -407,7 +415,7 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
     helper function of _converter function
     
     _pair_conversion_including_children will extend the search looking recursively 
-    for conversion from from_unit chidren to to_unit children.
+    for conversion from from_unit children to to_unit children.
     
     the children of from_unit and to_unit are created as the ratio of combined children from 
     the numerator of the parent unit and the children of the denominator unit
@@ -493,23 +501,25 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     # get and set recursion limit
     recursion = _get_recursion_limit(recursion)
     if unyts_parameters_.verbose_:
-        logging.info(f"_converter: {recursion} remaining recursions, converting from {from_unit} to {to_unit}")
+        logger.info(f"_converter: {recursion} remaining recursions, converting from {from_unit} to {to_unit}")
     if recursion < 0:
         return None, None
 
     # try to convert
     if unyts_parameters_.verbose_:
-        logging.info(f"_converter: {recursion} remaining recursions, attempting direct conversion")
+        logger.info(f"_converter: {recursion} remaining recursions, attempting direct conversion")
     conv, conv_path = _get_conversion(value, from_unit, to_unit, recursion=recursion, use_cache=use_cache)
     # if Conversion found
-    if conv is not None:
+    if conv is Empty:
+        return Empty, None
+    elif conv is not None:
         return conv, conv_path
     
     units_network.previous.append((from_unit, to_unit))
    
     # look for conversions of parts in ratio or product units
     if unyts_parameters_.verbose_:
-        logging.info(f"_converter: {recursion} remaining recursions, attempting to convert ratio or product of units.")
+        logger.info(f"_converter: {recursion} remaining recursions, attempting to convert ratio or product of units.")
     list_conversion = []
     list_conversion_path = []
     split_from = _split_unit(from_unit)
@@ -526,7 +536,9 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
             if split_to[t] in '*/':
                 continue
             conv, conv_path = _get_conversion(1, split_from[f], split_to[t], recursion=recursion, use_cache=use_cache)
-            if conv is not None:
+            if conv is Empty:
+                return Empty, None
+            elif conv is not None:
                 flag = True
                 if len(list_conversion_path) > 0:
                     conv_path = [1] + conv_path
@@ -554,7 +566,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     # look for one-to-pair conversion path
     if ('/' in to_unit or '*' in to_unit) and ('/' not in from_unit and '*' not in from_unit):
         if unyts_parameters_.verbose_:
-            logging.info(f"_converter: {recursion} remaining recursions, looking for one-to-pair conversion path")
+            logger.info(f"_converter: {recursion} remaining recursions, looking for one-to-pair conversion path")
         from_unit_child = _get_pair_child(from_unit)
         if from_unit_child is not None:
             base_conversion, base_conversion_path = _converter(None, from_unit, from_unit_child, recursion=recursion, use_cache=use_cache)
@@ -572,7 +584,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     # look for pair-to-one conversion path
     elif ('/' in from_unit or '*' in from_unit) and ('/' not in to_unit and '*' not in to_unit):
         if unyts_parameters_.verbose_:
-            logging.info(f"_converter: {recursion} remaining recursions, looking for pair-to-one conversion path")
+            logger.info(f"_converter: {recursion} remaining recursions, looking for pair-to-one conversion path")
         to_unit_child = _get_pair_child(to_unit)
         if to_unit_child is not None:
             final_conversion, final_conversion_path = _converter(None, to_unit_child, to_unit, recursion=recursion, use_cache=use_cache)
@@ -590,7 +602,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     # look for pair to pair conversion path considering children
     if ('/' in from_unit) and ('/' in to_unit) and len(from_unit.split('/')) == 2 and len(to_unit.split('/')) == 2:
         if unyts_parameters_.verbose_:
-            logging.info(f"_converter: {recursion} remaining recursions, looking for pair-to-pair conversion path considering children")
+            logger.info(f"_converter: {recursion} remaining recursions, looking for pair-to-pair conversion path considering children")
         conversion, conversion_path = _ratio_conversion_including_children(from_unit, to_unit, recursion=recursion)
         if conversion is not None:        
             units_network.memory[(from_unit, to_unit)] = conversion, conversion_path
@@ -600,7 +612,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
                 return conversion(value), conversion_path
 
     if unyts_parameters_.verbose_:
-        logging.error(f"_converter: {recursion} remaining recursions, no conversion found")
+        logger.error(f"_converter: {recursion} remaining recursions, no conversion found")
     units_network.memory[(from_unit, to_unit)] = None, None
     return None, None
 
@@ -783,6 +795,8 @@ def convertible(from_unit: str, to_unit: str, use_cache:bool=None) -> bool:
     -------
         bool
     """
+    unyts_parameters_.reset_start_time()
+
     from unyts.unit_class import Unit
     if isinstance(from_unit, Unit):
         from_unit = from_unit.get_unit()
@@ -791,7 +805,7 @@ def convertible(from_unit: str, to_unit: str, use_cache:bool=None) -> bool:
 
     try:
         conv, conv_path = _converter(1, from_unit, to_unit, use_cache=use_cache)
-        return False if conv is None else True
+        return False if (conv is None or conv is Empty) else True
     except NoConversionFoundError:
         return False
 
@@ -821,8 +835,10 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty,
     converted_value : int, float, array, Series, DataFrame ...
         the converted value if input value is not None
     """
+    unyts_parameters_.reset_start_time()
+
     if unyts_parameters_.verbose_:
-        logging.info("convert: STARTING...")
+        logger.info("convert: STARTING...")
     # cleaning inputs
     value, from_unit, to_unit = _clean_input(value, from_unit, to_unit)
     print_conversion_path = _clean_print_conversion_path(print_conversion_path)
@@ -834,6 +850,7 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty,
 
     if conv is None:
         # regular conversion
+        #conv, conv_path = _converter(value, from_unit, to_unit, use_cache=use_cache)
         conv, conv_path = _converter(value, from_unit, to_unit, use_cache=use_cache)
 
     if conv is None:
@@ -842,9 +859,17 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty,
         else:
             return None
 
+    if conv is Empty:
+        # timeout
+        msg = f"The conversion exceeded the timeout limit of {unyts_parameters_.get_timeout()} seconds."
+        if unyts_parameters_.raise_error_:
+            raise SearchTimeoutError(msg)
+        else:
+            return Empty
+
     unyts_parameters_.last_path_str = print_path(conv_path)
     if print_conversion_path:
-        logging.info(f"converting from '{from_unit}' to '{to_unit}':\n {unyts_parameters_.last_path_str}")
+        logger.info(f"converting from '{from_unit}' to '{to_unit}':\n {unyts_parameters_.last_path_str}")
 
     return conv
 
@@ -875,12 +900,14 @@ def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str,
     converted_value : Series, DataFrame
         the converted value if input value is not None
     """
+    unyts_parameters_.reset_start_time()
+
     conv = None
     print_conversion_path = bool(print_conversion_path)
     if convertible(from_unit, to_unit):
         conv, conv_path = _converter(value, from_unit, to_unit, use_cache=use_cache)
-    if print_conversion_path and conv is not None:
-        logging.info("converting from '{from_unit}' to '{to_unit}':\n {print_path(conv_path)}")
-    elif print_conversion_path and conv is not None:
-        logging.warning("conversion not found, returning original values.")
-    return value if conv is None else conv
+    if print_conversion_path and conv is not None and conv is not Empty:
+        logger.info("converting from '{from_unit}' to '{to_unit}':\n {print_path(conv_path)}")
+    elif print_conversion_path and conv is not None and conv is not Empty:
+        logger.warning("conversion not found, returning original values.")
+    return value if (conv is None or conv is Empty) else conv
