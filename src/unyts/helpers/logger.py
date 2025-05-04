@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sat Oct 24 15:57:27 2020
+Created on Sun May 04 2025
 
 @author: Martín Carlos Araya <martinaraya@gmail.com>
+
+this logger was coded with help of Claude AI
 """
 
-__version__ = '0.3.0'
+__version__ = '0.1.0'
 __release__ = 20250504
 __all__ = ['logger']
-
-# logger code generated with Claude.AI
 
 import logging
 import sys
 import os
-from IPython import get_ipython
 
 
 class ColorCodes:
@@ -41,8 +40,8 @@ class ColorCodes:
     BRIGHT_WHITE = "\033[97m"
 
 
-class UnytsLogger:
-    """Logger that works both in Jupyter notebook with HTML styling and in console with ANSI colors"""
+class UnytLogger:
+    """Logger that works in both Jupyter notebook and console with explicit mode control"""
 
     LOG_LEVELS = {
         "debug": (logging.DEBUG, "#e6f3ff", "#0066cc", ColorCodes.BRIGHT_CYAN),  # Light blue
@@ -52,67 +51,58 @@ class UnytsLogger:
         "critical": (logging.CRITICAL, "#f9e6ff", "#660066", ColorCodes.BRIGHT_MAGENTA)  # Light purple
     }
 
-    def __init__(self, name="Unyts", default_level="info"):
-        """Initialize the hybrid logger
+    def __init__(self, name="Unyt", default_level="info", mode=None):
+        """Initialize the logger with explicit mode control
 
         Args:
             name (str): Name of the logger
             default_level (str): Default log level (debug, info, warning, error, critical)
+            mode (str, optional): Force 'jupyter' or 'console' mode. If None, auto-detect.
         """
         self.logger = logging.getLogger(name)
-        self.output_id = f"logger_{id(self)}"
-        self.is_notebook = self._is_jupyter_notebook()
+
+        # Set display mode (jupyter, console) with option to force a specific mode
+        if mode is not None and mode in ['jupyter', 'console']:
+            self.mode = mode
+        else:
+            self.mode = 'jupyter' if self._is_notebook_safe() else 'console'
+
+        # Verify jupyter mode actually works, otherwise fallback to console
+        if self.mode == 'jupyter' and not self._can_display_html():
+            self.mode = 'console'
 
         # Clear any existing handlers if the logger already exists
         if self.logger.hasHandlers():
             self.logger.handlers.clear()
 
-        # Create output container if in notebook
-        if self.is_notebook:
-            self._setup_jupyter_container()
-
         # Set initial level
         self.set_level(default_level)
 
-    def _is_jupyter_notebook(self):
-        """Determine if code is running in a Jupyter notebook"""
+    def _is_notebook_safe(self):
+        """Simple check for Jupyter notebook environment"""
         try:
-            ipython = get_ipython()
-            if ipython is not None and 'IPython.core.interactiveshell' in str(type(ipython)):
-                # Check if it's notebook or terminal IPython
-                if 'IPKernelApp' in ipython.config:
-                    return True
-                else:
-                    return False
-            else:
-                return False
-        except (ImportError, NameError):
+            # Check for specific environment variables that indicate Jupyter
+            if 'JUPYTER_KERNEL' in os.environ or 'JPY_PARENT_PID' in os.environ:
+                return True
+
+            # Check if IPython is in sys.modules
+            if 'IPython' in sys.modules:
+                return True
+
+            return False
+        except:
             return False
 
-    def _setup_jupyter_container(self):
-        """Set up the HTML container for Jupyter output"""
-        from IPython.display import display, HTML
-
-        display(HTML(f"""
-        <div id="{self.output_id}" style="font-family: monospace;">
-        </div>
-        <script>
-            // Function to update the log container
-            window.updateLog_{self.output_id} = function(color, textColor, level, message) {{
-                const container = document.getElementById("{self.output_id}");
-                if (container) {{
-                    const logLine = document.createElement("div");
-                    logLine.style.backgroundColor = color;
-                    logLine.style.color = textColor;
-                    logLine.style.padding = "1px 5px";
-                    logLine.style.margin = "0";
-                    logLine.style.lineHeight = "1.0";
-                    logLine.innerHTML = `<b>[${level}]</b>: ${message}`;
-                    container.appendChild(logLine);
-                }}
-            }};
-        </script>
-        """))
+    def _can_display_html(self):
+        """Check if we can actually display HTML content in the current environment"""
+        try:
+            # Try to import display and HTML and see if they exist
+            from IPython.display import display, HTML
+            # Make a test HTML object to verify it works
+            test_html = HTML("<div>Test</div>")
+            return True
+        except:
+            return False
 
     def set_level(self, level_name):
         """Change the logger's level based on a string name
@@ -125,25 +115,13 @@ class UnytsLogger:
         """
         level_name = level_name.lower()
         if level_name not in self.LOG_LEVELS:
-            if self.is_notebook:
-                self._log_jupyter_message(
-                    f"Invalid log level: '{level_name}'. Using current level.",
-                    "warning"
-                )
-            else:
-                self._log_console_message(
-                    f"Invalid log level: '{level_name}'. Using current level.",
-                    "warning"
-                )
+            message = f"Invalid log level: '{level_name}'. Using current level."
+            self._log_message(message, "warning")
             return False
 
         level_value = self.LOG_LEVELS[level_name][0]
         self.logger.setLevel(level_value)
-
-        if self.is_notebook:
-            self._log_jupyter_message(f"Log level changed to {level_name.upper()}", level_name)
-        else:
-            self._log_console_message(f"Log level changed to {level_name.upper()}", level_name)
+        self._log_message(f"Log level changed to {level_name.upper()}", level_name)
         return True
 
     def get_current_level(self):
@@ -158,32 +136,55 @@ class UnytsLogger:
                 return name.upper()
         return "UNKNOWN"
 
-    def _log_jupyter_message(self, message, level):
-        """Add a message to the log container using JavaScript
+    def force_console_mode(self):
+        """Force logger to use console mode regardless of environment"""
+        self.mode = 'console'
+
+    def force_jupyter_mode(self):
+        """Force logger to use jupyter mode if the environment supports it"""
+        if self._can_display_html():
+            self.mode = 'jupyter'
+        else:
+            self._log_console("Cannot use Jupyter mode in this environment", "warning")
+
+    def _log_jupyter(self, message, level):
+        """Display a message with HTML styling for Jupyter notebooks
 
         Args:
             message (str): Log message text
             level (str): Log level name
         """
-        from IPython.display import display_javascript
+        try:
+            from IPython.display import display, HTML
 
-        level = level.lower()
-        if level in self.LOG_LEVELS:
-            _, bg_color, text_color, _ = self.LOG_LEVELS[level]
-        else:
-            # Default colors if level not found
-            bg_color, text_color = "#ffffff", "#000000"
+            level = level.lower()
+            if level in self.LOG_LEVELS:
+                _, bg_color, text_color, _ = self.LOG_LEVELS[level]
+            else:
+                # Default colors if level not found
+                bg_color, text_color = "#ffffff", "#000000"
 
-        # Escape any quotes in the message to prevent JS errors
-        message = message.replace('"', '\\"').replace("'", "\\'")
+            # Create HTML with styled div
+            html = f"""
+            <div style="
+                background-color: {bg_color}; 
+                color: {text_color}; 
+                padding: 10px; 
+                border-radius: 15px; 
+                margin: 0px;
+                font-family: monospace;
+                line-height: 1.2;
+                border: none;
+            ">
+                <b>[{level.upper()}]</b>: {message}
+            </div>
+            """
+            display(HTML(html))
+        except Exception:
+            # Fall back to console if display fails
+            self._log_console(message, level)
 
-        # Use JavaScript to append the message to the existing container
-        js_code = f"""
-        window.updateLog_{self.output_id}("{bg_color}", "{text_color}", "{level.upper()}", "{message}");
-        """
-        display_javascript(js_code, raw=True)
-
-    def _log_console_message(self, message, level):
+    def _log_console(self, message, level):
         """Print a colored message to the console
 
         Args:
@@ -199,16 +200,16 @@ class UnytsLogger:
         print(f"{color_code}[{level.upper()}]: {message}{ColorCodes.RESET}")
 
     def _log_message(self, message, level):
-        """Log a message to either Jupyter or console based on environment
+        """Route message to appropriate display method based on mode
 
         Args:
             message (str): Log message text
             level (str): Log level name
         """
-        if self.is_notebook:
-            self._log_jupyter_message(message, level)
+        if self.mode == 'jupyter':
+            self._log_jupyter(message, level)
         else:
-            self._log_console_message(message, level)
+            self._log_console(message, level)
 
     # Log methods
     def debug(self, message):
@@ -284,4 +285,5 @@ class UnytsLogger:
             return False
 
 
-logger = UnytsLogger("Unyts")
+# Create a default logger instance - force console mode for reliability
+logger = UnytLogger("Unyt", mode=None)
