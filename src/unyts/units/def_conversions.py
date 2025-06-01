@@ -6,8 +6,8 @@ Created on Tue Dec 03 23:15:37 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.1.1'
-__release__ = 20250502
+__version__ = '0.1.2'
+__release__ = 20250601
 
 from unyts import network
 from ..dictionaries import SpeedOfLight, StandardEarthGravity, StandardAirDensity
@@ -932,6 +932,14 @@ def kilogram_force__to__kilogram_mass(kilogram_force):
     f = kilogram_force
     return f / StandardEarthGravity
 
+def kilogram_force__to__Newton(kilogram_force):
+    """"
+    conversion of lambda:
+      f: f * StandardEarthGravity
+    """
+    f = kilogram_force
+    return f * StandardEarthGravity
+
 def Dyne__to__Newton(Dyne):
     """"
     conversion of lambda: 
@@ -1092,13 +1100,21 @@ def lb_slash_ft3__to__lb_slash_stb(lb_slash_ft3):
     d = lb_slash_ft3
     return d * 5.614584
 
-def Pa_star_s__to__Poise(Pa_star_s):
+def Pascal_star_second__to__Poise(Pascal_star_second):
     """"
     conversion of lambda: 
       v: v * 10
     """
-    v = Pa_star_s
+    v = Pascal_star_second
     return v * 10
+
+def Pascal_star_second__to__Reyn(Pascal_star_second):
+    """"
+    conversion of lambda:
+      v: v * 0.00014503773779686
+    """
+    v = Pascal_star_second
+    return v * 0.00014503773779686
 
 def byte__to__bit(byte):
     """"

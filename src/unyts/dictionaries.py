@@ -6,8 +6,8 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.53'
-__release__ = 20250504
+__version__ = '0.5.54'
+__release__ = 20250601
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'StandardWaterDensity',
            'unitless_names', 'uncertain_names']
 
@@ -56,7 +56,7 @@ SI = {
 }
 
 SI_order = (('Length', 'Pressure', 'Weight', 'Mass', 'Time', 'Frequency', 'Power', 'Voltage', 'Current', 'Resistance',
-             'Impedance', 'Conductance', 'Capacitance', 'Charge', 'Inductance', 'Energy', 'Permeability'),
+             'Impedance', 'Conductance', 'Capacitance', 'Charge', 'Inductance', 'Energy', 'Permeability', 'Viscosity'),
             ('Area',),
             ('Rate', 'Volume',),)
 
@@ -411,9 +411,12 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Viscosity'] = []
     dictionary['Viscosity_NAMES_REVERSE_UPPER'] = {
         'centipoise': ('cP',),
-        'Poise': ('dyne*s/cm2', 'g/cm/s', 'dyne*s/cm^2'),
-        'Pa*s': ('N*s/m2', 'kg/m/s', 'N*s/m^2')
+        'millipoise': ('mP',),
+        'Poise': ('P', 'dyne*s/cm2', 'g/cm/s', 'dyne*s/cm^2'),
+        'Pascal*second': ('Pascal-second', 'Pascal second', 'Pa*s', 'N*s/m2', 'kg/m/s', 'N*s/m^2'),
+        'Reyn': ('lbf*s/in2', 'reyn')
     }
+    dictionary['Viscosity_SI'] = ('P', 'Pa*s')
 
     # Permeability
     dictionary['Permeability'] = []
@@ -430,7 +433,8 @@ def _load_dictionary() -> (dict, dict):
         'Newton': ('N', 'newton', 'kg*m/s2', 'kg*m/s^2'),
         'kilogram force': ('kgf', 'kilopondio',),  # 'kilogram'
         'kilopondio': ('kp',),
-        'Dyne': ('dyne', 'dyn', 'g*cm/s2', 'g*cm/s^2')
+        'Dyne': ('dyne', 'dyn', 'g*cm/s2', 'g*cm/s^2'),
+        'pound force': ('lbf',)
     }
 
     # Energy

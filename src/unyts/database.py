@@ -6,8 +6,8 @@ Created on Tue Dec 03 23:15:37 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.2'
-__release__ = 20250504
+__version__ = '0.6.3'
+__release__ = 20250601
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf']
 
 
@@ -505,8 +505,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('metric ton'), network.get_node('kilogram'), metric_ton__to__kilogram))
     network.add_edge(Conversion(network.get_node('kilogram'), network.get_node('gram'), kilogram__to__gram))
     # network.addEdge(Conversion(network.getNode('pound'), network.getNode('gram'), pound__to__gram))
-    network.add_edge(
-        Conversion(network.get_node('pound'), network.get_node('kilogram'), pound__to__kilogram))
+    network.add_edge(Conversion(network.get_node('pound'), network.get_node('kilogram'), pound__to__kilogram))
 
     # Force conversion
     network.add_edge(Conversion(network.get_node('kilogram mass'), network.get_node('kilogram force'),
@@ -515,6 +514,10 @@ def _load_network():
                                 kilogram_force__to__kilogram_mass))
     network.add_edge(Conversion(network.get_node('Dyne'), network.get_node('Newton'), Dyne__to__Newton))
     network.add_edge(Conversion(network.get_node('Newton'), network.get_node('Dyne'), Newton__to__Dyne))
+    network.add_edge(Conversion(network.get_node('pound force'), network.get_node('kilogram force'),
+                                pound__to__kilogram))
+    network.add_edge(Conversion(network.get_node('kilogram force'), network.get_node('Newton'),
+                                kilogram_force__to__Newton))
 
     # Energy Conversion
     network.add_edge(Conversion(network.get_node('Joule'), network.get_node('gram calorie'), Joule__to__gram_calorie))
@@ -540,12 +543,12 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('bara/m'), network.get_node('kg/m3'), bara_slash_m__to__kg_slash_m3))
     network.add_edge(Conversion(network.get_node('bar/m'), network.get_node('kg/m3'), bar_slash_m__to__kg_slash_m3))
     network.add_edge(Conversion(network.get_node('barg/m'), network.get_node('kg/m3'), barg_slash_m__to__kg_slash_m3))
-    network.add_edge(
-        Conversion(network.get_node('g/cm3'), network.get_node('lb/ft3'), g_slash_cm3__to__lb_slash_ft3))
+    network.add_edge(Conversion(network.get_node('g/cm3'), network.get_node('lb/ft3'), g_slash_cm3__to__lb_slash_ft3))
     network.add_edge(Conversion(network.get_node('lb/ft3'), network.get_node('lb/stb'), lb_slash_ft3__to__lb_slash_stb))
 
     # Viscosity conversions
-    network.add_edge(Conversion(network.get_node('Pa*s'), network.get_node('Poise'), Pa_star_s__to__Poise))
+    network.add_edge(Conversion(network.get_node('Pascal*second'), network.get_node('Poise'), Pascal_star_second__to__Poise))
+    network.add_edge(Conversion(network.get_node('Pascal*second'), network.get_node('Reyn'), Pascal_star_second__to__Reyn))
 
     # Data conversions
     network.add_edge(Conversion(network.get_node('byte'), network.get_node('bit'), byte__to__bit))
