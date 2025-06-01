@@ -6,7 +6,7 @@ Created on Sat Oct 24 12:14:51 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.54'
+__version__ = '0.5.55'
 __release__ = 20250601
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'StandardWaterDensity',
            'unitless_names', 'uncertain_names']
@@ -54,6 +54,8 @@ SI = {
     'r': (si_r_1, si_r_2, si_r_3),  # ronto
     'q': (si_q_1, si_q_2, si_q_3),  # quecto
 }
+
+SI_butK = {k: v for k, v in SI.items() if k not in ['K']}
 
 SI_order = (('Length', 'Pressure', 'Weight', 'Mass', 'Time', 'Frequency', 'Power', 'Voltage', 'Current', 'Resistance',
              'Impedance', 'Conductance', 'Capacitance', 'Charge', 'Inductance', 'Energy', 'Permeability', 'Viscosity'),
@@ -410,13 +412,15 @@ def _load_dictionary() -> (dict, dict):
     # Viscosity
     dictionary['Viscosity'] = []
     dictionary['Viscosity_NAMES_REVERSE_UPPER'] = {
-        'centipoise': ('cP',),
+        'centipoise': ('cP', 'CP'),
         'millipoise': ('mP',),
         'Poise': ('P', 'dyne*s/cm2', 'g/cm/s', 'dyne*s/cm^2'),
         'Pascal*second': ('Pascal-second', 'Pascal second', 'Pa*s', 'N*s/m2', 'kg/m/s', 'N*s/m^2'),
-        'Reyn': ('lbf*s/in2', 'reyn')
+        'Reyn': ('lbf*s/in2', 'reyn'),
+        'Poiseuille': ('Pl',),
     }
-    dictionary['Viscosity_SI'] = ('P', 'Pa*s')
+    dictionary['Viscosity_SI'] = ('Pa*s', 'Pl')
+    dictionary['Viscosity_KnotSI'] = ('P',)
 
     # Permeability
     dictionary['Permeability'] = []

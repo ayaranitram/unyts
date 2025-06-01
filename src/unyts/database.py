@@ -6,14 +6,14 @@ Created on Tue Dec 03 23:15:37 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.3'
+__version__ = '0.6.4'
 __release__ = 20250601
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf']
 
 
 import os
 
-from .dictionaries import SI, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary
+from .dictionaries import SI, SI_butK, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary
 from .units.def_conversions import *
 from .network import UDigraph, UNode, Conversion
 from .parameters import unyts_parameters_
@@ -192,6 +192,48 @@ def _load_network():
                     network.add_edge(
                         Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name), SI[prefix][0],
                                    reverse=True))
+        elif '_KnotSI' in unit_kind and unit_kind.split('_')[0] in SI_order[0]:
+            for unit_name in dictionary[unit_kind]:
+                network.add_node(UNode(unit_name))
+                dictionary[unit_kind.split('_')[0]].append(unit_name)
+                for prefix in SI_butK:
+                    network.add_node(UNode(prefix + unit_name))
+                    network.add_edge(
+                        Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name),
+                                   SI_butK[prefix][0]))
+                    network.add_edge(
+                        Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name),
+                                   SI_butK[prefix][0],
+                                   reverse=True))
+                    dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
+        elif '_KnotSI' in unit_kind and unit_kind.split('_')[0] in SI_order[1]:
+            for unit_name in dictionary[unit_kind]:
+                network.add_node(UNode(unit_name))
+                dictionary[unit_kind.split('_')[0]].append(unit_name)
+                for prefix in SI_butK:
+                    network.add_node(UNode(prefix + unit_name))
+                    network.add_edge(
+                        Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name),
+                                   SI_butK[prefix][1]))
+                    network.add_edge(
+                        Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name),
+                                   SI_butK[prefix][1],
+                                   reverse=True))
+                    dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
+        elif '_KnotSI' in unit_kind and unit_kind.split('_')[0] in SI_order[2]:
+            for unit_name in dictionary[unit_kind]:
+                network.add_node(UNode(unit_name))
+                dictionary[unit_kind.split('_')[0]].append(unit_name)
+                for prefix in SI_butK:
+                    network.add_node(UNode(prefix + unit_name))
+                    network.add_edge(
+                        Conversion(network.get_node(prefix + unit_name), network.get_node(unit_name),
+                                   SI_butK[prefix][2]))
+                    network.add_edge(
+                        Conversion(network.get_node(unit_name), network.get_node(prefix + unit_name),
+                                   SI_butK[prefix][2],
+                                   reverse=True))
+                    dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
                     dictionary[unit_kind.split('_')[0]].append(prefix + unit_name)
         if '_DATA' in unit_kind and unit_kind.split('_')[0] in DATA_order[0]:
             for unit_name in dictionary[unit_kind]:
@@ -549,6 +591,7 @@ def _load_network():
     # Viscosity conversions
     network.add_edge(Conversion(network.get_node('Pascal*second'), network.get_node('Poise'), Pascal_star_second__to__Poise))
     network.add_edge(Conversion(network.get_node('Pascal*second'), network.get_node('Reyn'), Pascal_star_second__to__Reyn))
+    network.add_edge(Conversion(network.get_node('Pascal*second'), network.get_node('Poiseuille'), equality))
 
     # Data conversions
     network.add_edge(Conversion(network.get_node('byte'), network.get_node('bit'), byte__to__bit))
