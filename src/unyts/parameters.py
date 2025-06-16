@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.8'
-__release__ = 20250504
+__version__ = '0.6.9'
+__release__ = 20250615
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'set_density', 'get_density',
            'recursion_limit', 'verbose', 'set_algorithm', 'set_parallel']
 
@@ -28,7 +28,7 @@ __max_generations_default__ = 25
 __timeout__ = 30
 __default_density__ = 0.997
 __default_fvf__ = 1.0
-
+__default_logger_level__ = "INFO"
 
 class UnytsParameters(object):
     """
@@ -157,7 +157,8 @@ class UnytsParameters(object):
                   'max_generations': self.max_generations_,
                   'timeout': self.timeout_,
                   'parallel': self.parallel_,
-                  'config_files_folder': self.config_files_folder_ if self.config_files_folder_ != dir_path else None}
+                  'config_files_folder': self.config_files_folder_ if self.config_files_folder_ != dir_path else None,
+                  'logger_level': logger.get_current_level()}
         with open(ini_path, 'w') as f:
             json_dump(params, f)
         with open(ini_backup, 'w') as f:
@@ -228,6 +229,7 @@ class UnytsParameters(object):
     def set_logger_level(self, level:str="INFO") -> None:
         if type(level) is str and level.upper() in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
             logger.set_level(level)
+            self.save_params()
 
     def reload_next_time(self, switch=None):
         if switch is None:

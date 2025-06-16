@@ -8,13 +8,15 @@ Created on Sun May 04 2025
 this logger was coded with help of Claude AI
 """
 
-__version__ = '0.1.0'
-__release__ = 20250504
+__version__ = '0.1.1'
+__release__ = 20250615
 __all__ = ['logger']
 
 import logging
 import sys
 import os
+import json
+from pathlib import Path
 
 
 class ColorCodes:
@@ -119,9 +121,10 @@ class UnytLogger:
             self._log_message(message, "warning")
             return False
 
-        level_value = self.LOG_LEVELS[level_name][0]
-        self.logger.setLevel(level_value)
-        self._log_message(f"Log level changed to {level_name.upper()}", level_name)
+        if level_name.upper() != self.get_current_level():
+            level_value = self.LOG_LEVELS[level_name][0]
+            self.logger.setLevel(level_value)
+            self._log_message(f"Log level changed to {level_name.upper()}", level_name)
         return True
 
     def get_current_level(self):
@@ -176,7 +179,7 @@ class UnytLogger:
                 line-height: 1.2;
                 border: none;
             ">
-                <b>[{level.upper()}]</b>: {message}
+                <b>[Unyts {level.upper()}]</b>: {message}
             </div>
             """
             display(HTML(html))
@@ -197,7 +200,7 @@ class UnytLogger:
         else:
             color_code = ColorCodes.RESET
 
-        print(f"{color_code}[{level.upper()}]: {message}{ColorCodes.RESET}")
+        print(f"{color_code}[Unyts {level.upper()}]: {message}{ColorCodes.RESET}")
 
     def _log_message(self, message, level):
         """Route message to appropriate display method based on mode
@@ -286,4 +289,15 @@ class UnytLogger:
 
 
 # Create a default logger instance - force console mode for reliability
-logger = UnytLogger("Unyt", mode=None)
+__params_file = str(Path(__file__).with_name('parameters.ini').absolute())
+__params_file = '/'.join(__params_file.split('/')[:-2] + [__params_file.split('/')[-1]])
+if os.path.isfile(__params_file):
+    with open(__params_file, 'r') as f:
+        __params_file = json.load(f)
+    if 'logger_level' in __params_file and __params_file['logger_level'].lower() in ('debug', 'info', 'warning', 'error', 'critical'):
+        logger_default_level = __params_file['logger_level'].lower()
+    else:
+        logger_default_level = 'info'
+else:
+    logger_default_level = 'info'
+logger = UnytLogger("Unyt", mode=None, default_level=logger_default_level)
