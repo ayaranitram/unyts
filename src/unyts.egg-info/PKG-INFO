@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: unyts
-Version: 0.9.12
+Version: 0.9.15
 Summary: an unit converter based on graph network and classes to operate with units.
 Author-email: Martin Carlos Araya <martinaraya@gmail.com>
 License: MIT License
@@ -63,9 +63,8 @@ This package is intended to be used in three ways:
 - As unit converter for single numerical values, using the GUI.
 
 ### To launch the GUI
-From an OS terminal or console, execute `python -m unyts`  
-
-In the interface, simpy type in the units to convert and the value to be converted and click the *convert* button or hit _Enter_ key. 
+From an OS terminal or console, execute `python -m unyts`.
+In the interface, simply type in the units to convert and the value to be converted and click the *convert* button or hit _Enter_ key. 
 
 ### To use the _units converter_ function `convert()`:  
 `from unyts import convert`  

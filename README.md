@@ -25,7 +25,7 @@ From an OS terminal or console, execute `python -m unyts`
 
 <img src="unyts_gui_.jpg" alt="drawing" width="300"/>  
 
-In the interface, simpy type in the units to convert and the value to be converted and click the *convert* button or hit _Enter_ key. 
+In the interface, simply type in the units to convert and the value to be converted and click the *convert* button or hit _Enter_ key. 
 
 ### To use the _units converter_ function `convert()`:  
 `from unyts import convert`  
