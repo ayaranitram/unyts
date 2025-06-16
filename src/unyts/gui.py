@@ -6,8 +6,8 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.6'
-__release__ = 20250502
+__version__ = '0.4.7'
+__release__ = 20250615
 __all__ = ['start_gui']
 
 import tkinter as tk
@@ -25,6 +25,7 @@ from .parameters import unyts_parameters_  # set_density
 from .helpers.logger import logger
 import pathlib, os
 import webbrowser
+from sys import platform
 
 
 class UnytsApp(tk.Frame):
@@ -614,17 +615,72 @@ def start_gui():
         else:
             pass
 
+    def update_logger_level(level:str):
+        level = level.upper()
+        if level == 'DEBUG':
+            _logger_debug_.set(True)
+            _logger_info_.set(False)
+            _logger_warn_.set(False)
+            _logger_error_.set(False)
+            _logger_critical_.set(False)
+        elif level == 'INFO':
+            _logger_debug_.set(False)
+            _logger_info_.set(True)
+            _logger_warn_.set(False)
+            _logger_error_.set(False)
+            _logger_critical_.set(False)
+        elif level == 'WARNING':
+            _logger_debug_.set(False)
+            _logger_info_.set(False)
+            _logger_warn_.set(True)
+            _logger_error_.set(False)
+            _logger_critical_.set(False)
+        elif level == 'ERROR':
+            _logger_debug_.set(False)
+            _logger_info_.set(False)
+            _logger_warn_.set(False)
+            _logger_error_.set(True)
+            _logger_critical_.set(False)
+        elif level == 'CRITICAL':
+            _logger_debug_.set(False)
+            _logger_info_.set(False)
+            _logger_warn_.set(False)
+            _logger_error_.set(False)
+            _logger_critical_.set(True)
+    def set_logger_debug():
+        unyts_parameters_.set_logger_level('DEBUG')
+        update_logger_level('DEBUG')
+    def set_logger_info():
+        unyts_parameters_.set_logger_level('INFO')
+        update_logger_level('INFO')
+    def set_logger_warn():
+        unyts_parameters_.set_logger_level('WARNING')
+        update_logger_level('WARNING')
+    def set_logger_error():
+        unyts_parameters_.set_logger_level('ERROR')
+        update_logger_level('ERROR')
+    def set_logger_critical():
+        unyts_parameters_.set_logger_level('CRITICAL')
+        update_logger_level('CRITICAL')
+
     logger.info("starting Unyts GUI...")
-    w, h = 325, 235
-    root = tk.Tk(screenName='Unyts')
-    root.geometry(f"{w}x{h}")
-    root.maxsize(w, h)
-    root.minsize(w, h)
-    root.resizable(False, False)
+    if platform.startswith('win'):
+        w, h = 325, 235
+    elif platform.startswith('linux'):
+        w, h = 390, 265
+    else:
+        w, h = None, None
+    root = tk.Tk()  #(screenName='Unyts')
+    if w is not None:
+        root.geometry(f"{w}x{h}")
+        root.maxsize(int(w*1.5), int(h*1.5))
+        root.minsize(w, h)
+        root.resizable(False, False)
     icon_file = 'unyts_icon.ico'
-    current_dir = pathlib.Path(__file__).parent.resolve()
-    icon_path = os.path.join(current_dir, icon_file)
-    root.iconbitmap(default=icon_path)
+    if platform.startswith('win'):
+        current_dir = pathlib.Path(__file__).parent.resolve()
+        icon_path = os.path.join(current_dir, icon_file)
+        root.iconbitmap(default=icon_path)
 
     # variables
     _cache_ = tk.BooleanVar()
@@ -643,6 +699,12 @@ def start_gui():
     _par_mp_.set(unyts_parameters_.parallel_ and unyts_parameters_.multiprocessing_)
     _par_off_.set(not unyts_parameters_.parallel_)
     _par_auto_.set(unyts_parameters_.parallel_)
+    _logger_debug_ = tk.BooleanVar()
+    _logger_info_ = tk.BooleanVar()
+    _logger_warn_ = tk.BooleanVar()
+    _logger_error_ = tk.BooleanVar()
+    _logger_critical_ = tk.BooleanVar()
+    update_logger_level(logger.get_current_level())
 
     # deactivate the experimental parallel mode
     if unyts_parameters_._deactivate_parallel and unyts_parameters_.parallel_:
@@ -681,6 +743,14 @@ def start_gui():
     options_menu.add_checkbutton(label='Use cache', variable=_cache_, command=unyts_parameters_.cache)
     options_menu.add_separator()
     options_menu.add_command(label='Set cache folder', command=set_cache_folder)
+    options_menu.add_separator()
+    logging_menu = tk.Menu(unyts_menu)
+    logging_menu.add_checkbutton(label="DEBUG", variable=_logger_debug_, command=set_logger_debug)
+    logging_menu.add_checkbutton(label="INFO", variable=_logger_info_, command=set_logger_info)
+    logging_menu.add_checkbutton(label="WARNING", variable=_logger_warn_, command=set_logger_warn)
+    logging_menu.add_checkbutton(label="ERROR", variable=_logger_error_, command=set_logger_error)
+    logging_menu.add_checkbutton(label="CRITICAL", variable=_logger_critical_, command=set_logger_critical)
+    options_menu.add_cascade(label="Set logging level", menu=logging_menu)
     # Search algorith menu
     search_menu = tk.Menu(unyts_menu)
     search_menu.add_checkbutton(label='BFS', variable=_bfs_, command=_set_bfs)

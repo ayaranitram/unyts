@@ -6,23 +6,29 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.9.14'
-__release__ = 20250601
+__version__ = '0.9.15'
+__release__ = 20250615
 __all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit', 'valid_unit',
            'set_unit', 'set_conversion', 'set_density', 'get_density',
            'save', 'start_gui', 'set_fvf', 'set_algorithm', 'set_parallel', 'set_timeout',
            'verbose']
 
 from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density,\
-    recursion_limit, verbose, set_algorithm, get_algorithm, set_parallel, get_parallel, set_timeout, get_timeout
+    recursion_limit, verbose, set_algorithm, get_algorithm, set_parallel, get_parallel, set_timeout, get_timeout,\
+    set_logging_level
 from .database import network_to_frame, save_memory, load_memory, clean_memory, set_fvf, get_fvf
 from .units.define import units
 from .converter import convert, convertible
 from .Empty import Empty
 from .unit_class import Unit, is_Unit, valid_unit
 from .units.custom import set_unit, set_conversion
-from .gui import start_gui
 from .helpers.logger import logger
+try:
+    from .gui import start_gui
+except:
+    def start_gui():
+        logger.error("The GUI is not available in this system.")
+
 
 
 if unyts_parameters_.show_version_:

@@ -29,6 +29,7 @@ src/unyts/helpers/common_classes.py
 src/unyts/helpers/is_number.py
 src/unyts/helpers/is_unit.py
 src/unyts/helpers/lambda_to_def.py
+src/unyts/helpers/logger.py
 src/unyts/helpers/multi_split.py
 src/unyts/helpers/unit_string_tools.py
 src/unyts/units/__init__.py
