@@ -88,7 +88,6 @@ def get_fvf() -> str:
 
 
 def _load_network():
-    start = time.perf_counter()
     logger.info('preparing units network...')
     network = UDigraph()
 
@@ -647,9 +646,6 @@ def _load_network():
     del dictionary['dataBIT']
     dictionary['UserUnits'] = list(dictionary['UserUnits'])
 
-    end = time.perf_counter()
-    print(f"_load_network took time: {end - start} seconds")
-
     return network
 
 
@@ -845,32 +841,87 @@ if not unyts_parameters_.reload_ and \
         logger.error("Failed to load from cache. Creating new dictionaries and saving them to cache...")
         units_network, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
 else:
+    start = time.perf_counter()
     units_network = _load_network()
+    end = time.perf_counter()
+    print(f"_load_network took time: {end - start} seconds")
     # load the dictionary with ratio units
+    start = time.perf_counter()
     _create_Rates()
+    end = time.perf_counter()
+    print(f"_create_Rates took time: {end - start} seconds")
+    start = time.perf_counter()
     _create_VolumeRatio()
+    end = time.perf_counter()
+    print(f"_create_VolumeRatio took time: {end - start} seconds")
+    start = time.perf_counter()
     _create_Density()
+    end = time.perf_counter()
+    print(f"_create_Density took time: {end - start} seconds")
+    start = time.perf_counter()
     _create_Velocity()
+    end = time.perf_counter()
+    print(f"_create_Velocity took time: {end - start} seconds")
+    start = time.perf_counter()
     _create_Acceleration()
+    end = time.perf_counter()
+    print(f"_create_Acceleration took time: {end - start} seconds")
+    start = time.perf_counter()
     _create_ProductivityIndex()
+    end = time.perf_counter()
+    print(f"_create_ProductivityIndex took time: {end - start} seconds")
+    start = time.perf_counter()
     _create_PressureGradient()
+    end = time.perf_counter()
+    print(f"_create_PressureGradient took time: {end - start} seconds")
+    start = time.perf_counter()
     _create_Pressure()
+    end = time.perf_counter()
+    print(f"_create_Pressure took time: {end - start} seconds")
+    start = time.perf_counter()
     _create_TemperatureGradient()
+    end = time.perf_counter()
+    print(f"_create_TemperatureGradient took time: {end - start} seconds")
+    start = time.perf_counter()
     _create_Power()
+    end = time.perf_counter()
+    print(f"_create_Power took time: {end - start} seconds")
+    start = time.perf_counter()
     _create_Frequency()
+    end = time.perf_counter()
+    print(f"_create_Frequency took time: {end - start} seconds")
+    start = time.perf_counter()
     _create_Conductance()
+    end = time.perf_counter()
+    print(f"_create_Conductance took time: {end - start} seconds")
+    start = time.perf_counter()
     _create_Capacitance_Charge()
+    end = time.perf_counter()
+    print(f"_create_Capacitance_Charge took time: {end - start} seconds")
+    start = time.perf_counter()
     _create_Voltage_Current_Resistance()
+    end = time.perf_counter()
+    print(f"_create_Voltage_Current_Resistance took time: {end - start} seconds")
+    start = time.perf_counter()
     _complete_products()
+    end = time.perf_counter()
+    print(f"_complete_products took time: {end - start} seconds")
+    start = time.perf_counter()
     # clean empty edges
     _clean_network()
+    end = time.perf_counter()
+    print(f"_clean_network took time: {end - start} seconds")
+
 
     unyts_parameters_.reload_ = False
     unyts_parameters_.save_params()
     if unyts_parameters_.cache_:
+        start = time.perf_counter()
         logger.info('saving units network and dictionary to cache...')
         if _cloudpickle_:
             with open(unyts_parameters_.get_user_folder() + 'units_network.cache', 'wb') as f:
                 cloudpickle_dump(units_network, f)
         with open(unyts_parameters_.get_user_folder() + 'units_dictionary.cache', 'w') as f:
             json_dump(dictionary, f)
+        end = time.perf_counter()
+        print(f"saving cache took time: {end - start} seconds")
