@@ -215,7 +215,7 @@ def hybrid_BFS(graph, start, end, verbose=False, max_generations_screening=25) -
     else:
         raise NotImplementedError("No option defined for parallel processing.")
 
-    from .database import units_network
+    from .database_comprenhension import units_network
 
     verbose_ = verbose and unyts_parameters_.verbose_details_ > 0
     results_ = {'bfs': '', 'lean_bfs': ''}

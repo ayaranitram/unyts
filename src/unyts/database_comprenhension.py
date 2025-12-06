@@ -21,6 +21,8 @@ from .helpers.logger import logger
 from os.path import isfile
 from json import dump as json_dump
 
+import time
+
 try:
     from cloudpickle import dump as cloudpickle_dump, load as cloudpickle_load
     _cloudpickle_ = True
@@ -87,6 +89,7 @@ def get_fvf() -> str:
 
 
 def _load_network():
+    start = time.perf_counter()
     logger.info('preparing units network...')
     network = UDigraph()
 
@@ -104,61 +107,47 @@ def _load_network():
             dictionary[unit_kind.split('_')[0]].extend([unit_name for unit_name in dictionary[unit_kind]])
             #     for secondName in dictionary[unit_kind][unit_name]:
             #         network.add_node(UNode(secondName))
-            network.edges.update({UNode(secondName): ([], []) for secondName in dictionary[unit_kind][unit_name]})
+            network.edges.update({UNode(secondName): ([], [])
+                                  for unit_name in dictionary[unit_kind]
+                                  for secondName in dictionary[unit_kind][unit_name]})
             #         network.add_edge(Conversion(network.get_node(secondName), network.get_node(unit_name), equality, alias=True))
             _ = [network.add_edge(Conversion(network.get_node(secondName), network.get_node(unit_name), equality, alias=True))
-                 for secondName in dictionary[unit_kind][unit_name]
-                 for unit_name in dictionary[unit_kind]]
+                 for unit_name in dictionary[unit_kind]
+                 for secondName in dictionary[unit_kind][unit_name]]
             #         network.add_edge(Conversion(network.get_node(unit_name), network.get_node(secondName), equality, alias=True))
             _ = [network.add_edge(Conversion(network.get_node(unit_name), network.get_node(secondName), equality, alias=True))
-                 for secondName in dictionary[unit_kind][unit_name]
-                 for unit_name in dictionary[unit_kind]]
+                 for unit_name in dictionary[unit_kind]
+                 for secondName in dictionary[unit_kind][unit_name]]
             #         dictionary[unit_kind.split('_')[0]].append(secondName)
             dictionary[unit_kind.split('_')[0]].extend([secondName
-                                                        for secondName in dictionary[unit_kind][unit_name]
-                                                        for unit_name in dictionary[unit_kind]])
+                                                        for unit_name in dictionary[unit_kind]
+                                                        for secondName in dictionary[unit_kind][unit_name]])
         if '_SPACES' in unit_kind:
-            space_replacement = [' ', '-', '_']
-            # for rep in ['-', '_']:
-            #     for unit_name in dictionary[unit_kind]:
-            #         if ' ' in unit_name:
-            #             network.add_node(UNode(unit_name))
-            # network.edges.update({UNode(unit_name): ([], []) for unit_name in dictionary[unit_kind] if ' ' in unit_name})
-            #             network.add_node(UNode(unit_name.replace(' ', rep)))
-            network.edges.update({UNode(unit_name.replace(' ', rep)): ([], []) for rep in space_replacement for unit_name in dictionary[unit_kind] if ' ' in unit_name})
-            #             dictionary[unit_kind.split('_')[0]].append(unit_name)
-            # dictionary[unit_kind.split('_')[0]].extend([unit_name for unit_name in dictionary[unit_kind] if ' ' in unit_name])
-            #             dictionary[unit_kind.split('_')[0]].append(unit_name.replace(' ', rep))
-            dictionary[unit_kind.split('_')[0]].extend([unit_name.replace(' ', rep) for rep in space_replacement for unit_name in dictionary[unit_kind] if ' ' in unit_name])
-            #             network.add_edge(
-            #                 Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', rep)),
-            #                            equality))
-            _ = [network.add_edge(Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', rep)), equality, alias=True))
-                 for rep in space_replacement
-                 for unit_name in dictionary[unit_kind]
-                 if ' ' in unit_name]
-
-            #            network.add_edge(
-            #                Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', rep)),
-            #                           equality))
-
-            _ = [network.add_edge(network.get_node(unit_name.replace(' ', rep)), Conversion(network.get_node(unit_name), equality, alias=True))
-                 for rep in space_replacement
-                 for unit_name in dictionary[unit_kind]
-                 if ' ' in unit_name]
-
-
-
+            for rep in ['-', '_']:
+                for unit_name in dictionary[unit_kind]:
+                    if ' ' in unit_name:
+                        network.add_node(UNode(unit_name))
+                        network.add_node(UNode(unit_name.replace(' ', rep)))
+                        dictionary[unit_kind.split('_')[0]].append(unit_name)
+                        dictionary[unit_kind.split('_')[0]].append(unit_name.replace(' ', rep))
+                        network.add_edge(
+                            Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', rep)),
+                                       equality))
+                        network.add_edge(
+                            Conversion(network.get_node(unit_name.replace(' ', rep)), network.get_node(unit_name),
+                                       equality))
                         if type(dictionary[unit_kind]) is dict:
                             for secondName in dictionary[unit_kind][unit_name]:
                                 if ' ' in secondName:
                                     network.add_node(UNode(secondName))
                                     network.add_node(UNode(secondName.replace(' ', rep)))
                                     network.add_edge(
-                                        Conversion(network.get_node(secondName.replace(' ', rep)), network.get_node(secondName),
+                                        Conversion(network.get_node(secondName.replace(' ', rep)),
+                                                   network.get_node(secondName),
                                                    equality))
                                     network.add_edge(
-                                        Conversion(network.get_node(secondName), network.get_node(secondName.replace(' ', rep)),
+                                        Conversion(network.get_node(secondName),
+                                                   network.get_node(secondName.replace(' ', rep)),
                                                    equality))
                                     dictionary[unit_kind.split('_')[0]].append(secondName)
                                     dictionary[unit_kind.split('_')[0]].append(secondName.replace(' ', rep))
@@ -169,10 +158,12 @@ def _load_network():
                                     network.add_node(UNode(secondName))
                                     network.add_node(UNode(secondName.replace(' ', rep)))
                                     network.add_edge(
-                                        Conversion(network.get_node(secondName.replace(' ', rep)), network.get_node(secondName),
+                                        Conversion(network.get_node(secondName.replace(' ', rep)),
+                                                   network.get_node(secondName),
                                                    equality))
                                     network.add_edge(
-                                        Conversion(network.get_node(secondName), network.get_node(secondName.replace(' ', rep)),
+                                        Conversion(network.get_node(secondName),
+                                                   network.get_node(secondName.replace(' ', rep)),
                                                    equality))
                                     dictionary[unit_kind.split('_')[0]].append(secondName)
                                     dictionary[unit_kind.split('_')[0]].append(secondName.replace(' ', rep))
@@ -689,6 +680,10 @@ def _load_network():
     del dictionary['dataBYTE']
     del dictionary['dataBIT']
     dictionary['UserUnits'] = list(dictionary['UserUnits'])
+
+    end = time.perf_counter()
+    print(f"_load_network optimized took time: {end - start} seconds")
+
     return network
 
 

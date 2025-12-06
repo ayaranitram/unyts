@@ -42,13 +42,13 @@ class UserUnits(Unit):
 
 
 def set_unit(unit_name: str) -> bool:
-    from ..database import units_network
+    from ..database_comprenhension import units_network
     from ..network import UNode
     units_network.add_node(UNode(unit_name))
 
 
 def set_conversion(from_units: str, to_units: str, conversion, reverse_conversion=None) -> bool:
-    from ..database import units_network
+    from ..database_comprenhension import units_network
     from ..network import UNode, Conversion
     if reverse_conversion is None:
         def reverse_conversion(x): return x / conversion(1)

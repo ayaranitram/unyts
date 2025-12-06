@@ -29,6 +29,7 @@ except ModuleNotFoundError:
         logger.warning("Missing `cloudpickle` package. Not able to cache network dictionary.")
     _cloudpickle_ = False
 
+import time
 
 def save_memory(path=None) -> None:
     units_network.save_memory(path)
@@ -87,6 +88,7 @@ def get_fvf() -> str:
 
 
 def _load_network():
+    start = time.perf_counter()
     logger.info('preparing units network...')
     network = UDigraph()
 
@@ -115,7 +117,7 @@ def _load_network():
                             Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', rep)),
                                        equality))
                         network.add_edge(
-                            Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', rep)),
+                            Conversion(network.get_node(unit_name.replace(' ', rep)), network.get_node(unit_name),
                                        equality))
                         if type(dictionary[unit_kind]) is dict:
                             for secondName in dictionary[unit_kind][unit_name]:
@@ -644,6 +646,10 @@ def _load_network():
     del dictionary['dataBYTE']
     del dictionary['dataBIT']
     dictionary['UserUnits'] = list(dictionary['UserUnits'])
+
+    end = time.perf_counter()
+    print(f"_load_network took time: {end - start} seconds")
+
     return network
 
 
