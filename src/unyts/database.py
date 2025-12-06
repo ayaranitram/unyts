@@ -836,7 +836,8 @@ if not unyts_parameters_.reload_ and \
         unyts_parameters_.reload_ = False
         unyts_parameters_.save_params()
     except:
-        logger.error("Failed to load from cache. Creating new dictionaries and saving them to cache...")
+        logger.error("Failed to load from cache.")
+        logger.info("Creating new dictionaries and saving them to cache...")
         units_network, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
 else:
     units_network = _load_network()
