@@ -115,7 +115,7 @@ def _load_network():
                             Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', rep)),
                                        equality))
                         network.add_edge(
-                            Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', rep)),
+                            Conversion(network.get_node(unit_name.replace(' ', rep)), network.get_node(unit_name),
                                        equality))
                         if type(dictionary[unit_kind]) is dict:
                             for secondName in dictionary[unit_kind][unit_name]:
