@@ -18,6 +18,8 @@ from .parameters import unyts_parameters_
 from .units.def_prefixes import *
 from .helpers.logger import logger
 
+import time
+
 StandardAirDensity = 1.225  # Kg/m3 or g/cc
 StandardEarthGravity = 9.80665  # m/s2 or 980.665 cm/s2 from
 StandardWaterDensity = 1.00  # g/cm3 because the size of the gram was originally based on the mass of a cubic centimetre of water.
@@ -86,6 +88,7 @@ OGF_order = (tuple(), tuple, ('Volume', 'Rate',))
 
 
 def _load_dictionary() -> (dict, dict):
+    start = time.perf_counter()
     logger.info('preparing units dictionary...')
 
     # the dictionary that contains all the units definitions
@@ -616,6 +619,9 @@ def _load_dictionary() -> (dict, dict):
             pickle_dump(temperature_ratio_conversions, f)
         with open(unyts_parameters_.get_user_folder() + 'unitless_names.cache', 'wb') as f:
             pickle_dump(unitless_names, f)
+
+    end = time.perf_counter()
+    print(f"_load_dictionary took time: {end - start} seconds")
 
     return dictionary, temperature_ratio_conversions, unitless_names
 
