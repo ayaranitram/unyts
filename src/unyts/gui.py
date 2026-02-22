@@ -20,8 +20,11 @@ from unyts import __version__ as unyts_version
 from .converter import convert
 from .dictionaries import _all_units
 from .errors import NoConversionFoundError, NoFVFError, SearchTimeoutError
-from .database_comprenhension import save_memory, load_memory, clean_memory, delete_cache, units_network  # set_fvf
 from .parameters import unyts_parameters_  # set_density
+if unyts_parameters_._comprehension:
+    from .database_comprehension import save_memory, load_memory, clean_memory, delete_cache, units_network  # set_fvf
+else:
+    from .database import save_memory, load_memory, clean_memory, delete_cache, units_network  # set_fvf
 from .helpers.logger import logger
 import pathlib, os
 import webbrowser

@@ -10,12 +10,15 @@ __version__ = '0.8.8'
 __release__ = 20250504
 __all__ = ['convert', 'convertible']
 
-from .database_comprenhension import units_network
+from .parameters import unyts_parameters_, _get_density
+if unyts_parameters_._comprehension:
+    from .database_comprehension import units_network
+else:
+    from .database import units_network
 from .dictionaries import dictionary, temperatureRatioConversions, uncertain_names
 from .Empty import Empty, str_Empty
 from .searches import BFS, lean_BFS, DFS, hybrid_BFS, print_path
 from .errors import NoConversionFoundError, SearchTimeoutError
-from .parameters import unyts_parameters_, _get_density
 from .helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
 from .units.def_conversions import equality, percentage__to__fraction, fraction__to__percentage, inverse
 from functools import reduce

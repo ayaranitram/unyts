@@ -787,13 +787,16 @@ def _create_Acceleration() -> None:
 
 
 def _complete_products() -> None:
-    for key in dictionary:
-        dictionary[key] = tuple(set(list(dictionary[key]) + [f"{u.split('*')[1]}*{u.split('*')[0]}"
-                                                             for u in dictionary[key]
-                                                             if '/' not in u
-                                                             and len(u.split('*')) == 2]))
-
-
+    # for key in dictionary:
+    #    dictionary[key] = tuple(set(list(dictionary[key]) + [f"{u.split('*')[1]}*{u.split('*')[0]}"
+    #                                                         for u in dictionary[key]
+    #                                                         if '/' not in u
+    #                                                         and len(u.split('*')) == 2]))
+    dictionary.update({key: tuple(set(list(dictionary[key]) + [f"{u.split('*')[1]}*{u.split('*')[0]}"
+                                                               for u in dictionary[key]
+                                                               if '/' not in u
+                                                               and len(u.split('*')) == 2]))
+                       for key in dictionary})
 def _rebuild_units():
     logger.warning('Rebuilding units dictionary...')
     from .dictionaries import _load_dictionary
