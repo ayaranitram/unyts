@@ -6,10 +6,11 @@ Created on Tue Dec 03 23:15:37 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.5'
-__release__ = 20251031
+__version__ = '0.6.6'
+__release__ = 20260215
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf']
 
+print("loading database")
 
 import os
 
@@ -18,6 +19,7 @@ from .units.def_conversions import *
 from .network import UDigraph, UNode, Conversion
 from .parameters import unyts_parameters_
 from .helpers.logger import logger
+from .helpers.timer import timeit
 from os.path import isfile
 from json import dump as json_dump
 
@@ -29,20 +31,20 @@ except ModuleNotFoundError:
         logger.warning("Missing `cloudpickle` package. Not able to cache network dictionary.")
     _cloudpickle_ = False
 
-import time
 
+@timeit
 def save_memory(path=None) -> None:
     units_network.save_memory(path)
 
-
+@timeit
 def load_memory(path=None) -> None:
     units_network.load_memory(path)
 
-
+@timeit
 def clean_memory(path=None) -> None:
     units_network.clean_memory()
 
-
+@timeit
 def delete_cache() -> None:
     for each in ('search_memory.cache', 'units_network.cache', 'units_dictionary.cache',
                  'temperature_ratio_conversions.cache', 'unitless_names.cache'):
@@ -50,7 +52,7 @@ def delete_cache() -> None:
         if os.path.exists(path):
             os.remove(path)
 
-
+@timeit
 def set_fvf(fvf=None) -> None:
     def valid_fvf(fvf):
         if type(fvf) is str:
@@ -77,7 +79,7 @@ def set_fvf(fvf=None) -> None:
     unyts_parameters_.fvf_ = fvf
     logger.info(f"FVF set to {fvf} rV/stV")
 
-
+@timeit
 def get_fvf() -> str:
     if units_network.fvf is not None:
         return str(round(units_network.fvf, 4))
@@ -86,7 +88,7 @@ def get_fvf() -> str:
     else:
         return ""
 
-
+@timeit
 def _load_network():
     logger.info('preparing units network...')
     network = UDigraph()
@@ -95,6 +97,7 @@ def _load_network():
         if '_' not in unit_kind:
             for unit_name in dictionary[unit_kind]:
                 network.add_node(UNode(unit_name))
+
         if '_NAMES' in unit_kind:
             for unit_name in dictionary[unit_kind]:
                 network.add_node(UNode(unit_name))
@@ -104,6 +107,7 @@ def _load_network():
                     network.add_edge(Conversion(network.get_node(secondName), network.get_node(unit_name), equality, alias=True))
                     network.add_edge(Conversion(network.get_node(unit_name), network.get_node(secondName), equality, alias=True))
                     dictionary[unit_kind.split('_')[0]].append(secondName)
+
         if '_SPACES' in unit_kind:
             for rep in ['-', '_']:
                 for unit_name in dictionary[unit_kind]:
@@ -158,6 +162,7 @@ def _load_network():
                         Conversion(network.get_node(unit_name), network.get_node(f"{prefix}{unit_name}"), SI[prefix][0],
                                    reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(f"{prefix}{unit_name}")
+
         elif '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[1]:
             for unit_name in dictionary[unit_kind]:
                 network.add_node(UNode(unit_name))
@@ -170,6 +175,7 @@ def _load_network():
                         Conversion(network.get_node(unit_name), network.get_node(f"{prefix}{unit_name}"), SI[prefix][1],
                                    reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(f"{prefix}{unit_name}")
+
         elif '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[2]:
             for unit_name in dictionary[unit_kind]:
                 network.add_node(UNode(unit_name))
@@ -182,6 +188,7 @@ def _load_network():
                         Conversion(network.get_node(unit_name), network.get_node(f"{prefix}{unit_name}"), SI[prefix][2],
                                    reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(f"{prefix}{unit_name}")
+
         elif '_linearSI' in unit_kind and unit_kind.split('_')[0] in SI_order[2]:
             for unit_name in dictionary[unit_kind]:
                 network.add_node(UNode(unit_name))
@@ -193,6 +200,7 @@ def _load_network():
                     network.add_edge(
                         Conversion(network.get_node(unit_name), network.get_node(f"{prefix}{unit_name}"), SI[prefix][0],
                                    reverse=True))
+
         elif '_KnotSI' in unit_kind and unit_kind.split('_')[0] in SI_order[0]:
             for unit_name in dictionary[unit_kind]:
                 network.add_node(UNode(unit_name))
@@ -207,6 +215,7 @@ def _load_network():
                                    SI_butK[prefix][0],
                                    reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(f"{prefix}{unit_name}")
+
         elif '_KnotSI' in unit_kind and unit_kind.split('_')[0] in SI_order[1]:
             for unit_name in dictionary[unit_kind]:
                 network.add_node(UNode(unit_name))
@@ -221,6 +230,7 @@ def _load_network():
                                    SI_butK[prefix][1],
                                    reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(f"{prefix}{unit_name}")
+
         elif '_KnotSI' in unit_kind and unit_kind.split('_')[0] in SI_order[2]:
             for unit_name in dictionary[unit_kind]:
                 network.add_node(UNode(unit_name))
@@ -236,6 +246,7 @@ def _load_network():
                                    reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(f"{prefix}{unit_name}")
                     dictionary[unit_kind.split('_')[0]].append(f"{prefix}{unit_name}")
+
         if '_DATA' in unit_kind and unit_kind.split('_')[0] in DATA_order[0]:
             for unit_name in dictionary[unit_kind]:
                 network.add_node(UNode(unit_name))
@@ -248,6 +259,7 @@ def _load_network():
                         Conversion(network.get_node(unit_name), network.get_node(f"{prefix}{unit_name}"), DATA[prefix][0],
                                    reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(f"{prefix}{unit_name}")
+
         if '_DATA' in unit_kind and unit_kind.split('_')[0] in DATA_order[1]:
             for unit_name in dictionary[unit_kind]:
                 network.add_node(UNode(unit_name))
@@ -260,6 +272,7 @@ def _load_network():
                         Conversion(network.get_node(unit_name), network.get_node(f"{prefix}{unit_name}"), DATA[prefix][1],
                                    reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(f"{prefix}{unit_name}")
+
         if '_OGF' in unit_kind and unit_kind.split('_')[0] in OGF_order[2]:
             for unit_name in dictionary[unit_kind]:
                 network.add_node(UNode(unit_name))
@@ -272,6 +285,7 @@ def _load_network():
                         Conversion(network.get_node(unit_name), network.get_node(f"{prefix}{unit_name}"), OGF[prefix][2],
                                    reverse=True))
                     dictionary[unit_kind.split('_')[0]].append(f"{prefix}{unit_name}")
+
         if '_PLURALwS' in unit_kind:
             if type(dictionary[unit_kind]) is dict:
                 for unit_name in dictionary[unit_kind]:
@@ -291,6 +305,7 @@ def _load_network():
                     network.add_edge(
                         Conversion(network.get_node(f"{unit_name}s"), network.get_node(unit_name), equality))
                     dictionary[unit_kind.split('_')[0]].append(f"{unit_name}s")
+
             if '_UPPER' in unit_kind:
                 if type(dictionary[unit_kind]) is dict:
                     for unit_name in dictionary[unit_kind]:
@@ -314,6 +329,7 @@ def _load_network():
                             Conversion(network.get_node(f"{unit_name.upper()}S"), network.get_node(unit_name),
                                        equality))
                         dictionary[unit_kind.split('_')[0]].append(f"{unit_name.upper()}S")
+
             if '_LOWER' in unit_kind:
                 if type(dictionary[unit_kind]) is dict:
                     # list_names = list(dictionary[unit_kind].keys())
@@ -338,6 +354,7 @@ def _load_network():
                             Conversion(network.get_node(f"{unit_name.lower()}s"), network.get_node(unit_name),
                                        equality))
                         dictionary[unit_kind.split('_')[0]].append(f"{unit_name.lower()}s")
+
         if '_UPPER' in unit_kind:
             if type(dictionary[unit_kind]) is dict:
                 for unit_name in dictionary[unit_kind]:
@@ -365,6 +382,7 @@ def _load_network():
                     network.add_edge(
                         Conversion(network.get_node(unit_name.upper()), network.get_node(unit_name), equality))
                     dictionary[unit_kind.split('_')[0]].append(unit_name.upper())
+
         if '_LOWER' in unit_kind:
             if type(dictionary[unit_kind]) is dict:
                 for unit_name in dictionary[unit_kind]:
@@ -392,6 +410,7 @@ def _load_network():
                     network.add_edge(
                         Conversion(network.get_node(unit_name.lower()), network.get_node(unit_name), equality))
                     dictionary[unit_kind.split('_')[0]].append(unit_name.lower())
+
         if '_INVERSE' in unit_kind:
             pass
 
@@ -648,7 +667,7 @@ def _load_network():
 
     return network
 
-
+@timeit
 def _create_Rates() -> None:
     # volumes / Time
     rates = list(dictionary['Rate']) if 'Rate' in dictionary else []
@@ -657,7 +676,7 @@ def _create_Rates() -> None:
     rates += [f"{data}/{time}" for data in dictionary['Data'] for time in dictionary['Time']]
     dictionary['Rate'] = tuple(set(rates))
 
-
+@timeit
 def _create_VolumeRatio() -> None:
     # Volume / Volume
     ratio = list(dictionary['VolumeRatio']) if 'VolumeRatio' in dictionary else []
@@ -665,21 +684,21 @@ def _create_VolumeRatio() -> None:
               dictionary['Volume']]
     dictionary['VolumeRatio'] = tuple(set(ratio))
 
-
+@timeit
 def _create_Density() -> None:
     # mass / Volume
     density = list(dictionary['Density']) if 'Density' in dictionary else []
     density += [f"{mass}/{volume}" for mass in dictionary['Mass'] for volume in dictionary['Volume']]
     dictionary['Density'] = tuple(set(density))
 
-
+@timeit
 def _create_Velocity() -> None:
     # Length / Time
     velocity = list(dictionary['Velocity']) if 'Velocity' in dictionary else []
     velocity += [f"{length}/{time}" for length in dictionary['Length'] for time in dictionary['Time']]
     dictionary['Velocity'] = tuple(set(velocity))
 
-
+@timeit
 def _create_Power() -> None:
     # Length / Time
     power = list(dictionary['Power']) if 'Power' in dictionary else []
@@ -690,21 +709,21 @@ def _create_Power() -> None:
     power += [f"{resistance}*{current}2" for resistance in dictionary['Resistance'] for current in dictionary['Current']]
     dictionary['Power'] = tuple(set(power))
 
-
+@timeit
 def _create_Frequency() -> None:
     # 1 / Time
     frequency = list(dictionary['Frequency']) if 'Frequency' in dictionary else []
     frequency += [f"'1/{time}" for time in dictionary['Time']]
     dictionary['Frequency'] = tuple(set(frequency))
 
-
+@timeit
 def _create_Conductance() -> None:
     # 1 / Resistance
     conductance = list(dictionary['Conductance']) if 'Conductance' in dictionary else []
     conductance += [f"1/{resistance}" for resistance in dictionary['Resistance']]
     dictionary['Conductance'] = tuple(set(conductance))
 
-
+@timeit
 def _create_Capacitance_Charge() -> None:
     # Capacitance, Charge = Charge / Voltage, Capacitance * Voltage
     capacitance, charge = \
@@ -719,7 +738,7 @@ def _create_Capacitance_Charge() -> None:
     dictionary['Capacitance'] = tuple(set(capacitance))
     dictionary['Charge'] = tuple(set(charge))
 
-
+@timeit
 def _create_Voltage_Current_Resistance() -> None:
     # Voltage, Current, Resistance = (Current * Resistance) + (Power / Current), \
     #                                (Voltage / Resistance) + (Power / Voltage), \
@@ -742,14 +761,14 @@ def _create_Voltage_Current_Resistance() -> None:
     dictionary['Current'] = tuple(set(current))
     dictionary['Resistance'] = tuple(set(resistance))
 
-
+@timeit
 def _create_Pressure() -> None:
     # Weight / Area
     pressure = list(dictionary['Pressure']) if 'Pressure' in dictionary else []
     pressure += [f"{weight}/{area}" for weight in dictionary['Weight'] for area in dictionary['Area']]
     dictionary['Pressure'] = tuple(set(pressure))
 
-
+@timeit
 def _create_ProductivityIndex() -> None:
     # Volume / Time / Pressure
     productivityIndex = list(dictionary['ProductivityIndex']) if 'ProductivityIndex' in dictionary else []
@@ -759,7 +778,7 @@ def _create_ProductivityIndex() -> None:
                           for pressure in dictionary['Pressure']]
     dictionary['ProductivityIndex'] = tuple(set(productivityIndex))
 
-
+@timeit
 def _create_PressureGradient() -> None:
     # Pressure / Length
     pressureGradient = list(dictionary['PressureGradient']) if 'PressureGradient' in dictionary else []
@@ -767,7 +786,7 @@ def _create_PressureGradient() -> None:
                          dictionary['Length']]
     dictionary['PressureGradient'] = tuple(set(pressureGradient))
 
-
+@timeit
 def _create_TemperatureGradient() -> None:
     # Pressure / Length
     temperatureGradient = list(dictionary['TemperatureGradient']) if 'TemperatureGradient' in dictionary else []
@@ -775,7 +794,7 @@ def _create_TemperatureGradient() -> None:
                             dictionary['Length']]
     dictionary['TemperatureGradient'] = tuple(set(temperatureGradient))
 
-
+@timeit
 def _create_Acceleration() -> None:
     # Length / Time / Time
     acceleration = list(dictionary['Acceleration']) if 'Acceleration' in dictionary else []
@@ -785,7 +804,7 @@ def _create_Acceleration() -> None:
                      for time2 in dictionary['Time']]
     dictionary['Acceleration'] = tuple(set(acceleration))
 
-
+@timeit
 def _complete_products() -> None:
     # for key in dictionary:
     #    dictionary[key] = tuple(set(list(dictionary[key]) + [f"{u.split('*')[1]}*{u.split('*')[0]}"
@@ -797,6 +816,9 @@ def _complete_products() -> None:
                                                                if '/' not in u
                                                                and len(u.split('*')) == 2]))
                        for key in dictionary})
+
+
+@timeit
 def _rebuild_units():
     logger.warning('Rebuilding units dictionary...')
     from .dictionaries import _load_dictionary
@@ -807,7 +829,7 @@ def _rebuild_units():
     unyts_parameters_.save_params()
     return units_network, dictionary, temperatureRatioConversions, unitless_names
 
-
+@timeit
 def network_to_frame():
     try:
         from pandas import DataFrame
@@ -823,9 +845,17 @@ def network_to_frame():
             i += 1
     return frame.drop_duplicates(['source', 'target'])
 
-
+@timeit
 def _clean_network():
     units_network.edges = {k: v for k, v in units_network.edges.items() if v != ([], [])}
+
+@timeit
+def _save_cache():
+    if _cloudpickle_:
+        with open(f"{unyts_parameters_.get_user_folder()}units_network.cache", 'wb') as f:
+            cloudpickle_dump(units_network, f)
+    with open(f"{unyts_parameters_.get_user_folder()}units_dictionary.cache", 'w') as f:
+        json_dump(dictionary, f)
 
 
 # load the network into an instance of the graph database
@@ -845,87 +875,29 @@ if not unyts_parameters_.reload_ and \
         logger.info("Creating new dictionaries and saving them to cache...")
         units_network, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
 else:
-    start = time.perf_counter()
     units_network = _load_network()
-    end = time.perf_counter()
-    print(f"_load_network took time: {end - start} seconds")
+
     # load the dictionary with ratio units
-    start = time.perf_counter()
     _create_Rates()
-    end = time.perf_counter()
-    print(f"_create_Rates took time: {end - start} seconds")
-    start = time.perf_counter()
     _create_VolumeRatio()
-    end = time.perf_counter()
-    print(f"_create_VolumeRatio took time: {end - start} seconds")
-    start = time.perf_counter()
     _create_Density()
-    end = time.perf_counter()
-    print(f"_create_Density took time: {end - start} seconds")
-    start = time.perf_counter()
     _create_Velocity()
-    end = time.perf_counter()
-    print(f"_create_Velocity took time: {end - start} seconds")
-    start = time.perf_counter()
     _create_Acceleration()
-    end = time.perf_counter()
-    print(f"_create_Acceleration took time: {end - start} seconds")
-    start = time.perf_counter()
     _create_ProductivityIndex()
-    end = time.perf_counter()
-    print(f"_create_ProductivityIndex took time: {end - start} seconds")
-    start = time.perf_counter()
     _create_PressureGradient()
-    end = time.perf_counter()
-    print(f"_create_PressureGradient took time: {end - start} seconds")
-    start = time.perf_counter()
     _create_Pressure()
-    end = time.perf_counter()
-    print(f"_create_Pressure took time: {end - start} seconds")
-    start = time.perf_counter()
     _create_TemperatureGradient()
-    end = time.perf_counter()
-    print(f"_create_TemperatureGradient took time: {end - start} seconds")
-    start = time.perf_counter()
     _create_Power()
-    end = time.perf_counter()
-    print(f"_create_Power took time: {end - start} seconds")
-    start = time.perf_counter()
     _create_Frequency()
-    end = time.perf_counter()
-    print(f"_create_Frequency took time: {end - start} seconds")
-    start = time.perf_counter()
     _create_Conductance()
-    end = time.perf_counter()
-    print(f"_create_Conductance took time: {end - start} seconds")
-    start = time.perf_counter()
     _create_Capacitance_Charge()
-    end = time.perf_counter()
-    print(f"_create_Capacitance_Charge took time: {end - start} seconds")
-    start = time.perf_counter()
     _create_Voltage_Current_Resistance()
-    end = time.perf_counter()
-    print(f"_create_Voltage_Current_Resistance took time: {end - start} seconds")
-    start = time.perf_counter()
     _complete_products()
-    end = time.perf_counter()
-    print(f"_complete_products took time: {end - start} seconds")
-    start = time.perf_counter()
+
     # clean empty edges
     _clean_network()
-    end = time.perf_counter()
-    print(f"_clean_network took time: {end - start} seconds")
-
 
     unyts_parameters_.reload_ = False
     unyts_parameters_.save_params()
     if unyts_parameters_.cache_:
-        start = time.perf_counter()
-        logger.info('saving units network and dictionary to cache...')
-        if _cloudpickle_:
-            with open(f"{unyts_parameters_.get_user_folder()}units_network.cache", 'wb') as f:
-                cloudpickle_dump(units_network, f)
-        with open(f"{unyts_parameters_.get_user_folder()}units_dictionary.cache", 'w') as f:
-            json_dump(dictionary, f)
-        end = time.perf_counter()
-        print(f"saving cache took time: {end - start} seconds")
+        _save_cache()

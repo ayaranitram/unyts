@@ -61,6 +61,7 @@ class UnytsParameters(object):
         self._deactivate_parallel = True  # to hide the Parallel menu in the GUI
         self._warnings = []
         self._start_time = 0
+        self._timing = True
         self._comprehension = False
 
     def threading_available(self):

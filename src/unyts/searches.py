@@ -14,12 +14,13 @@ __all__ = ['BFS', 'lean_BFS', 'DFS', 'hybrid_BFS', 'print_path']
 from unyts import unyts_parameters_
 from .Empty import Empty
 from .helpers.logger import logger
+from .helpers.timer import timeit
 
 import os
 from multiprocessing import Process
 from threading import Thread
 
-
+@timeit
 def BFS(graph, start, end, verbose=False) -> list:
     """
     Implementation of Breadth-First Search algorithm.
@@ -61,7 +62,7 @@ def BFS(graph, start, end, verbose=False) -> list:
                            if next_node not in conv_path]
             visited.append(conv_path)
 
-
+@timeit
 def DFS(graph, start, end, verbose=False, branch_depht=25) -> list:
     """
     Implementation of Depth-First Search algorithm.
@@ -123,7 +124,7 @@ class SlimUDigraph(object):
     def children_of(self, node):
         return self.edges[node][0] if node in self.edges else []
 
-
+@timeit
 def lean_BFS(graph, start, end, verbose=False, max_generations_screening=25) -> list:
     """
     Runs BFS algorithm on a lean digraph network, where only the nodes related to the `start` and `end` nodes are kept.
@@ -176,15 +177,18 @@ class SerialRun(object):
         except:
             return None
 
+@timeit
 def _bfs(results, graph, start, end, verbose=False):
     results['bfs'] = BFS(graph, start, end, verbose=verbose)
     return results['bfs']
 
+@timeit
 def _lean_bfs(results, graph, start, end, verbose=False, max_generations_screening=25):
     results['lean_bfs'] = lean_BFS(graph, start, end, verbose=verbose,
                                    max_generations_screening=max_generations_screening)
     return results['lean_bfs']
 
+@timeit
 def hybrid_BFS(graph, start, end, verbose=False, max_generations_screening=25) -> list:
     """
     Runs lean_BFS and BFS searches in two independent threads, and returns the first obtained result.
@@ -215,7 +219,10 @@ def hybrid_BFS(graph, start, end, verbose=False, max_generations_screening=25) -
     else:
         raise NotImplementedError("No option defined for parallel processing.")
 
-    from .database_comprenhension import units_network
+    if unyts_parameters_._comprehension:
+        from .database_comprehension import units_network
+    else:
+        from .database import units_network
 
     verbose_ = verbose and unyts_parameters_.verbose_details_ > 0
     results_ = {'bfs': '', 'lean_bfs': ''}
@@ -254,7 +261,7 @@ def hybrid_BFS(graph, start, end, verbose=False, max_generations_screening=25) -
     os.environ["PYTHONWARNINGS"] = pythonwarnings
     return _return
 
-
+@timeit
 def print_path(path: list) -> str:
     """
     Assumes path is a list of nodes.

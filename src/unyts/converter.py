@@ -20,11 +20,13 @@ from .Empty import Empty, str_Empty
 from .searches import BFS, lean_BFS, DFS, hybrid_BFS, print_path
 from .errors import NoConversionFoundError, SearchTimeoutError
 from .helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
+from .helpers.logger import logger
+from .helpers.timer import timeit
 from .units.def_conversions import equality, percentage__to__fraction, fraction__to__percentage, inverse
 from functools import reduce
 from typing import Union
 from sys import getrecursionlimit
-from .helpers.logger import logger
+
 
 
 try:
@@ -55,7 +57,7 @@ else:
     _numeric = (int, float, complex)
     numeric = Union[int, float, complex]
 
-
+@timeit
 def _str2function(string: str):
     """
     Returns a function with a multiplication or division operation, depending on the received string.
@@ -77,7 +79,7 @@ def _str2function(string: str):
     if string == '*':
         return _prod
 
-
+@timeit
 def _apply_conversion(value, conversion_path):
     """
     Helper function to apply the functions stated in the `conversion_path`.
@@ -137,7 +139,7 @@ def _apply_conversion(value, conversion_path):
         i += 1
     return value
 
-
+@timeit
 def _function_conversion(conversion_path):
     """
     Helper function to make a function applying in sequence all the conversions listed in the conversion_path.
@@ -157,7 +159,7 @@ def _function_conversion(conversion_path):
         return _conversion_loop(x, big_conversion[:])
     return _looped_conversion
 
-
+@timeit
 def _conversion_loop(x, conversion_list):
     """
     Helper function to apply conversion functions in sequence.
@@ -178,7 +180,7 @@ def _conversion_loop(x, conversion_list):
         x = conversion_i(x)
     return x
 
-
+@timeit
 def _get_pair_child(unit: str):
     """
     Returns the following child of a unit node.
@@ -214,7 +216,7 @@ def _get_pair_child(unit: str):
     if type(pair_child) is str:
         return pair_child
 
-
+@timeit
 def _get_recursion_limit(recursion=None):
     if recursion is None:
         recursion = min(getrecursionlimit() - 15, unyts_parameters_.max_recursion_)
@@ -226,7 +228,7 @@ def _get_recursion_limit(recursion=None):
         recursion -= 1
     return recursion
 
-
+@timeit
 def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     """
     Helper function to handle looking for the conversion factor of special cases and through the units network.
@@ -353,7 +355,7 @@ def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=No
     else:
         return None, None
     
-
+@timeit
 def generations_until_common(start, end, verbose=False, max_generations_screening=25) -> list:
     """
     Finds the number of generations requiered to get a common unit between `start` and `end`, 
@@ -383,7 +385,7 @@ def generations_until_common(start, end, verbose=False, max_generations_screenin
         selection = start_descendants.intersection(end_descendants)
     return generations if len(selection) > 0 else (np.inf if _numpy_ else 9999)
 
-
+@timeit
 def _get_descendants(unit:str, generations=None, get_combinations=True):
     generations = unyts_parameters_.max_generations_ if generations is None else generations
     if generations == 0:
@@ -412,7 +414,7 @@ def _get_descendants(unit:str, generations=None, get_combinations=True):
         descendants = children
     return {unit}.union(descendants)
 
-
+@timeit
 def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max_paths=12, use_cache:bool=None):
     """
     helper function of _converter function
@@ -473,7 +475,7 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
         path += 1
     return conversion, conversion_path
     
-    
+@timeit
 def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     """
     Transform the received value (integer, float, array, series, frame, ...)
@@ -619,7 +621,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     units_network.memory[(from_unit, to_unit)] = None, None
     return None, None
 
-
+@timeit
 def _clean_input(value: numeric, from_unit: str, to_unit: str_Empty) -> (numeric, str, str):
     """
     Helper function to preprocess the input parameters from the user
@@ -682,15 +684,15 @@ def _clean_input(value: numeric, from_unit: str, to_unit: str_Empty) -> (numeric
 
     return value, from_unit, to_unit
 
-
+@timeit
 def _clean_print_conversion_path(print_conversion_path: bool = None) -> bool:
     return unyts_parameters_.print_path_ if print_conversion_path is None else bool(print_conversion_path)
 
-
+@timeit
 def _clean_verbose(verbose) -> bool:
     return unyts_parameters_.verbose_ if verbose is None else bool(verbose)
 
-
+@timeit
 def _density_conversion(value: numeric, from_unit: str, to_unit: str, use_cache:bool=None):
     """
     Helper function to deal with conversion between weight and volume, using density.
@@ -732,7 +734,7 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str, use_cache:
 
     return conv, conv_path
 
-
+@timeit
 def _search_network(from_unit, to_unit, algorithm:str=None):
     """
     Searches for a path from `from_units` through the units network to `to_units`.
@@ -782,7 +784,7 @@ def _search_network(from_unit, to_unit, algorithm:str=None):
         conversion_path = None
     return conversion_path
 
-
+@timeit
 def convertible(from_unit: str, to_unit: str, use_cache:bool=None) -> bool:
     """
     Returns True if a conversion path from `from_unit` to `to_unit` is found, otherwise returns True.
@@ -812,7 +814,7 @@ def convertible(from_unit: str, to_unit: str, use_cache:bool=None) -> bool:
     except NoConversionFoundError:
         return False
 
-
+@timeit
 def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty,
             print_conversion_path: bool = None, use_cache:bool=None):
     """
@@ -876,7 +878,7 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty,
 
     return conv
 
-
+@timeit
 def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str,
                           print_conversion_path:bool=False, use_cache:bool=None):
     """

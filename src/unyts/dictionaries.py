@@ -14,11 +14,12 @@ __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEar
 from json import load as json_load
 from pickle import load as pickle_load, dump as pickle_dump
 from os.path import isfile
+
 from .parameters import unyts_parameters_
 from .units.def_prefixes import *
 from .helpers.logger import logger
+from .helpers.timer import timeit
 
-import time
 
 StandardAirDensity = 1.225  # Kg/m3 or g/cc
 StandardEarthGravity = 9.80665  # m/s2 or 980.665 cm/s2 from
@@ -86,9 +87,8 @@ OGF = {'M': (None, None, ogf_M),
        }
 OGF_order = (tuple(), tuple, ('Volume', 'Rate',))
 
-
+@timeit
 def _load_dictionary() -> (dict, dict):
-    start = time.perf_counter()
     logger.info('preparing units dictionary...')
 
     # the dictionary that contains all the units definitions
@@ -620,9 +620,6 @@ def _load_dictionary() -> (dict, dict):
         with open(unyts_parameters_.get_user_folder() + 'unitless_names.cache', 'wb') as f:
             pickle_dump(unitless_names, f)
 
-    end = time.perf_counter()
-    print(f"_load_dictionary took time: {end - start} seconds")
-
     return dictionary, temperature_ratio_conversions, unitless_names
 
 
@@ -646,6 +643,6 @@ if not unyts_parameters_.reload_ and \
 else:
     dictionary, temperatureRatioConversions, unitless_names = _load_dictionary()
 
-
+@timeit
 def _all_units():
     return set([each for units in dictionary.values() for each in units])
