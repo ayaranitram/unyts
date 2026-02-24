@@ -937,32 +937,83 @@ if not unyts_parameters_.reload_ and \
 else:
     units_network = _load_network()
 
-    # Start background threads for heavy CPU-bound functions
-    # These run concurrently with other _create_* functions (overlapped execution)
-    # Saves ~20% of build time by parallelizing during other work
-    productivity_thread = threading.Thread(target=_create_ProductivityIndex, daemon=False)
-    complete_products_thread = threading.Thread(target=_complete_products, daemon=False)
-    productivity_thread.start()
-    complete_products_thread.start()
+    # Adaptive execution: if running on Python 3.14+ we can use true parallel
+    # execution (no-GIL); otherwise fall back to overlapped execution which
+    # starts heavy tasks in background while the main thread runs other creates.
+    import sys
+    import os
+    from ._parallel_helpers import parallel_execute
 
-    # load the dictionary with ratio units (other functions run while threads compute)
-    _create_Rates()
-    _create_VolumeRatio()
-    _create_Density()
-    _create_Velocity()
-    _create_Acceleration()
-    _create_PressureGradient()
-    _create_Pressure()
-    _create_TemperatureGradient()
-    _create_Power()
-    _create_Frequency()
-    _create_Conductance()
-    _create_Capacitance_Charge()
-    _create_Voltage_Current_Resistance()
+    PARALLEL_3_14 = False
+    try:
+        if sys.version_info >= (3, 14):
+            # default on 3.14+, can be disabled by env var UNYTS_PARALLEL_3_14=0
+            PARALLEL_3_14 = True
+        env = os.environ.get('UNYTS_PARALLEL_3_14')
+        if env is not None:
+            if env in ('0', 'False', 'false'):
+                PARALLEL_3_14 = False
+            elif env in ('1', 'True', 'true'):
+                PARALLEL_3_14 = True
+    except Exception:
+        PARALLEL_3_14 = False
 
-    # Wait for background threads to complete before network cleanup
-    productivity_thread.join()
-    complete_products_thread.join()
+    create_functions = [
+        _create_Rates,
+        _create_VolumeRatio,
+        _create_Density,
+        _create_Velocity,
+        _create_Acceleration,
+        _create_ProductivityIndex,
+        _create_Pressure,
+        _create_TemperatureGradient,
+        _create_Power,
+        _create_Frequency,
+        _create_Conductance,
+        _create_Capacitance_Charge,
+        _create_Voltage_Current_Resistance,
+    ]
+
+    if PARALLEL_3_14:
+        try:
+            # Run all independent _create_* functions in parallel (safe on 3.14+)
+            parallel_execute(create_functions)
+        except Exception:
+            # If parallel execution fails, fallback to overlapped approach
+            logger.exception('Parallel create_functions failed; falling back to overlapped execution')
+            productivity_thread = threading.Thread(target=_create_ProductivityIndex, daemon=False)
+            complete_products_thread = threading.Thread(target=_complete_products, daemon=False)
+            productivity_thread.start()
+            complete_products_thread.start()
+
+            # Run remaining create functions while heavy tasks compute
+            for fn in create_functions:
+                try:
+                    fn()
+                except Exception:
+                    logger.exception('Error running create function %s', getattr(fn, '__name__', fn))
+
+            productivity_thread.join()
+            complete_products_thread.join()
+    else:
+        # Overlapped execution for Python < 3.14: start heavy tasks and run others
+        productivity_thread = threading.Thread(target=_create_ProductivityIndex, daemon=False)
+        complete_products_thread = threading.Thread(target=_complete_products, daemon=False)
+        productivity_thread.start()
+        complete_products_thread.start()
+
+        # Run other create functions while heavy tasks compute
+        for fn in create_functions:
+            # Skip ProductivityIndex and complete_products because already running
+            if fn in (_create_ProductivityIndex, _complete_products):
+                continue
+            try:
+                fn()
+            except Exception:
+                logger.exception('Error running create function %s', getattr(fn, '__name__', fn))
+
+        productivity_thread.join()
+        complete_products_thread.join()
 
     # clean empty edges
     _clean_network()
