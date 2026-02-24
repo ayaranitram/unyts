@@ -50,8 +50,10 @@ class UnytsParameters(object):
         self.algorithm_ = 'lean_BFS'
         self.max_generations_ = __max_generations_default__
         self.timeout_ = __timeout__
+        self._timing = False
+        self._testing = False
         self.load_params()
-        self.reload_ = self.reload_ if reload is None else bool(reload)
+        self.reload_ = (self.reload_ if reload is None else bool(reload)) and self._testing
         self.memory_ = not self.reload_
         self.last_path_str = ""
         self.gui = False
@@ -61,8 +63,7 @@ class UnytsParameters(object):
         self._deactivate_parallel = True  # to hide the Parallel menu in the GUI
         self._warnings = []
         self._start_time = 0
-        self._timing = True
-        self._comprehension = False
+        self._comprehension = False  # whether to use comprehension-based database (faster but more memory intensive) or not (slower but more memory efficient)
 
     def threading_available(self):
         try:
@@ -100,7 +101,9 @@ class UnytsParameters(object):
                       'max_generations': __max_generations_default__,
                       'timeout': __timeout__,
                       'parallel': False,
-                      'config_files_folder': None}
+                      'config_files_folder': None,
+                      'timing': False,
+                      'testing': False}
             with open(ini_path, 'w') as f:
                 json_dump(params, f)
         self.print_path_ = params['print_path'] if 'print_path' in params else False
@@ -121,6 +124,8 @@ class UnytsParameters(object):
         self.config_files_folder_ = dir_path if ('config_files_folder' not in params or params['config_files_folder'] is None) \
             else params['config_files_folder'] if ('config_files_folder' in params and isdir(params['config_files_folder'])) \
             else self.config_files_folder_
+        self._timing = params['timing'] if 'timing' in params else False
+        self._testing = params['testing'] if 'testing' in params else False
 
         if self.show_version_ and isfile(ini_backup):
             with open(ini_backup, 'r') as f:
@@ -142,6 +147,8 @@ class UnytsParameters(object):
             self.config_files_folder_ = dir_path if ('config_files_folder' not in params or params['config_files_folder'] is None) \
                 else params['config_files_folder'] if ('config_files_folder' in params and isdir(params['config_files_folder'])) \
                 else self.config_files_folder_
+            self._timing = params['timing'] if 'timing' in params else False
+            self._testing = params['testing'] if 'testing' in params else False
 
     def save_params(self) -> None:
         params = {'print_path': self.print_path_,
@@ -160,6 +167,8 @@ class UnytsParameters(object):
                   'timeout': self.timeout_,
                   'parallel': self.parallel_,
                   'config_files_folder': self.config_files_folder_ if self.config_files_folder_ != dir_path else None,
+                  'timing': self._timing,
+                  'testing': self._testing,
                   'logger_level': logger.get_current_level()}
         with open(ini_path, 'w') as f:
             json_dump(params, f)
@@ -227,6 +236,10 @@ class UnytsParameters(object):
         if _prev != self.verbose_:
             logger.info(f"verbose {'ON' if self.verbose_ else 'OFF'}")
         self.save_params()
+
+    @property
+    def logger_level(self) -> str:
+        return logger.get_current_level()
 
     def set_logger_level(self, level:str="INFO") -> None:
         if type(level) is str and level.upper() in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
