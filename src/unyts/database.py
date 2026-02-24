@@ -92,63 +92,60 @@ def get_fvf() -> str:
 def _load_network():
     logger.info('preparing units network...')
     network = UDigraph()
+    add_node = network.add_node
+    get_node = network.get_node
+    add_edge = network.add_edge
 
     for unit_kind in dictionary:
         if '_' not in unit_kind:
             for unit_name in dictionary[unit_kind]:
-                network.add_node(UNode(unit_name))
+                add_node(UNode(unit_name))
 
         if '_NAMES' in unit_kind:
             for unit_name in dictionary[unit_kind]:
-                network.add_node(UNode(unit_name))
+                add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for secondName in dictionary[unit_kind][unit_name]:
-                    network.add_node(UNode(secondName))
-                    network.add_edge(Conversion(network.get_node(secondName), network.get_node(unit_name), equality, alias=True))
-                    network.add_edge(Conversion(network.get_node(unit_name), network.get_node(secondName), equality, alias=True))
+                    add_node(UNode(secondName))
+                    add_edge(Conversion(get_node(secondName), get_node(unit_name), equality, alias=True))
+                    add_edge(Conversion(get_node(unit_name), get_node(secondName), equality, alias=True))
                     dictionary[unit_kind.split('_')[0]].append(secondName)
 
         if '_SPACES' in unit_kind:
             for rep in ['-', '_']:
                 for unit_name in dictionary[unit_kind]:
                     if ' ' in unit_name:
-                        network.add_node(UNode(unit_name))
-                        network.add_node(UNode(unit_name.replace(' ', rep)))
+                        add_node(UNode(unit_name))
+                        add_node(UNode(unit_name.replace(' ', rep)))
                         dictionary[unit_kind.split('_')[0]].append(unit_name)
                         dictionary[unit_kind.split('_')[0]].append(unit_name.replace(' ', rep))
-                        network.add_edge(
-                            Conversion(network.get_node(unit_name), network.get_node(unit_name.replace(' ', rep)),
+                        add_edge(
+                            Conversion(get_node(unit_name), get_node(unit_name.replace(' ', rep)),
                                        equality))
-                        network.add_edge(
-                            Conversion(network.get_node(unit_name.replace(' ', rep)), network.get_node(unit_name),
+                        add_edge(
+                            Conversion(get_node(unit_name.replace(' ', rep)), get_node(unit_name),
                                        equality))
                         if type(dictionary[unit_kind]) is dict:
                             for secondName in dictionary[unit_kind][unit_name]:
                                 if ' ' in secondName:
-                                    network.add_node(UNode(secondName))
-                                    network.add_node(UNode(secondName.replace(' ', rep)))
-                                    network.add_edge(
-                                        Conversion(network.get_node(secondName.replace(' ', rep)), network.get_node(secondName),
+                                    add_node(UNode(secondName))
+                                    add_node(UNode(secondName.replace(' ', rep)))
+                                    add_edge(
+                                        Conversion(get_node(secondName.replace(' ', rep)), get_node(secondName),
                                                    equality))
-                                    network.add_edge(
-                                        Conversion(network.get_node(secondName), network.get_node(secondName.replace(' ', rep)),
+                                    add_edge(
+                                        Conversion(get_node(secondName), get_node(secondName.replace(' ', rep)),
                                                    equality))
                                     dictionary[unit_kind.split('_')[0]].append(secondName)
                                     dictionary[unit_kind.split('_')[0]].append(secondName.replace(' ', rep))
                     else:
                         if type(dictionary[unit_kind]) is dict:
                             for secondName in dictionary[unit_kind][unit_name]:
-                                if ' ' in secondName:
-                                    network.add_node(UNode(secondName))
-                                    network.add_node(UNode(secondName.replace(' ', rep)))
-                                    network.add_edge(
-                                        Conversion(network.get_node(secondName.replace(' ', rep)), network.get_node(secondName),
-                                                   equality))
-                                    network.add_edge(
-                                        Conversion(network.get_node(secondName), network.get_node(secondName.replace(' ', rep)),
-                                                   equality))
-                                    dictionary[unit_kind.split('_')[0]].append(secondName)
-                                    dictionary[unit_kind.split('_')[0]].append(secondName.replace(' ', rep))
+                                add_node(UNode(secondName))
+                                add_edge(
+                                    Conversion(get_node(secondName), get_node(unit_name), equality))
+                                add_edge(
+                                    Conversion(get_node(unit_name), get_node(secondName), equality))
 
         if '_SI' in unit_kind and unit_kind.split('_')[0] in SI_order[0]:
             for unit_name in dictionary[unit_kind]:
@@ -740,26 +737,34 @@ def _create_Capacitance_Charge() -> None:
 
 @timeit
 def _create_Voltage_Current_Resistance() -> None:
-    # Voltage, Current, Resistance = (Current * Resistance) + (Power / Current), \
-    #                                (Voltage / Resistance) + (Power / Voltage), \
-    #                                (Voltage / Current)
-    voltage, current, resistance = \
-        list(dictionary['Voltage']) if 'Voltage' in dictionary else [], \
-        list(dictionary['Current']) if 'Current' in dictionary else [], \
-        list(dictionary['Resistance']) if 'Resistance' in dictionary else []
-    voltage, current, resistance = \
-        voltage + \
-        [f"{current}*{resistance}" for resistance in dictionary['Resistance'] for current in dictionary['Current']] + \
-        [f"{resistance}*{current}" for resistance in dictionary['Resistance'] for current in dictionary['Current']] + \
-        [f"{power}/{current}" for power in dictionary['Power'] for current in dictionary['Current']], \
-        current + \
-        [f"{voltage}/{resistance}" for resistance in dictionary['Resistance'] for voltage in dictionary['Voltage']] + \
-        [f"{power}/{voltage}" for power in dictionary['Power'] for voltage in dictionary['Voltage']], \
-        resistance + \
-        [f"{voltage}/{current}" for current in dictionary['Current'] for voltage in dictionary['Voltage']]
-    dictionary['Voltage'] = tuple(set(voltage))
-    dictionary['Current'] = tuple(set(current))
-    dictionary['Resistance'] = tuple(set(resistance))
+    """Voltage‑Current‑Resistance combinations.
+
+    Previous implementation updated the sets in place while iterating over
+    them, causing the iterables to grow continuously and eventually
+    exhaust memory.  Fix by working from snapshots of the original
+    lists so that the comprehension bounds remain static.
+    """
+    volt0 = list(dictionary.get('Voltage', []))
+    curr0 = list(dictionary.get('Current', []))
+    res0 = list(dictionary.get('Resistance', []))
+    power0 = list(dictionary.get('Power', []))
+
+    new_volt = set(volt0)
+    new_curr = set(curr0)
+    new_res = set(res0)
+
+    # generate derived units from the original collections only
+    new_volt |= {f"{c}*{r}" for r in res0 for c in curr0}
+    new_volt |= {f"{p}/{c}" for p in power0 for c in curr0}
+
+    new_curr |= {f"{v}/{r}" for r in res0 for v in volt0}
+    new_curr |= {f"{p}/{v}" for p in power0 for v in volt0}
+
+    new_res |= {f"{v}/{c}" for c in curr0 for v in volt0}
+
+    dictionary['Voltage'] = tuple(new_volt)
+    dictionary['Current'] = tuple(new_curr)
+    dictionary['Resistance'] = tuple(new_res)
 
 @timeit
 def _create_Pressure() -> None:
@@ -771,12 +776,17 @@ def _create_Pressure() -> None:
 @timeit
 def _create_ProductivityIndex() -> None:
     # Volume / Time / Pressure
-    productivityIndex = list(dictionary['ProductivityIndex']) if 'ProductivityIndex' in dictionary else []
-    productivityIndex += [f"{volume}/{time}/{pressure}"
-                          for volume in dictionary['Volume']
-                          for time in dictionary['Time']
-                          for pressure in dictionary['Pressure']]
-    dictionary['ProductivityIndex'] = tuple(set(productivityIndex))
+    # build set comprehension to reduce Python overhead
+    if 'ProductivityIndex' in dictionary:
+        existing = set(dictionary['ProductivityIndex'])
+    else:
+        existing = set()
+    # only iterate once using comprehension
+    existing |= {f"{v}/{t}/{p}"
+                 for v in dictionary.get('Volume', [])
+                 for t in dictionary.get('Time', [])
+                 for p in dictionary.get('Pressure', [])}
+    dictionary['ProductivityIndex'] = tuple(existing)
 
 @timeit
 def _create_PressureGradient() -> None:
@@ -797,25 +807,21 @@ def _create_TemperatureGradient() -> None:
 @timeit
 def _create_Acceleration() -> None:
     # Length / Time / Time
-    acceleration = list(dictionary['Acceleration']) if 'Acceleration' in dictionary else []
-    acceleration += [f"{length}/{time1}2" if time1 == time2 else f"{length}/{time1}/{time2}"
-                     for length in dictionary['Length']
-                     for time1 in dictionary['Time']
-                     for time2 in dictionary['Time']]
-    dictionary['Acceleration'] = tuple(set(acceleration))
+    existing = set(dictionary.get('Acceleration', []))
+    existing |= {f"{length}/{t1}2" if t1 == t2 else f"{length}/{t1}/{t2}"
+                 for length in dictionary.get('Length', [])
+                 for t1 in dictionary.get('Time', [])
+                 for t2 in dictionary.get('Time', [])}
+    dictionary['Acceleration'] = tuple(existing)
 
 @timeit
 def _complete_products() -> None:
-    # for key in dictionary:
-    #    dictionary[key] = tuple(set(list(dictionary[key]) + [f"{u.split('*')[1]}*{u.split('*')[0]}"
-    #                                                         for u in dictionary[key]
-    #                                                         if '/' not in u
-    #                                                         and len(u.split('*')) == 2]))
-    dictionary.update({key: tuple(set(list(dictionary[key]) + [f"{u.split('*')[1]}*{u.split('*')[0]}"
-                                                               for u in dictionary[key]
-                                                               if '/' not in u
-                                                               and len(u.split('*')) == 2]))
-                       for key in dictionary})
+    # mirror simple products to include reversed order
+    for key, vals in list(dictionary.items()):
+        extras = {f"{u.split('*')[1]}*{u.split('*')[0]}"
+                  for u in vals
+                  if '/' not in u and len(u.split('*')) == 2}
+        dictionary[key] = tuple(set(vals) | extras)
 
 
 @timeit
@@ -851,11 +857,25 @@ def _clean_network():
 
 @timeit
 def _save_cache():
-    if _cloudpickle_:
-        with open(f"{unyts_parameters_.get_user_folder()}units_network.cache", 'wb') as f:
+    """Write cache files only when absent or when forced by reload flag.
+
+    This avoids rewriting large files on every import, which was the
+    single slowest step (~20 seconds).  Cache creation still happens the
+    first time the database is built or if ``unyts_parameters_.reload_``
+    is True.
+    """
+    user_folder = unyts_parameters_.get_user_folder()
+    net_path = f"{user_folder}units_network.cache"
+    dict_path = f"{user_folder}units_dictionary.cache"
+
+    # only write the network cache once (if cloudpickle enabled)
+    if _cloudpickle_ and not isfile(net_path):
+        with open(net_path, 'wb') as f:
             cloudpickle_dump(units_network, f)
-    with open(f"{unyts_parameters_.get_user_folder()}units_dictionary.cache", 'w') as f:
-        json_dump(dictionary, f)
+    # dictionary cache is JSON and can be large -- skip if already exists
+    if not isfile(dict_path):
+        with open(dict_path, 'w') as f:
+            json_dump(dictionary, f)
 
 
 # load the network into an instance of the graph database
