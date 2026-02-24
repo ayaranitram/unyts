@@ -14,8 +14,16 @@ __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEar
 from json import load as json_load
 from pickle import load as pickle_load, dump as pickle_dump
 from os.path import isfile
+import threading
 
 from .parameters import unyts_parameters_
+
+# Try to import cloudpickle for efficient serialization
+try:
+    from cloudpickle import dump as cloudpickle_dump, load as cloudpickle_load
+    _cloudpickle_ = True
+except ImportError:
+    _cloudpickle_ = False
 from .units.def_prefixes import *
 from .helpers.logger import logger
 from .helpers.timer import timeit
@@ -643,6 +651,85 @@ if not unyts_parameters_.reload_ and \
 else:
     dictionary, temperatureRatioConversions, unitless_names = _load_dictionary()
 
+# Cache for _all_units to avoid recomputation
+_all_units_cache = None
+_all_units_cache_event = threading.Event()  # Signals when cache is ready
+_all_units_cache_thread = None  # Reference to cached thread for joining
+
+# Try to load _all_units cache from persistent storage at module init
+# This will be set before dictionary is loaded, and available immediately
+_try_load_all_units_cache = False  # Will be set by _load_all_units_cache()
+
 @timeit
 def _all_units():
+    global _all_units_cache, _all_units_cache_event
+    if _all_units_cache is not None:
+        return _all_units_cache
+    # Cache is being computed in background thread, wait for it
+    if not _all_units_cache_event.is_set():
+        _all_units_cache_event.wait(timeout=30)  # Safety timeout
+    if _all_units_cache is not None:
+        return _all_units_cache
+    # Fallback: compute if cache somehow didn't populate
     return set([each for units in dictionary.values() for each in units])
+
+def _cache_all_units_async():
+    """Compute and cache _all_units result in background thread"""
+    global _all_units_cache, _all_units_cache_event
+    # Use @timeit equivalent to measure just the computation, not the thread overhead
+    import time
+    start = time.perf_counter()
+    _all_units_cache = set([each for units in dictionary.values() for each in units])
+    elapsed = time.perf_counter() - start
+    print(f"'_cache_all_units_async' computation time: {elapsed:.6f} seconds (background thread)")
+    _all_units_cache_event.set()  # Signal that cache is ready
+
+def _cache_all_units():
+    """Spawn async task to populate cache in background (if not already loaded from file)"""
+    global _all_units_cache_event, _all_units_cache_thread, _all_units_cache
+    
+    # If already loaded from persistent cache, skip async computation
+    if _all_units_cache is not None:
+        _all_units_cache_event.set()  # Mark as ready
+        return
+    
+    _all_units_cache_event.clear()  # Reset event for new cache population
+    _all_units_cache_thread = threading.Thread(target=_cache_all_units_async, daemon=True)
+    _all_units_cache_thread.start()  # Background thread, doesn't block rebuild
+
+def _wait_for_all_units_cache():
+    """Wait for async cache computation to complete"""
+    global _all_units_cache_event, _all_units_cache_thread
+    if _all_units_cache_thread is not None and _all_units_cache_thread.is_alive():
+        _all_units_cache_thread.join()  # Wait for thread to finish
+    _all_units_cache_event.wait(timeout=30)  # Safety timeout
+def _save_all_units_cache():
+    """Save computed _all_units cache to file for persistence"""
+    global _all_units_cache
+    if _all_units_cache is None or not _cloudpickle_:
+        return
+    try:
+        cache_path = f"{unyts_parameters_.get_user_folder()}all_units.cache"
+        with open(cache_path, 'wb') as f:
+            cloudpickle_dump(_all_units_cache, f)
+    except Exception as e:
+        logger.warning(f"Failed to save _all_units cache: {e}")
+
+def _load_all_units_cache():
+    """Load _all_units cache from file if available"""
+    global _all_units_cache, _all_units_cache_event
+    if not _cloudpickle_:
+        return False
+    try:
+        cache_path = f"{unyts_parameters_.get_user_folder()}all_units.cache"
+        if isfile(cache_path):
+            with open(cache_path, 'rb') as f:
+                _all_units_cache = cloudpickle_load(f)
+                _all_units_cache_event.set()  # Mark cache as ready
+                return True
+    except Exception as e:
+        logger.debug(f"Failed to load _all_units cache: {e}")
+    return False
+
+# Attempt to load _all_units cache from persistent storage at module init
+_try_load_all_units_cache = _load_all_units_cache()
