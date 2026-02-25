@@ -889,22 +889,42 @@ def _save_cache_async():
     user_folder = unyts_parameters_.get_user_folder()
     net_path = f"{user_folder}units_network.cache"
     dict_path = f"{user_folder}units_dictionary.cache"
+    tmp_net = net_path + ".tmp"
+    tmp_dict = dict_path + ".tmp"
 
     # Only write the network cache once (if cloudpickle enabled)
-    if _cloudpickle_ and not isfile(net_path):
+    if _cloudpickle_:
         try:
-            with open(net_path, 'wb') as f:
+            # Write to temp file then atomically replace to avoid partial files
+            with open(tmp_net, 'wb') as f:
                 cloudpickle_dump(units_network, f)
-        except Exception as e:
-            pass  # Silently fail in background thread
-    
-    # Dictionary cache is JSON and can be large -- skip if already exists
-    if not isfile(dict_path):
+            try:
+                os.replace(tmp_net, net_path)
+            except Exception:
+                # Fallback to rename
+                os.rename(tmp_net, net_path)
+        except Exception:
+            # Clean up temp file if exists
+            try:
+                if isfile(tmp_net):
+                    os.remove(tmp_net)
+            except Exception:
+                pass
+
+    # Dictionary cache is JSON and can be large -- write atomically
+    try:
+        with open(tmp_dict, 'w') as f:
+            json_dump(dictionary, f)
         try:
-            with open(dict_path, 'w') as f:
-                json_dump(dictionary, f)
-        except Exception as e:
-            pass  # Silently fail in background thread
+            os.replace(tmp_dict, dict_path)
+        except Exception:
+            os.rename(tmp_dict, dict_path)
+    except Exception:
+        try:
+            if isfile(tmp_dict):
+                os.remove(tmp_dict)
+        except Exception:
+            pass
 
 
 @timeit
@@ -1023,11 +1043,15 @@ else:
 
     unyts_parameters_.reload_ = False
     unyts_parameters_.save_params()
-    if unyts_parameters_.cache_:
-        _save_cache()
 
-    # Ensure async cache computation is complete before Unit class initialization
+    # Ensure async cache computation is complete before persisting caches
     _wait_for_all_units_cache()
-    
+
     # Persist the computed _all_units cache to file for faster future loads
     _save_all_units_cache()
+
+    # Trigger asynchronous cache writing (units_network + dictionary) only
+    # after all builds and _all_units computation completed. This prevents
+    # writing partial/incomplete cache files that could break later loads.
+    if unyts_parameters_.cache_:
+        _save_cache()

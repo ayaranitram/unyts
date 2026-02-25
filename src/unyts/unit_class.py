@@ -89,7 +89,7 @@ class Unit(object, metaclass=UnytType):
         elif type(units) is str and units.strip() in Unit._all_units_str:
             units = units.strip()
         elif unyts_parameters_.raise_error:
-            raise WrongUnitsError(f"'{units}' is not a valid units name. Valid are: {self.kind.class_units}")
+            raise WrongUnitsError(f"'{units}' is not a valid units name.")
         elif not unyts_parameters_.raise_error:
             logger.error(f"'{units}' is not a valid units name.")
         self.name = 'unit' if name is None else name
