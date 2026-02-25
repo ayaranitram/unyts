@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.8.8'
-__release__ = 20250504
+__version__ = '0.8.9'
+__release__ = 20260224
 __all__ = ['convert', 'convertible']
 
 from .parameters import unyts_parameters_, _get_density

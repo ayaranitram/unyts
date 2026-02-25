@@ -5,7 +5,7 @@ Created on Sat Jan 28 09:41:45 2023
 @author: martin
 """
 __version__ = '0.0.1'
-__release__ = 20230128
+__release__ = 20260223
 
 from enum import Enum
 from unyts import units, Unit

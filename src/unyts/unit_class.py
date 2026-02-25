@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.6'
-__release__ = 20250504
+__version__ = '0.6.7'
+__release__ = 20260224
 __all__ = ['Unit', 'is_Unit']
 
 from .errors import WrongUnitsError, WrongValueError, NoConversionFoundError
