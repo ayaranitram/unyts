@@ -6,16 +6,13 @@ Created on Tue Dec 03 23:15:37 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.7.0'
+__version__ = '0.8.0'
 __release__ = 20260225
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf']
 
-print("loading database")
-
-import os
 import threading
 
-from .dictionaries import SI, SI_butK, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, _cache_all_units, _wait_for_all_units_cache, _save_all_units_cache, _load_all_units_cache
+from .dictionaries import SI, SI_butK, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, _cache_all_units, _wait_for_all_units_cache, _save_all_units_cache
 from .units.def_conversions import *
 from .network import UDigraph, UNode, Conversion
 from .parameters import unyts_parameters_
@@ -854,6 +851,12 @@ def _rebuild_units():
     from .dictionaries import _load_dictionary
     dictionary, temperatureRatioConversions, unitless_names = _load_dictionary()
     units_network = _load_network()
+    # load search memory now that graph is populated (rebuild path)
+    if unyts_parameters_.cache_ and unyts_parameters_.memory_:
+        try:
+            units_network.load_memory()
+        except Exception:
+            logger.exception('loading memory after rebuild failed')
     _clean_network()
     unyts_parameters_.reload_ = True
     unyts_parameters_.save_params()
@@ -948,6 +951,12 @@ if not unyts_parameters_.reload_ and \
         with open(f"{unyts_parameters_.get_user_folder()}units_network.cache", 'rb') as f:
             units_network = cloudpickle_load(f)
         logger.info('units network loaded from cache...')
+        # # after loading structure from disk, populate search memory if enabled
+        # if unyts_parameters_.cache_ and unyts_parameters_.memory_:
+        #     try:
+        #         units_network.load_memory()
+        #     except Exception:
+        #         logger.exception('loading memory after cache load failed')
         unyts_parameters_.reload_ = False
         unyts_parameters_.save_params()
     except:
@@ -962,7 +971,7 @@ else:
     # starts heavy tasks in background while the main thread runs other creates.
     import sys
     import os
-    from ._parallel_helpers import parallel_execute
+    from .helpers._parallel_helpers import parallel_execute
 
     PARALLEL_3_14 = False
     try:
@@ -1047,11 +1056,15 @@ else:
     # Ensure async cache computation is complete before persisting caches
     _wait_for_all_units_cache()
 
-    # Persist the computed _all_units cache to file for faster future loads
-    _save_all_units_cache()
-
     # Trigger asynchronous cache writing (units_network + dictionary) only
     # after all builds and _all_units computation completed. This prevents
     # writing partial/incomplete cache files that could break later loads.
     if unyts_parameters_.cache_:
         _save_cache()
+        # Persist the computed _all_units cache to file for faster future loads
+        _save_all_units_cache()
+
+    # load chached previous searches
+    if unyts_parameters_.cache_ and unyts_parameters_.memory_:
+        print("load memory from database...")
+        units_network.load_memory()

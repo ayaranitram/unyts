@@ -6,8 +6,9 @@
 # `unyts`
 <p align="center"><img src="unyts_icon_web.png" /></p>  
 
-I saw the opportunity to use a *digraph network* to build a units converter able to convert from any units to any units without the need to populate an endless table of possible conversions. Powered by the _Breadth First Search_, or _BFS_, algorithm to search through the network, this converter can find conversions from a particular Unit (or ratio of units) to any other Unit (or ratio) as long as a path connecting them exists.  
-This package is under development and is regularly updated. Back compatibility is intended to be maintained when possible.
+I identified the opportunity to use a *directed graph (digraph) network* to build a unit converter capable of converting between any two units without the need to populate an endless table of predefined conversions. Powered by the *Breadth-First Search (BFS)* algorithm to traverse the network, the converter determines conversion paths from a given unit (or ratio of units) to any other compatible unit (or ratio), provided that a connecting path exists.  
+
+This package is currently under active development and is regularly updated. Backward compatibility will be maintained whenever possible.  
   
 ## What do this package contains:
 - It is loaded with a network of units preloaded for distances, area, volume, mass and time conversions defined for SI and Imperial systems according to the definition of each Unit, i.e.: _1_foot = 12_inches_.

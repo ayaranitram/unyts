@@ -26,7 +26,7 @@ The optimized `src/unyts/__init__.py` contains:
    - `network` module - graph structures only
 
 2. **Deferred Imports via `__getattr__()`** (loaded on first access):
-   - `database.py` / `database_comprehension.py` - 14.3-14.5s (largest bottleneck)
+   - `database.py` - 14.3-14.5s (largest bottleneck)
    - `converter.py` - conversion functions
    - `units/define.py` - units creation
    - `unit_class.py` - Unit class

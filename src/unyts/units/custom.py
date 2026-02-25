@@ -6,8 +6,8 @@ Created on Sat Oct 24 14:34:59 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.5.31'
-__release__ = 20250323
+__version__ = '0.5.32'
+__release__ = 20260225
 __all__ = ['CustomUnits', 'UserUnits', 'OtherUnits', 'set_unit', 'set_conversion']
 
 from ..unit_class import Unit
@@ -42,21 +42,13 @@ class UserUnits(Unit):
 
 
 def set_unit(unit_name: str) -> bool:
-    from ..parameters import unyts_parameters_
-    if unyts_parameters_._comprehension:
-        from ..database_comprehension import units_network
-    else:
-        from ..database import units_network
+    from ..database import units_network
     from ..network import UNode
     units_network.add_node(UNode(unit_name))
 
 
 def set_conversion(from_units: str, to_units: str, conversion, reverse_conversion=None) -> bool:
-    from ..parameters import unyts_parameters_
-    if unyts_parameters_._comprehension:
-        from ..database_comprehension import units_network
-    else:
-        from ..database import units_network
+    from ..database import units_network
     from ..network import UNode, Conversion
     if reverse_conversion is None:
         def reverse_conversion(x): return x / conversion(1)

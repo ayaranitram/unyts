@@ -6,15 +6,12 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.8.9'
-__release__ = 20260224
+__version__ = '0.8.10'
+__release__ = 20260225
 __all__ = ['convert', 'convertible']
 
 from .parameters import unyts_parameters_, _get_density
-if unyts_parameters_._comprehension:
-    from .database_comprehension import units_network
-else:
-    from .database import units_network
+from .database import units_network
 from .dictionaries import dictionary, temperatureRatioConversions, uncertain_names
 from .Empty import Empty, str_Empty
 from .searches import BFS, lean_BFS, DFS, hybrid_BFS, print_path

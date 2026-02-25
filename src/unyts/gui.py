@@ -6,8 +6,8 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.7'
-__release__ = 20250615
+__version__ = '0.4.8'
+__release__ = 20260225
 __all__ = ['start_gui']
 
 import tkinter as tk
@@ -21,10 +21,7 @@ from .converter import convert
 from .dictionaries import _all_units
 from .errors import NoConversionFoundError, NoFVFError, SearchTimeoutError
 from .parameters import unyts_parameters_  # set_density
-if unyts_parameters_._comprehension:
-    from .database_comprehension import save_memory, load_memory, clean_memory, delete_cache, units_network  # set_fvf
-else:
-    from .database import save_memory, load_memory, clean_memory, delete_cache, units_network  # set_fvf
+from .database import save_memory, load_memory, clean_memory, delete_cache, units_network  # set_fvf
 from .helpers.logger import logger
 import pathlib, os
 import webbrowser

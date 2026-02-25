@@ -6,8 +6,8 @@ Created on Sat Oct 24 17:52:34 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.6'
-__release__ = 20250504
+__version__ = '0.6.7'
+__release__ = 20260225
 __all__ = ['BFS', 'lean_BFS', 'DFS', 'hybrid_BFS', 'print_path']
 
 
@@ -219,10 +219,7 @@ def hybrid_BFS(graph, start, end, verbose=False, max_generations_screening=25) -
     else:
         raise NotImplementedError("No option defined for parallel processing.")
 
-    if unyts_parameters_._comprehension:
-        from .database_comprehension import units_network
-    else:
-        from .database import units_network
+    from .database import units_network
 
     verbose_ = verbose and unyts_parameters_.verbose_details_ > 0
     results_ = {'bfs': '', 'lean_bfs': ''}

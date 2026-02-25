@@ -6,6 +6,7 @@ Created on Sat Oct 24 12:36:48 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 import logging
+import os
 from os.path import isfile
 
 from .errors import NoFVFError
@@ -19,8 +20,8 @@ except ModuleNotFoundError:
     _cloudpickle_ = False
 
 
-__version__ = '0.4.22'
-__release__ = 20250504
+__version__ = '0.4.25'
+__release__ = 20260225
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -35,6 +36,18 @@ class UNode(object):
 
     def __str__(self):
         return self.name
+
+    # equality is based on the node name so that nodes created in different
+    # sessions or after a rebuild compare equal; this allows memory caching
+    # and dictionary lookups to function across reloads.
+    def __eq__(self, other):
+        if not isinstance(other, UNode):
+            return False
+        return self.name == other.name
+
+    def __hash__(self):
+        # needed for using nodes as dict keys
+        return hash(self.name)
 
 
 class UDigraph(object):
@@ -54,8 +67,9 @@ class UDigraph(object):
         self.memory = {}
         self.print = False
         self._cloudpickle_ = _cloudpickle_
-        if unyts_parameters_.cache_ and unyts_parameters_.memory_:
-            self.load_memory()
+        # do not load the search memory here, wait until the network is built
+        # if unyts_parameters_.cache_ and unyts_parameters_.memory_:
+        #     self.load_memory()
 
     def get_edges_str(self) -> dict:
         if self._edges_str is None:
@@ -77,7 +91,12 @@ class UDigraph(object):
             path = unyts_parameters_.get_user_folder() + 'search_memory.cache'
         if not self._cloudpickle_:
             logger.warning("Missing `cloudpickle` package. Not able to cache search memory.")
-        if not isfile(unyts_parameters_.get_user_folder() + 'search_memory.cache'):
+
+        # use the supplied path when checking for existence; previous
+        # implementations looked at the default location regardless of the
+        # argument, which meant callers providing an explicit file never
+        # actually loaded it.
+        if not isfile(path):
             msg = "starting clean memory..."
             logger.info(msg)
         else:
@@ -85,12 +104,33 @@ class UDigraph(object):
             try:
                 with open(path, 'rb') as f:
                     cached_memory = cloudpickle_load(f)
+                    # if a graph already exists, drop entries whose source
+                    # node is not present (stale data); this makes it safe to
+                    # load memory early and then build the graph without
+                    # carrying dead references.
+                    #if self.edges:
+                    #     filtered = {k: v for k, v in cached_memory.items() if k in self.edges}
+                    #     self.memory.update(filtered)
                     self.memory.update(cached_memory)
+                    # else:
+                        # don't populate until we have nodes; keep the cache
+                        # around for a later load.
+                    #     msg = "starting clean memory..."
+                    #     logger.info(msg)
+                    # report how many entries we kept (note that ``msg`` may
+                    # have been reassigned above, so recompute it here)
                     msg = f"{len(self.memory)} conversion path{'' if len(self.memory) == 1 else 's'} in memory."
                     logger.info(msg)
-            except:
+            except Exception:
                 msg = 'Failed to load memory from cache.'
-                logger.error(msg)
+                logger.warning(msg)
+                try:
+                    # os.remove(path)
+                    msg = "starting clean memory..."
+                    logger.info(msg)
+                except Exception:
+                    msg = f'The search cache file seems to be corrupted. Please delete it from: {path}'
+                    logger.warning(msg)
         unyts_parameters_.last_path_str = msg
 
     def clean_memory(self):
@@ -100,10 +140,20 @@ class UDigraph(object):
             logger.info(msg)
 
     def add_node(self, node) -> None:
+        # nodes may appear multiple times during the various dictionary
+        # preprocessing branches.  earlier versions raised a ValueError so
+        # that inconsistent dictionaries would fail fast, but the build
+        # logic itself often generates the same unit in more than one
+        # pass (e.g. nanosecond is added when handling `Time` and again
+        # during plural/uppercase conversions).  the duplicate is harmless
+        # so simply ignore it and optionally log a debug message.
         if node in self.edges:
-            raise ValueError('Duplicate node')
-        else:
-            self.edges[node] = [], []
+            # don't spam the user in normal operation; only log when
+            # verbosity/debugging is requested
+            if unyts_parameters_.verbose_:
+                logger.debug(f"skipping duplicate node {node}")
+            return
+        self.edges[node] = [], []
 
     def add_edge(self, edge, reverse=False) -> None:
         src = edge.get_source()

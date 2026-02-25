@@ -6,7 +6,7 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.9.21'
+__version__ = '0.10.0'
 __release__ = 20260225
 __all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit', 'valid_unit',
            'set_unit', 'set_conversion', 'set_density', 'get_density',
@@ -49,7 +49,7 @@ def __getattr__(name):
     
     # Database attributes - lazy load (triggers network build/cache load)
     if name in ('network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'set_fvf', 'get_fvf', 'units_network'):
-        db_mod = 'database_comprehension' if unyts_parameters_._comprehension else 'database'
+        db_mod = 'database'
         return _load_and_get(db_mod, name)
     
     # Units function - lazy load (uses database)

@@ -6,7 +6,7 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.10'
+__version__ = '0.6.12'
 __release__ = 20260225
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'set_density', 'get_density',
            'recursion_limit', 'verbose', 'set_algorithm', 'set_parallel']
@@ -63,7 +63,6 @@ class UnytsParameters(object):
         self._deactivate_parallel = True  # to hide the Parallel menu in the GUI
         self._warnings = []
         self._start_time = 0
-        self._comprehension = False  # whether to use comprehension-based database (faster but more memory intensive) or not (slower but more memory efficient)
 
     def threading_available(self):
         try:
