@@ -24,13 +24,14 @@ src/unyts.egg-info/dependency_links.txt
 src/unyts.egg-info/requires.txt
 src/unyts.egg-info/top_level.txt
 src/unyts/helpers/__init__.py
+src/unyts/helpers/_parallel_helpers.py
 src/unyts/helpers/caster.py
 src/unyts/helpers/common_classes.py
 src/unyts/helpers/is_number.py
 src/unyts/helpers/is_unit.py
-src/unyts/helpers/lambda_to_def.py
 src/unyts/helpers/logger.py
 src/unyts/helpers/multi_split.py
+src/unyts/helpers/timer.py
 src/unyts/helpers/unit_string_tools.py
 src/unyts/units/__init__.py
 src/unyts/units/custom.py
