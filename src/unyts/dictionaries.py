@@ -663,8 +663,8 @@ _try_load_all_units_cache = False  # Will be set by _load_all_units_cache()
 
 @timeit
 def _all_units():
-    global _all_units_cache, _all_units_cache_event
     """Return set of all units across all categories, using cached value if available, otherwise compute and cache asynchronously."""
+    # global _all_units_cache, _all_units_cache_event
     if _all_units_cache is not None:
         return _all_units_cache
     # Cache is being computed in background thread, wait for it
@@ -677,7 +677,7 @@ def _all_units():
 
 def _cache_all_units_async():
     """Compute and cache _all_units result in background thread"""
-    global _all_units_cache, _all_units_cache_event
+    global _all_units_cache  # _all_units_cache_event
     # Use @timeit equivalent to measure just the computation, not the thread overhead
     import time
     start = time.perf_counter()
@@ -701,13 +701,14 @@ def _cache_all_units():
 
 def _wait_for_all_units_cache():
     """Wait for async cache computation to complete"""
-    global _all_units_cache_event, _all_units_cache_thread
+    # global _all_units_cache_event, _all_units_cache_thread
     if _all_units_cache_thread is not None and _all_units_cache_thread.is_alive():
         _all_units_cache_thread.join()  # Wait for thread to finish
     _all_units_cache_event.wait(timeout=30)  # Safety timeout
+
 def _save_all_units_cache():
     """Save computed _all_units cache to file for persistence"""
-    global _all_units_cache
+    # global _all_units_cache
     if _all_units_cache is None or not _cloudpickle_:
         return
     try:
@@ -719,7 +720,7 @@ def _save_all_units_cache():
 
 def _load_all_units_cache():
     """Load _all_units cache from file if available"""
-    global _all_units_cache, _all_units_cache_event
+    global _all_units_cache  #, _all_units_cache_event
     if not _cloudpickle_:
         return False
     try:
