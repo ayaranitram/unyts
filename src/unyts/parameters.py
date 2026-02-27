@@ -327,8 +327,6 @@ class UnytsParameters(object):
                 self._warnings.append(msg)
             self.save_params()
 
-    def get_algorithm(self):
-        return self.algorithm_
     def set_parallel(self, method:str):
         """Set the parallel processing method."""
         if method is None:
