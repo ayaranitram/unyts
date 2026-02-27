@@ -7,30 +7,38 @@ Created on Fri Aug 26 13:12:52 2022
 helper functions for units modules
 """
 
-__version__ = '0.5.2'
-__release__ = 20230117
+__version__ = '0.5.3'
+__release__ = 20260227
 __all__ = ['multi_split']
+
+from typing import Sequence, List, Union, Optional
 
 
 def multi_split(string: str,
-                sep: str or tuple or list = ('*', '/'),
-                remove: str or tuple or list = (' ',)
-                ) -> list:
+                sep: Union[str, Sequence[str]] = ('*', '/'),
+                remove: Optional[Union[str, Sequence[str]]] = (' ',)
+                ) -> List[str]:
     """
     receives a string and returns a list with string split by all the separators in sep.
     the default separator is the blank space ' '.
     use the remove parameter to indicate the separators that must not be reported in the output list.
     by default, the blank space is not reported.
     """
-    assert type(string) is str
+    if not isinstance(string, str):
+        raise TypeError('string must be str')
 
-    # check sep and remove are str
-    if type(sep) is str:
+    # normalize sep and remove to lists of strings
+    if isinstance(sep, str):
         sep = [sep]
+    else:
+        sep = list(sep)
+
     if remove is None:
         remove = []
-    elif type(remove) is str:
+    elif isinstance(remove, str):
         remove = [remove]
+    else:
+        remove = list(remove)
 
     # eliminate duplicated separators
     sep = list(set(sep))
