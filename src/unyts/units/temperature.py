@@ -33,7 +33,7 @@ class TemperatureGradient(Unit):
     class_units = _dictionary['TemperatureGradient']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
-    def __init__(self, value: str, units: unit_or_str, name=None):
+    def __init__(self, value: numeric, units: unit_or_str, name=None):
         """Initialize a TemperatureGradient object with a value and units."""
         name = 'temperature_gradient' if name is None else name
         super().__init__(value, units, name)
