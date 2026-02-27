@@ -16,10 +16,12 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 
 class Mass(Unit):
+    """A class to represent a mass quantity with a value, unit, and name, and to support unit conversion and arithmetic operations."""
     class_units = _dictionary['Mass']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
+        """Initialize a Mass object with a value and units."""
         name = 'mass' if name is None else name
         super().__init__(value, units, name)
         self.kind = Mass

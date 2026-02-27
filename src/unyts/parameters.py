@@ -36,6 +36,7 @@ class UnytsParameters(object):
     """
 
     def __init__(self, reload=None) -> None:
+        """Init the UnytsParameters object, loading preferences from the ini file or using defaults."""
         self.config_files_folder_ = dir_path
         self.print_path_ = False
         self.cache_ = True
@@ -65,6 +66,7 @@ class UnytsParameters(object):
         self._start_time = 0
 
     def threading_available(self):
+        """Return whether threading is available."""
         try:
             import threading
             threading_ = True
@@ -73,6 +75,7 @@ class UnytsParameters(object):
         return threading_
 
     def multiprocessing_available(self):
+        """Return whether multiprocessing is available."""
         try:
             import multiprocessing
             multiprocessing_ = True
@@ -81,6 +84,7 @@ class UnytsParameters(object):
         return multiprocessing_
 
     def load_params(self) -> None:
+        """Load parameters from the ini file or use defaults."""
         if isfile(ini_path):
             with open(ini_path, 'r') as f:
                 params = json_load(f)
@@ -150,6 +154,7 @@ class UnytsParameters(object):
             self._testing = params['testing'] if 'testing' in params else False
 
     def save_params(self) -> None:
+        """Save the current parameters to the ini file."""
         params = {'print_path': self.print_path_,
                   'cache': self.cache_,
                   'reload': self.reload_,
@@ -175,6 +180,7 @@ class UnytsParameters(object):
             json_dump(params, f)
 
     def print_path(self, switch=None) -> None:
+        """Toggle or set the print path parameter."""
         _prev = self.print_path_
         if switch is None:
             self.print_path_ = not self.print_path_
@@ -190,6 +196,7 @@ class UnytsParameters(object):
         self.save_params()
 
     def cache(self, switch=None) -> None:
+        """Toggle or set the cache parameter."""
         if switch is None:
             self.cache_ = not self.cache_
         elif type(switch) is str:
@@ -203,6 +210,7 @@ class UnytsParameters(object):
         self.save_params()
 
     def raise_error(self, switch=None) -> None:
+        """Toggle or set the raise_error parameter."""
         if switch is None:
             self.raise_error_ = not self.raise_error_
         elif type(switch) is str:
@@ -216,6 +224,7 @@ class UnytsParameters(object):
         self.save_params()
 
     def verbose(self, switch=None) -> None:
+        """Toggle or set the verbose parameter."""
         _prev = self.verbose_
         if type(switch) is int:
             self.verbose_details_ = switch
@@ -238,14 +247,17 @@ class UnytsParameters(object):
 
     @property
     def logger_level(self) -> str:
+        """Return the current logger level."""
         return logger.get_current_level()
 
     def set_logger_level(self, level:str="INFO") -> None:
+        """Set the logger level."""
         if type(level) is str and level.upper() in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
             logger.set_level(level)
             self.save_params()
 
     def reload_next_time(self, switch=None):
+        """Flag whether to reload the network and dictionary on next import."""
         if switch is None:
             self.reload_ = not self.reload_
         elif type(switch) is str:
@@ -262,6 +274,7 @@ class UnytsParameters(object):
         self.save_params()
 
     def recursion_limit(self, limit=None):
+        """Set or return the recursion limit."""
         if limit is None:
             return self.max_recursion_
         elif (type(limit) is str and limit.lower() == 'max') or limit is False:
@@ -276,6 +289,7 @@ class UnytsParameters(object):
         return self.max_recursion_
 
     def generations_limit(self, limit=None):
+        """Set or return the generations limit."""
         if limit is None:
             return self.max_generations_
         elif (type(limit) is str and limit.lower() == 'max') or limit is False:
@@ -290,9 +304,11 @@ class UnytsParameters(object):
         return self.max_generations_
 
     def get_algorithm(self):
+        """Return the current search algorithm."""
         return self.algorithm_
 
     def set_algorithm(self, algorithm:str):
+        """Set the search algorithm."""
         if algorithm not in ['BFS', 'lean_BFS', 'DFS', 'hybrid_BFS']:
             logger.error(f"Valid algorithms are 'BFS', 'lean_BFS', 'hybrid_BFS', and 'DFS' not '{algorithm}'.")
         elif algorithm == 'hybrid_BFS' and not self.threading_:
@@ -313,8 +329,8 @@ class UnytsParameters(object):
 
     def get_algorithm(self):
         return self.algorithm_
-
     def set_parallel(self, method:str):
+        """Set the parallel processing method."""
         if method is None:
             self.parallel_ = True
             self.threading_ = self.threading_available()
@@ -342,9 +358,11 @@ class UnytsParameters(object):
         logger.info(msg)
 
     def get_parallel(self):
+        """Return the current parallel processing setting."""
         return self.parallel_
 
     def set_timeout(self, timeout:int=120):
+        """Set the timeout for path searches in seconds. Use -1 or False for no timeout, and 'max' or True for a very long timeout."""
         if type(timeout) is not int:
             raise TypeError("´timeout´ must be entered in seconds, as integer")
         self.timeout_ = timeout
@@ -355,9 +373,11 @@ class UnytsParameters(object):
         self.save_params()
 
     def get_timeout(self):
+        """Return the current timeout value in seconds."""
         return self.timeout_
 
     def is_intime(self):
+        """Return whether the current search is within the timeout limit."""
         if self._start_time == 0:
             self._start_time = time()
             return True
@@ -367,9 +387,11 @@ class UnytsParameters(object):
             return False
 
     def reset_start_time(self):
+        """Reset the start time for timeout checking."""
         self._start_time = 0
 
     def set_user_folder(self, path=None):
+        """Define the folder where the configuration files are stored. If path is None, it will be set to the default folder."""
         if path is None:
             self.config_files_folder_ = dir_path
         elif isdir(path):
@@ -378,6 +400,7 @@ class UnytsParameters(object):
             logger.warning(f"Folder {path} doesn't exists, user folder not changed.")
 
     def get_user_folder(self):
+        """Return the current user folder path."""
         return self.config_files_folder_
 
 
@@ -385,25 +408,32 @@ unyts_parameters_ = UnytsParameters()
 
 
 def print_path(switch=None) -> None:
+    """Set or return whether to print the path of each search."""
     unyts_parameters_.print_path(switch)
 
 
 def raise_error(switch=None) -> None:
+    """Set or return whether to raise an error on search failure."""
     unyts_parameters_.raise_error(switch)
 
 
 def verbose(switch=None) -> None:
+    """Set or return the verbosity level."""
     unyts_parameters_.verbose(switch)
 
 
 def cache(switch=None) -> None:
+    """Set or return whether to cache search results."""
+
     unyts_parameters_.cache(switch)
 
 def recursion_limit(limit=None) -> int:
+    """Set or return the recursion limit."""
     return unyts_parameters_.recursion_limit(limit)
 
 
 def set_density(density: float = None, units: str = 'g/cm3') -> None:
+    """Set the density value and units."""
     from .units.ratios import Density
     if density is None:
         print('Please enter density g/cm³ or enter a tuple density, units like: 997, kg/m³ :')
@@ -439,6 +469,7 @@ def set_density(density: float = None, units: str = 'g/cm3') -> None:
 
 
 def _get_density() -> float:
+    """Return the current density value."""
     while unyts_parameters_.density_ is None:
         density = input("Please set density value: ")
         try:
@@ -451,6 +482,7 @@ def _get_density() -> float:
 
 
 def get_density():
+    """Return the current density as a Density object in g/cm³."""
     from .units.ratios import Density
     if unyts_parameters_.density_ is None:
         raise ValueError("'density' is not set.")
@@ -458,30 +490,36 @@ def get_density():
 
 
 def reload() -> None:
+    """Set the reload parameter to True, which will cause the network and dictionary to be re-created on next import. This is useful if you have made changes to the code and want to ensure that the latest version is used, or if you want to clear the cache and start fresh. Note that you may need to restart the Python kernel for the changes to take effect."""
     unyts_parameters_.reload_ = True
     unyts_parameters_.save_params()
     logger.info("On next 'import unyts', the dictionary and network will be re-created.\n It might be required to restart the Python kernel.")
 
 
 def set_algorithm(algorithm:str):
+    """Set the algorithm to be used for path searches."""
     if algorithm not in ['BFS', 'lean_BFS', 'DFS', 'hybrid_BFS']:
         raise ValueError(f"valid algorithms are 'BFS', 'lean_BFS', 'hybrid_BFS', and 'DFS' not {algorithm}.")
     unyts_parameters_.set_algorithm(algorithm)
 
 
 def get_algorithm():
+    """Return the current algorithm being used for path searches."""
     return unyts_parameters_.algorithm_
 
 
 def set_parallel(method:str):
+    """Set the parallel method to be used for path searches."""
     unyts_parameters_.set_parallel(method)
 
 
 def get_parallel():
+    """Return the current parallel method being used for path searches."""
     return unyts_parameters_.get_parallel()
 
 
 def set_timeout(timeout:int=None):
+    """Set the timeout for path searches in seconds. Use -1 or False for no timeout, and 'max' or True for a very long timeout."""
     if timeout is None:
         timeout = __timeout__
     if timeout is False:
@@ -494,9 +532,11 @@ def set_timeout(timeout:int=None):
 
 
 def get_timeout():
+    """Return the current timeout value in seconds."""
     return unyts_parameters_.get_timeout()
 
 
 def set_logging_level(level:str="WARNING"):
+    """Set the logging level."""
     unyts_parameters_.set_logger_level(level)
 

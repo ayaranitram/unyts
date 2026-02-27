@@ -16,18 +16,26 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 
 def CustomUnits(value: numeric, units: unit_or_str, name=None) -> Unit:
+    """Factory function for creating custom units that are not part of the standard unit definitions."""
     return UserUnits(value, units, name)
 
 
 def OtherUnits(value: numeric, units: unit_or_str, name=None) -> Unit:
+    """Generic factory for creating units that are not part of the standard unit definitions.  
+    This is an alias for `CustomUnits` and is provided for semantic clarity when creating units that are not necessarily user-defined but are still outside the standard definitions."""
     return UserUnits(value, units, name)
 
 
 class UserUnits(Unit):
+    """A class to represent user-defined units that are not part of the standard unit definitions.  
+    This class is used for units that are added by the user at runtime using the `set_unit` function, and for units that are defined in the `custom.py` module.  
+    The unit names are stored in the `UserUnits` entry of the `dictionary`, and any unit name that is not in the standard unit definitions can be used as a UserUnit.  
+    The conversion functions for UserUnits must be defined by the user using the `set_conversion` function."""
     class_units = dictionary['UserUnits']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
+        """Initialize a UserUnits object."""
         name = 'user_units' if name is None else name
         super().__init__(value, None, name)
         self.kind = UserUnits
@@ -42,12 +50,16 @@ class UserUnits(Unit):
 
 
 def set_unit(unit_name: str) -> bool:
+    """Add a new unit name to the UserUnits class and the database."""
     from ..database import units_network
     from ..network import UNode
     units_network.add_node(UNode(unit_name))
 
 
 def set_conversion(from_units: str, to_units: str, conversion, reverse_conversion=None) -> bool:
+    """Set a conversion function between two units, this adds a directed edge to the units network.  
+    If `reverse_conversion` is not provided, the reverse conversion will be automatically generated as `lambda x: x / conversion(1)`, 
+    which is correct for linear conversions but may not be correct for more complex conversions (e.g. temperature)."""
     from ..database import units_network
     from ..network import UNode, Conversion
     if reverse_conversion is None:

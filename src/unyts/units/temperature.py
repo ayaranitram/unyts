@@ -16,10 +16,12 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 
 class Temperature(Unit):
+    """A class to represent a temperature quantity with a value, unit, and name, and to provide methods for checking valid units and converting between them."""
     class_units = _dictionary['Temperature']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
+        """Initialize a Temperature object with a value and units."""
         name = 'temperature' if name is None else name
         super().__init__(value, units, name)
         self.kind = Temperature
@@ -27,10 +29,12 @@ class Temperature(Unit):
 
 
 class TemperatureGradient(Unit):
+    """A class to represent temperature gradient units."""
     class_units = _dictionary['TemperatureGradient']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: str, units: unit_or_str, name=None):
+        """Initialize a TemperatureGradient object with a value and units."""
         name = 'temperature_gradient' if name is None else name
         super().__init__(value, units, name)
         self.kind = TemperatureGradient

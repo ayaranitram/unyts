@@ -18,10 +18,12 @@ from ..dictionaries import unitless_names
 
 
 class Dimensionless(Unit):
+    """A class to represent dimensionless quantities, which can be converted to and from percentage units."""
     class_units = _dictionary['Dimensionless']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str = None, name=None):
+        """Initialize a Dimensionless object with a value and units."""
         name = 'dimensionless' if name is None else name
         super().__init__(value, units, name)
         self.kind = Dimensionless
@@ -30,6 +32,7 @@ class Dimensionless(Unit):
         self.__unit = self.check_unit(units)
 
     def convert(self, new_unit: unit_or_str = None) -> Unit:
+        """Convert a Dimensionless object to a new unit."""
         if new_unit is not None and type(new_unit) is not str:
             try:
                 new_unit = new_unit.unit
@@ -46,14 +49,17 @@ class Dimensionless(Unit):
             return units(self.value, new_unit)
 
     def to(self, new_unit: unit_or_str = None) -> Unit:
+        """Convert a Dimensionless object to a new unit."""
         return self.convert(new_unit)
 
 
 class Percentage(Dimensionless):
+    """A class to represent percentage quantities."""
     class_units = _dictionary['Percentage']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str = None, name=None):
+        """Initialize a Percentage object with a value and units."""
         name = 'percentage' if name is None else name
         super().__init__(0, None, name)
         self.kind = Percentage
@@ -63,13 +69,17 @@ class Percentage(Dimensionless):
         self.unit = self.check_unit(units)
 
     def __repr__(self) -> str:
+        """Return a string representation of the Percentage object."""
         return f"{self.value * 100}_{self.unit}"
 
     def __str__(self) -> str:
+        """Return a string representation of the Percentage object."""
         return f"{self.value * 100}_{self.unit}"
 
     def __neg__(self) -> Unit:
+        """Return a negative version of the Percentage object."""
         return self.kind(self.value * -100, self.unit)
 
     def __abs__(self) -> Unit:
+        """Return an absolute version of the Percentage object."""
         return self.kind(abs(self.value) * 100, self.unit)

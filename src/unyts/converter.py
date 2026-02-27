@@ -68,8 +68,10 @@ def _str2function(string: str):
     function
     """
     def _div(x,y):
+        """Division function for _str2function."""
         return x / y
     def _prod(x,y):
+        """Product function for _str2function."""
         return x * y
     if string == '/':
         return _div
@@ -153,6 +155,7 @@ def _function_conversion(conversion_path):
     big_conversion = [units_network.conversion(conversion_path[i], conversion_path[i + 1])
                   for i in range(len(conversion_path) - 1)]
     def _looped_conversion(x):
+        """Apply all conversions in conversion_path to x."""
         return _conversion_loop(x, big_conversion[:])
     return _looped_conversion
 
@@ -190,6 +193,7 @@ def _get_pair_child(unit: str):
         unit_node
     """
     def _operation_filter(u):
+        """Filter function to find children that are ratios or products of the received unit."""
         return '/' in u or '*' in u
 
     # get the Unit node if the name received is string
@@ -215,6 +219,7 @@ def _get_pair_child(unit: str):
 
 @timeit
 def _get_recursion_limit(recursion=None):
+    """Helper function to get the recursion limit for the recursive calls in the conversion search."""
     if recursion is None:
         recursion = min(getrecursionlimit() - 15, unyts_parameters_.max_recursion_)
     elif recursion > 1:
@@ -246,6 +251,7 @@ def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=No
 
     """
     def _multiply_by_fraction(x):
+        """Multiply a value by a fraction."""
         return x * num / den
 
     # get and set recursion limit
@@ -384,6 +390,7 @@ def generations_until_common(start, end, verbose=False, max_generations_screenin
 
 @timeit
 def _get_descendants(unit:str, generations=None, get_combinations=True):
+    """Finds the descendants of a unit in the graph network, up to a certain number of generations."""
     generations = unyts_parameters_.max_generations_ if generations is None else generations
     if generations == 0:
         return {unit}
@@ -447,6 +454,7 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
     common = from_family.intersection(to_family)
     
     def total_generations(u):
+        """Helper function to calculate the total generations from from_unit to u and from u to to_unit."""
         return generations_until_common(from_unit, u) + generations_until_common(u, to_unit)
     from_to_generations = [total_generations(u) for u in common]
     min_generations = min(from_to_generations)
@@ -465,6 +473,7 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
             if this_path_len < shortest_path:
                 conversion_path = from_child_conversion_path + child_to_conversion_path
                 def conversion(x):
+                    """Return the result of converting x from from_unit to to_unit."""
                     return child_to_conversion(from_child_conversion(x))
                 shortest_path = this_path_len
             if path == max_paths:
@@ -494,6 +503,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
         (conversion, conversion_path)
     """
     def _product(x, y):
+        """Product function for _str2function."""
         return x * y
 
     # avoid infinite looping, do not repeat searches
@@ -558,6 +568,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
         conversion_factor = reduce(_product, list_conversion)
         conversion_path = [node for path in list_conversion_path for node in path]
         def conversion(x):
+            """Apply the conversion factor to x."""
             return x * conversion_factor
         units_network.memory[(from_unit, to_unit)] = conversion, conversion_path
         if value is None:
@@ -576,6 +587,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
             if pair_conversion is not None and base_conversion is not None:
                 conversion_path = base_conversion_path + pair_conversion_path
                 def conversion(x):
+                    """Apply the conversion from from_unit to to_unit."""
                     return pair_conversion(base_conversion(x))
                 units_network.memory[(from_unit, to_unit)] = conversion, conversion_path
                 if value is None:
@@ -594,6 +606,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
             if pair_conversion is not None and final_conversion is not None:
                 conversion_path = pair_conversion_path + final_conversion_path
                 def conversion(x):
+                    """Apply the conversion from from_unit to to_unit."""
                     return final_conversion(pair_conversion(x))
                 units_network.memory[(from_unit, to_unit)] = conversion, conversion_path
                 if value is None:
@@ -683,10 +696,12 @@ def _clean_input(value: numeric, from_unit: str, to_unit: str_Empty) -> (numeric
 
 @timeit
 def _clean_print_conversion_path(print_conversion_path: bool = None) -> bool:
+    """Helper function to clean the print_conversion_path parameter, considering the default value in unyts_parameters_."""
     return unyts_parameters_.print_path_ if print_conversion_path is None else bool(print_conversion_path)
 
 @timeit
 def _clean_verbose(verbose) -> bool:
+    """Helper function to clean the verbose parameter, considering the default value in unyts_parameters_."""
     return unyts_parameters_.verbose_ if verbose is None else bool(verbose)
 
 @timeit
@@ -712,6 +727,7 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str, use_cache:
         this_units_density, _ = _converter(density, 'g/cm3', f"{to_unit}/{from_unit}", use_cache=use_cache)
         if value is None:
             def conv(x):
+                """Density conversion function."""
                 return x * this_units_density
         else:
             conv = value * this_units_density
@@ -722,6 +738,7 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str, use_cache:
         this_units_density = _converter(density, 'g/cm3', f"{from_unit}/{to_unit}", use_cache=use_cache)
         if value is None:
             def conv(x):
+                """Density conversion function."""
                 return x / this_units_density
         else:
             conv = value / this_units_density

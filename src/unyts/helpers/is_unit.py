@@ -13,6 +13,8 @@ from ..dictionaries import dictionary as _dictionary
 
 
 def is_unit(unit: str) -> bool:
+    """Return True if the given string is a valid unit in the unyts system, False otherwise.  
+    This function checks against the unit definitions in the unyts dictionary, including handling compound units with '/' and '*' operators."""
     if type(unit) is str:
         unit = unit.strip()
     else:

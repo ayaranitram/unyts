@@ -20,11 +20,13 @@ from .helpers.multi_split import multi_split
 _super_numbers_ = dict(zip('⁰¹³²⁴⁵⁶⁷⁸⁹', '0123456789'))
 
 def unit_split(unit_string: str) -> str:
+    """Split a unit string into its components.  For example, 'm/s^2' would be split into ['m', 's^-2']."""
     us = multi_split(unit_string)
     return us
 
 
 def unit_base_power(unit_string: str) -> tuple:  # tuple[str, int]
+    """Return the base and power of a unit string."""
     u_bas, u_pow = '', ''
     oth = ''
     inv = False
@@ -61,10 +63,12 @@ def unit_base_power(unit_string: str) -> tuple:  # tuple[str, int]
 
 
 def unit_base(unit_string: str) -> str:
+    """Return the base of a unit string."""
     return unit_base_power(unit_string)[0]
 
 
 def unit_product(unit_string1: str, unit_string2: str) -> str:
+    """Return the product of two unit strings."""
     if unit_string1 is None:
         unit_string1 = 'dimensionless'
     if unit_string2 is None:
@@ -140,6 +144,7 @@ def unit_product(unit_string1: str, unit_string2: str) -> str:
 
 
 def unit_division(unit_string1: str, unit_string2: str) -> str:
+    """Return the division of two unit strings."""
     if unit_string1 is None:
         unit_string1 = 'dimensionless'
     if unit_string2 is None:
@@ -217,6 +222,7 @@ def unit_division(unit_string1: str, unit_string2: str) -> str:
 
 
 def unit_power(unit_string: str, power: int or str) -> str:
+    """Return the power of a unit string."""
     if unit_string is None:
         unit_string = 'dimensionless'
     if power is None:
@@ -251,6 +257,7 @@ def unit_power(unit_string: str, power: int or str) -> str:
 
 
 def unit_addition(unit_string1:str, unit_string2:str) -> str:
+    """Return the addition of two unit strings."""
     if unit_string1 is None:
         unit_string1 = 'dimensionless'
     if unit_string2 is None:
@@ -273,6 +280,7 @@ def unit_addition(unit_string1:str, unit_string2:str) -> str:
 
 
 def unit_inverse(unit_string: str) -> str:
+    """Return the inverse of a unit string."""
     if unit_string is None:
         unit_string = 'dimensionless'
 

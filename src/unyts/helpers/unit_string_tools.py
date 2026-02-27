@@ -14,20 +14,24 @@ from .multi_split import multi_split
 
 
 def split_ratio(unit: str) -> list:  # list[str]  not sub-typing in order to be compatible with Python 3.7 - 3.9
+    """Splits a unit string by '/' and returns a list of stripped strings."""
     return list(map(str.strip, unit.split('/')))
 
 
 def split_product(unit: str) -> list:  # list[str]  not sub-typing in order to be compatible with Python 3.7 - 3.9
+    """Splits a unit string by '*' and returns a list of stripped strings."""
     return list(map(str.strip, unit.split('*')))
 
 
 def split_unit(unit: str) -> list:
+    """Splits a unit string by '*' and '/' and returns a list of stripped strings."""
     return multi_split(unit,
                        sep=('*', '/',),
                        remove=None)
 
 
 def reduce_parentheses(unit: str) -> str:
+    """Reduces parentheses in a unit string by removing redundant ones."""
     if '(' not in unit and ')' not in unit:
         return unit
     elif unit.count('(') > unit.count(')'):
@@ -59,7 +63,9 @@ def reduce_parentheses(unit: str) -> str:
 
 
 def reduce_units(unit: str, raise_error=False) -> str:
+    """Reduces a unit string by removing redundant terms."""
     def change(unit_):
+        """Helper function to change a unit string by replacing '*' with '/' and vice versa."""
         return ('/' + unit_[1:]) if unit_[0] == '*' else ('*' + unit_[1:])
 
     if raise_error:

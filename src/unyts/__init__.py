@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.10.0'
-__release__ = 20260225
+__version__ = '0.10.1'
+__release__ = 20260227
 __all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit', 'valid_unit',
            'set_unit', 'set_conversion', 'set_density', 'get_density',
            'save', 'start_gui', 'set_fvf', 'set_algorithm', 'set_parallel', 'set_timeout', 'verbose']
@@ -76,6 +76,7 @@ def __getattr__(name):
             return _load_and_get('gui', 'start_gui')
         except Exception:
             def start_gui():
+                """Placeholder function when GUI fails to load."""
                 logger.error("The GUI is not available in this system.")
             return start_gui
     

@@ -29,9 +29,11 @@ from sys import platform
 
 
 class UnytsApp(tk.Frame):
+    """A Tkinter application for unit conversion using the Unyts library. Provides a GUI for users to input units and values, perform conversions, and display results and conversion paths."""
     _all_units_str = _all_units()
 
     def __init__(self, master=None):
+        """Initialize the UnytsApp with a master Tkinter window."""
         super().__init__(master)
         self.user_print_path_ = bool(unyts_parameters_.print_path_)
         self.pack()
@@ -118,18 +120,21 @@ class UnytsApp(tk.Frame):
         # self.input_button.bind('<ButtonRelease>', self._get_input)
 
     def _validate_from_units(self, *args):
+        """Validate the 'from' unit input against known units and numeric values."""
         if self.from_unit_val.get() not in UnytsApp._all_units_str and not is_numeric(self.from_unit_val.get()):
             return False
         else:
             return True
 
     def _validate_to_units(self, *args):
+        """Validate the 'to' unit input against known units and numeric values."""
         if self.to_unit_val.get() not in UnytsApp._all_units_str and not is_numeric(self.to_unit_val.get()):
             return False
         else:
             return True
 
     def _get_from(self):
+        """Parse and validate the 'from' unit and value inputs, handling various formats and edge cases."""
         from_value = self.from_value_val.get().strip().replace("no conversion found!", "").replace("wrong number format", "")
         from_unit = self.from_unit_val.get().strip()
         if len(from_value) == 0 and len(from_unit) > 0 and not is_numeric(from_unit):
@@ -148,6 +153,7 @@ class UnytsApp(tk.Frame):
         return from_unit, from_value
 
     def _get_to(self):
+        """Parse and validate the 'to' unit and value inputs, handling various formats and edge cases."""
         to_value = self.to_value_val.get().strip().replace("no conversion found!", "").replace("wrong number format", "")
         to_unit = self.to_unit_val.get().strip()
         if len(to_value) == 0 and len(to_unit) > 0 and not is_numeric(to_unit):
@@ -166,6 +172,7 @@ class UnytsApp(tk.Frame):
         return to_unit, to_value
 
     def _calculate(self, *args):
+        """Calculate the conversion from 'from' units to 'to' units."""
         self._display_path(" ")
         start_time = process_time()
         from_unit, from_value = self._get_from()
@@ -213,6 +220,7 @@ class UnytsApp(tk.Frame):
             return
 
     def _rcalculate(self, *args):
+        """Reverse calculate the conversion from 'to' units to 'from' units."""
         self._display_path(" ")
         start_time = process_time()
         from_unit, from_value = self._get_to()
@@ -260,6 +268,7 @@ class UnytsApp(tk.Frame):
             return
 
     def _calculation_time(self, start_time, end_time):
+        """Calculate and display the time taken for a conversion operation."""
         total_time = end_time - start_time
         if total_time < 1:
             total_time = round(total_time * 1000, 0)
@@ -281,6 +290,7 @@ class UnytsApp(tk.Frame):
         self.result_str.set(total_time)
 
     def _partial_msg(self):
+        """Scroll the path message if it exceeds the maximum length."""
         if len(unyts_parameters_.last_path_str) < self._max_len:
             self.path.after_cancel(self._path_marquee)
             self.path_str.set(unyts_parameters_.last_path_str)
@@ -304,6 +314,7 @@ class UnytsApp(tk.Frame):
         self._path_marquee = self.path.after(speed, self._partial_msg)
 
     def _display_path(self, error:str=""):
+        """Display the conversion path or error message in the GUI."""
         if bool(error):
             self.show_temporary_message()
             if self._path_marquee is not None:
@@ -324,6 +335,7 @@ class UnytsApp(tk.Frame):
             self.path_str.set("")
 
     def check_temporary_message(self):
+        """Check and update the temporary path message visibility."""
         if self.user_print_path_ is not unyts_parameters_.print_path_:
             unyts_parameters_.print_path_ = bool(self.user_print_path_)
             if self.user_print_path_:
@@ -332,17 +344,22 @@ class UnytsApp(tk.Frame):
                 self.path.pack_forget()
 
     def show_temporary_message(self):
+        """Show a temporary path message in the GUI."""
         if not unyts_parameters_.print_path_:
             self.user_print_path_ = bool(unyts_parameters_.print_path_)
             self.path.pack()
+
     def _get_input(self):
+        """Cash a user input from the input field and store it in the input_value_str variable."""
         self.input_value_str = self.input_value.get().strip()
 
 
 def start_gui():
+    """Start the Unyts GUI application."""
     unyts_parameters_.gui = True
 
     def close_gui():
+        """Close the Unyts GUI application."""
         logger.info("INFO:shutting down Unyts.")
         if unyts_parameters_.cache_:
             logger.info("saving memory...")
@@ -353,10 +370,13 @@ def start_gui():
     else:
         delete_cache()
     def open_help():
+        """Open the Unyts help documentation in a web browser."""
         webbrowser.open('https://github.com/ayaranitram/unyts/blob/master/unyts_demo.ipynb')
     def open_git():
+        """Open the Unyts GitHub repository in a web browser."""
         webbrowser.open('https://github.com/ayaranitram/unyts')
     def print_path():
+        """Set the print_path parameter and update the GUI accordingly."""
         unyts_parameters_.print_path()
         if unyts_parameters_.print_path_:
             unyts_gui.path.pack()
@@ -365,6 +385,7 @@ def start_gui():
             unyts_gui._display_path(" ")
             unyts_gui.path.pack_forget()
     def _set_bfs():
+        """Set the algorithm to BFS and update GUI state."""
         if unyts_parameters_.get_algorithm() != 'BFS':
             unyts_gui.repeat_search.select()
         unyts_parameters_.set_algorithm('BFS')
@@ -373,6 +394,7 @@ def start_gui():
         _dfs_.set(False)
         _hybrid_BFS_.set(False)
     def _set_lean_bfs():
+        """Set the algorithm to lean_BFS and update GUI state."""
         if unyts_parameters_.get_algorithm() != 'lean_BFS':
             unyts_gui.repeat_search.select()
         unyts_parameters_.set_algorithm('lean_BFS')
@@ -381,6 +403,7 @@ def start_gui():
         _dfs_.set(False)
         _hybrid_BFS_.set(False)
     def _set_dfs():
+        """Set the algorithm to DFS and update GUI state."""
         if unyts_parameters_.get_algorithm() != 'DFS':
             unyts_gui.repeat_search.select()
         unyts_parameters_.set_algorithm('DFS')
@@ -389,6 +412,7 @@ def start_gui():
         _dfs_.set(True)
         _hybrid_BFS_.set(False)
     def _set_hybrid_BFS():
+        """Set the algorithm to hybrid_BFS and update GUI state."""
         if unyts_parameters_.get_algorithm() != 'hybrid_BFS':
             unyts_gui.repeat_search.select()
         unyts_parameters_.set_algorithm('hybrid_BFS')
@@ -397,24 +421,28 @@ def start_gui():
         _dfs_.set(False)
         _hybrid_BFS_.set(True)
     def _set_par_th():
+        """Set the parallelization mode to threading and update GUI state."""
         unyts_parameters_.set_parallel('t')
         _par_th_.set(True)
         _par_mp_.set(False)
         _par_off_.set(False)
         _par_auto_.set(False)
     def _set_par_mp():
+        """Set the parallelization mode to multiprocessing and update GUI state."""
         unyts_parameters_.set_parallel('p')
         _par_th_.set(False)
         _par_mp_.set(True)
         _par_off_.set(False)
         _par_auto_.set(False)
     def _set_par_off():
+        """Set the parallelization mode to off and update GUI state."""
         unyts_parameters_.set_parallel(False)
         _par_th_.set(False)
         _par_mp_.set(False)
         _par_off_.set(True)
         _par_auto_.set(False)
     def _set_par_auto():
+        """Set the parallelization mode to auto and update GUI state."""
         unyts_parameters_.set_parallel(None)
         _par_th_.set(unyts_parameters_.threading_)
         _par_mp_.set(unyts_parameters_.multiprocessing_)
@@ -422,6 +450,7 @@ def start_gui():
         _par_auto_.set(True)
 
     def _set_fvf():
+        """Set the formation volume factor (FVF) and update GUI state."""
         if unyts_parameters_.fvf_ is not None:
             current_value = f"{unyts_parameters_.fvf_} vol/vol"
             prev_fvf_ = unyts_parameters_.fvf_
@@ -475,6 +504,7 @@ def start_gui():
         unyts_gui._display_path()
 
     def _set_density():
+        """Set the constant density and update GUI state."""
         if unyts_parameters_.density_ is not None:
             current_value = f"{unyts_parameters_.density_} g/cm³"
         else:
@@ -519,6 +549,7 @@ def start_gui():
         unyts_gui._display_path()
 
     def _set_timeout():
+        """Set the conversion timeout limit and update GUI state."""
         if unyts_parameters_.timeout_ is not None:
             current_value = f"{unyts_parameters_.timeout_} seconds"
             prev_timeout_ = unyts_parameters_.timeout_
@@ -570,6 +601,7 @@ def start_gui():
         unyts_gui._display_path()
 
     def export_memory():
+        """Export the current memory to a cache file."""
         cache_path = filedialog.asksaveasfilename(
             title='Save',
             filetypes=(('Cache files', '*.cache'),('All Files', '*.*')),
@@ -583,6 +615,7 @@ def start_gui():
         else:
             pass
     def load_memory_file():
+        """Load a memory cache file."""
         cache_path = filedialog.askopenfilename(
             title='Load',
             filetypes=(('Cache files', '*.cache'),('All Files', '*.*')))
@@ -603,6 +636,7 @@ def start_gui():
             pass
 
     def set_cache_folder():
+        """Set the cache folder path and update GUI state."""
         cache_path = unyts_parameters_.get_user_folder()
         cache_path = filedialog.askdirectory(initialdir=cache_path, title='Cache Folder')
         if cache_path:
@@ -616,6 +650,7 @@ def start_gui():
             pass
 
     def update_logger_level(level:str):
+        """Update the logger level and update GUI state."""
         level = level.upper()
         if level == 'DEBUG':
             _logger_debug_.set(True)
@@ -648,18 +683,23 @@ def start_gui():
             _logger_error_.set(False)
             _logger_critical_.set(True)
     def set_logger_debug():
+        """Set the logger level to DEBUG and update GUI state."""
         unyts_parameters_.set_logger_level('DEBUG')
         update_logger_level('DEBUG')
     def set_logger_info():
+        """Set the logger level to INFO and update GUI state."""
         unyts_parameters_.set_logger_level('INFO')
         update_logger_level('INFO')
     def set_logger_warn():
+        """Set the logger level to WARNING and update GUI state."""
         unyts_parameters_.set_logger_level('WARNING')
         update_logger_level('WARNING')
     def set_logger_error():
+        """Set the logger level to ERROR and update GUI state."""
         unyts_parameters_.set_logger_level('ERROR')
         update_logger_level('ERROR')
     def set_logger_critical():
+        """Set the logger level to CRITICAL and update GUI state."""
         unyts_parameters_.set_logger_level('CRITICAL')
         update_logger_level('CRITICAL')
 

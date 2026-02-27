@@ -32,18 +32,22 @@ except ModuleNotFoundError:
 
 @timeit
 def save_memory(path=None) -> None:
+    """Save the current search memory to a cache file."""
     units_network.save_memory(path)
 
 @timeit
 def load_memory(path=None) -> None:
+    """Load the search memory from a cache file if it exists."""
     units_network.load_memory(path)
 
 @timeit
 def clean_memory(path=None) -> None:
+    """Remove previous search memory cache file."""
     units_network.clean_memory()
 
 @timeit
 def delete_cache() -> None:
+    """Delete all cached files."""
     for each in ('search_memory.cache', 'units_network.cache', 'units_dictionary.cache',
                  'temperature_ratio_conversions.cache', 'unitless_names.cache'):
         path = f"{unyts_parameters_.get_user_folder()}{each}"
@@ -52,7 +56,9 @@ def delete_cache() -> None:
 
 @timeit
 def set_fvf(fvf=None) -> None:
+    """Set the formation Volume factor (FVF) value."""
     def valid_fvf(fvf):
+        """Validate the formation Volume factor (FVF) input."""
         if type(fvf) is str:
             try:
                 fvf = float(fvf)
@@ -79,6 +85,7 @@ def set_fvf(fvf=None) -> None:
 
 @timeit
 def get_fvf() -> str:
+    """Return the current formation Volume factor (FVF) value."""
     if units_network.fvf is not None:
         return str(round(units_network.fvf, 4))
     elif unyts_parameters_.fvf:
@@ -88,6 +95,7 @@ def get_fvf() -> str:
 
 @timeit
 def _load_network():
+    """Load the units network from the source definitions."""
     logger.info('preparing units network...')
     network = UDigraph()
     add_node = network.add_node
@@ -664,6 +672,7 @@ def _load_network():
 
 @timeit
 def _create_Rates() -> None:
+    """Create Rate units from Volume, Weight and Data units."""
     # volumes / Time
     rates = list(dictionary['Rate']) if 'Rate' in dictionary else []
     rates += [f"{volume}/{time}" for volume in dictionary['Volume'] for time in dictionary['Time']]
@@ -673,6 +682,7 @@ def _create_Rates() -> None:
 
 @timeit
 def _create_VolumeRatio() -> None:
+    """Create VolumeRatio units from Volume units."""
     # Volume / Volume
     ratio = list(dictionary['VolumeRatio']) if 'VolumeRatio' in dictionary else []
     ratio += [f"{numerator}/{denominator}" for numerator in dictionary['Volume'] for denominator in
@@ -681,6 +691,7 @@ def _create_VolumeRatio() -> None:
 
 @timeit
 def _create_Density() -> None:
+    """Create Density units from Mass and Volume units."""
     # mass / Volume
     density = list(dictionary['Density']) if 'Density' in dictionary else []
     density += [f"{mass}/{volume}" for mass in dictionary['Mass'] for volume in dictionary['Volume']]
@@ -688,6 +699,7 @@ def _create_Density() -> None:
 
 @timeit
 def _create_Velocity() -> None:
+    """Create Velocity units from Length and Time units."""
     # Length / Time
     velocity = list(dictionary['Velocity']) if 'Velocity' in dictionary else []
     velocity += [f"{length}/{time}" for length in dictionary['Length'] for time in dictionary['Time']]
@@ -695,6 +707,7 @@ def _create_Velocity() -> None:
 
 @timeit
 def _create_Power() -> None:
+    """Create Power units from Energy, Time, Voltage, Current and Resistance units."""
     # Length / Time
     power = list(dictionary['Power']) if 'Power' in dictionary else []
     power += [f"{energy}/{time}" for energy in dictionary['Energy'] for time in dictionary['Time']]
@@ -706,6 +719,7 @@ def _create_Power() -> None:
 
 @timeit
 def _create_Frequency() -> None:
+    """Create Frequency units from Time units."""
     # 1 / Time
     frequency = list(dictionary['Frequency']) if 'Frequency' in dictionary else []
     frequency += [f"'1/{time}" for time in dictionary['Time']]
@@ -713,6 +727,7 @@ def _create_Frequency() -> None:
 
 @timeit
 def _create_Conductance() -> None:
+    """Create Conductance units from Resistance units."""
     # 1 / Resistance
     conductance = list(dictionary['Conductance']) if 'Conductance' in dictionary else []
     conductance += [f"1/{resistance}" for resistance in dictionary['Resistance']]
@@ -720,6 +735,7 @@ def _create_Conductance() -> None:
 
 @timeit
 def _create_Capacitance_Charge() -> None:
+    """Create Capacitance and Charge units from Voltage, Capacitance and Charge units."""
     # Capacitance, Charge = Charge / Voltage, Capacitance * Voltage
     capacitance, charge = \
         list(dictionary['Capacitance']) if 'Capacitance' in dictionary else [], \
@@ -735,7 +751,7 @@ def _create_Capacitance_Charge() -> None:
 
 @timeit
 def _create_Voltage_Current_Resistance() -> None:
-    """Voltage‑Current‑Resistance combinations.
+    """Create Voltage‑Current‑Resistance combinations.
 
     Previous implementation updated the sets in place while iterating over
     them, causing the iterables to grow continuously and eventually
@@ -766,6 +782,7 @@ def _create_Voltage_Current_Resistance() -> None:
 
 @timeit
 def _create_Pressure() -> None:
+    """Create Pressure units from Weight and Area units."""
     # Weight / Area
     pressure = list(dictionary['Pressure']) if 'Pressure' in dictionary else []
     pressure += [f"{weight}/{area}" for weight in dictionary['Weight'] for area in dictionary['Area']]
@@ -773,6 +790,7 @@ def _create_Pressure() -> None:
 
 @timeit
 def _create_ProductivityIndex() -> None:
+    """Create ProductivityIndex units from Volume, Time and Pressure units."""
     # Volume / Time / Pressure
     # Optimize: use list comprehension (faster than set comp for large iteration counts)
     # then update(): allocates list once, then set processes it, more efficient than
@@ -797,6 +815,7 @@ def _create_ProductivityIndex() -> None:
 
 @timeit
 def _create_PressureGradient() -> None:
+    """Create PressureGradient units from Pressure and Length units."""
     # Pressure / Length
     pressureGradient = list(dictionary['PressureGradient']) if 'PressureGradient' in dictionary else []
     pressureGradient += [f"{pressure}/{length}" for pressure in dictionary['Pressure'] for length in
@@ -805,6 +824,7 @@ def _create_PressureGradient() -> None:
 
 @timeit
 def _create_TemperatureGradient() -> None:
+    """Create TemperatureGradient units from Temperature and Length units."""
     # Pressure / Length
     temperatureGradient = list(dictionary['TemperatureGradient']) if 'TemperatureGradient' in dictionary else []
     temperatureGradient += [f"{temperature}/{length}" for temperature in dictionary['Temperature'] for length in
@@ -813,6 +833,7 @@ def _create_TemperatureGradient() -> None:
 
 @timeit
 def _create_Acceleration() -> None:
+    """Create Acceleration units from Length and Time units."""
     # Length / Time / Time
     existing = set(dictionary.get('Acceleration', []))
     existing |= {f"{length}/{t1}2" if t1 == t2 else f"{length}/{t1}/{t2}"
@@ -823,6 +844,7 @@ def _create_Acceleration() -> None:
 
 @timeit
 def _complete_products() -> None:
+    """Mirror products to include reversed order where applicable."""
     # Mirror simple products to include reversed order.
     # Only process keys that actually have reversible '*' products.
     # This avoids iterating through 111+ keys that have no such products.
@@ -847,6 +869,7 @@ def _complete_products() -> None:
 
 @timeit
 def _rebuild_units():
+    """Rebuild the units network and dictionaries from the source definitions."""
     logger.warning('Rebuilding units dictionary...')
     from .dictionaries import _load_dictionary
     dictionary, temperatureRatioConversions, unitless_names = _load_dictionary()
@@ -864,6 +887,7 @@ def _rebuild_units():
 
 @timeit
 def network_to_frame():
+    """Converts the units network to a pandas DataFrame."""
     try:
         from pandas import DataFrame
     except ModuleNotFoundError:
@@ -880,6 +904,7 @@ def network_to_frame():
 
 @timeit
 def _clean_network():
+    """Remove edges with empty conversions to clean up the network after loading from cache."""
     units_network.edges = {k: v for k, v in units_network.edges.items() if v != ([], [])}
 
 def _save_cache_async():

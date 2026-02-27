@@ -44,6 +44,7 @@ class CallableModule(types.ModuleType):
     """A module subclass that proxies calls to the units factory."""
 
     def __call__(self, value, unit=None, name=None):
+        """Call the units factory with the given arguments."""
         return _load_units()(value, unit, name)
 
 

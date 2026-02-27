@@ -16,10 +16,12 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 
 class Length(Unit):
+    """A class to represent a length quantity with associated units."""
     class_units = _dictionary['Length']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
+        """Initialize a Length object with a value and units."""
         name = 'length' if name is None else name
         super().__init__(value, units, name)
         self.kind = Length
@@ -27,10 +29,12 @@ class Length(Unit):
 
 
 class Area(Unit):
+    """A class to represent area quantities with associated units, supporting arithmetic operations and unit conversions."""
     class_units = _dictionary['Area']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
+        """Initialize an Area object with a value and units."""
         name = 'area' if name is None else name
         super().__init__(value, units, name)
         self.kind = Area
@@ -38,10 +42,12 @@ class Area(Unit):
 
 
 class Volume(Unit):
+    """A class to represent volume quantities with associated units, supporting arithmetic operations and unit conversions."""
     class_units = _dictionary['Volume']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
+        """Initialize a Volume object with a value and units."""
         name = 'volume' if name is None else name
         super().__init__(value, units, name)
         self.kind = Volume
@@ -49,10 +55,12 @@ class Volume(Unit):
 
 
 class Permeability(Unit):
+    """A class to represent permeability quantities with associated units, supporting arithmetic operations and unit conversions."""
     class_units = _dictionary['Permeability']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
+        """Initialize a Permeability object with a value and units."""
         name = 'permeability' if name is None else name
         super().__init__(value, units, name)
         self.kind = Permeability

@@ -65,7 +65,9 @@ else:
 
 
 class UnytType(type):
+    """A metaclass for the Unit class to allow for class-level attributes and methods related to units, such as a list of all valid unit names."""
     def __repr__(self):
+        """Return a string representation of the UnytType, which is the name of the class."""
         return self.__name__
 
 
@@ -79,6 +81,7 @@ class Unit(object, metaclass=UnytType):
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units=None, name=None):
+        """Initialize a Unit object with a value and units."""
         if isinstance(value, Unit):
             if units is None:
                 value, units = value.value, value.unit
@@ -99,46 +102,58 @@ class Unit(object, metaclass=UnytType):
 
     @property
     def unit(self):
+        """Return the unit of the current Unit object."""
         return self.__unit
 
     @unit.setter
     def unit(self, units):
+        """Set the unit of the current Unit object."""
         self.__unit = units
 
     @property
     def units(self):
+        """Return the units of the current Unit object."""
         return self.__unit
 
     @units.setter
     def units(self, units):
+        """Set the units of the current Unit object."""
         self.__unit = units
 
     def get_value(self):
+        """Return the value of the current Unit object."""
         return self.value
 
     @property
     def value(self):
+        """Return the value of the current Unit object."""
         return self.__value
 
     @value.setter
     def value(self, value):
+        """Validate and set the value of the current Unit object."""
         self.__value = self.check_value(value)
 
     @property
     def values(self):
+        """Return the values of the current Unit object."""
         return self.__value
 
     @values.setter
     def values(self, value):
+        """Validate and set the values of the current Unit object."""
         self.__value = self.check_value(value)
 
     def __call__(self) -> numeric:
+        """Return the value of the current Unit object."""
         return self.value
 
     def __repr__(self) -> str:
+        """Return a string representation of the current Unit object."""
         return f"{self.value}_{self.unit}"
 
     def __str__(self) -> str:
+        """Return a string representation of the current Unit object."""
         if self.unit is None or len(str(self.unit).strip()) == 0:
             return str(self.value)
         else:
@@ -146,6 +161,7 @@ class Unit(object, metaclass=UnytType):
 
     @property
     def dtype(self):
+        """Return the data type of the current Unit object."""
         if hasattr(self.values, 'dtype'):
             return self.values.dtype
         elif _numpy_:
@@ -159,6 +175,7 @@ class Unit(object, metaclass=UnytType):
             raise NotImplementedError("dtype not implemented without NumPy.")
 
     def convert(self, new_unit: str):
+        """Convert the current Unit object to a new unit."""
         if type(new_unit) is not str and hasattr(new_unit, 'units') and type(new_unit.units) is str:
             new_unit = new_unit.units
         elif type(new_unit) is not str:
@@ -177,12 +194,15 @@ class Unit(object, metaclass=UnytType):
             return self.kind(_convert(self.__value, self.unit, new_unit), new_unit)
 
     def to(self, new_unit):
+        """Convert the current Unit object to a new unit."""
         return self.convert(new_unit)
 
     def __neg__(self):
+        """Return the negative of the current Unit object."""
         return self.kind(self.value.__neg__(), self.unit)
 
     def __bool__(self):
+        """Return the boolean value of the current Unit object."""
         from .units.custom import UserUnits
         from .units.unitless import Dimensionless, Percentage
         if self.kind in (Dimensionless, Percentage, UserUnits):
@@ -190,9 +210,11 @@ class Unit(object, metaclass=UnytType):
         return True
 
     def __abs__(self):
+        """Return the absolute value of the current Unit object."""
         return self.kind(abs(self.value), self.unit)
 
     def __add__(self, other):
+        """Return the sum of the current Unit object and another value, handling unit conversions as necessary."""
         from .units.unitless import Dimensionless, Percentage
         if isinstance(other, Unit):
             if other.kind is self.kind:
@@ -231,9 +253,11 @@ class Unit(object, metaclass=UnytType):
             raise NotImplementedError(f"Addition of {type(self)} and {type(other)} not implemented.")
 
     def __radd__(self, other):
+        """Return the sum of another value and the current Unit object, handling unit conversions as necessary."""
         return self.__add__(other)
 
     def __mul__(self, other):
+        """Return the product of the current Unit object and another value, handling unit conversions as necessary."""
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
         if isinstance(other, Unit):
@@ -271,9 +295,11 @@ class Unit(object, metaclass=UnytType):
             raise NotImplementedError(f"Product of {type(self)} and {type(other)} not implemented.")
 
     def __rmul__(self, other):
+        """Return the product of another value and the current Unit object, handling unit conversions as necessary."""
         return self.__mul__(other)
 
     def __pow__(self, other):
+        """Return the power of the current Unit object raised to another value, handling unit conversions as necessary."""
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
         if isinstance(other, Unit):
@@ -314,6 +340,7 @@ class Unit(object, metaclass=UnytType):
             raise NotImplementedError(f"Power of {type(self)} to {type(other)} not implemented.")
 
     def __rpow__(self, other):
+        """Return the power of another value raised to the current Unit object, handling unit conversions as necessary."""
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
         if self.kind is Percentage:
@@ -324,6 +351,7 @@ class Unit(object, metaclass=UnytType):
             raise TypeError(f"unsupported operand type(s) for ** or pow(): '{type(other)}' and '{type(self)}.")
 
     def __sub__(self, other):
+        """Return the difference of the current Unit object and another value, handling unit conversions as necessary."""
         # return self.__add__(other * -1)
         from .units.unitless import Dimensionless, Percentage
         if isinstance(other, Unit):
@@ -363,9 +391,11 @@ class Unit(object, metaclass=UnytType):
             raise NotImplementedError(f"Subtraction of {type(self)} and {type(other)} not implemented.")
 
     def __rsub__(self, other):
+        """Return the difference of another value and the current Unit object, handling unit conversions as necessary."""
         return self.__neg__() + other
 
     def __truediv__(self, other):
+        """Return the quotient of the current Unit object and another value, handling unit conversions as necessary."""
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
         if isinstance(other, Unit):
@@ -400,6 +430,7 @@ class Unit(object, metaclass=UnytType):
             raise NotImplementedError(f"Division of {type(self)} by {type(other)} not implemented.")
 
     def __rtruediv__(self, other):
+        """Return the quotient of another value and the current Unit object, handling unit conversions as necessary."""
         from .units.define import units
         from .units.unitless import Dimensionless, Percentage
         if self.kind is Percentage:
@@ -412,6 +443,7 @@ class Unit(object, metaclass=UnytType):
             raise NotImplementedError(f"Division of {type(self)} by {type(other)} not implemented.")
 
     def __floordiv__(self, other):
+        """Return the quotient of the current Unit object and another value, handling unit conversions as necessary."""
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
         if isinstance(other, Unit):
@@ -446,6 +478,7 @@ class Unit(object, metaclass=UnytType):
             raise NotImplementedError(f"Division of {type(self)} by {type(other)} not implemented.")
 
     def __rfloordiv__(self, other):
+        """Return the quotient of another value and the current Unit object, handling unit conversions as necessary."""
         from .units.define import units
         from .units.unitless import Dimensionless, Percentage
         if self.kind is Percentage:
@@ -458,6 +491,7 @@ class Unit(object, metaclass=UnytType):
             raise NotImplementedError(f"Division of {type(self)} by {type(other)} not implemented.")
 
     def __matmul__(self, other):
+        """Return the quotient of the current Unit object and another value, without making unit conversions. Useful to calculate ratios of units."""
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
         if isinstance(other, Unit):
@@ -484,6 +518,7 @@ class Unit(object, metaclass=UnytType):
             raise NotImplementedError(f"Division of {type(self)} by {type(other)} not implemented.")
 
     def __mod__(self, other):
+        """Return the remainder of the current Unit object divided by another value, handling unit conversions as necessary."""
         from .units.unitless import Dimensionless, Percentage
         from .units.define import units
         if isinstance(other, Unit):
@@ -517,6 +552,7 @@ class Unit(object, metaclass=UnytType):
             raise NotImplementedError(f"Module of {type(self)} when divided by {type(other)} not implemented.")
 
     def __lt__(self, other) -> bool:
+        """Return whether the current Unit object is less than another value, handling unit conversions as necessary."""
         if not isinstance(other, Unit):
             return self.value < other
         elif type(self) == type(other):
@@ -526,6 +562,7 @@ class Unit(object, metaclass=UnytType):
             raise TypeError(msg)
 
     def __le__(self, other) -> bool:
+        """Return whether the current Unit object is less than or equal to another value, handling unit conversions as necessary."""
         if not isinstance(other, Unit):
             return self.value <= other
         elif type(self) == type(other):
@@ -535,6 +572,7 @@ class Unit(object, metaclass=UnytType):
             raise TypeError(msg)
 
     def __eq__(self, other) -> bool:
+        """Return whether the current Unit object is equal to another value, handling unit conversions as necessary."""
         if not isinstance(other, Unit):
             return self.value == other
         elif type(self) is type(other):
@@ -544,6 +582,7 @@ class Unit(object, metaclass=UnytType):
             raise TypeError(msg)
 
     def __ne__(self, other):
+        """Return whether the current Unit object is not equal to another value, handling unit conversions as necessary."""
         if not isinstance(other, Unit):
             return self.value != other
         elif type(self) is type(other):
@@ -553,6 +592,7 @@ class Unit(object, metaclass=UnytType):
             raise TypeError(msg)
 
     def __ge__(self, other):
+        """Return whether the current Unit object is greater than or equal to another value, handling unit conversions as necessary."""
         if not isinstance(other, Unit):
             return self.value >= other
         elif type(self) is type(other):
@@ -562,6 +602,7 @@ class Unit(object, metaclass=UnytType):
             raise TypeError(msg)
 
     def __gt__(self, other):
+        """Return whether the current Unit object is greater than another value, handling unit conversions as necessary."""
         if not isinstance(other, Unit):
             return self.value > other
         elif type(self) is type(other):
@@ -571,15 +612,18 @@ class Unit(object, metaclass=UnytType):
             raise TypeError(msg)
 
     def __len__(self):
+        """Return the length of the current Unit object's value. For scalar values, return 1."""
         try:
             return len(self.value)
         except TypeError:
             return 1
 
     def __round__(self, n=None):
+        """Return the current Unit object rounded to the specified number of decimal places."""
         return self.kind(round(self.value, n), self.unit)
 
     def __getitem__(self, item):
+        """Return a Unit object for a specific item in the current Unit object's value."""
         if type(item) is int:
             if item >= len(self):
                 raise IndexError
@@ -592,12 +636,15 @@ class Unit(object, metaclass=UnytType):
             return self.kind(self.value[item], self.unit)
 
     def __iter__(self):
+        """Iterate over the current Unit object's value. For scalar values, return an iterator with a single element."""
         if not hasattr(self.value, '__iter__'):
             return np.array((self.value,)).__iter__()
         else:
             return self.value.__iter__()
 
     def equals(self, other, precision:int=None):
+        """Return whether the current Unit object is equal to another value, handling unit conversions as necessary. 
+        If precision is specified, round both values to the specified number of decimal places before comparing."""
         if precision is None:
             self.__eq__(other)
         if not isinstance(other, Unit):
@@ -609,17 +656,23 @@ class Unit(object, metaclass=UnytType):
             raise TypeError(msg)
 
     def eq(self, other, precision: int = None):
+        """Return whether the current Unit object is equal to another value, handling unit conversions as necessary. 
+        If precision is specified, round both values to the specified number of decimal places before comparing."""
         return self.equals(other, precision)
 
     def get_unit(self):
+        """Return the unit of the current Unit object."""
         return self.unit
 
     def get_units(self):
+        """Return the units of the current Unit object."""
         return self.get_unit()
 
     def round(self, precision:int=0, *, value=None):
+        """Return a new Unit object with the value rounded to the specified number of decimal places."""
         value_ = self.value if value is None else value
         def significants(v, i):
+            """Return a float with the specified number of significant figures."""
             return float(f"{v:.{abs(i)}g}")
         from .units.define import units
         precision = int(precision)
@@ -640,6 +693,12 @@ class Unit(object, metaclass=UnytType):
         return units(value_, self.units) if value is None else value_
 
     def check_value(self, value):
+        """Validate the value for the current Unit object. 
+        If the value is a list or tuple, convert it to a NumPy array. 
+        If the value is another Unit object, use its value. 
+        If the value is a number, return it as is. 
+        If the value is an array-like object, return it as is. 
+        Otherwise, raise a WrongValueError."""
         if type(value) in (list, tuple):
             try:
                 return np.array(value)
@@ -655,6 +714,7 @@ class Unit(object, metaclass=UnytType):
             raise WrongValueError(str(value))
 
     def check_unit(self, units):
+        """Check if the given units are valid for the current Unit object."""
         if type(units) is str:
             pass
         elif type(self) is units:
@@ -671,10 +731,12 @@ class Unit(object, metaclass=UnytType):
 
 
 def is_Unit(obj) -> bool:
+    """Return True if the given object is an instance of Unit, otherwise return False."""
     return isinstance(obj, Unit)
 
 
 def valid_unit(unit_name:str) -> bool:
+    """Return True if the given unit name is a valid unit, otherwise return False."""
     if unit_name is None or (type(unit_name) is str and unit_name.strip() in Unit._all_units_str):
         return True
     else:

@@ -16,10 +16,12 @@ from ..helpers.common_classes import unit_or_str, numeric
 
 
 class Force(Unit):
+    """A class to represent a force quantity with a value, unit, name, and kind.  The class_units attribute is set to the list of valid units for this kind of quantity from the dictionary."""
     class_units = _dictionary['Force']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
+        """Initialize a Force object with a value and units."""
         name = 'force' if name is None else name
         super().__init__(value, units, name)
         self.kind = Force
@@ -27,10 +29,12 @@ class Force(Unit):
 
 
 class Pressure(Unit):
+    """A class to represent pressure quantities with associated units, supporting arithmetic operations and unit conversions."""
     class_units = _dictionary['Pressure']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
+        """Initialize a Pressure object with a value and units."""
         name = 'pressure' if name is None else name
         super().__init__(value, units, name)
         self.kind = Pressure
@@ -38,10 +42,12 @@ class Pressure(Unit):
 
 
 class Weight(Unit):
+    """A class to represent weight quantities with associated units, supporting arithmetic operations and unit conversions."""
     class_units = _dictionary['Weight']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
+        """Initialize a Weight object with a value and units."""
         name = 'weight' if name is None else name
         super().__init__(value, units, name)
         self.kind = Weight
@@ -49,10 +55,12 @@ class Weight(Unit):
 
 
 class Compressibility(Unit):
+    """A class to represent compressibility quantities with associated units, supporting arithmetic operations and unit conversions."""
     class_units = _dictionary['Compressibility']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
+        """Initialize a Compressibility object with a value and units."""
         name = 'compressibility' if name is None else name
         super().__init__(value, units, name)
         self.kind = Compressibility
@@ -60,10 +68,12 @@ class Compressibility(Unit):
 
 
 class Viscosity(Unit):
+    """A class to represent viscosity quantities with associated units, supporting arithmetic operations and unit conversions."""
     class_units = _dictionary['Viscosity']
     __slots__ = ('__unit', '__value', 'name', 'kind')
 
     def __init__(self, value: numeric, units: unit_or_str, name=None):
+        """Initialize a Viscosity object with a value and units."""
         name = 'viscosity' if name is None else name
         super().__init__(value, units, name)
         self.kind = Viscosity

@@ -26,26 +26,32 @@ __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
 class UNode(object):
+    """A class to represent a node in the units network graph. The `name` attribute is used for equality and hashing, so that nodes created in different sessions or after a rebuild compare equal; this allows memory caching and dictionary lookups to function across reloads."""
     __slots__ = ('name',)
 
     def __init__(self, name):
+        """Initialize a UNode with a name string."""
         self.name = name if type(name) is str else ''
 
     def get_name(self):
+        """Return the name of the UNode."""
         return self.name
 
     def __str__(self):
+        """Return the string representation of the UNode."""
         return self.name
 
     # equality is based on the node name so that nodes created in different
     # sessions or after a rebuild compare equal; this allows memory caching
     # and dictionary lookups to function across reloads.
     def __eq__(self, other):
+        """Return True if the UNode is equal to another UNode."""
         if not isinstance(other, UNode):
             return False
         return self.name == other.name
 
     def __hash__(self):
+        """Return the hash of the UNode's name."""
         # needed for using nodes as dict keys
         return hash(self.name)
 
@@ -59,6 +65,7 @@ class UDigraph(object):
     __slots__ = ('edges', '_edges_str', 'previous', 'recursion_limit', 'fvf', 'memory', 'print', '_cloudpickle_')
 
     def __init__(self) -> None:
+        """Initialize a UDigraph with default attributes."""
         self.edges = {}
         self._edges_str = None
         self.previous = [(None, None)]
@@ -72,11 +79,13 @@ class UDigraph(object):
         #     self.load_memory()
 
     def get_edges_str(self) -> dict:
+        """Return a string representation of the edges in the UDigraph."""
         if self._edges_str is None:
             self._edges_str = {str(k): {str(each) for each in v[0]} for k, v in self.edges.items()}
         return self._edges_str
 
     def save_memory(self, path=None) -> None:
+        """Save the current search memory to a cache file."""
         if path is None:
             path = unyts_parameters_.get_user_folder() + 'search_memory.cache'
         if self._cloudpickle_:
@@ -87,6 +96,7 @@ class UDigraph(object):
             logger.warning("Missing `cloudpickle` package. Not able to cache search memory.")
 
     def load_memory(self, path=None) -> None:
+        """Load search memory from a cache file."""
         if path is None:
             path = unyts_parameters_.get_user_folder() + 'search_memory.cache'
         if not self._cloudpickle_:
@@ -134,12 +144,14 @@ class UDigraph(object):
         unyts_parameters_.last_path_str = msg
 
     def clean_memory(self):
+        """Clean the search memory of the UDigraph."""
         self.memory = {}
         msg = f"memory cleaned."
         if unyts_parameters_.verbose_:
             logger.info(msg)
 
     def add_node(self, node) -> None:
+        """Add a node to the UDigraph if it does not already exist."""
         # nodes may appear multiple times during the various dictionary
         # preprocessing branches.  earlier versions raised a ValueError so
         # that inconsistent dictionaries would fail fast, but the build
@@ -156,6 +168,7 @@ class UDigraph(object):
         self.edges[node] = [], []
 
     def add_edge(self, edge, reverse=False) -> None:
+        """Add an edge to the UDigraph."""
         src = edge.get_source()
         dest = edge.get_destination()
         conv = edge.get_convert()
@@ -166,15 +179,18 @@ class UDigraph(object):
             self.edges[src][1].append(conv)
 
     def children_of(self, node):
+        """Return the list of child nodes for a given node in the UDigraph."""
         return self.edges[node][0]
 
     def has_node(self, node):
+        """Return True if a node exists in the UDigraph."""
         if type(node) is str:
             return node in [n.get_name() for n in self.edges]
         else:
             return node in self.edges
 
     def get_node(self, name):
+        """Return the node with the given name from the UDigraph."""
         result = [n for n in self.edges if n.get_name() == name]
         if len(result) == 0:
             raise NameError(name)
@@ -182,9 +198,11 @@ class UDigraph(object):
             return result[0]
 
     def list_nodes(self):
+        """Return a list of all node names in the UDigraph."""
         return list(set([n.get_name() for n in self.edges.keys()]))
 
     def convert(self, value, src, dest):
+        """Convert a value from one unit to another in the UDigraph."""
         if type(src) != UNode:
             src = self.get_node(src)
         if type(dest) != UNode:
@@ -192,6 +210,7 @@ class UDigraph(object):
         return self.edges[src][1][self.edges[src][0].index(dest)](value)
 
     def conversion(self, src, dest):
+        """Return the conversion function from one unit to another in the UDigraph."""
         if type(src) != UNode:
             src = self.get_node(src)
         if type(dest) != UNode:
@@ -199,6 +218,7 @@ class UDigraph(object):
         return self.edges[src][1][self.edges[src][0].index(dest)]
 
     def __str__(self) -> str:
+        """Return a string representation of the UDigraph."""
         result = ''
         for src in self.edges:
             for dest in self.edges[src]:
@@ -208,6 +228,7 @@ class UDigraph(object):
         return result[:-1]  # remove final \n
 
     def set_fvf(self, FVF) -> None:
+        """Set the Formation Volume Factor (FVF) for the UDigraph."""
         if type(FVF) is str:
             try:
                 FVF = float(FVF)
@@ -219,7 +240,9 @@ class UDigraph(object):
             self.fvf = FVF
 
     def get_fvf(self):
+        """Return the Formation Volume Factor (FVF) of the UDigraph."""
         def valid_fvf(FVF):
+            """Return a valid FVF value or False if invalid."""
             if type(FVF) is str:
                 try:
                     FVF = float(FVF)
@@ -248,6 +271,7 @@ class UDigraph(object):
 
 
 class Conversion(object):
+    """A class to represent a conversion between two units in the UDigraph, with an associated conversion function and metadata about whether it is a reverse or alias conversion."""
     __slots__ = ('src', 'dest', 'conv', 'rev', 'alias')
 
     def __init__(self, src, dest, conv, reverse=False, alias=False):
@@ -259,18 +283,23 @@ class Conversion(object):
         self.alias = alias
 
     def get_source(self):
+        """Return the source node of the conversion."""
         return self.src
 
     def get_destination(self):
+        """Return the destination node of the conversion."""
         return self.dest
 
     def convert(self, value):
+        """Convert a value using the conversion function."""
         return self.conv(value)
 
     def reverse(self, value):
+        """Reverse a value using the conversion function."""
         return value / self.conv(1)
 
     def get_convert(self):
+        """Return the conversion function for this conversion."""
         if self.rev and self.conv is not None:
             # return lambda x: x / self.conv(1)
             return self.reverse
@@ -278,4 +307,5 @@ class Conversion(object):
             return self.conv
 
     def __str__(self) -> str:
+        """Return a string representation of the conversion."""
         return self.src.get_name() + '->' + self.dest.get_name()

@@ -83,6 +83,7 @@ def DFS(graph, start, end, verbose=False, branch_depht=25) -> list:
     from unyts.converter import _get_descendants
     branch_depht = unyts_parameters_.generations_limit() if branch_depht is None else branch_depht
     def dfs_(graph, node, visited, path_queue):
+        """Recursive function to perform DFS."""
         visited.add(node)
         for child in graph.children_of(node):
             if not unyts_parameters_.is_intime():
@@ -119,9 +120,11 @@ class SlimUDigraph(object):
     The `children_of` method returns the list of nodes with direct relation to the key node. This method will be used by the search algorithms.
     """
     def __init__(self, edges:dict={}):
+        """Init method for SlimUDigraph class."""
         self.edges = edges
 
     def children_of(self, node):
+        """Returns the list of nodes with direct relation to the key node. This method will be used by the search algorithms."""
         return self.edges[node][0] if node in self.edges else []
 
 @timeit
@@ -164,10 +167,13 @@ def lean_BFS(graph, start, end, verbose=False, max_generations_screening=25) -> 
         return BFS(slim_graph, start, end, verbose=verbose and unyts_parameters_.verbose_details_ > 0)
 
 class SerialRun(object):
+    """A class to run a function in serial, used when parallel processing is not enabled or available. The `start` method runs the target function and returns its result, while checking if another run has already finished and returned a result to avoid redundant computation."""
     def __init__(self, target, args):
+        """Init method for SerialRun class."""
         self.target = target
         self.args = args
     def start(self):
+        """Start the target function and return its result."""
         # check if other run has finished already
         for each in self.args[0].values():
             if each != '' and each is not None:
@@ -179,11 +185,13 @@ class SerialRun(object):
 
 @timeit
 def _bfs(results, graph, start, end, verbose=False):
+    """Execute BFS and store result in results dict."""
     results['bfs'] = BFS(graph, start, end, verbose=verbose)
     return results['bfs']
 
 @timeit
 def _lean_bfs(results, graph, start, end, verbose=False, max_generations_screening=25):
+    """Execute lean_BFS and store result in results dict."""
     results['lean_bfs'] = lean_BFS(graph, start, end, verbose=verbose,
                                    max_generations_screening=max_generations_screening)
     return results['lean_bfs']

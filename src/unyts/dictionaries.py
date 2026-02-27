@@ -97,6 +97,7 @@ OGF_order = (tuple(), tuple, ('Volume', 'Rate',))
 
 @timeit
 def _load_dictionary() -> (dict, dict):
+    """Load the units dictionary from a cache file if it exists, otherwise build it from source definitions and cache it for future use."""
     logger.info('preparing units dictionary...')
 
     # the dictionary that contains all the units definitions
@@ -663,6 +664,7 @@ _try_load_all_units_cache = False  # Will be set by _load_all_units_cache()
 @timeit
 def _all_units():
     global _all_units_cache, _all_units_cache_event
+    """Return set of all units across all categories, using cached value if available, otherwise compute and cache asynchronously."""
     if _all_units_cache is not None:
         return _all_units_cache
     # Cache is being computed in background thread, wait for it
@@ -686,7 +688,7 @@ def _cache_all_units_async():
 
 def _cache_all_units():
     """Spawn async task to populate cache in background (if not already loaded from file)"""
-    global _all_units_cache_event, _all_units_cache_thread, _all_units_cache
+    global _all_units_cache_thread  # _all_units_cache_event, _all_units_cache
     
     # If already loaded from persistent cache, skip async computation
     if _all_units_cache is not None:

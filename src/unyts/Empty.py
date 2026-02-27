@@ -12,7 +12,9 @@ from typing import Union
 
 
 class EmptyType(type):
+    """A metaclass for the EmptyClass to specify an "Empty" (not Null nor None) value."""
     def __repr__(self):
+        """Return a string representation of the EmptyType."""
         return "EmptyType"
 
 
@@ -21,6 +23,7 @@ class EmptyClass(object, metaclass=EmptyType):
     A class to specify an "Empty" (not Null nor None) value.
     """
     def __repr__(self):
+        """Return a string representation of the EmptyClass."""
         return "Empty"
 
 Empty = EmptyClass()
