@@ -55,10 +55,10 @@ Out: 18_in
 For further examples of use, the following Jupyter notebook <a href="https://github.com/ayaranitram/unyts/blob/master/unyts_demo.ipynb">**unyts_demo**</a> intends to be a guide on how to use this converter and units classes.  
   
 ## To install this package:  
-Install it from the <a href="https://pypi.org/search/?q=unyts">pypi.org</a> repository:  
+Install it from the <a href="https://pypi.org/project/unyts/">pypi.org</a> repository:  
 `pip install unyts`  
 or upgrade to the latest version:  
-`pip install --upgrade unyts`  
+`pip install --upgrade unyts`  !
   
 ## Optional requisites:  
 The main functionalities are purely Python powered and does not require any other package to work but, if present, some commonly known packages are used to improve the operability of `unyts`:  
