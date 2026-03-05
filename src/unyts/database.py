@@ -6,8 +6,8 @@ Created on Tue Dec 03 23:15:37 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.8.0'
-__release__ = 20260225
+__version__ = '0.8.1'
+__release__ = 202600305
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf']
 
 import threading
@@ -84,14 +84,15 @@ def set_fvf(fvf=None) -> None:
     logger.info(f"FVF set to {fvf} rV/stV")
 
 @timeit
-def get_fvf() -> str:
-    """Return the current formation Volume factor (FVF) value."""
+def get_fvf() -> float:
+    """Return the current formation Volume factor (FVF) value.
+    If FVF is not set, it will return 1.0."""
     if units_network.fvf is not None:
-        return str(round(units_network.fvf, 4))
-    elif unyts_parameters_.fvf:
-        set_fvf(unyts_parameters_.fvf)
+        return round(units_network.fvf, 4)
+    elif unyts_parameters_.fvf_:
+        set_fvf(unyts_parameters_.fvf_)
     else:
-        return ""
+        return 1.0
 
 @timeit
 def _load_network():
