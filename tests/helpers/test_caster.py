@@ -8,11 +8,13 @@ Created on Sat Aug 20 22:58:51 2022
 from unyts.helpers.caster import caster, to_number
 
 def test_caster():
+    """Validate generic casting behavior for numeric strings and complex values."""
     assert caster('1') == 1 and type(caster('1')) is int
     assert caster('1.5') == 1.5 and type(caster('1.5')) is float
     assert caster('-1-1j') == -1-1j and type(caster('1+1j')) is complex
 
 def test_to_number():
+    """Validate numeric-string normalization and conversion edge cases."""
     assert to_number('1') == 1 and type(to_number('1')) is int
     assert to_number('-1') == -1 and type(to_number('-1')) is int
     assert to_number('1 000') == 1000 and type(to_number('1 000')) is int

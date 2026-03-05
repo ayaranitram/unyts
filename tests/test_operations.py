@@ -9,6 +9,7 @@ from unyts.operations import unit_base_power, unit_product, unit_division, unit_
 
 
 def test_unit_base_power():
+    """Verify decomposition of units into base token and exponent."""
     assert unit_base_power('m') == ('m', 1)
     assert unit_base_power('ft') == ('ft', 1)
     assert unit_base_power('m2') == ('m', 2)
@@ -19,6 +20,7 @@ def test_unit_base_power():
 
 
 def test_unit_product():
+    """Verify multiplication of unit tokens and exponent combination rules."""
     assert unit_product('m', 'ft') == 'm2'
     assert unit_product('ft', 'm') == 'ft2'
     assert unit_product('m', 's') == 'm*s'
@@ -26,12 +28,14 @@ def test_unit_product():
 
 
 def test_unit_division():
+    """Verify division of units and resulting exponent updates."""
     assert unit_division('m', 'm') == 'm/m'
     assert unit_division('m', 'm2') == 'm-1'
     assert unit_division('cm3', 'cm') == 'cm2'
 
 
 def test_unit_power():
+    """Verify exponentiation rules for units across numeric and symbolic exponents."""
     assert unit_power('m', -1) == 'm-1'
     assert unit_power('m', 0) == 'dimensionless'
     assert unit_power('m', 1) == 'm'

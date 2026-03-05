@@ -12,6 +12,7 @@ from string import ascii_uppercase
 
 
 def key2name(txt):
+    """Convert CamelCase dictionary keys into snake_case unit class names."""
     return (''.join([('_' if s in ascii_uppercase else '') + s.lower() for s in txt])).strip('_')
 
 

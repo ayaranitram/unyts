@@ -8,6 +8,7 @@ Created on Sun May 23 11:27:57 2021
 from unyts.helpers.multi_split import multi_split
 
 def test_multisplit():
+    """Verify unit tokenization around division and multiplication operators."""
     assert multi_split('m2') == ['m2']
     assert multi_split('km/h') == ['km', '/', 'h']
     assert multi_split('mD*ft') == ['mD', '*', 'ft']

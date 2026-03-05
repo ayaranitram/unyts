@@ -8,6 +8,7 @@ Created on Sun May 23 11:27:57 2021
 from unyts.helpers.is_number import is_number
 
 def test_is_number():
+    """Check number detection for numeric literals and non-numeric text."""
     assert is_number(1) is True
     assert is_number(0) is True
     assert is_number(-1) is True

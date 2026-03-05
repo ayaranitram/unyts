@@ -9,6 +9,7 @@ from unyts.helpers.is_unit import is_unit
 
 
 def test_is_unit():
+    """Check unit-string detection for simple and composite units."""
     assert is_unit('m') is True
     assert is_unit('m/h') is True
     assert is_unit('stb/day/psi') is True
