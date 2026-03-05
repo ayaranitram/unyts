@@ -1,0 +1,6 @@
+dictionary keys:
+['Acceleration', 'Area', 'Capacitance', 'Charge', 'Compressibility', 'Conductance', 'Current', 'Data', 'Date', 'Density', 'Dimensionless', 'Energy', 'Force', 'Frequency', 'Impedance', 'Inductance', 'Length', 'Mass', 'Percentage', 'Permeability', 'Power', 'Pressure', 'PressureGradient', 'ProductivityIndex', 'Rate', 'Resistance', 'Temperature', 'TemperatureGradient', 'Time', 'UserUnits', 'Velocity', 'Viscosity', 'Voltage', 'Volume', 'VolumeRatio', 'Weight', 'otherUnits']
+
+duplicate entries by category:
+{}
+Time_PLURALwS_UPPER_REVERSE not present in dictionary

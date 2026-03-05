@@ -1,0 +1,3159 @@
+[
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\dictionaries.py",
+    "kind": "function",
+    "name": "_load_dictionary",
+    "lineno": 99,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\dictionaries.py",
+    "kind": "function",
+    "name": "_all_units",
+    "lineno": 664,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\errors.py",
+    "kind": "class",
+    "name": "WrongUnitsError",
+    "lineno": 14,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\errors.py",
+    "kind": "method",
+    "name": "WrongUnitsError.__init__",
+    "lineno": 15,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\errors.py",
+    "kind": "class",
+    "name": "WrongValueError",
+    "lineno": 19,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\errors.py",
+    "kind": "method",
+    "name": "WrongValueError.__init__",
+    "lineno": 20,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\errors.py",
+    "kind": "class",
+    "name": "WrongDateFormatError",
+    "lineno": 24,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\errors.py",
+    "kind": "method",
+    "name": "WrongDateFormatError.__init__",
+    "lineno": 25,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\errors.py",
+    "kind": "class",
+    "name": "NoConversionFoundError",
+    "lineno": 29,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\errors.py",
+    "kind": "method",
+    "name": "NoConversionFoundError.__init__",
+    "lineno": 30,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\errors.py",
+    "kind": "class",
+    "name": "NoFVFError",
+    "lineno": 34,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\errors.py",
+    "kind": "method",
+    "name": "NoFVFError.__init__",
+    "lineno": 35,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\errors.py",
+    "kind": "class",
+    "name": "SearchTimeoutError",
+    "lineno": 39,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\errors.py",
+    "kind": "method",
+    "name": "SearchTimeoutError.__init__",
+    "lineno": 40,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "class",
+    "name": "UnytsApp",
+    "lineno": 31,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "method",
+    "name": "UnytsApp.__init__",
+    "lineno": 34,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "method",
+    "name": "UnytsApp._validate_from_units",
+    "lineno": 120,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "method",
+    "name": "UnytsApp._validate_to_units",
+    "lineno": 126,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "method",
+    "name": "UnytsApp._get_from",
+    "lineno": 132,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "method",
+    "name": "UnytsApp._get_to",
+    "lineno": 150,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "method",
+    "name": "UnytsApp._calculate",
+    "lineno": 168,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "method",
+    "name": "UnytsApp._rcalculate",
+    "lineno": 215,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "method",
+    "name": "UnytsApp._calculation_time",
+    "lineno": 262,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "method",
+    "name": "UnytsApp._partial_msg",
+    "lineno": 283,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "method",
+    "name": "UnytsApp._display_path",
+    "lineno": 306,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "method",
+    "name": "UnytsApp.check_temporary_message",
+    "lineno": 326,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "method",
+    "name": "UnytsApp.show_temporary_message",
+    "lineno": 334,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "method",
+    "name": "UnytsApp._get_input",
+    "lineno": 338,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "start_gui",
+    "lineno": 342,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "close_gui",
+    "lineno": 345,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "open_help",
+    "lineno": 355,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "open_git",
+    "lineno": 357,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "print_path",
+    "lineno": 359,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "_set_bfs",
+    "lineno": 367,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "_set_lean_bfs",
+    "lineno": 375,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "_set_dfs",
+    "lineno": 383,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "_set_hybrid_BFS",
+    "lineno": 391,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "_set_par_th",
+    "lineno": 399,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "_set_par_mp",
+    "lineno": 405,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "_set_par_off",
+    "lineno": 411,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "_set_par_auto",
+    "lineno": 417,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "_set_fvf",
+    "lineno": 424,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "_set_density",
+    "lineno": 477,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "_set_timeout",
+    "lineno": 521,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "export_memory",
+    "lineno": 572,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "load_memory_file",
+    "lineno": 585,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "set_cache_folder",
+    "lineno": 605,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "update_logger_level",
+    "lineno": 618,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "set_logger_debug",
+    "lineno": 650,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "set_logger_info",
+    "lineno": 653,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "set_logger_warn",
+    "lineno": 656,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "set_logger_error",
+    "lineno": 659,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\gui.py",
+    "kind": "function",
+    "name": "set_logger_critical",
+    "lineno": 662,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.__init__",
+    "lineno": 38,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.threading_available",
+    "lineno": 67,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.multiprocessing_available",
+    "lineno": 75,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.load_params",
+    "lineno": 83,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.save_params",
+    "lineno": 152,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.print_path",
+    "lineno": 177,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.cache",
+    "lineno": 192,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.raise_error",
+    "lineno": 205,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.verbose",
+    "lineno": 218,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.logger_level",
+    "lineno": 240,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.set_logger_level",
+    "lineno": 243,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.reload_next_time",
+    "lineno": 248,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.recursion_limit",
+    "lineno": 264,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.generations_limit",
+    "lineno": 278,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.get_algorithm",
+    "lineno": 292,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.set_algorithm",
+    "lineno": 295,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.get_algorithm",
+    "lineno": 314,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.set_parallel",
+    "lineno": 317,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.get_parallel",
+    "lineno": 344,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.set_timeout",
+    "lineno": 347,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.get_timeout",
+    "lineno": 357,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.is_intime",
+    "lineno": 360,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.reset_start_time",
+    "lineno": 369,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.set_user_folder",
+    "lineno": 372,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "method",
+    "name": "UnytsParameters.get_user_folder",
+    "lineno": 380,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "print_path",
+    "lineno": 387,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "raise_error",
+    "lineno": 391,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "verbose",
+    "lineno": 395,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "cache",
+    "lineno": 399,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "recursion_limit",
+    "lineno": 402,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "set_density",
+    "lineno": 406,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "_get_density",
+    "lineno": 441,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "get_density",
+    "lineno": 453,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "reload",
+    "lineno": 460,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "set_algorithm",
+    "lineno": 466,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "get_algorithm",
+    "lineno": 472,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "set_parallel",
+    "lineno": 476,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "get_parallel",
+    "lineno": 480,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "set_timeout",
+    "lineno": 484,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "get_timeout",
+    "lineno": 496,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\parameters.py",
+    "kind": "function",
+    "name": "set_logging_level",
+    "lineno": 500,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\__init__.py",
+    "kind": "function",
+    "name": "start_gui",
+    "lineno": 78,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\Empty.py",
+    "kind": "class",
+    "name": "EmptyType",
+    "lineno": 14,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\Empty.py",
+    "kind": "method",
+    "name": "EmptyType.__repr__",
+    "lineno": 15,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\Empty.py",
+    "kind": "method",
+    "name": "EmptyClass.__repr__",
+    "lineno": 23,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\operations.py",
+    "kind": "function",
+    "name": "unit_split",
+    "lineno": 22,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\operations.py",
+    "kind": "function",
+    "name": "unit_base_power",
+    "lineno": 27,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\operations.py",
+    "kind": "function",
+    "name": "unit_base",
+    "lineno": 63,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\operations.py",
+    "kind": "function",
+    "name": "unit_product",
+    "lineno": 67,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\operations.py",
+    "kind": "function",
+    "name": "unit_division",
+    "lineno": 142,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\operations.py",
+    "kind": "function",
+    "name": "unit_power",
+    "lineno": 219,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\operations.py",
+    "kind": "function",
+    "name": "unit_addition",
+    "lineno": 253,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\operations.py",
+    "kind": "function",
+    "name": "unit_inverse",
+    "lineno": 275,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "_div",
+    "lineno": 70,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "_prod",
+    "lineno": 72,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "_looped_conversion",
+    "lineno": 155,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "_operation_filter",
+    "lineno": 192,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "_get_recursion_limit",
+    "lineno": 217,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "_multiply_by_fraction",
+    "lineno": 248,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "_get_descendants",
+    "lineno": 386,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "total_generations",
+    "lineno": 449,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "conversion",
+    "lineno": 467,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "_product",
+    "lineno": 496,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "conversion",
+    "lineno": 560,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "conversion",
+    "lineno": 578,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "conversion",
+    "lineno": 596,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "_clean_print_conversion_path",
+    "lineno": 685,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "_clean_verbose",
+    "lineno": 689,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "conv",
+    "lineno": 714,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\converter.py",
+    "kind": "function",
+    "name": "conv",
+    "lineno": 724,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "class",
+    "name": "UNode",
+    "lineno": 28,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UNode.__init__",
+    "lineno": 31,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UNode.get_name",
+    "lineno": 34,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UNode.__str__",
+    "lineno": 37,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UNode.__eq__",
+    "lineno": 43,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UNode.__hash__",
+    "lineno": 48,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.__init__",
+    "lineno": 61,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.get_edges_str",
+    "lineno": 74,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.save_memory",
+    "lineno": 79,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.load_memory",
+    "lineno": 89,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.clean_memory",
+    "lineno": 136,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.add_node",
+    "lineno": 142,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.add_edge",
+    "lineno": 158,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.children_of",
+    "lineno": 168,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.has_node",
+    "lineno": 171,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.get_node",
+    "lineno": 177,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.list_nodes",
+    "lineno": 184,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.convert",
+    "lineno": 187,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.conversion",
+    "lineno": 194,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.__str__",
+    "lineno": 201,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.set_fvf",
+    "lineno": 210,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.get_fvf",
+    "lineno": 221,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "UDigraph.valid_fvf",
+    "lineno": 222,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "class",
+    "name": "Conversion",
+    "lineno": 250,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "Conversion.get_source",
+    "lineno": 261,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "Conversion.get_destination",
+    "lineno": 264,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "Conversion.convert",
+    "lineno": 267,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "Conversion.reverse",
+    "lineno": 270,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "Conversion.get_convert",
+    "lineno": 273,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\network.py",
+    "kind": "method",
+    "name": "Conversion.__str__",
+    "lineno": 280,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "save_memory",
+    "lineno": 34,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "load_memory",
+    "lineno": 38,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "clean_memory",
+    "lineno": 42,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "delete_cache",
+    "lineno": 46,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "set_fvf",
+    "lineno": 54,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "valid_fvf",
+    "lineno": 55,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "get_fvf",
+    "lineno": 81,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_load_network",
+    "lineno": 90,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_create_Rates",
+    "lineno": 666,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_create_VolumeRatio",
+    "lineno": 675,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_create_Density",
+    "lineno": 683,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_create_Velocity",
+    "lineno": 690,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_create_Power",
+    "lineno": 697,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_create_Frequency",
+    "lineno": 708,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_create_Conductance",
+    "lineno": 715,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_create_Capacitance_Charge",
+    "lineno": 722,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_create_Pressure",
+    "lineno": 768,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_create_ProductivityIndex",
+    "lineno": 775,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_create_PressureGradient",
+    "lineno": 799,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_create_TemperatureGradient",
+    "lineno": 807,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_create_Acceleration",
+    "lineno": 815,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_complete_products",
+    "lineno": 825,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_rebuild_units",
+    "lineno": 849,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "network_to_frame",
+    "lineno": 866,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\database.py",
+    "kind": "function",
+    "name": "_clean_network",
+    "lineno": 882,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "class",
+    "name": "UnytType",
+    "lineno": 67,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "UnytType.__repr__",
+    "lineno": 68,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__init__",
+    "lineno": 81,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.unit",
+    "lineno": 101,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.unit",
+    "lineno": 105,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.units",
+    "lineno": 109,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.units",
+    "lineno": 113,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.get_value",
+    "lineno": 116,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.value",
+    "lineno": 120,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.value",
+    "lineno": 124,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.values",
+    "lineno": 128,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.values",
+    "lineno": 132,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__call__",
+    "lineno": 135,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__repr__",
+    "lineno": 138,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__str__",
+    "lineno": 141,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.dtype",
+    "lineno": 148,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.convert",
+    "lineno": 161,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.to",
+    "lineno": 179,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__neg__",
+    "lineno": 182,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__bool__",
+    "lineno": 185,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__abs__",
+    "lineno": 192,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__add__",
+    "lineno": 195,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__radd__",
+    "lineno": 233,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__mul__",
+    "lineno": 236,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__rmul__",
+    "lineno": 273,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__pow__",
+    "lineno": 276,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__rpow__",
+    "lineno": 316,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__sub__",
+    "lineno": 326,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__rsub__",
+    "lineno": 365,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__truediv__",
+    "lineno": 368,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__rtruediv__",
+    "lineno": 402,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__floordiv__",
+    "lineno": 414,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__rfloordiv__",
+    "lineno": 448,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__matmul__",
+    "lineno": 460,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__mod__",
+    "lineno": 486,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__lt__",
+    "lineno": 519,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__le__",
+    "lineno": 528,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__eq__",
+    "lineno": 537,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__ne__",
+    "lineno": 546,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__ge__",
+    "lineno": 555,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__gt__",
+    "lineno": 564,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__len__",
+    "lineno": 573,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__round__",
+    "lineno": 579,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__getitem__",
+    "lineno": 582,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.__iter__",
+    "lineno": 594,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.equals",
+    "lineno": 600,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.eq",
+    "lineno": 611,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.get_unit",
+    "lineno": 614,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.get_units",
+    "lineno": 617,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.round",
+    "lineno": 620,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.significants",
+    "lineno": 622,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.check_value",
+    "lineno": 642,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "method",
+    "name": "Unit.check_unit",
+    "lineno": 657,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "function",
+    "name": "is_Unit",
+    "lineno": 673,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\unit_class.py",
+    "kind": "function",
+    "name": "valid_unit",
+    "lineno": 677,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\searches.py",
+    "kind": "function",
+    "name": "dfs_",
+    "lineno": 85,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\searches.py",
+    "kind": "method",
+    "name": "SlimUDigraph.__init__",
+    "lineno": 121,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\searches.py",
+    "kind": "method",
+    "name": "SlimUDigraph.children_of",
+    "lineno": 124,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\searches.py",
+    "kind": "class",
+    "name": "SerialRun",
+    "lineno": 166,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\searches.py",
+    "kind": "method",
+    "name": "SerialRun.__init__",
+    "lineno": 167,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\searches.py",
+    "kind": "method",
+    "name": "SerialRun.start",
+    "lineno": 170,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\searches.py",
+    "kind": "function",
+    "name": "_bfs",
+    "lineno": 181,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\searches.py",
+    "kind": "function",
+    "name": "_lean_bfs",
+    "lineno": 186,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\__main__.py",
+    "kind": "module",
+    "name": "__main__.py",
+    "lineno": 1,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\helpers\\is_unit.py",
+    "kind": "function",
+    "name": "is_unit",
+    "lineno": 15,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\helpers\\unit_string_tools.py",
+    "kind": "function",
+    "name": "split_ratio",
+    "lineno": 16,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\helpers\\unit_string_tools.py",
+    "kind": "function",
+    "name": "split_product",
+    "lineno": 20,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\helpers\\unit_string_tools.py",
+    "kind": "function",
+    "name": "split_unit",
+    "lineno": 24,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\helpers\\unit_string_tools.py",
+    "kind": "function",
+    "name": "reduce_parentheses",
+    "lineno": 30,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\helpers\\unit_string_tools.py",
+    "kind": "function",
+    "name": "reduce_units",
+    "lineno": 61,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\helpers\\unit_string_tools.py",
+    "kind": "function",
+    "name": "change",
+    "lineno": 62,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\helpers\\timer.py",
+    "kind": "module",
+    "name": "timer.py",
+    "lineno": 1,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\helpers\\timer.py",
+    "kind": "function",
+    "name": "timeit",
+    "lineno": 4,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\helpers\\timer.py",
+    "kind": "function",
+    "name": "wrap_func",
+    "lineno": 5,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\__init__.py",
+    "kind": "method",
+    "name": "CallableModule.__call__",
+    "lineno": 46,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\custom.py",
+    "kind": "function",
+    "name": "CustomUnits",
+    "lineno": 18,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\custom.py",
+    "kind": "function",
+    "name": "OtherUnits",
+    "lineno": 22,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\custom.py",
+    "kind": "class",
+    "name": "UserUnits",
+    "lineno": 26,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\custom.py",
+    "kind": "method",
+    "name": "UserUnits.__init__",
+    "lineno": 30,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\custom.py",
+    "kind": "function",
+    "name": "set_unit",
+    "lineno": 44,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\custom.py",
+    "kind": "function",
+    "name": "set_conversion",
+    "lineno": 50,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\custom.py",
+    "kind": "function",
+    "name": "reverse_conversion",
+    "lineno": 54,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\data.py",
+    "kind": "class",
+    "name": "Data",
+    "lineno": 18,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\data.py",
+    "kind": "method",
+    "name": "Data.__init__",
+    "lineno": 22,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\date.py",
+    "kind": "class",
+    "name": "Date",
+    "lineno": 21,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\date.py",
+    "kind": "method",
+    "name": "Date.__init__",
+    "lineno": 25,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\date.py",
+    "kind": "method",
+    "name": "Date.value",
+    "lineno": 33,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\date.py",
+    "kind": "method",
+    "name": "Date.value",
+    "lineno": 36,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\date.py",
+    "kind": "method",
+    "name": "Date.values",
+    "lineno": 40,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\date.py",
+    "kind": "method",
+    "name": "Date.value",
+    "lineno": 43,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\date.py",
+    "kind": "method",
+    "name": "Date.__add__",
+    "lineno": 46,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\date.py",
+    "kind": "method",
+    "name": "Date.__sub__",
+    "lineno": 50,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\date.py",
+    "kind": "method",
+    "name": "Date.year",
+    "lineno": 54,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\date.py",
+    "kind": "method",
+    "name": "Date.month",
+    "lineno": 57,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\date.py",
+    "kind": "method",
+    "name": "Date.day",
+    "lineno": 60,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\date.py",
+    "kind": "method",
+    "name": "Date.check_date",
+    "lineno": 63,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "ogf_M",
+    "lineno": 15,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "ogf_MM",
+    "lineno": 18,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "ogf_B",
+    "lineno": 21,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "ogf_T",
+    "lineno": 24,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_bit_Y",
+    "lineno": 31,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_bit_Z",
+    "lineno": 34,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_bit_E",
+    "lineno": 37,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_bit_P",
+    "lineno": 40,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_bit_T",
+    "lineno": 43,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_bit_G",
+    "lineno": 46,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_bit_M",
+    "lineno": 49,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_bit_K",
+    "lineno": 52,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_byte_Y",
+    "lineno": 57,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_byte_Z",
+    "lineno": 60,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_byte_E",
+    "lineno": 63,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_byte_P",
+    "lineno": 66,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_byte_T",
+    "lineno": 69,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_byte_G",
+    "lineno": 72,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_byte_M",
+    "lineno": 75,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "data_byte_K",
+    "lineno": 78,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_Q_1",
+    "lineno": 85,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_R_1",
+    "lineno": 88,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_Y_1",
+    "lineno": 91,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_Z_1",
+    "lineno": 94,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_E_1",
+    "lineno": 97,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_P_1",
+    "lineno": 100,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_T_1",
+    "lineno": 103,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_G_1",
+    "lineno": 106,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_M_1",
+    "lineno": 109,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_k_1",
+    "lineno": 112,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_h_1",
+    "lineno": 115,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_da_1",
+    "lineno": 118,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_d_1",
+    "lineno": 121,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_c_1",
+    "lineno": 124,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_m_1",
+    "lineno": 127,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_u_1",
+    "lineno": 130,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_n_1",
+    "lineno": 133,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_p_1",
+    "lineno": 136,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_f_1",
+    "lineno": 139,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_a_1",
+    "lineno": 142,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_z_1",
+    "lineno": 145,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_y_1",
+    "lineno": 148,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_r_1",
+    "lineno": 151,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_q_1",
+    "lineno": 154,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_Q_2",
+    "lineno": 160,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_R_2",
+    "lineno": 163,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_Y_2",
+    "lineno": 166,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_Z_2",
+    "lineno": 169,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_E_2",
+    "lineno": 172,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_P_2",
+    "lineno": 175,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_T_2",
+    "lineno": 178,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_G_2",
+    "lineno": 181,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_M_2",
+    "lineno": 184,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_k_2",
+    "lineno": 187,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_h_2",
+    "lineno": 190,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_da_2",
+    "lineno": 193,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_d_2",
+    "lineno": 196,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_c_2",
+    "lineno": 199,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_m_2",
+    "lineno": 202,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_u_2",
+    "lineno": 205,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_n_2",
+    "lineno": 208,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_p_2",
+    "lineno": 211,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_f_2",
+    "lineno": 214,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_a_2",
+    "lineno": 217,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_z_2",
+    "lineno": 220,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_y_2",
+    "lineno": 223,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_r_2",
+    "lineno": 226,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_q_2",
+    "lineno": 229,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_Q_3",
+    "lineno": 235,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_R_3",
+    "lineno": 238,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_Y_3",
+    "lineno": 241,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_Z_3",
+    "lineno": 244,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_E_3",
+    "lineno": 247,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_P_3",
+    "lineno": 250,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_T_3",
+    "lineno": 253,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_G_3",
+    "lineno": 256,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_M_3",
+    "lineno": 259,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_k_3",
+    "lineno": 262,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_h_3",
+    "lineno": 265,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_da_3",
+    "lineno": 268,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_d_3",
+    "lineno": 271,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_c_3",
+    "lineno": 274,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_m_3",
+    "lineno": 277,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_u_3",
+    "lineno": 280,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_n_3",
+    "lineno": 283,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_p_3",
+    "lineno": 286,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_f_3",
+    "lineno": 289,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_a_3",
+    "lineno": 292,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_z_3",
+    "lineno": 295,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_y_3",
+    "lineno": 298,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_r_3",
+    "lineno": 301,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\def_prefixes.py",
+    "kind": "function",
+    "name": "si_q_3",
+    "lineno": 304,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "class",
+    "name": "Energy",
+    "lineno": 19,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Energy.__init__",
+    "lineno": 23,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Energy.__truediv__",
+    "lineno": 29,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "class",
+    "name": "Power",
+    "lineno": 38,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Power.__init__",
+    "lineno": 42,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Power.__mul__",
+    "lineno": 48,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Power.__truediv__",
+    "lineno": 54,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "class",
+    "name": "Current",
+    "lineno": 63,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Current.__init__",
+    "lineno": 67,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Current.__mul__",
+    "lineno": 73,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "class",
+    "name": "Voltage",
+    "lineno": 80,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Voltage.__init__",
+    "lineno": 84,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Voltage.__mul__",
+    "lineno": 90,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Voltage.__truediv__",
+    "lineno": 98,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "class",
+    "name": "Resistance",
+    "lineno": 107,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Resistance.__init__",
+    "lineno": 111,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Resistance.__mul__",
+    "lineno": 118,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "class",
+    "name": "Conductance",
+    "lineno": 125,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Conductance.__init__",
+    "lineno": 129,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "class",
+    "name": "Capacitance",
+    "lineno": 136,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Capacitance.__init__",
+    "lineno": 140,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Capacitance.__mul__",
+    "lineno": 146,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "class",
+    "name": "Charge",
+    "lineno": 153,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Charge.__init__",
+    "lineno": 157,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Charge.__truediv__",
+    "lineno": 163,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "class",
+    "name": "Inductance",
+    "lineno": 170,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Inductance.__init__",
+    "lineno": 174,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "class",
+    "name": "Impedance",
+    "lineno": 181,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\energy.py",
+    "kind": "method",
+    "name": "Impedance.__init__",
+    "lineno": 185,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\force.py",
+    "kind": "class",
+    "name": "Force",
+    "lineno": 18,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\force.py",
+    "kind": "method",
+    "name": "Force.__init__",
+    "lineno": 22,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\force.py",
+    "kind": "class",
+    "name": "Pressure",
+    "lineno": 29,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\force.py",
+    "kind": "method",
+    "name": "Pressure.__init__",
+    "lineno": 33,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\force.py",
+    "kind": "class",
+    "name": "Weight",
+    "lineno": 40,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\force.py",
+    "kind": "method",
+    "name": "Weight.__init__",
+    "lineno": 44,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\force.py",
+    "kind": "class",
+    "name": "Compressibility",
+    "lineno": 51,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\force.py",
+    "kind": "method",
+    "name": "Compressibility.__init__",
+    "lineno": 55,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\force.py",
+    "kind": "class",
+    "name": "Viscosity",
+    "lineno": 62,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\force.py",
+    "kind": "method",
+    "name": "Viscosity.__init__",
+    "lineno": 66,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\geometry.py",
+    "kind": "class",
+    "name": "Length",
+    "lineno": 18,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\geometry.py",
+    "kind": "method",
+    "name": "Length.__init__",
+    "lineno": 22,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\geometry.py",
+    "kind": "class",
+    "name": "Area",
+    "lineno": 29,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\geometry.py",
+    "kind": "method",
+    "name": "Area.__init__",
+    "lineno": 33,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\geometry.py",
+    "kind": "class",
+    "name": "Volume",
+    "lineno": 40,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\geometry.py",
+    "kind": "method",
+    "name": "Volume.__init__",
+    "lineno": 44,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\geometry.py",
+    "kind": "class",
+    "name": "Permeability",
+    "lineno": 51,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\geometry.py",
+    "kind": "method",
+    "name": "Permeability.__init__",
+    "lineno": 55,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\mass.py",
+    "kind": "class",
+    "name": "Mass",
+    "lineno": 18,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\mass.py",
+    "kind": "method",
+    "name": "Mass.__init__",
+    "lineno": 22,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\rates.py",
+    "kind": "class",
+    "name": "Rate",
+    "lineno": 18,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\rates.py",
+    "kind": "method",
+    "name": "Rate.__init__",
+    "lineno": 22,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\rates.py",
+    "kind": "class",
+    "name": "Velocity",
+    "lineno": 29,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\rates.py",
+    "kind": "method",
+    "name": "Velocity.__init__",
+    "lineno": 33,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\rates.py",
+    "kind": "function",
+    "name": "Speed",
+    "lineno": 40,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\rates.py",
+    "kind": "class",
+    "name": "Acceleration",
+    "lineno": 44,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\rates.py",
+    "kind": "method",
+    "name": "Acceleration.__init__",
+    "lineno": 48,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\ratios.py",
+    "kind": "class",
+    "name": "Density",
+    "lineno": 18,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\ratios.py",
+    "kind": "method",
+    "name": "Density.__init__",
+    "lineno": 22,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\ratios.py",
+    "kind": "class",
+    "name": "VolumeRatio",
+    "lineno": 29,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\ratios.py",
+    "kind": "method",
+    "name": "VolumeRatio.__init__",
+    "lineno": 33,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\ratios.py",
+    "kind": "class",
+    "name": "ProductivityIndex",
+    "lineno": 40,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\ratios.py",
+    "kind": "method",
+    "name": "ProductivityIndex.__init__",
+    "lineno": 44,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\ratios.py",
+    "kind": "class",
+    "name": "PressureGradient",
+    "lineno": 51,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\ratios.py",
+    "kind": "method",
+    "name": "PressureGradient.__init__",
+    "lineno": 55,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\ratios.py",
+    "kind": "class",
+    "name": "TemperatureGradient",
+    "lineno": 61,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\ratios.py",
+    "kind": "method",
+    "name": "TemperatureGradient.__init__",
+    "lineno": 65,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\temperature.py",
+    "kind": "class",
+    "name": "Temperature",
+    "lineno": 18,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\temperature.py",
+    "kind": "method",
+    "name": "Temperature.__init__",
+    "lineno": 22,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\temperature.py",
+    "kind": "class",
+    "name": "TemperatureGradient",
+    "lineno": 29,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\temperature.py",
+    "kind": "method",
+    "name": "TemperatureGradient.__init__",
+    "lineno": 33,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\time.py",
+    "kind": "class",
+    "name": "Time",
+    "lineno": 18,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\time.py",
+    "kind": "method",
+    "name": "Time.__init__",
+    "lineno": 22,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\time.py",
+    "kind": "method",
+    "name": "Time.__mul__",
+    "lineno": 28,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\time.py",
+    "kind": "class",
+    "name": "Frequency",
+    "lineno": 36,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\time.py",
+    "kind": "method",
+    "name": "Frequency.__init__",
+    "lineno": 40,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\unitless.py",
+    "kind": "class",
+    "name": "Dimensionless",
+    "lineno": 20,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\unitless.py",
+    "kind": "method",
+    "name": "Dimensionless.__init__",
+    "lineno": 24,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\unitless.py",
+    "kind": "method",
+    "name": "Dimensionless.convert",
+    "lineno": 32,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\unitless.py",
+    "kind": "method",
+    "name": "Dimensionless.to",
+    "lineno": 48,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\unitless.py",
+    "kind": "class",
+    "name": "Percentage",
+    "lineno": 52,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\unitless.py",
+    "kind": "method",
+    "name": "Percentage.__init__",
+    "lineno": 56,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\unitless.py",
+    "kind": "method",
+    "name": "Percentage.__repr__",
+    "lineno": 65,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\unitless.py",
+    "kind": "method",
+    "name": "Percentage.__str__",
+    "lineno": 68,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\unitless.py",
+    "kind": "method",
+    "name": "Percentage.__neg__",
+    "lineno": 71,
+    "docstring": ""
+  },
+  {
+    "file": "D:\\git\\unyts\\src\\unyts\\units\\unitless.py",
+    "kind": "method",
+    "name": "Percentage.__abs__",
+    "lineno": 74,
+    "docstring": ""
+  }
+]
