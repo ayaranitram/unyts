@@ -63,7 +63,9 @@ def set_conversion(from_units: str, to_units: str, conversion, reverse_conversio
     from ..database import units_network
     from ..network import UNode, Conversion
     if reverse_conversion is None:
-        def reverse_conversion(x): return x / conversion(1)
+        def reverse_conversion(x):
+            """Apply a default reverse conversion for linear relationships."""
+            return x / conversion(1)
     if type(from_units) is str:
         pass
     elif hasattr(from_units, 'units') and type(from_units.units) is str:
