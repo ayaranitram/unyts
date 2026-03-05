@@ -233,13 +233,15 @@ class UDigraph(object):
             try:
                 FVF = float(FVF)
             except ValueError:
-                print(f'received FVF value is not a number: {FVF}')
+                logger.error(f'received FVF value is not a number: {FVF}')
+                raise TypeError(f'received FVF value is not a number: {FVF}')
         if type(FVF) in (int, float):
             if FVF <= 0:
                 logger.error('FVF should be a positive number...')
+                raise ValueError('FVF should be a positive number...')
             self.fvf = FVF
 
-    def get_fvf(self):
+    def get_fvf(self) -> float:
         """Return the Formation Volume Factor (FVF) of the UDigraph."""
         def valid_fvf(FVF):
             """Return a valid FVF value or False if invalid."""
