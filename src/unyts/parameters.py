@@ -6,7 +6,7 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.6.12'
+__version__ = '0.6.13'
 __release__ = 20260225
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'set_density', 'get_density',
            'recursion_limit', 'verbose', 'set_algorithm', 'set_parallel']
@@ -448,6 +448,14 @@ def set_density(density: float = None, units: str = 'g/cm3') -> None:
             else:
                 density = None
     if not isinstance(density, (int, float)) and not type(density) is Density:
+        if isinstance(density, str) and ((',' in density and len(density.split(',')) == 2)
+                                         or (' ' in density and len(density.split()) == 2)):
+            density, units = density.strip('()').replace(',', ' ').split()
+            try:
+                density = float(density)
+                set_density(density, units)
+            except:
+                raise ValueError("'density' must be a float or int.")
         raise ValueError("'density' must be a float or int.")
     elif type(density) is Density:
         density = density.to('g/cm3')
