@@ -13,6 +13,14 @@ __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'c
 import threading
 
 from .dictionaries import SI, SI_butK, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, _cache_all_units, _wait_for_all_units_cache, _save_all_units_cache
+
+# certain prefix+unit combinations must be treated specially because the
+# resulting string is already used as a non-prefix alias.  e.g. "r" (ronto)
+# + "m3" would ordinarily produce "rm3" (ronto cubic meter) but the latter
+# is the ubiquitous shorthand for reservoir cubic meter; adding the prefix
+# would attach ronto conversion edges to the wrong node.  We simply skip
+# those problematic cases during network construction.
+PROTECTED_PREFIX_COMBINATIONS = {('r', 'm3'), ('r', 'm³'), ('r', 'm^3')}
 from .units.def_conversions import *
 from .network import UDigraph, UNode, Conversion
 from .parameters import unyts_parameters_
@@ -48,6 +56,7 @@ def clean_memory(path=None) -> None:
 @timeit
 def delete_cache() -> None:
     """Delete all cached files."""
+    import os
     for each in ('search_memory.cache', 'units_network.cache', 'units_dictionary.cache',
                  'temperature_ratio_conversions.cache', 'unitless_names.cache'):
         path = f"{unyts_parameters_.get_user_folder()}{each}"
@@ -86,11 +95,21 @@ def set_fvf(fvf=None) -> None:
 @timeit
 def get_fvf() -> float:
     """Return the current formation Volume factor (FVF) value.
-    If FVF is not set, it will return 1.0."""
+    If FVF is not set, it will return 1.0.
+
+    In previous versions this function failed to return the value when
+    ``units_network.fvf`` was ``None`` but ``unyts_parameters_.fvf_`` was
+    already defined.  The call to :func:`set_fvf` only mutated state and
+    returned ``None``, which propagated to callers and eventually caused
+    ``TypeError`` in conversion routines.  The corrected implementation
+    always returns a numeric result.
+    """
     if units_network.fvf is not None:
         return round(units_network.fvf, 4)
     elif unyts_parameters_.fvf_:
+        # populate the graph from the stored parameter and return it
         set_fvf(unyts_parameters_.fvf_)
+        return round(units_network.fvf, 4)
     else:
         return 1.0
 
@@ -159,6 +178,9 @@ def _load_network():
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for prefix in SI:
+                    # skip prohibited combinations
+                    if (prefix, unit_name) in PROTECTED_PREFIX_COMBINATIONS:
+                        continue
                     network.add_node(UNode(f"{prefix}{unit_name}"))
                     network.add_edge(
                         Conversion(network.get_node(f"{prefix}{unit_name}"), network.get_node(unit_name), SI[prefix][0]))
@@ -172,6 +194,8 @@ def _load_network():
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for prefix in SI:
+                    if (prefix, unit_name) in PROTECTED_PREFIX_COMBINATIONS:
+                        continue
                     network.add_node(UNode(f"{prefix}{unit_name}"))
                     network.add_edge(
                         Conversion(network.get_node(f"{prefix}{unit_name}"), network.get_node(unit_name), SI[prefix][1]))
@@ -185,6 +209,8 @@ def _load_network():
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for prefix in SI:
+                    if (prefix, unit_name) in PROTECTED_PREFIX_COMBINATIONS:
+                        continue
                     network.add_node(UNode(f"{prefix}{unit_name}"))
                     network.add_edge(
                         Conversion(network.get_node(f"{prefix}{unit_name}"), network.get_node(unit_name), SI[prefix][2]))
@@ -198,6 +224,8 @@ def _load_network():
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for prefix in SI:
+                    if (prefix, unit_name) in PROTECTED_PREFIX_COMBINATIONS:
+                        continue
                     network.add_node(UNode(f"{prefix}{unit_name}"))
                     network.add_edge(
                         Conversion(network.get_node(f"{prefix}{unit_name}"), network.get_node(unit_name), SI[prefix][0]))
@@ -210,6 +238,8 @@ def _load_network():
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for prefix in SI_butK:
+                    if (prefix, unit_name) in PROTECTED_PREFIX_COMBINATIONS:
+                        continue
                     network.add_node(UNode(f"{prefix}{unit_name}"))
                     network.add_edge(
                         Conversion(network.get_node(f"{prefix}{unit_name}"), network.get_node(unit_name),
@@ -225,6 +255,8 @@ def _load_network():
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for prefix in SI_butK:
+                    if (prefix, unit_name) in PROTECTED_PREFIX_COMBINATIONS:
+                        continue
                     network.add_node(UNode(f"{prefix}{unit_name}"))
                     network.add_edge(
                         Conversion(network.get_node(f"{prefix}{unit_name}"), network.get_node(unit_name),
@@ -240,6 +272,8 @@ def _load_network():
                 network.add_node(UNode(unit_name))
                 dictionary[unit_kind.split('_')[0]].append(unit_name)
                 for prefix in SI_butK:
+                    if (prefix, unit_name) in PROTECTED_PREFIX_COMBINATIONS:
+                        continue
                     network.add_node(UNode(f"{prefix}{unit_name}"))
                     network.add_edge(
                         Conversion(network.get_node(f"{prefix}{unit_name}"), network.get_node(unit_name),
@@ -572,6 +606,7 @@ def _load_network():
     network.add_edge(Conversion(network.get_node('kilogram'), network.get_node('gram'), kilogram__to__gram))
     # network.addEdge(Conversion(network.getNode('pound'), network.getNode('gram'), pound__to__gram))
     network.add_edge(Conversion(network.get_node('pound'), network.get_node('kilogram'), pound__to__kilogram))
+    network.add_edge(Conversion(network.get_node('pods'), network.get_node('kilogram'), pods__to__kilogram))
 
     # Force conversion
     network.add_edge(Conversion(network.get_node('kilogram mass'), network.get_node('kilogram force'),

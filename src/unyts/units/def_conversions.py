@@ -9,7 +9,6 @@ Created on Tue Dec 03 23:15:37 2024
 __version__ = '0.1.2'
 __release__ = 20250601
 
-from unyts import network
 from ..dictionaries import SpeedOfLight, StandardEarthGravity, StandardAirDensity
 
 
@@ -623,10 +622,12 @@ def reservoir_cubic_meter__to__reservoir_barrel(reservoir_cubic_meter):
 def reservoir_cubic_meter__to__standard_cubic_meter(reservoir_cubic_meter):
     """"
     conversion of lambda: 
-      v: v / network.get_fvf()
+      v: v / get_fvf()
     """
     v = reservoir_cubic_meter
-    return v / network.get_fvf()
+    # import inside function to avoid circular import during module load
+    from unyts.database import get_fvf
+    return v / get_fvf()
 
 def cubic_inch__to__cubic_thou(cubic_inch):
     """"
@@ -1123,3 +1124,11 @@ def byte__to__bit(byte):
     """
     d = byte
     return d * 8
+
+def pods__to__kilogram(pods):
+    """"
+    conversion of lambda: 
+      w: w * 8.4
+    """
+    w = pods
+    return w * 8.4

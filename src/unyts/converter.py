@@ -15,6 +15,55 @@ from .database import units_network
 from .dictionaries import dictionary, temperatureRatioConversions, uncertain_names
 from .Empty import Empty, str_Empty
 from .searches import BFS, lean_BFS, DFS, hybrid_BFS, print_path
+from .dictionaries import collect_alias_conflicts, dictionary
+
+# cached map of alias conflicts; populated lazily
+_alias_conflicts_cache = None
+
+def _get_alias_conflicts():
+    global _alias_conflicts_cache
+    if _alias_conflicts_cache is None:
+        # import dictionary here to ensure we use the current module's object
+        from .dictionaries import dictionary as _dict_ref
+        _alias_conflicts_cache = collect_alias_conflicts(_dict_ref)
+    return _alias_conflicts_cache
+
+
+def _check_ambiguous(unit: str) -> None:
+    """Raise or warn if ``unit`` is ambiguous.
+
+    An alias is ambiguous when it maps to more than one canonical unit name.
+    If the conflicting units are connected in the current network the
+    ambiguity is dangerous and we raise ValueError; otherwise we merely log a
+    warning.  This check is intentionally lightweight and sidesteps active
+    conversions by relying on the search algorithms we already depend on.
+    """
+    if not isinstance(unit, str):
+        return
+    conflicts = _get_alias_conflicts().get(unit)
+    if not conflicts or len(conflicts) <= 1:
+        return
+    # determine whether any pair of conflicting units are in the same network
+    try:
+        from .database import units_network
+        compatible = False
+        names = list(conflicts)
+        for i in range(len(names)):
+            for j in range(i + 1, len(names)):
+                a, b = names[i], names[j]
+                if units_network.has_node(a) and units_network.has_node(b):
+                    path = BFS(units_network, units_network.get_node(a), units_network.get_node(b))
+                    if path is not None:
+                        compatible = True
+                        break
+            if compatible:
+                break
+    except Exception:
+        compatible = False
+    if compatible:
+        raise ValueError(f"ambiguous unit '{unit}' matches multiple units {conflicts}; please specify which one you mean")
+    else:
+        logger.warning(f"ambiguous unit '{unit}' matches {conflicts} but they are incompatible; conversion path search will not mix them.")
 from .errors import NoConversionFoundError, SearchTimeoutError
 from .helpers.unit_string_tools import split_unit as _split_unit, reduce_parentheses as _reduce_parentheses
 from .helpers.logger import logger
@@ -346,6 +395,29 @@ def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=No
 
     # check if path is already defined in network
     conversion_path = _search_network(from_unit, to_unit)
+
+    # case-insensitive fallback: if the exact units are not present but
+    # a same-name node exists in a different case, try again using those
+    # canonical forms.  This handles inputs like 'RM3' when the graph only
+    # contains 'rm3'.
+    if conversion_path is None:
+        fu = from_unit
+        tu = to_unit
+        # attempt to match existing node names ignoring case
+        if isinstance(fu, str) and not units_network.has_node(fu):
+            match = next((n for n in units_network.list_nodes() if n.lower() == fu.lower()), None)
+            if match:
+                fu = match
+        if isinstance(tu, str) and not units_network.has_node(tu):
+            match = next((n for n in units_network.list_nodes() if n.lower() == tu.lower()), None)
+            if match:
+                tu = match
+        if (fu, tu) != (from_unit, to_unit):
+            conversion_path = _search_network(fu, tu)
+            if conversion_path is not None and conversion_path is not Empty:
+                # cache the successful path under the original case inputs
+                units_network.memory[(from_unit, to_unit)] = (_function_conversion(conversion_path), conversion_path)
+
     # return Conversion if found in network
     if conversion_path is Empty:
         return Empty, None
@@ -691,6 +763,11 @@ def _clean_input(value: numeric, from_unit: str, to_unit: str_Empty) -> (numeric
     if unyts_parameters_.reduce_parentheses_:
         from_unit = _reduce_parentheses(from_unit)
         to_unit = _reduce_parentheses(to_unit)
+
+    # ambiguous alias check must happen after normalization but before any
+    # conversion attempt; warnings/errors are raised from here.
+    _check_ambiguous(from_unit)
+    _check_ambiguous(to_unit)
 
     return value, from_unit, to_unit
 

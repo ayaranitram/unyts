@@ -9,7 +9,7 @@ Created on Sat Oct 24 12:14:51 2020
 __version__ = '0.6.0'
 __release__ = 20260227
 __all__ = ['dictionary', 'SI', 'OGF', 'DATA', 'StandardAirDensity', 'StandardEarthGravity', 'StandardWaterDensity',
-           'unitless_names', 'uncertain_names']
+           'unitless_names', 'uncertain_names', 'collect_alias_conflicts', 'ALIAS_PRIORITY', 'AMBIGUOUS_ALIASES']
 
 from json import load as json_load
 from pickle import load as pickle_load, dump as pickle_dump
@@ -27,6 +27,68 @@ except ImportError:
 from .units.def_prefixes import *
 from .helpers.logger import logger
 from .helpers.timer import timeit
+
+
+# ----------------------------------------------------------------------------
+# ambiguous alias handling
+#
+# `collect_alias_conflicts` scans the raw dictionary and returns a mapping
+# from every alias string to the set of canonical unit names that claim it.
+# this is public API so callers (tests, external tools) can inspect our
+# unit definitions.  The map is used during dictionary building to warn about
+# or resolve collisions, and also by the converter for runtime input checks.
+#
+# `ALIAS_PRIORITY` assigns a preferred canonical name when an alias is shared
+# across units.  The loader will remove the alias from other units; the
+# priority value should be one of the canonical names present in the map.  In
+# particular, ``'rm3'`` is reserved for *reservoir cubic meter* and therefore
+# must not appear as the ronto prefix applied to ``m3``.
+#
+# `AMBIGUOUS_ALIASES` collects strings that are known to collide but have no
+# clear winner; they will remain in place and trigger runtime warnings.
+# ----------------------------------------------------------------------------
+
+AMBIGUOUS_ALIASES = set(['w', 'yd', 'pc'])
+
+# prioritize some aliases when they clash; keys are alias strings, values are
+# the canonical unit name that should keep the alias.
+ALIAS_PRIORITY = {
+    'rm3': 'reservoir cubic meter',
+    'pc': 'pie cúbico',
+}
+
+
+def collect_alias_conflicts(dictionary_obj):
+    """Return alias-&gt;set(canonical names) mappings for a units dictionary.
+
+    Only dictionary entries whose values are themselves dictionaries are
+    inspected; nested structures containing lists or tuples of synonyms are
+    flattened.  The returned map does **not** include prefix-generated names
+    (those are handled separately in :mod:`database`).
+    """
+    alias_map = {}
+    for key, val in dictionary_obj.items():
+        if isinstance(val, dict):
+            for canon, aliases in val.items():
+                if isinstance(aliases, (list, tuple)):
+                    for a in aliases:
+                        if isinstance(a, str):
+                            alias_map.setdefault(a, set()).add(canon)
+                elif isinstance(aliases, str):
+                    alias_map.setdefault(aliases, set()).add(canon)
+    return alias_map
+
+
+def _remove_alias_from_dict(dictionary_obj, canon, alias):
+    """Strip an alias from the dictionary entry for ``canon`` if present."""
+    for key, val in dictionary_obj.items():
+        if isinstance(val, dict) and canon in val:
+            aliases = val[canon]
+            if isinstance(aliases, (list, tuple)) and alias in aliases:
+                new_aliases = [a for a in aliases if a != alias]
+                # preserve the original type (tuple or list)
+                dictionary_obj[key][canon] = tuple(new_aliases) if isinstance(aliases, tuple) else new_aliases
+
 
 
 StandardAirDensity = 1.225  # Kg/m3 or g/cc
@@ -69,7 +131,8 @@ SI = {
 SI_butK = {k: v for k, v in SI.items() if k not in ['K']}
 
 SI_order = (('Length', 'Pressure', 'Weight', 'Mass', 'Time', 'Frequency', 'Power', 'Voltage', 'Current', 'Resistance',
-             'Impedance', 'Conductance', 'Capacitance', 'Charge', 'Inductance', 'Energy', 'Permeability', 'Viscosity'),
+             'Impedance', 'Conductance', 'Capacitance', 'Charge', 'Inductance', 'Energy', 'Permeability', 'Viscosity',
+             'Compressibility',),
             ('Area',),
             ('Rate', 'Volume',),)
 
@@ -172,7 +235,7 @@ def _load_dictionary() -> (dict, dict):
         'standard cubic meter': ('scm', 'sm3', 'stm3', 'm3', 'Sm3', 'sm³', 'sm^3'),
         'cubic centimeter': ('centimeter3', 'centimeter^3', 'cc', 'cm3', 'standard cubic centimeter', 'cm³', 'cm^3'),
         'standard cubic centimeter': ('scc', 'scm3', 'scm³', 'scm^3'),
-        'reservoir cubic meter': ('rem3', 'REm3', 'Rem3', 'rem³', 'rem^3'),
+        'reservoir cubic meter': ('rem3', 'REm3', 'Rem3', 'rem³', 'rem^3', 'rm3', 'RM3'),
         'reservoir cubic centimeter': ('recc', 'recm3', 'recm³', 'recm^3'),
         'cubic thou': ('thou3', 'thou^3', 'th3', 'th2*th', 'th*th2', 'th³', 'th^3', 'th^2*th', 'th*th^2'),
         'cubic tenth': ('tenth3', 'tenth^3', 'te3', 'te2*te', 'te*te2', 'te³', 'te^3', 'te^2*te', 'te*te^2'),
@@ -324,6 +387,7 @@ def _load_dictionary() -> (dict, dict):
         'metric ton': ('Tonne',),
         'g-mol': ('g-moles',),
         'Kg-mol': ('Kg-moles',),
+        'pods': ('пуд', 'poods', 'pood'),
     }
     dictionary['Weight_UK_NAMES_REVERSE'] = {
         'grain': ('gr',),
@@ -377,10 +441,11 @@ def _load_dictionary() -> (dict, dict):
     # Compressibility
     dictionary['Compressibility'] = []
     dictionary['Compressibility_UPPER_NAMES_REVERSE'] = {
-        '1/psi': ('1/psia', 'µsip', 'usip', '1/psig'),
+        '1/psi': ('1/psia', '1/psig', 'sip'),
         'µsip': ('usip',),
         '1/bar': ('1/bara', '1/barg')
     }
+    dictionary['Compressibility_SI'] = ('sip',)
 
     # Rate
     dictionary['Rate'] = []
@@ -622,6 +687,23 @@ def _load_dictionary() -> (dict, dict):
             for key in dictionary[name]:
                 unitless_names += [key] + list(dictionary[name][key])
     unitless_names = list(set(unitless_names)) + [None]
+
+    # --- alias conflict resolution ------------------------------------------------
+    conflicts = collect_alias_conflicts(dictionary)
+    # log all collisions for visibility; some may later be corrected
+    for alias, names in conflicts.items():
+        if len(names) > 1:
+            logger.warning(f"alias '{alias}' maps to multiple units: {names}")
+            # if we have a priority rule, enforce it now
+            if alias in ALIAS_PRIORITY and ALIAS_PRIORITY[alias] in names:
+                preferred = ALIAS_PRIORITY[alias]
+                for canon in list(names):
+                    if canon != preferred:
+                        _remove_alias_from_dict(dictionary, canon, alias)
+                        logger.debug(f"removed alias '{alias}' from '{canon}' (reserved for '{preferred}')")
+    # Note that some ambiguous aliases are intentionally left in place
+    # (they are recorded in AMBIGUOUS_ALIASES) and will be handled at runtime.
+    # -----------------------------------------------------------------------------
 
     if unyts_parameters_.cache_:
         with open(unyts_parameters_.get_user_folder() + 'temperature_ratio_conversions.cache', 'wb') as f:
