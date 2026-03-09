@@ -114,3 +114,10 @@ def test_convert_for_SimPandas():
     array = np.random.rand(10)
     assert (convert_for_SimPandas(array, 'meter', 'litre') == array).all()
     assert (convert_for_SimPandas(array, 'm', 'yd') == convert(array, 'm', 'yd')).all()
+
+
+def test_case_insensitive_convert():
+    # both low and mixed/upper case should work
+    assert convert(1, 'METER', 'INCH') == pytest.approx(convert(1, 'meter', 'inch'))
+    assert convert(1, 'rm3', 'SM3') == pytest.approx(convert(1, 'rm3', 'sm3'))
+    assert convert(1, 'RB', 'STB') == pytest.approx(convert(1, 'rb', 'stb'))

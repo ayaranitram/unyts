@@ -213,6 +213,15 @@ class UnytLogger:
             self._log_jupyter(message, level)
         else:
             self._log_console(message, level)
+        # also forward the message to the underlying ``logging`` logger so
+        # unittest fixtures like ``caplog`` can intercept it.  We catch any
+        # exception to avoid disrupting normal operation if the level name is
+        # unexpected.
+        try:
+            lvl = self.LOG_LEVELS.get(level.lower(), (logging.INFO,))[0]
+            self.logger.log(lvl, message)
+        except Exception:
+            pass
 
     # Log methods
     def debug(self, message):

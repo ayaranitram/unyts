@@ -8,7 +8,7 @@ Created on Sat Oct 24 18:24:20 2020
 
 __version__ = '0.10.1'
 __release__ = 20260227
-__all__ = ['units', 'convert', 'convertible', 'Unit', 'is_Unit', 'valid_unit',
+__all__ = ['units', 'convert', 'converter', 'convertible', 'Unit', 'is_Unit', 'valid_unit',
            'set_unit', 'set_conversion', 'set_density', 'get_density',
            'save', 'start_gui', 'set_fvf', 'set_algorithm', 'set_parallel', 'set_timeout', 'verbose']
 
@@ -59,6 +59,11 @@ def __getattr__(name):
     # Converter functions - lazy load (uses database)
     if name in ('convert', 'convertible'):
         return _load_and_get('converter', name)
+    # provide a convenience alias so ``from unyts import converter`` returns a
+    # callable function rather than the module object.  Some legacy tests and
+    # user code expect this behaviour.
+    if name == 'converter':
+        return _load_and_get('converter', 'convert')
     
     # Unit class - lazy load (depends on heavy modules)
     if name == 'Unit':

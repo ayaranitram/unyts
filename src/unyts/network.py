@@ -218,14 +218,20 @@ class UDigraph(object):
         return self.edges[src][1][self.edges[src][0].index(dest)]
 
     def __str__(self) -> str:
-        """Return a string representation of the UDigraph."""
-        result = ''
-        for src in self.edges:
-            for dest in self.edges[src]:
-                result = result + src.get_name() + '->' \
-                         + dest.get_name() + \
-                         str(self.conv) + '\n'
-        return result[:-1]  # remove final \n
+        """Return a string representation of the UDigraph.
+
+        The original implementation iterated over ``self.edges[src]`` which
+        is a pair ``[neighbors, conversions]`` and therefore produced
+        ``list`` objects in place of destination nodes.  That resulted in
+        ``AttributeError`` when converting to strings and made the repr
+        unusable in tests.  We now explicitly iterate the node list only and
+        drop the unused ``self.conv`` attribute entirely.
+        """
+        result_lines = []
+        for src, (dests, _) in self.edges.items():
+            for dest in dests:
+                result_lines.append(f"{src.get_name()}->{dest.get_name()}")
+        return "\n".join(result_lines)
 
     def set_fvf(self, FVF) -> None:
         """Set the Formation Volume Factor (FVF) for the UDigraph."""

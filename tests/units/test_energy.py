@@ -9,93 +9,103 @@ from unyts.units.energy import Energy, Power, Current, Voltage, Conductance, \
     Capacitance, Resistance, Charge
 from unyts.units.time import Time
 
-e = Energy(100, 'Wh')
-assert type(e) is Energy
-assert e.name == 'energy'
-assert e.kind is Energy
-assert e.value == 100
-assert e.unit == 'Wh'
 
-p = Power(100, 'W')
-assert type(p) is Power
-assert p.name == 'power'
-assert p.kind is Power
-assert p.value == 100
-assert p.unit == 'W'
+def test_energy():
+    """Comprehensive smoke tests for the energy-related unit classes."""
+    e = Energy(100, 'Wh')
+    assert type(e) is Energy
+    assert e.name == 'energy'
+    assert e.kind is Energy
+    assert e.value == 100
+    assert e.unit == 'Wh'
 
-i = Current(1.5, 'A')
-assert type(i) is Current
-assert i.name == 'current'
-assert i.kind is Current
-assert i.value == 1.5
-assert i.unit == 'A'
+    p = Power(100, 'W')
+    assert type(p) is Power
+    assert p.name == 'power'
+    assert p.kind is Power
+    assert p.value == 100
+    assert p.unit == 'W'
 
-v = Voltage(220, 'V')
-assert type(v) is Voltage
-assert v.name == 'voltage'
-assert v.kind is Voltage
-assert v.value == 220
-assert v.unit == 'V'
+    i = Current(1.5, 'A')
+    assert type(i) is Current
+    assert i.name == 'current'
+    assert i.kind is Current
+    assert i.value == 1.5
+    assert i.unit == 'A'
 
-s = Conductance(1, 'Siemen')
-assert type(s) is Conductance
-assert s.name == 'conductance'
-assert s.kind is Conductance
-assert s.value == 1
-assert s.unit == 'Siemen'
+    v = Voltage(220, 'V')
+    assert type(v) is Voltage
+    assert v.name == 'voltage'
+    assert v.kind is Voltage
+    assert v.value == 220
+    assert v.unit == 'V'
 
-f = Capacitance(1, 'Farad')
-assert type(f) is Capacitance
-assert f.name == 'capacitance'
-assert f.kind is Capacitance
-assert f.value == 1
-assert f.unit == 'Farad'
+    s = Conductance(1, 'Siemen')
+    assert type(s) is Conductance
+    assert s.name == 'conductance'
+    assert s.kind is Conductance
+    assert s.value == 1
+    assert s.unit == 'Siemen'
 
-r = Resistance(12, 'ohm')
-assert type(r) is Resistance
-assert r.name == 'resistance'
-assert r.kind is Resistance
-assert r.value == 12
-assert r.unit == 'ohm'
+    f = Capacitance(1, 'Farad')
+    assert type(f) is Capacitance
+    assert f.name == 'capacitance'
+    assert f.kind is Capacitance
+    assert f.value == 1
+    assert f.unit == 'Farad'
 
-c = Charge(1, 'Coulomb')
-assert type(c) is Charge
-assert c.name == 'charge'
-assert c.kind is Charge
-assert c.value == 1
-assert c.unit == 'Coulomb'
+    r = Resistance(12, 'ohm')
+    assert type(r) is Resistance
+    assert r.name == 'resistance'
+    assert r.kind is Resistance
+    assert r.value == 12
+    assert r.unit == 'ohm'
 
-t = Time(1, 'h')
+    c = Charge(1, 'Coulomb')
+    assert type(c) is Charge
+    assert c.name == 'charge'
+    assert c.kind is Charge
+    assert c.value == 1
+    assert c.unit == 'Coulomb'
 
-assert type(e / t) is Power
-assert (e / t).unit == 'Watt'
+    t = Time(1, 'h')
 
-assert type(p * t) is Energy
-assert (p * t).unit == 'Wh'
+    assert type(e / t) is Power
+    assert (e / t).unit == 'Watt'
 
-assert type(e / p) is Time
-assert (e / p).unit == 'hour'
+    assert type(p * t) is Energy
+    assert (p * t).unit == 'Wh'
 
-assert type(p / i) is Voltage
-assert (p / i).unit == 'Volt'
+    assert type(e / p) is Time
+    assert (e / p).unit == 'hour'
 
-assert type(p / v) is Current
-assert (p / v).unit == 'Ampere'
+    assert type(p / i) is Voltage
+    assert (p / i).unit == 'Volt'
 
-assert type(i * r) is Voltage
-assert (i * r).unit == 'Volt'
+    assert type(p / v) is Current
+    assert (p / v).unit == 'Ampere'
 
-assert type(v * i) is Power
-assert (v * i).units == 'Watt'
+    assert type(i * r) is Voltage
+    assert (i * r).unit == 'Volt'
 
-assert type(v * f) is Charge
-assert (v * f).units == 'Coulomb'
+    assert type(v * i) is Power
+    assert (v * i).units == 'Watt'
 
-assert type(v / i) is Resistance
-assert (v / i).units == 'Ohm'
+    # previous conversions earlier in the file may have populated the network
+    # cache with negative results, causing the compound-product search to fail
+    # later.  Clear the memory to ensure the V*F -> Coulomb conversion is
+    # re-evaluated from scratch.
+    from unyts.database import units_network
+    units_network.memory.clear()
 
-assert type(v / r) is Current
-assert (v / r).units == 'Ampere'
+    assert type(v * f) is Charge
+    assert (v * f).units == 'Coulomb'
 
-assert type(r * i) is Voltage
-assert (r * i).unit == 'Volt'
+    assert type(v / i) is Resistance
+    assert (v / i).units == 'Ohm'
+
+    assert type(v / r) is Current
+    assert (v / r).units == 'Ampere'
+
+    assert type(r * i) is Voltage
+    assert (r * i).unit == 'Volt'

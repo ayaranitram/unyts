@@ -79,6 +79,11 @@ def reduce_units(unit: str, raise_error=False) -> str:
         if '+' in unit or '-' in unit:
             return unit
 
+    # quick win: simple form X/X should reduce to '1'
+    if unit.count('/') == 1:
+        left, right = unit.split('/')
+        if left == right:
+            return 'dimensionless'  # return '1' would be more intuitive but 'dimensionless' is more explicit and less likely to cause confusion with a unit of '1' (e.g. 1 meter)
     if '/' in unit:
         unit_split = multi_split('*' + unit,
                                  sep=('+', '-', '*', '/', '^', '**', '(', ')'),

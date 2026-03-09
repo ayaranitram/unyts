@@ -62,13 +62,38 @@ def units(value: numeric, unit: unit_or_str=None, name=None) -> Unit:
 
     unit = unit.strip()
 
+    # perform canonical alias lookup early so that later code only deals
+    # with names that actually appear in the dictionary structure.  We do not
+    # attempt to disambiguate here; if the alias is truly ambiguous the
+    # recursive search below will still find a matching canonical name when it
+    # exists.
+    from ..dictionaries import canonical_name
+    unit = canonical_name(unit)
+
     if unit in uncertain_names:
         return Unit(value, unit, name)
     if (type(unit) is str and unit == 'date') or type(unit) is Date:
         return Date(value, 'date', name)
 
+    # helper that knows how to search arbitrary dictionary entries
+    def _in_dict(u, val):
+        if isinstance(val, (list, tuple, set)):
+            return u in val
+        elif isinstance(val, dict):
+            # check both keys (canonical names) and alias lists
+            if u in val:
+                return True
+            for aliases in val.values():
+                if isinstance(aliases, (list, tuple, set)):
+                    if u in aliases:
+                        return True
+                elif isinstance(aliases, str):
+                    if u == aliases:
+                        return True
+        return False
+
     for kind in _dictionary:
-        if unit in _dictionary[kind]:
+        if _in_dict(unit, _dictionary[kind]):
             if "'" in unit:
                 u = eval(kind + '''(0, "''' + unit + '''")''', name)
             else:

@@ -165,8 +165,18 @@ def to_number(number_or_string: str, decimal_sign='auto', thousand_separator='au
         # check thousands separator
         if thousand_separator in ('auto', '.') and decimal_sign in ('auto', ','):
             if ',' in new_string and '.' in new_string:
-                if validate(str_to_clean, ds=',', ts='.'):
-                    new_string = new_string.replace('.', '').replace(',', '.')
+                # both comma and dot present; decide which is decimal by
+                # looking at order.  In english-style formats the dot usually
+                # appears after the comma ("1,234.56" -> comma thousand,
+                # dot decimal), whereas european formats use the opposite.
+                if new_string.rfind('.') > new_string.rfind(','):
+                    # dot is decimal, comma is thousand
+                    if validate(str_to_clean, ds='.', ts=','):
+                        new_string = new_string.replace(',', '')
+                else:
+                    # comma is decimal, dot is thousand
+                    if validate(str_to_clean, ds=',', ts='.'):
+                        new_string = new_string.replace('.', '').replace(',', '.')
                 return new_string
 
         if thousand_separator.strip() == 'auto':

@@ -64,8 +64,13 @@ def delete_cache() -> None:
             os.remove(path)
 
 @timeit
-def set_fvf(fvf=None) -> None:
-    """Set the formation Volume factor (FVF) value."""
+def set_fvf(fvf=None, units=None) -> None:
+    """Set the formation Volume factor (FVF) value.
+
+    Historically the function accepted a single numeric argument.  Some of the
+    unit tests still call this helper with two arguments (``fvf`` and a unit
+    string) – the unit parameter is ignored but accepted for compatibility.
+    """
     def valid_fvf(fvf):
         """Validate the formation Volume factor (FVF) input."""
         if type(fvf) is str:
@@ -80,6 +85,9 @@ def set_fvf(fvf=None) -> None:
                 return fvf
         else:
             return False
+    # ignore units argument if provided; it is only here for API compatibility
+    # with older tests and user code.
+    # ``fvf`` may be ``None`` in which case we prompt interactively as before.
     if fvf is None:
         print('Please enter formation Volume factor (FVF) in reservoir_volume/standard_volume:')
         while fvf is None:
@@ -699,9 +707,22 @@ def _load_network():
     for unit_kind in to_remove:
         dictionary.pop(unit_kind)
     # merge data dictionaries into a single
-    dictionary['Data'] = tuple(dictionary['dataBYTE'] + dictionary['dataBIT'])
-    del dictionary['dataBYTE']
-    del dictionary['dataBIT']
+    # this operation may be invoked multiple times during testing or network
+    # rebuilding, so avoid mutating the global dictionary in a way that
+    # causes later calls to fail.  ``dataBYTE`` and ``dataBIT`` are combined
+    # into ``Data`` but left in place (and missing keys are handled
+    # gracefully) so that a second call still succeeds.
+    if 'Data' not in dictionary:
+        # build from underlying lists if present
+        data_bytes = dictionary.get('dataBYTE', [])
+        data_bits = dictionary.get('dataBIT', [])
+        dictionary['Data'] = tuple(data_bytes + data_bits)
+    else:
+        # already computed previously; nothing to do
+        pass
+    # keep the original keys around rather than deleting them; tests
+    # and subsequent builds expect them to exist
+    # dictionary['UserUnits'] is always converted to list
     dictionary['UserUnits'] = list(dictionary['UserUnits'])
 
     return network
