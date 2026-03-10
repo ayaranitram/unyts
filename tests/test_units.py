@@ -27,7 +27,7 @@ for kind in [k for k in dictionary if k in ['Length']]:
 
         assert str(u1) == (str(u1.value) + '_' + str(u1.unit))
         assert -u1 == (u1 * -1)
-        assert bool(u1) is False if u1.kind in (Dimensionless, Percentage) else True
+        assert bool(u1) is False if (u1.kind is Dimensionless or u1.kind is Percentage) else True
         assert abs(u1) == u1.kind(abs(u1.value), u1.unit)
         assert round(u0, 0) == u1
 
@@ -114,8 +114,9 @@ for kind in [k for k in dictionary if k in ['Length']]:  # [k for k in dictionar
         #     assert (u1 // u2) == units(u1.value // convert(u2.value, u2.unit, u1.unit), unitDivision(u1.unit, u2.unit))
         #     assert (u2 // u1) == units(u2.value // convert(u1.value, u1.unit, u2.unit), unitDivision(u2.unit, u1.unit))
 
-assert units(6, 'ft') / units(12, 'in') == units(6, 'ft/ft')
-assert (units(6, 'ft') / units(12, 'in')).units == 'ft/ft'
+ratio = units(6, 'ft') / units(12, 'in')
+assert ratio.value == 6
+assert ratio.units == 'ft/ft'
 assert units(6, 'ft') @ units(12, 'in') == units(0.5, 'ft/in')
 assert (units(6, 'ft') @ units(12, 'in')).units == 'ft/in'
 

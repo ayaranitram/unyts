@@ -9,6 +9,13 @@ import os
 import pytest
 
 from unyts.dictionaries import dictionary, uncertain_names, _load_dictionary
+from unyts.parameters import unyts_parameters_
+from unyts.database import clean_memory
+# ensure cache is disabled for this potentially intensive test and start
+# with a clean search memory; the autouse fixture in conftest handles most
+# cases, but we set it here explicitly to be extra safe.
+unyts_parameters_.cache_ = False
+clean_memory()
 # rebuild dictionary fresh so we aren't affected by earlier network builds
 french,_,_ = _load_dictionary()
 _original_dictionary = {k:list(v) for k,v in french.items()}

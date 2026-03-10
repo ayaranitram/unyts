@@ -1,4 +1,5 @@
 def lambda_to_def(code_line:str) -> str:
+    """Convert an inline lambda conversion expression into a named function definition."""
     
     from_unit_i = code_line.index("network.get_node(") + len("network.get_node(")
     from_unit_f = code_line[from_unit_i:].index("),") + from_unit_i
@@ -33,6 +34,7 @@ def lambda_to_def(code_line:str) -> str:
     
 
 def read_database(file_path:str=None):
+    """Read database source code lines from disk."""
     if file_path is None:
         file_path = r"/unyts/database.py"
     with open(file_path, 'r') as f:
@@ -41,6 +43,7 @@ def read_database(file_path:str=None):
 
 
 def convert_code():
+    """Transform lambda conversions in the database file using line-based parsing."""
     file_code = read_database()
     
     def_conversions = []
@@ -68,6 +71,7 @@ def convert_code():
         
         
 def convert_code_text():
+    """Transform lambda conversions in the database file using text-block parsing."""
     file_code = "".join(read_database())
     
     def_conversions = []

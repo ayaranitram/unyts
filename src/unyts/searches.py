@@ -20,6 +20,7 @@ import os
 from multiprocessing import Process
 from threading import Thread
 
+
 @timeit
 def BFS(graph, start, end, verbose=False) -> list:
     """
@@ -38,31 +39,30 @@ def BFS(graph, start, end, verbose=False) -> list:
     -------
     shortest_path: list
     """
+    # track visited nodes rather than full paths to avoid exploding memory
     init_path = [start]
     path_queue = [init_path]
-    visited = list()
-    while len(path_queue) != 0:
+    visited_nodes = set()
+    while path_queue:
         if not unyts_parameters_.is_intime():
             return Empty
-        # get and remove oldest element in path_queue
         conv_path = path_queue.pop(0)
-        if conv_path in visited:
+        last_node = conv_path[-1]
+        if last_node in visited_nodes:
             if verbose:
-                logger.info(f"""<BFS>: {len(path_queue)} paths in queue. Already visited BFS path:\n{print_path(conv_path)}""")
-        else:
+                logger.info(f"<BFS>: skipping path to already visited node {last_node}")
+            continue
+        if verbose:
+            logger.info(f"<BFS> {len(path_queue)} paths in queue. Current BFS path:\n{print_path(conv_path)}")
+        visited_nodes.add(last_node)
+        if last_node is end:
             if verbose:
-                logger.info(f"""<BFS> {len(path_queue)} paths in queue. Current BFS path:\n{print_path(conv_path)}""")
-            last_node = conv_path[-1]
-            if last_node is end:
-                if verbose:
-                    logger.info(f"""<BFS> Found end node {end.get_name()} in the path:\n{print_path(conv_path)}""")
-                return conv_path
-            path_queue += [conv_path + [next_node]
-                           for next_node in graph.children_of(last_node) 
-                           if next_node not in conv_path]
-            visited.append(conv_path)
+                logger.info(f"<BFS> Found end node {end.get_name()} in the path:\n{print_path(conv_path)}")
+            return conv_path
+        path_queue += [conv_path + [next_node]
+                       for next_node in graph.children_of(last_node)
+                       if next_node not in conv_path]
 
-@timeit
 def DFS(graph, start, end, verbose=False, branch_depht=25) -> list:
     """
     Implementation of Depth-First Search algorithm.

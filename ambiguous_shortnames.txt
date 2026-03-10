@@ -1,0 +1,30 @@
+[Unyts WARNING]: alias 'F' maps to multiple units: {'Farad', 'Fahrenheit'}
+[Unyts WARNING]: alias 'oz' maps to multiple units: {'fluid ounce', 'ounce'}
+[Unyts WARNING]: alias 'm3' maps to multiple units: {'cubic meter', 'standard cubic meter'}
+[Unyts WARNING]: alias 'm³' maps to multiple units: {'m3', 'cubic meter'}
+[Unyts WARNING]: alias 'm^3' maps to multiple units: {'m3', 'cubic meter'}
+[Unyts WARNING]: alias 'cm³' maps to multiple units: {'cubic centimeter', 'cm3'}
+[Unyts WARNING]: alias 'cm^3' maps to multiple units: {'cubic centimeter', 'cm3'}
+[Unyts WARNING]: alias 'in2*in' maps to multiple units: {'in3', 'cubic inch'}
+[Unyts WARNING]: alias 'in*in2' maps to multiple units: {'in3', 'cubic inch'}
+[Unyts WARNING]: alias 'in³' maps to multiple units: {'in3', 'cubic inch'}
+[Unyts WARNING]: alias 'in^3' maps to multiple units: {'in3', 'cubic inch'}
+[Unyts WARNING]: alias 'in^2*in' maps to multiple units: {'in3', 'cubic inch'}
+[Unyts WARNING]: alias 'in*in^2' maps to multiple units: {'in3', 'cubic inch'}
+[Unyts WARNING]: alias 'ft³' maps to multiple units: {'ft3', 'cubic foot'}
+[Unyts WARNING]: alias 'cf' maps to multiple units: {'standard cubic foot', 'cubic foot'}
+[Unyts WARNING]: alias 'ft2*ft' maps to multiple units: {'ft3', 'cubic foot'}
+[Unyts WARNING]: alias 'ft*ft2' maps to multiple units: {'ft3', 'cubic foot'}
+[Unyts WARNING]: alias 'ft^3' maps to multiple units: {'ft3', 'cubic foot'}
+[Unyts WARNING]: alias 'ft^2*ft' maps to multiple units: {'ft3', 'cubic foot'}
+[Unyts WARNING]: alias 'ft*ft^2' maps to multiple units: {'ft3', 'cubic foot'}
+[Unyts WARNING]: alias 'yd³' maps to multiple units: {'cubic yard', 'yd3'}
+[Unyts WARNING]: alias 'yd^3' maps to multiple units: {'cubic yard', 'yd3'}
+[Unyts WARNING]: alias 'yd^2*yd' maps to multiple units: {'cubic yard', 'yd3'}
+[Unyts WARNING]: alias 'yd*yd^2' maps to multiple units: {'cubic yard', 'yd3'}
+[Unyts WARNING]: alias 'stb' maps to multiple units: {'barrel', 'standard barrel'}
+[Unyts WARNING]: alias 'oil barrel' maps to multiple units: {'barrel', 'standard barrel'}
+[Unyts WARNING]: alias 'psig/ft' maps to multiple units: {'psi/ft', 'psia/ft'}
+[Unyts WARNING]: alias 'barg/m' maps to multiple units: {'bara/m', 'bar/m'}
+[Unyts WARNING]: alias 'usip' maps to multiple units: {'1/psi', 'µsip'}
+[Unyts WARNING]: alias 'cf/day' maps to multiple units: {'scf/day', 'ft3/day'}
