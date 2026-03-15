@@ -321,10 +321,10 @@ class UnytsParameters(object):
             self.algorithm_ = algorithm
             if self.verbose_:
                 logger.info(f"{algorithm} set as search algorithm.")
-            msg = "The search memory must be cleansed if intended to repeat searches with a different algorithm."
-            if msg not in self._warnings:
-                logger.warning(msg)
-                self._warnings.append(msg)
+                msg = "The search memory must be cleansed if intended to repeat searches with a different algorithm."
+                if msg not in self._warnings:
+                    logger.warning(msg)
+                    self._warnings.append(msg)
             self.save_params()
 
     def set_parallel(self, method:str):
