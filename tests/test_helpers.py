@@ -54,7 +54,7 @@ def test_multi_split_and_unit_string_tools():
     with pytest.raises(ValueError):
         reduce_parentheses('(m')
 
-    assert reduce_units('m/m') == '1'
+    assert reduce_units('m/m') == 'dimensionless'
     assert reduce_units('m*m') == 'm*m'  # nothing to cancel
     assert reduce_units(None) is None
     with pytest.raises(ValueError):

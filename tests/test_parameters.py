@@ -44,13 +44,14 @@ def test_recursion_and_generation_limits(caplog):
     assert unyts_parameters_.max_recursion_ == 5
     with pytest.raises(ValueError):
         parameters.recursion_limit('bad')
+    parameters.recursion_limit(12)  # reset to default for other tests
 
     oldg = unyts_parameters_.max_generations_
     assert unyts_parameters_.generations_limit() == oldg
     assert unyts_parameters_.generations_limit(10) == 10
     with pytest.raises(ValueError):
         unyts_parameters_.generations_limit('bad')
-
+    unyts_parameters_.generations_limit(25)  # reset to default for other tests
 
 def test_algorithm_setting(caplog):
     # valid algorithm sets value and adds warning
@@ -83,6 +84,7 @@ def test_timeout_and_is_intime():
     # simulate passing of time by manipulating _start_time
     unyts_parameters_._start_time -= 2
     assert unyts_parameters_.is_intime() is False
+    unyts_parameters_.set_timeout(30)  # reset to longer timeout for other tests
 
 
 def test_user_folder(tmp_path):

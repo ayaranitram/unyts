@@ -20,7 +20,6 @@ import os
 from multiprocessing import Process
 from threading import Thread
 
-
 @timeit
 def BFS(graph, start, end, verbose=False) -> list:
     """
@@ -235,8 +234,8 @@ def hybrid_BFS(graph, start, end, verbose=False, max_generations_screening=25) -
     os.environ["PYTHONWARNINGS"] = "ignore"
 
     runner_lean_bfs = runner(target=_lean_bfs,
-                             args=(results_, units_network, start, end, verbose_, max_generations_screening))
-    runner_bfs = runner(target=_bfs, args=(results_, units_network, start, end, verbose_))
+                             args=(results_, graph, start, end, verbose_, max_generations_screening))
+    runner_bfs = runner(target=_bfs, args=(results_, graph, start, end, verbose_))
     if verbose:
         logger.info(f"<hybrid BFS> starting BFS and lean_BFS threads, from {start} to {end}")
 

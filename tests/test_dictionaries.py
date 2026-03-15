@@ -17,8 +17,8 @@ from unyts.database import clean_memory
 unyts_parameters_.cache_ = False
 clean_memory()
 # rebuild dictionary fresh so we aren't affected by earlier network builds
-french,_,_ = _load_dictionary()
-_original_dictionary = {k:list(v) for k,v in french.items()}
+fresh,_,_ = _load_dictionary()
+_original_dictionary = {k:list(v) for k,v in fresh.items()}
 
 # note: we delay importing `units` until inside the loop so the network
 # isn't constructed until we actually need it (and only per-assertion).

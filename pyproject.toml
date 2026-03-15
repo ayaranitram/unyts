@@ -7,7 +7,7 @@ where = ["src"]
 
 [project]
 name = "unyts"
-version = "0.10.1"
+version = "0.10.5"
 authors = [
   { name="Martin Carlos Araya", email="martinaraya@gmail.com" },
 ]
@@ -31,3 +31,6 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/ayaranitram/unyts"
 "Bug Tracker" = "https://github.com/ayaranitram/unyts/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

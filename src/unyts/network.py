@@ -146,6 +146,7 @@ class UDigraph(object):
     def clean_memory(self):
         """Clean the search memory of the UDigraph."""
         self.memory = {}
+        self.previous = [(None, None)]
         msg = f"memory cleaned."
         if unyts_parameters_.verbose_:
             logger.info(msg)

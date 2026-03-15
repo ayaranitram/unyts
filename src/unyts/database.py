@@ -706,23 +706,15 @@ def _load_network():
             dictionary[unit_kind] = tuple(set(dictionary[unit_kind]))
     for unit_kind in to_remove:
         dictionary.pop(unit_kind)
-    # merge data dictionaries into a single
-    # this operation may be invoked multiple times during testing or network
-    # rebuilding, so avoid mutating the global dictionary in a way that
-    # causes later calls to fail.  ``dataBYTE`` and ``dataBIT`` are combined
-    # into ``Data`` but left in place (and missing keys are handled
-    # gracefully) so that a second call still succeeds.
+    # merge dataBYTE and dataBIT into a single 'Data' key, then remove the
+    # originals so that define.py's eval() finds the 'Data' class name.
     if 'Data' not in dictionary:
-        # build from underlying lists if present
-        data_bytes = dictionary.get('dataBYTE', [])
-        data_bits = dictionary.get('dataBIT', [])
+        data_bytes = dictionary.pop('dataBYTE', [])
+        data_bits = dictionary.pop('dataBIT', [])
         dictionary['Data'] = tuple(data_bytes + data_bits)
     else:
-        # already computed previously; nothing to do
-        pass
-    # keep the original keys around rather than deleting them; tests
-    # and subsequent builds expect them to exist
-    # dictionary['UserUnits'] is always converted to list
+        dictionary.pop('dataBYTE', None)
+        dictionary.pop('dataBIT', None)
     dictionary['UserUnits'] = list(dictionary['UserUnits'])
 
     return network
@@ -861,13 +853,13 @@ def _create_ProductivityIndex() -> None:
     else:
         existing = set()
     
-    # List comp: ~1.4x faster than set comp for 19.5M items
-    new_products = [f"{v}/{t}/{p}"
+    # Use a generator expression to avoid materializing the full list in
+    # memory.  The previous list comprehension allocated ~500 MB for ~19.5M
+    # strings, causing MemoryError on constrained systems.
+    existing.update(f"{v}/{t}/{p}"
                     for v in volumes
                     for t in times
-                    for p in pressures]
-    
-    existing.update(new_products)
+                    for p in pressures)
     dictionary['ProductivityIndex'] = tuple(existing)
 
 @timeit

@@ -57,18 +57,15 @@ def units(value: numeric, unit: unit_or_str=None, name=None) -> Unit:
         unit = 'Dimensionless'
     if type(unit) is not str:
         raise TypeError("'units' must be a string or Unit instance.")
-    if not isinstance(value, _numeric) and not ((type(unit) is str and unit == 'date') or type(unit) is Date):
+    if not isinstance(value, _numeric) and not isinstance(value, (list, tuple)) and not ((type(unit) is str and unit == 'date') or type(unit) is Date):
         raise TypeError("'value' parameter must be numeric.")
 
     unit = unit.strip()
 
-    # perform canonical alias lookup early so that later code only deals
-    # with names that actually appear in the dictionary structure.  We do not
-    # attempt to disambiguate here; if the alias is truly ambiguous the
-    # recursive search below will still find a matching canonical name when it
-    # exists.
-    from ..dictionaries import canonical_name
-    unit = canonical_name(unit)
+    # NOTE: canonical_name() resolves aliases like 'ft' → 'foot' using the
+    # full dictionary, but applying it here would change user-visible unit
+    # strings.  The dictionary lookup below already handles both canonical
+    # and alias forms, so canonicalization is not needed.
 
     if unit in uncertain_names:
         return Unit(value, unit, name)

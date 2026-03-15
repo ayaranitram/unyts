@@ -633,7 +633,7 @@ def _load_dictionary() -> (dict, dict):
     # iterate over a nonempty list.
     dictionary['Dimensionless'] = ['fraction', 'dimensionless']
     dictionary['Dimensionless_fractions_NAMES_REVERSE_UPPER'] = {
-        'fraction': ('ratio', 'dimensionless', 'unitless', 'None', '')}
+        'fraction': ('ratio', 'dimensionless', 'unitless', 'None')}
 
     # Percentage units: canonical name and some aliases
     dictionary['Percentage'] = ['percentage']
@@ -884,6 +884,28 @@ def _load_all_units_cache():
 
 _alias_to_canon_cache = None
 
+def _build_alias_map():
+    """Build alias→canonical mapping from the *full* dictionary.
+
+    The module-level ``dictionary`` is stripped of ``_NAMES_REVERSE`` keys
+    after the network is built (or when loaded from cache), so it lacks the
+    dict-type entries that ``collect_alias_conflicts`` needs.  We therefore
+    reload the fresh dictionary (which is cheap — it's just Python dicts)
+    to obtain the complete alias information.
+    """
+    fresh, _, _ = _load_dictionary()
+    alias_to_canon = {}
+    conflicts = collect_alias_conflicts(fresh)
+    for alias, names in conflicts.items():
+        if len(names) == 1:
+            alias_to_canon[alias] = next(iter(names))
+    # map canonical names to themselves explicitly
+    for kind, val in fresh.items():
+        if isinstance(val, dict):
+            for canon in val.keys():
+                alias_to_canon[canon] = canon
+    return alias_to_canon
+
 def canonical_name(unit: str) -> str:
     """Return the canonical unit name associated with ``unit``.
 
@@ -891,29 +913,11 @@ def canonical_name(unit: str) -> str:
     name the canonical string is returned.  Ambiguous aliases are returned
     unchanged so that callers (typically the converter) can implement
     context‑sensitive disambiguation logic.
-
-    The previous implementation cached the alias map globally which
-    caused problems during testing: some tests rebuild or mutate the
-    dictionary, leaving the cached map out of date and leading to
-    surprising results (e.g. ``canonical_name('ml')`` returning ``'ml'``
-    instead of ``'millilitre'``).  The cache has therefore been removed
-    in favour of recomputing the mapping on every call.  Performance is
-    still excellent for the relatively small dictionaries we maintain.
     """
-    # build alias->canonical mapping fresh; we intentionally avoid
-    # holding a long‑lived cache to keep behaviour predictable during
-    # tests and interactive sessions.
-    alias_to_canon = {}
-    conflicts = collect_alias_conflicts(dictionary)
-    for alias, names in conflicts.items():
-        if len(names) == 1:
-            alias_to_canon[alias] = next(iter(names))
-    # map canonical names to themselves explicitly as well
-    for kind, val in dictionary.items():
-        if isinstance(val, dict):
-            for canon in val.keys():
-                alias_to_canon[canon] = canon
-    return alias_to_canon.get(unit, unit)
+    global _alias_to_canon_cache
+    if _alias_to_canon_cache is None:
+        _alias_to_canon_cache = _build_alias_map()
+    return _alias_to_canon_cache.get(unit, unit)
 
 # Attempt to load _all_units cache from persistent storage at module init
 _try_load_all_units_cache = _load_all_units_cache()

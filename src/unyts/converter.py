@@ -614,7 +614,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
                 return x
             return conv, [from_unit, 'identity', to_unit]
         else:
-            return (value if from_unit == from_unit else value), [from_unit, 'identity', to_unit]
+            return value, [from_unit, 'identity', to_unit]
 
     # avoid infinite looping, do not repeat searches
     if (from_unit, to_unit) in units_network.previous:
@@ -809,31 +809,25 @@ def _clean_input(value: numeric, from_unit: str, to_unit: str_Empty) -> (numeric
 
     # convert straightforward aliases to their canonical names; ambiguous
     # aliases are left untouched so that we can later decide based on context.
-    from .dictionaries import canonical_name
-
-    from_unit = canonical_name(from_unit)
-    to_unit = canonical_name(to_unit)
+    # NOTE: canonical_name() uses the full (fresh) dictionary which maps
+    # abbreviations like 'ft' → 'foot', 'm' → 'meter', etc.  Applying this
+    # here would change the unit strings stored in the resulting Unit objects
+    # (e.g. 'foot/inch' instead of 'ft/in').  The network already has
+    # equality edges between canonical and abbreviated forms, so the BFS
+    # converter finds paths from either.  We therefore skip canonicalization
+    # in _clean_input and let canonical_name() remain available for callers
+    # that need human-readable canonical forms (e.g. dictionaries module).
 
     # if we still have an ambiguous alias (e.g. 'oz' which maps to both
     # 'fluid ounce' and 'ounce') try to resolve it using the target unit.
     # this helps ensure `oz.to('ml')` behaves as volume while
     # `oz.to('g')` behaves as weight.
     def _disambiguate(u: str, other: str) -> str:
-        # build fresh conflict map each time; the cached version can become
-        # stale after the network mutates dictionary in place.
         conflicts_map = collect_alias_conflicts(dictionary)
         conflicts = conflicts_map.get(u)
-        # debug dump of dictionary structure in case we unexpectedly lose
-        # nested dict entries (which is what happened during testing).
-        sample = list(dictionary.items())[:10]
-        logger.info(f"dictionary sample types: {[ (k, type(v)) for k,v in sample ]}")
-        logger.info(f"disambiguate called for '{u}' vs target '{other}'; conflicts_map contains {('yes' if u in conflicts_map else 'no')} keys")
         if conflicts and len(conflicts) > 1 and other is not None:
             logger.info(f"  found ambiguous candidates {conflicts}")
-            # canonicalize the other unit as well to simplify comparisons
             ocanon = canonical_name(other)
-            # attempt to pick a candidate that has a network path to the
-            # other unit; BFS is cheap relative to a full conversion search
             try:
                 from .database import units_network
                 for cand in conflicts:
@@ -892,7 +886,7 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str, use_cache:
     elif from_unit not in uncertain_names and to_unit not in uncertain_names and \
             to_unit in dictionary['Volume'] and from_unit in dictionary['Weight']:
         density = _get_density()
-        this_units_density = _converter(density, 'g/cm3', f"{from_unit}/{to_unit}", use_cache=use_cache)
+        this_units_density, _ = _converter(density, 'g/cm3', f"{from_unit}/{to_unit}", use_cache=use_cache)
         if value is None:
             def conv(x):
                 """Density conversion function."""
@@ -1083,7 +1077,7 @@ def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str,
     if convertible(from_unit, to_unit):
         conv, conv_path = _converter(value, from_unit, to_unit, use_cache=use_cache)
     if print_conversion_path and conv is not None and conv is not Empty:
-        logger.info("converting from '{from_unit}' to '{to_unit}':\n {print_path(conv_path)}")
-    elif print_conversion_path and conv is not None and conv is not Empty:
+        logger.info(f"converting from '{from_unit}' to '{to_unit}':\n {print_path(conv_path)}")
+    elif print_conversion_path and conv is None:
         logger.warning("conversion not found, returning original values.")
     return value if (conv is None or conv is Empty) else conv

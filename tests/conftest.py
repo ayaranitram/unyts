@@ -19,6 +19,8 @@ def manage_cache():
     # entering test: disable persistent caching and drop any previous data
     unyts_parameters_.cache_ = False
     clean_memory()
+    unyts_parameters_.reset_start_time()
     yield
     # after test: also clear in case the test temporarily re-enabled it
     clean_memory()
+    unyts_parameters_.reset_start_time()

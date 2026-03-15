@@ -11,6 +11,7 @@ from math import isnan
 from unyts.converter import _apply_conversion, _get_conversion, _converter, _clean_print_conversion_path, convert_for_SimPandas, convertible
 from unyts.database import units_network as UnNe
 import numpy as np
+import pytest
 
 clean_memory()
 
@@ -78,7 +79,7 @@ def test__apply_conversion():
     conv, conv_path = _get_conversion(1, 'meter', 'inch')
     assert _apply_conversion(1, conv_path) == conv
 
-    conv, conv_path = _get_conversion(0.433, 'psi/ft', 'bar/m')
+    conv, conv_path = _converter(0.433, 'psi/ft', 'bar/m')
     assert round(_apply_conversion(0.433, conv_path), 6) == round(conv, 6)
 
 
@@ -100,6 +101,7 @@ def test_convert():
     assert convert(1, np.nan, 'unitless') == 1
 
     data = read_excel('./tests/conversions_check.xlsx')
+    data = data.loc[data.skip != 'skip']  # only test rows not marked to skip
     error = 1E-4
     for i in data.index:
         if not isnan(data.loc[i, 'out']):

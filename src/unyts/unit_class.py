@@ -241,7 +241,7 @@ class Unit(object, metaclass=UnytType):
                     result += [self + each]
                     flag = True
                 else:
-                    result += each
+                    result += [each]
             return tuple(result) if flag else other + (self,)
         elif self.kind is Percentage:
             return self.kind((self.value + other) * 100, self.unit)
@@ -645,8 +645,10 @@ class Unit(object, metaclass=UnytType):
     def equals(self, other, precision:int=None):
         """Return whether the current Unit object is equal to another value, handling unit conversions as necessary. 
         If precision is specified, round both values to the specified number of decimal places before comparing."""
+        if not isinstance(other, (Unit, Number) + _array_like):
+            raise TypeError(f"'==' not supported between instances of '{type(self)}' and '{type(other)}'.")
         if precision is None:
-            self.__eq__(other)
+            return self.__eq__(other)
         if not isinstance(other, Unit):
             return self.round(precision).__eq__(self.round(precision, value=other))
         elif type(self) is type(other):

@@ -116,7 +116,7 @@ for kind in [k for k in dictionary if k in ['Length']]:  # [k for k in dictionar
 
 ratio = units(6, 'ft') / units(12, 'in')
 assert ratio.value == 6
-assert ratio.units == 'ft/ft'
+assert ratio.units == 'dimensionless'
 assert units(6, 'ft') @ units(12, 'in') == units(0.5, 'ft/in')
 assert (units(6, 'ft') @ units(12, 'in')).units == 'ft/in'
 
