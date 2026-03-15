@@ -68,7 +68,7 @@ class UDigraph(object):
         """Initialize a UDigraph with default attributes."""
         self.edges = {}
         self._edges_str = None
-        self.previous = [(None, None)]
+        self.previous = []
         self.recursion_limit = 5
         self.fvf = None
         self.memory = {}
@@ -146,7 +146,7 @@ class UDigraph(object):
     def clean_memory(self):
         """Clean the search memory of the UDigraph."""
         self.memory = {}
-        self.previous = [(None, None)]
+        self.previous = []
         msg = f"memory cleaned."
         if unyts_parameters_.verbose_:
             logger.info(msg)

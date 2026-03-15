@@ -2,7 +2,26 @@
 
 ## Recent Releases
 
-### v0.10.1 (2026-02-27) - Current Release ⭐
+### v0.10.5 (2026-06) - Current Release ⭐
+**Stability & Correctness Release**
+
+- All optimizations from v0.10.0/v0.10.1 verified and stabilized
+- Fixed MemoryError in network building (generator expression)
+- Fixed missing `logger.exception()` method
+- Restored set-based BFS and hybrid_BFS algorithms
+- Fixed over-canonicalization of unit strings
+- Fixed dataBIT/dataBYTE merge into Data class
+- Removed invalid empty-string entry from Dimensionless dictionary
+- Fixed `Unit.equals()` return value
+- Expanded test suite (72 tests, all passing)
+- Extended Python support to 3.7–3.14
+- Full backward compatibility
+
+[What's New since v0.9.15](WHATS_NEW.md) | [Release Notes](RELEASE_NOTES.md)
+
+---
+
+### v0.10.1 (2026-02-27)
 **Major Performance & Feature Release**
 
 - 200× faster imports (14.5s → 0.08s)
@@ -16,7 +35,7 @@
 - Comprehensive test suite
 - Full backward compatibility
 
-**Key Stats**: 38 module updates, 9+ test modules, 6 cache types, Python 3.7-3.11 support
+**Key Stats**: 38 module updates, 9+ test modules, 6 cache types
 
 [Full Details](CHANGELOG.md#0101---2026-02-27) | [Release Notes](RELEASE_NOTES.md)
 
@@ -50,7 +69,7 @@ Series focused on feature development and stability improvements before the majo
 
 ---
 
-## Module Version Matrix (v0.10.1)
+## Module Version Matrix (v0.10.5)
 
 | Module | Version | Release Date |
 |--------|---------|--------------|
@@ -109,6 +128,7 @@ Series focused on feature development and stability improvements before the majo
 
 | Period | Releases | Focus |
 |--------|----------|-------|
+| 2026-06 | v0.10.5 | Stability & correctness |
 | 2026-02-25 to 2026-03-05 | v0.10.0 - v0.10.1 | Performance optimization |
 | Pre-2026 | v0.0.x - v0.9.15 | Feature development |
 
@@ -116,7 +136,7 @@ Series focused on feature development and stability improvements before the majo
 
 ## Upgrade Path
 
-### From v0.9.15 to v0.10.1
+### From v0.9.15 to v0.10.5
 ✅ **Direct upgrade** - Fully backward compatible
 
 ```bash
@@ -137,8 +157,7 @@ delete_cache()
 ## Python Version Support
 
 | unyts Version | Python Versions |
-|---------------|-----------------|
-| 0.10.1 | 3.7, 3.8, 3.9, 3.10, 3.11 |
+|---------------|-----------------|| 0.10.5 | 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14 || 0.10.1 | 3.7, 3.8, 3.9, 3.10, 3.11 |
 | 0.10.0 | 3.7, 3.8, 3.9, 3.10, 3.11 |
 | 0.9.x | 3.7, 3.8, 3.9, 3.10 |
 

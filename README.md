@@ -26,7 +26,12 @@ From an OS terminal or console, execute `python -m unyts`
 
 <img src="unyts_gui_.jpg" alt="drawing" width="300"/>  
 
-In the interface, simply type in the units to convert and the value to be converted and click the *convert* button or hit _Enter_ key. 
+In the interface, simply type in the units to convert and the value to be converted and click the *convert* button or hit _Enter_ key.
+
+### To check whether a conversion is possible:
+`from unyts import convertible`  
+`convertible('ft', 'm')`  returns `True`  
+`convertible('ft', 'kg')` returns `False`
 
 ### To use the _units converter_ function `convert()`:  
 `from unyts import convert`  
@@ -66,3 +71,7 @@ The main functionalities are purely Python powered and does not require any othe
 - `Pandas` to be able to recognize Series and DataFrames  
 - `cloudpickle` to be able to save internal dictionaries and network to cache file, for faster loading  
 - `openpyxl` if willing to export the units network to a pandas DataFrame  
+
+## What's New
+
+See [WHATS_NEW.md](WHATS_NEW.md) for a full summary of changes since v0.9.15, including 200× faster imports, new API functions, smarter search algorithms, and expanded unit coverage.

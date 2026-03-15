@@ -12,10 +12,9 @@ __all__ = ['convert', 'convertible']
 
 from .parameters import unyts_parameters_, _get_density
 from .database import units_network
-from .dictionaries import dictionary, temperatureRatioConversions, uncertain_names
+from .dictionaries import dictionary, temperatureRatioConversions, uncertain_names, collect_alias_conflicts
 from .Empty import Empty, str_Empty
 from .searches import BFS, lean_BFS, DFS, hybrid_BFS, print_path
-from .dictionaries import collect_alias_conflicts, dictionary
 
 # cached map of alias conflicts; populated lazily
 _alias_conflicts_cache = None

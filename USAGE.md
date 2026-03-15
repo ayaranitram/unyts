@@ -88,6 +88,83 @@ isinstance(length, Unit)  # True
 
 Additional helpers and utilities such as `set_fvf`, `get_fvf`, `load_memory`, `save_memory`, etc. are available at the package level or via the `database` module (see the module docstrings).
 
+### `convertible(from_units, to_units)`
+
+Test whether a conversion path exists **without** actually performing the conversion.  Returns `True` or `False`.
+
+```python
+from unyts import convertible
+
+convertible('ft', 'm')    # True
+convertible('ft', 'kg')   # False
+```
+
+### `valid_unit(string)`
+
+Check whether a string is recognized as a valid unit name:
+
+```python
+from unyts import valid_unit
+
+valid_unit('ft')     # True
+valid_unit('xyz')    # False
+```
+
+### `is_Unit(obj)`
+
+Check whether an object is a `Unit` instance:
+
+```python
+from unyts import is_Unit, units
+
+is_Unit(units(1, 'm'))   # True
+is_Unit(42)               # False
+```
+
+### `network_to_frame()`
+
+Export the entire conversion network to a Pandas `DataFrame` for inspection or analysis:
+
+```python
+from unyts import network_to_frame
+
+df = network_to_frame()
+print(df.head())
+# Columns include: source, target, lambda
+```
+
+Requires `openpyxl` or `pandas` to be installed.
+
+### Configuration functions
+
+| Function | Purpose |
+|----------|---------|
+| `set_algorithm(name)` | Switch search strategy: `'BFS'`, `'lean_BFS'` (default), `'hybrid_BFS'` |
+| `set_timeout(seconds)` | Maximum time allowed per search (default 30 s) |
+| `set_parallel(flag)` | Enable or disable parallel search threads |
+| `set_fvf(value)` | Set the formation volume factor for reservoir conversions |
+| `set_density(value)` | Set the default density for mass ↔ volume conversions |
+| `get_density()` / `get_fvf()` | Retrieve current density / FVF values |
+| `set_logging_level(level)` | Adjust log verbosity: `'DEBUG'`, `'INFO'`, `'WARNING'`, `'ERROR'` |
+
+### Unit operators
+
+`Unit` objects support a range of arithmetic and comparison operators.  Some noteworthy additions:
+
+```python
+from unyts import units
+
+# ratio via matmul (@)
+units(12, 'in') @ units(1, 'ft')   # ratio in in/ft
+
+# floor division and modulo
+units(7, 'm') // units(2, 'm')     # 3
+units(7, 'm') % units(2, 'm')      # 1 m
+
+# rounding
+round(units(3.14159, 'm'), 2)      # 3.14 m
+```
+
 ---
 
 ## GUI
