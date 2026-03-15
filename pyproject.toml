@@ -31,6 +31,3 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/ayaranitram/unyts"
 "Bug Tracker" = "https://github.com/ayaranitram/unyts/issues"
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]

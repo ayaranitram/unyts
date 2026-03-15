@@ -57,40 +57,18 @@ def units(value: numeric, unit: unit_or_str=None, name=None) -> Unit:
         unit = 'Dimensionless'
     if type(unit) is not str:
         raise TypeError("'units' must be a string or Unit instance.")
-    if not isinstance(value, _numeric) and not isinstance(value, (list, tuple)) and not ((type(unit) is str and unit == 'date') or type(unit) is Date):
+    if not isinstance(value, _numeric) and not ((type(unit) is str and unit == 'date') or type(unit) is Date):
         raise TypeError("'value' parameter must be numeric.")
 
     unit = unit.strip()
-
-    # NOTE: canonical_name() resolves aliases like 'ft' → 'foot' using the
-    # full dictionary, but applying it here would change user-visible unit
-    # strings.  The dictionary lookup below already handles both canonical
-    # and alias forms, so canonicalization is not needed.
 
     if unit in uncertain_names:
         return Unit(value, unit, name)
     if (type(unit) is str and unit == 'date') or type(unit) is Date:
         return Date(value, 'date', name)
 
-    # helper that knows how to search arbitrary dictionary entries
-    def _in_dict(u, val):
-        if isinstance(val, (list, tuple, set)):
-            return u in val
-        elif isinstance(val, dict):
-            # check both keys (canonical names) and alias lists
-            if u in val:
-                return True
-            for aliases in val.values():
-                if isinstance(aliases, (list, tuple, set)):
-                    if u in aliases:
-                        return True
-                elif isinstance(aliases, str):
-                    if u == aliases:
-                        return True
-        return False
-
     for kind in _dictionary:
-        if _in_dict(unit, _dictionary[kind]):
+        if unit in _dictionary[kind]:
             if "'" in unit:
                 u = eval(kind + '''(0, "''' + unit + '''")''', name)
             else:

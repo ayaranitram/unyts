@@ -1,6 +1,5 @@
 from unyts import units
 from unyts.dictionaries import dictionary
-from unyts.errors import WrongUnitsError
 import pytest
 
 
@@ -12,20 +11,12 @@ def test_each_kind_instantiation_and_self_conversion():
             continue
         if not unit_list:
             continue
-        # try a few entries from the list since some generated names may be
-        # invalid (e.g. double-pluralized)
-        for ustr in unit_list[:5]:
-            try:
-                u = units(1, ustr)
-            except (WrongUnitsError, Exception):
-                continue
-            # unit strings may be normalized to canonical names, so just verify
-            # the object was created successfully with a non-empty unit
-            assert u.unit, f"unit string should not be empty for {ustr}"
-            # also attempt conversion to itself
-            u2 = u.convert(u.unit)
-            assert u2.unit == u.unit
-            break  # one successful instantiation per kind is enough
+        ustr = unit_list[0]
+        u = units(1, ustr)
+        assert u.unit == ustr
+        # also attempt conversion to itself
+        u2 = u.convert(ustr)
+        assert u2.unit == ustr
 
     # additionally, pick a couple of cross-kind conversions to ensure conversions work
     # length to length
@@ -39,10 +30,9 @@ def test_each_kind_instantiation_and_self_conversion():
 
 
 def test_invalid_unit_instantiation():
-    # 'not_a_unit' creates a UserUnits object (no raise), so just verify it works
-    u = units(1, 'not_a_unit')
-    assert u is not None
+    with pytest.raises(Exception):
+        units(1, 'not_a_unit')
 
-    # conversion to incompatible kind should raise
+    # conversion to incompatible
     with pytest.raises(Exception):
         units(1, 'm').convert('kg')

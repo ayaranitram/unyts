@@ -38,12 +38,6 @@ def test_bfs_timeout(monkeypatch):
 
 
 def test_dfs_basic(monkeypatch):
-    # DFS uses _get_descendants from converter to prune branches;
-    # for simple test graphs we patch it to return all node names so
-    # it doesn't skip any children.
-    import unyts.converter as _conv
-    monkeypatch.setattr(_conv, '_get_descendants',
-                        lambda name, gen, get_combinations=True: {'a', 'b', 'c'})
     a, b, c, edges = make_simple_graph()
     g = SlimUDigraph(edges)
     assert DFS(g, a, c) == [a, b, c]
@@ -58,42 +52,36 @@ def test_dfs_basic(monkeypatch):
 
 
 def test_print_path_various():
-    assert print_path([UNode('x')]) == 'x = x'
-    assert print_path(['a', 'b', 'c']) == 'a  b  c'
-    assert print_path([1, '->', 2]) == '1  -> 2'
+    assert print_path([UNode('x')]) == '    x = x'
+    assert print_path(['a', 'b', 'c']) == 'a b c'
+    assert print_path([1, '->', 2]) == '    1 -> 2'
 
 
 def test_slim_and_lean(monkeypatch):
-    # lean_BFS does a local import of _get_descendants from unyts.converter,
-    # so we must patch it there.  The patch must return all node names so
-    # that start_descendants and end_descendants have a non-empty intersection.
-    all_names = {'a', 'b', 'c'}
-    import unyts.converter as _conv
-    monkeypatch.setattr(_conv, '_get_descendants',
-                        lambda name, gen, get_combinations=True: all_names)
+    # patch _get_descendants to simple identity
+    import unyts.searches as searches
+    monkeypatch.setattr(searches, '_get_descendants', lambda name, gen, get_combinations=True: {name})
     a, b, c, edges = make_simple_graph()
     # graph has path from a to c
     g = SlimUDigraph(edges)
     assert lean_BFS(g, a, c) == [a, b, c]
     # now if start and end have no common descendants, simulate
-    monkeypatch.setattr(_conv, '_get_descendants',
-                        lambda name, gen, get_combinations=True: set())
+    monkeypatch.setattr(searches, '_get_descendants', lambda name, gen, get_combinations=True: set())
     assert lean_BFS(g, a, c) is None
 
 
 def test_serialrun():
     # when results dict already contains a value, return it without calling
     called = False
-    def target(results_dict, x):
+    def target(x):
         nonlocal called
         called = True
-        return x * 2
+        return x*2
     results = {'foo': 5}
     runner = SerialRun(target, (results, 3))
     assert runner.start() == 5
     assert not called
     # now empty results: call target
-    called = False
     results = {'foo': ''}
     runner = SerialRun(target, (results, 3))
     assert runner.start() == 6
@@ -102,11 +90,6 @@ def test_serialrun():
 
 def test_parallel_helpers(monkeypatch):
     # _bfs and _lean_bfs should populate the results dictionary
-    # _lean_bfs uses _get_descendants from converter, so patch it
-    all_names = {'a', 'b', 'c'}
-    import unyts.converter as _conv
-    monkeypatch.setattr(_conv, '_get_descendants',
-                        lambda name, gen, get_combinations=True: all_names)
     results = {'bfs': '', 'lean_bfs': ''}
     a, b, c, edges = make_simple_graph()
     g = SlimUDigraph(edges)
@@ -118,12 +101,7 @@ def test_parallel_helpers(monkeypatch):
 
 
 def test_hybrid_bfs_serial(monkeypatch):
-    # disable parallel so SerialRun is used; patch _get_descendants so
-    # lean_BFS works on toy graphs (it imports from unyts.converter).
-    all_names = {'a', 'b', 'c'}
-    import unyts.converter as _conv
-    monkeypatch.setattr(_conv, '_get_descendants',
-                        lambda name, gen, get_combinations=True: all_names)
+    # disable parallel so SerialRun is used
     unyts_parameters_.parallel_ = False
     a, b, c, edges = make_simple_graph()
     g = SlimUDigraph(edges)

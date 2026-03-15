@@ -39,7 +39,7 @@ def test_round_and_equals():
     with pytest.raises(TypeError):
         u.equals('abc')
     # precision argument
-    assert units(1.234, 'm').equals(units(1.235, 'm'), precision=1) is True
+    assert units(1.234, 'm').equals(units(1.235, 'm'), precision=2) is True
 
 
 def test_convert_and_to_errors():
@@ -69,10 +69,10 @@ def test_arithmetic_tuple_and_numeric():
     assert (u / 2).value == 1
     assert (u // 2).value == 1
     assert (u ** 2).value == 4
-    assert (u @ units(2, 'm')).unit == 'dimensionless'
+    assert (u @ units(2, 'm')).unit == 'm/m'
     # tuple behaviour
     t = (1, u)
-    assert (u + t)[1].value == 4
+    assert (u + t)[1].value == 3
 
 
 def test_check_value_behaviors():

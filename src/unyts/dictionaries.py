@@ -46,24 +46,9 @@ from .helpers.timer import timeit
 #
 # `AMBIGUOUS_ALIASES` collects strings that are known to collide but have no
 # clear winner; they will remain in place and trigger runtime warnings.
-#
-# `SILENT_AMBIGUOUS_ALIASES` lists aliases whose ambiguity is well-known and
-# intentional — no warning is needed.  These are aliases shared between a
-# "plain" unit and its "standard-condition" counterpart (e.g. 'm3' is used by
-# both 'cubic meter' and 'standard cubic meter').  In oil & gas engineering it
-# is conventional to omit the "standard" qualifier when the context is clear.
 # ----------------------------------------------------------------------------
 
 AMBIGUOUS_ALIASES = set(['w', 'yd', 'pc'])
-
-# oil-and-gas aliases intentionally shared between geometric and standard-
-# condition volumes; suppress the warning for these.
-SILENT_AMBIGUOUS_ALIASES = frozenset([
-    'm3', 'm³', 'm^3',            # cubic meter / standard cubic meter
-    'cf',                          # cubic foot  / standard cubic foot
-    'stb', 'oil barrel',           # barrel      / standard barrel
-    'cf/day',                      # ft3/day     / scf/day
-])
 
 # prioritize some aliases when they clash; keys are alias strings, values are
 # the canonical unit name that should keep the alias.
@@ -92,27 +77,6 @@ def collect_alias_conflicts(dictionary_obj):
                 elif isinstance(aliases, str):
                     alias_map.setdefault(aliases, set()).add(canon)
     return alias_map
-
-
-def _are_co_aliases(names, dictionary_obj):
-    """Return True if every name in *names* is an alias of every other,
-    i.e. they all represent the same physical unit and the conflict is harmless.
-    """
-    canon_to_aliases = {}
-    for val in dictionary_obj.values():
-        if isinstance(val, dict):
-            for canon, aliases in val.items():
-                s = canon_to_aliases.setdefault(canon, set())
-                if isinstance(aliases, (list, tuple)):
-                    s.update(a for a in aliases if isinstance(a, str))
-                elif isinstance(aliases, str):
-                    s.add(aliases)
-    names_list = list(names)
-    for i, a in enumerate(names_list):
-        for b in names_list[i + 1:]:
-            if b not in canon_to_aliases.get(a, set()) and a not in canon_to_aliases.get(b, set()):
-                return False
-    return True
 
 
 def _remove_alias_from_dict(dictionary_obj, canon, alias):
@@ -249,8 +213,7 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Volume_SI_UPPER'] = ('m3', 'm³', 'm^3')  # 'l', 'sm3', 'rm3' are Volume but the conversion of SI prefixes is linear
     dictionary['Volume_linearSI'] = ('sm3', 'sm³', 'Sm3', 'Sm³', 'sm^3',
                                      'stm3', 'stm³', 'STm3', 'STm³', 'stm^3',
-                                     'rem3', 'rem³', 'rem^3', 
-                                     'l')  # litre, sm3 and rem3 are Volume but the conversion of SI prefixes is linear
+                                     'rem3', 'rem³', 'rem^3', 'l')  # litre, sm3 and rem3 are Volume but the conversion of SI prefixes is linear
     dictionary['Volume_UK_NAMES_REVERSE'] = {
         'fluid ounce': ('fl oz', 'oz', 'ounce', 'ozUS'),
         'gill': ('gi', 'gillUS', 'giUS', 'USgill'),
@@ -424,7 +387,7 @@ def _load_dictionary() -> (dict, dict):
         'metric ton': ('Tonne',),
         'g-mol': ('g-moles',),
         'Kg-mol': ('Kg-moles',),
-        'pods': ('пуд', 'pood', 'poods'),
+        'pods': ('пуд', 'poods', 'pood'),
     }
     dictionary['Weight_UK_NAMES_REVERSE'] = {
         'grain': ('gr',),
@@ -664,15 +627,11 @@ def _load_dictionary() -> (dict, dict):
     dictionary['Acceleration'] = ['m/s2', 'ft/s2', 'm/s^2', 'ft/s^2']
 
     # Dimensionless
-    # The dictionary originally contained only reverse mappings; add at least a
-    # canonical name so the network has a node and the unitless tests can
-    # iterate over a nonempty list.
-    dictionary['Dimensionless'] = ['fraction', 'dimensionless']
+    dictionary['Dimensionless'] = []
     dictionary['Dimensionless_fractions_NAMES_REVERSE_UPPER'] = {
-        'fraction': ('ratio', 'dimensionless', 'unitless', 'None')}
+        'fraction': ('ratio', 'dimensionless', 'unitless', 'None', '')}
 
-    # Percentage units: canonical name and some aliases
-    dictionary['Percentage'] = ['percentage']
+    dictionary['Percentage'] = []
     dictionary['Percentage_NAMES_REVERSE'] = {'percentage': ('%', 'perc', 'percent', '/100'), }
 
     # Dates
@@ -734,10 +693,7 @@ def _load_dictionary() -> (dict, dict):
     # log all collisions for visibility; some may later be corrected
     for alias, names in conflicts.items():
         if len(names) > 1:
-            if _are_co_aliases(names, dictionary) or alias in SILENT_AMBIGUOUS_ALIASES:
-                logger.debug(f"alias '{alias}' is shared by co-aliases (same unit): {names}")
-            else:
-                logger.warning(f"alias '{alias}' maps to multiple units: {names}")
+            logger.warning(f"alias '{alias}' maps to multiple units: {names}")
             # if we have a priority rule, enforce it now
             if alias in ALIAS_PRIORITY and ALIAS_PRIORITY[alias] in names:
                 preferred = ALIAS_PRIORITY[alias]
@@ -789,47 +745,16 @@ _try_load_all_units_cache = False  # Will be set by _load_all_units_cache()
 
 @timeit
 def _all_units():
-    """Return set of all units across all categories.
-
-    The previous implementation simply iterated over ``dictionary.values()``
-    which missed names buried inside nested structures (``dict`` entries used
-    for *_NAMES, *_SPACES, etc.).  As a result ``ml`` and ``Coulomb`` were not
-    reported as valid units even though they were defined as aliases.  This
-    caused confusing behaviour in ``units()`` and in conversion routines.
-
-    The new implementation recursively traverses the dictionary content to
-    surface every string encountered.  A background thread populates a cache
-    exactly the same way so that callers can rely on a quick lookup.
-    """
+    """Return set of all units across all categories, using cached value if available, otherwise compute and cache asynchronously."""
     if _all_units_cache is not None:
-        # make sure '1' is always present
-        _all_units_cache.add('1')
         return _all_units_cache
     # Cache is being computed in background thread, wait for it
     if not _all_units_cache_event.is_set():
         _all_units_cache_event.wait(timeout=30)  # Safety timeout
     if _all_units_cache is not None:
-        _all_units_cache.add('1')
         return _all_units_cache
     # Fallback: compute if cache somehow didn't populate
-    # recursively walk dictionary values to collect all strings
-    def _collect(obj, seen=None):
-        seen = seen or set()
-        if isinstance(obj, str):
-            seen.add(obj)
-        elif isinstance(obj, (list, tuple, set)):
-            for item in obj:
-                _collect(item, seen)
-        elif isinstance(obj, dict):
-            for key, val in obj.items():
-                _collect(key, seen)
-                _collect(val, seen)
-        return seen
-
-    result = _collect(dictionary)
-    # always treat the literal '1' as a valid unit (dimensionless)
-    result.add('1')
-    return result
+    return set([each for units in dictionary.values() for each in units])
 
 def _cache_all_units_async():
     """Compute and cache _all_units result in background thread"""
@@ -837,51 +762,29 @@ def _cache_all_units_async():
     # Use @timeit equivalent to measure just the computation, not the thread overhead
     import time
     start = time.perf_counter()
-    # same recursive collector used by _all_units()
-    def _collect(obj, seen=None):
-        seen = seen or set()
-        if isinstance(obj, str):
-            seen.add(obj)
-        elif isinstance(obj, (list, tuple, set)):
-            for item in obj:
-                _collect(item, seen)
-        elif isinstance(obj, dict):
-            for key, val in obj.items():
-                _collect(key, seen)
-                _collect(val, seen)
-        return seen
-
-    _all_units_cache = _collect(dictionary)
-    # always include '1' in cache as well
-    _all_units_cache.add('1')
+    _all_units_cache = set([each for units in dictionary.values() for each in units])
+    elapsed = time.perf_counter() - start
+    print(f"'_cache_all_units_async' computation time: {elapsed:.6f} seconds (background thread)")
     _all_units_cache_event.set()  # Signal that cache is ready
 
-
 def _cache_all_units():
-    """Spawn async task to populate _all_units cache in background.
-
-    The previous version of this file accidentally removed this helper
-    during refactoring.  The :mod:`database` module imports it and now fails
-    if it is absent.  Re‑adding the original implementation here keeps the
-    asynchronous caching behaviour while ensuring the import works.
-    """
+    """Spawn async task to populate cache in background (if not already loaded from file)"""
     global _all_units_cache_thread
-
-    # If already loaded from persistent cache, mark ready and do nothing
+    
+    # If already loaded from persistent cache, skip async computation
     if _all_units_cache is not None:
-        _all_units_cache_event.set()
+        _all_units_cache_event.set()  # Mark as ready
         return
-
-    _all_units_cache_event.clear()
+    
+    _all_units_cache_event.clear()  # Reset event for new cache population
     _all_units_cache_thread = threading.Thread(target=_cache_all_units_async, daemon=True)
-    _all_units_cache_thread.start()
-
+    _all_units_cache_thread.start()  # Background thread, doesn't block rebuild
 
 def _wait_for_all_units_cache():
-    """Wait for the async _all_units cache computation to complete."""
+    """Wait for async cache computation to complete"""
     if _all_units_cache_thread is not None and _all_units_cache_thread.is_alive():
-        _all_units_cache_thread.join()
-    _all_units_cache_event.wait(timeout=30)
+        _all_units_cache_thread.join()  # Wait for thread to finish
+    _all_units_cache_event.wait(timeout=30)  # Safety timeout
 
 def _save_all_units_cache():
     """Save computed _all_units cache to file for persistence"""
@@ -909,54 +812,6 @@ def _load_all_units_cache():
     except Exception as e:
         logger.debug(f"Failed to load _all_units cache: {e}")
     return False
-
-# ---------------------------------------------------------------------------
-# alias / canonical name helpers
-#
-# ``collect_alias_conflicts`` builds an alias-&gt;set(canonical) mapping which
-# is useful for detecting ambiguous names.  In many places we also need a
-# quick way to convert a (non‑ambiguous) alias back to its canonical unit;
-# ``canonical_name`` provides that.  The map is computed lazily so that
-# importing :mod:`dictionaries` does not immediately traverse the entire
-# dictionary structure.
-# ---------------------------------------------------------------------------
-
-_alias_to_canon_cache = None
-
-def _build_alias_map():
-    """Build alias→canonical mapping from the *full* dictionary.
-
-    The module-level ``dictionary`` is stripped of ``_NAMES_REVERSE`` keys
-    after the network is built (or when loaded from cache), so it lacks the
-    dict-type entries that ``collect_alias_conflicts`` needs.  We therefore
-    reload the fresh dictionary (which is cheap — it's just Python dicts)
-    to obtain the complete alias information.
-    """
-    fresh, _, _ = _load_dictionary()
-    alias_to_canon = {}
-    conflicts = collect_alias_conflicts(fresh)
-    for alias, names in conflicts.items():
-        if len(names) == 1:
-            alias_to_canon[alias] = next(iter(names))
-    # map canonical names to themselves explicitly
-    for kind, val in fresh.items():
-        if isinstance(val, dict):
-            for canon in val.keys():
-                alias_to_canon[canon] = canon
-    return alias_to_canon
-
-def canonical_name(unit: str) -> str:
-    """Return the canonical unit name associated with ``unit``.
-
-    If ``unit`` is a recognized alias that maps to exactly one canonical
-    name the canonical string is returned.  Ambiguous aliases are returned
-    unchanged so that callers (typically the converter) can implement
-    context‑sensitive disambiguation logic.
-    """
-    global _alias_to_canon_cache
-    if _alias_to_canon_cache is None:
-        _alias_to_canon_cache = _build_alias_map()
-    return _alias_to_canon_cache.get(unit, unit)
 
 # Attempt to load _all_units cache from persistent storage at module init
 _try_load_all_units_cache = _load_all_units_cache()

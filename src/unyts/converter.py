@@ -12,9 +12,10 @@ __all__ = ['convert', 'convertible']
 
 from .parameters import unyts_parameters_, _get_density
 from .database import units_network
-from .dictionaries import dictionary, temperatureRatioConversions, uncertain_names, collect_alias_conflicts
+from .dictionaries import dictionary, temperatureRatioConversions, uncertain_names
 from .Empty import Empty, str_Empty
 from .searches import BFS, lean_BFS, DFS, hybrid_BFS, print_path
+from .dictionaries import collect_alias_conflicts, dictionary
 
 # cached map of alias conflicts; populated lazily
 _alias_conflicts_cache = None
@@ -302,28 +303,6 @@ def _get_conversion(value, from_unit, to_unit, recursion=None, use_cache:bool=No
         """Multiply a value by a fraction."""
         return x * num / den
 
-    # quick shortcut for common compound alias which occasionally fails
-    # during complex search sequences.  The product of Volt and Farad is
-    # always equivalent to a Coulomb, regardless of upstream cache state.
-    if (from_unit in ('V*F', 'Volt*Farad', 'F*V', 'Farad*Volt') and
-            to_unit == 'Coulomb'):
-        logger.info(f"shortcut conversion applied {from_unit} -> {to_unit}")
-        if value is None:
-            def conv(x):
-                return x
-            return conv, [from_unit, 'identity', 'Coulomb']
-        else:
-            return value, [from_unit, 'identity', 'Coulomb']
-    if (from_unit == 'Coulomb' and
-            to_unit in ('V*F', 'Volt*Farad', 'F*V', 'Farad*Volt')):
-        logger.info(f"shortcut conversion applied {from_unit} -> {to_unit}")
-        if value is None:
-            def conv(x):
-                return x
-            return conv, [from_unit, 'identity', to_unit]
-        else:
-            return value, [from_unit, 'identity', to_unit]
-
     # get and set recursion limit
     recursion = _get_recursion_limit(recursion)
     if unyts_parameters_.verbose_ and unyts_parameters_.verbose_details_ >= 2:
@@ -599,22 +578,6 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
         """Product function for _str2function."""
         return x * y
 
-    # quick top-level shortcut for any representation of Volt*Farad <-> Coulomb.
-    # The multiplication result from Voltage*Capacitance may produce 'V*Farad'
-    # or 'Farad*V', neither of which were covered previously.  Adding them here
-    # guarantees the path is returned before the recursive search kicks in and
-    # avoids the infinite loop that showed up in the energy unit tests when the
-    # cache had been cleared.
-    relevant_pairs = ('V*F', 'V*Farad', 'Volt*Farad', 'F*V', 'Farad*V', 'Farad*Volt')
-    if ((from_unit in relevant_pairs and to_unit == 'Coulomb') or
-            (to_unit in relevant_pairs and from_unit == 'Coulomb')):
-        if value is None:
-            def conv(x):
-                return x
-            return conv, [from_unit, 'identity', to_unit]
-        else:
-            return value, [from_unit, 'identity', to_unit]
-
     # avoid infinite looping, do not repeat searches
     if (from_unit, to_unit) in units_network.previous:
         return None, None
@@ -806,42 +769,6 @@ def _clean_input(value: numeric, from_unit: str, to_unit: str_Empty) -> (numeric
     _check_ambiguous(from_unit)
     _check_ambiguous(to_unit)
 
-    # convert straightforward aliases to their canonical names; ambiguous
-    # aliases are left untouched so that we can later decide based on context.
-    # NOTE: canonical_name() uses the full (fresh) dictionary which maps
-    # abbreviations like 'ft' → 'foot', 'm' → 'meter', etc.  Applying this
-    # here would change the unit strings stored in the resulting Unit objects
-    # (e.g. 'foot/inch' instead of 'ft/in').  The network already has
-    # equality edges between canonical and abbreviated forms, so the BFS
-    # converter finds paths from either.  We therefore skip canonicalization
-    # in _clean_input and let canonical_name() remain available for callers
-    # that need human-readable canonical forms (e.g. dictionaries module).
-
-    # if we still have an ambiguous alias (e.g. 'oz' which maps to both
-    # 'fluid ounce' and 'ounce') try to resolve it using the target unit.
-    # this helps ensure `oz.to('ml')` behaves as volume while
-    # `oz.to('g')` behaves as weight.
-    def _disambiguate(u: str, other: str) -> str:
-        conflicts_map = collect_alias_conflicts(dictionary)
-        conflicts = conflicts_map.get(u)
-        if conflicts and len(conflicts) > 1 and other is not None:
-            logger.info(f"  found ambiguous candidates {conflicts}")
-            ocanon = canonical_name(other)
-            try:
-                from .database import units_network
-                for cand in conflicts:
-                    candcanon = canonical_name(cand)
-                    if units_network.has_node(candcanon) and units_network.has_node(ocanon):
-                        if BFS(units_network, units_network.get_node(candcanon), units_network.get_node(ocanon)) is not None:
-                            logger.info(f"disambiguated '{u}' to '{candcanon}' based on target '{other}'")
-                            return candcanon
-            except Exception:
-                pass
-        return u
-
-    from_unit = _disambiguate(from_unit, to_unit)
-    to_unit = _disambiguate(to_unit, from_unit)
-
     return value, from_unit, to_unit
 
 @timeit
@@ -885,7 +812,7 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str, use_cache:
     elif from_unit not in uncertain_names and to_unit not in uncertain_names and \
             to_unit in dictionary['Volume'] and from_unit in dictionary['Weight']:
         density = _get_density()
-        this_units_density, _ = _converter(density, 'g/cm3', f"{from_unit}/{to_unit}", use_cache=use_cache)
+        this_units_density = _converter(density, 'g/cm3', f"{from_unit}/{to_unit}", use_cache=use_cache)
         if value is None:
             def conv(x):
                 """Density conversion function."""
@@ -1076,7 +1003,7 @@ def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str,
     if convertible(from_unit, to_unit):
         conv, conv_path = _converter(value, from_unit, to_unit, use_cache=use_cache)
     if print_conversion_path and conv is not None and conv is not Empty:
-        logger.info(f"converting from '{from_unit}' to '{to_unit}':\n {print_path(conv_path)}")
-    elif print_conversion_path and conv is None:
+        logger.info("converting from '{from_unit}' to '{to_unit}':\n {print_path(conv_path)}")
+    elif print_conversion_path and conv is not None and conv is not Empty:
         logger.warning("conversion not found, returning original values.")
     return value if (conv is None or conv is Empty) else conv
