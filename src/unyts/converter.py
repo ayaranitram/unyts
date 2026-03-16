@@ -826,15 +826,13 @@ def _clean_input(value: numeric, from_unit: str, to_unit: str_Empty) -> (numeric
         conflicts = conflicts_map.get(u)
         if conflicts and len(conflicts) > 1 and other is not None:
             logger.info(f"  found ambiguous candidates {conflicts}")
-            ocanon = canonical_name(other)
             try:
                 from .database import units_network
                 for cand in conflicts:
-                    candcanon = canonical_name(cand)
-                    if units_network.has_node(candcanon) and units_network.has_node(ocanon):
-                        if BFS(units_network, units_network.get_node(candcanon), units_network.get_node(ocanon)) is not None:
-                            logger.info(f"disambiguated '{u}' to '{candcanon}' based on target '{other}'")
-                            return candcanon
+                    if units_network.has_node(cand) and units_network.has_node(other):
+                        if BFS(units_network, units_network.get_node(cand), units_network.get_node(other)) is not None:
+                            logger.info(f"disambiguated '{u}' to '{cand}' based on target '{other}'")
+                            return cand
             except Exception:
                 pass
         return u
