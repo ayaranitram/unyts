@@ -17,3 +17,5 @@ venv
 gallery/*
 experiments/*
 .idea
+pytest.out
+docs/backup*
