@@ -213,6 +213,15 @@ class UnytLogger:
             self._log_jupyter(message, level)
         else:
             self._log_console(message, level)
+            # Forward messages to the underlying ``logging`` logger so
+            # unittest fixtures like ``caplog`` can intercept them.
+            # In notebooks, the HTML display already shows the message once,
+            # so avoid printing a second copy to stderr.
+            try:
+                lvl = self.LOG_LEVELS.get(level.lower(), (logging.INFO,))[0]
+                self.logger.log(lvl, message)
+            except Exception:
+                pass
 
     # Log methods
     def debug(self, message):
@@ -259,6 +268,28 @@ class UnytLogger:
         """
         if self.logger.isEnabledFor(logging.CRITICAL):
             self._log_message(message, "critical")
+
+    def exception(self, message, *args):
+        """Log an error message with traceback information.
+
+        Mimics the standard logging.Logger.exception() behaviour:
+        formats *message* with printf-style *args*, appends the current
+        exception's traceback (if any), and logs at ERROR level.
+
+        Args:
+            message (str): Error message text (may contain %s placeholders).
+            *args: Values for printf-style formatting.
+        """
+        import traceback as _tb
+        if args:
+            try:
+                message = message % args
+            except (TypeError, ValueError):
+                pass
+        tb = _tb.format_exc()
+        if tb and tb.strip() != 'NoneType: None':
+            message = f"{message}\n{tb}"
+        self.error(message)
 
     def change_level_interactive(self):
         """Interactive function to change log level

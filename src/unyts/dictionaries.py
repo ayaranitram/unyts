@@ -46,9 +46,24 @@ from .helpers.timer import timeit
 #
 # `AMBIGUOUS_ALIASES` collects strings that are known to collide but have no
 # clear winner; they will remain in place and trigger runtime warnings.
+#
+# `SILENT_AMBIGUOUS_ALIASES` lists aliases whose ambiguity is well-known and
+# intentional — no warning is needed.  These are aliases shared between a
+# "plain" unit and its "standard-condition" counterpart (e.g. 'm3' is used by
+# both 'cubic meter' and 'standard cubic meter').  In oil & gas engineering it
+# is conventional to omit the "standard" qualifier when the context is clear.
 # ----------------------------------------------------------------------------
 
 AMBIGUOUS_ALIASES = set(['w', 'yd', 'pc'])
+
+# oil-and-gas aliases intentionally shared between geometric and standard-
+# condition volumes; suppress the warning for these.
+SILENT_AMBIGUOUS_ALIASES = frozenset([
+    'm3', 'm³', 'm^3',            # cubic meter / standard cubic meter
+    'cf',                          # cubic foot  / standard cubic foot
+    'stb', 'oil barrel',           # barrel      / standard barrel
+    'cf/day',                      # ft3/day     / scf/day
+])
 
 # prioritize some aliases when they clash; keys are alias strings, values are
 # the canonical unit name that should keep the alias.
@@ -77,6 +92,27 @@ def collect_alias_conflicts(dictionary_obj):
                 elif isinstance(aliases, str):
                     alias_map.setdefault(aliases, set()).add(canon)
     return alias_map
+
+
+def _are_co_aliases(names, dictionary_obj):
+    """Return True if every name in *names* is an alias of every other,
+    i.e. they all represent the same physical unit and the conflict is harmless.
+    """
+    canon_to_aliases = {}
+    for val in dictionary_obj.values():
+        if isinstance(val, dict):
+            for canon, aliases in val.items():
+                s = canon_to_aliases.setdefault(canon, set())
+                if isinstance(aliases, (list, tuple)):
+                    s.update(a for a in aliases if isinstance(a, str))
+                elif isinstance(aliases, str):
+                    s.add(aliases)
+    names_list = list(names)
+    for i, a in enumerate(names_list):
+        for b in names_list[i + 1:]:
+            if b not in canon_to_aliases.get(a, set()) and a not in canon_to_aliases.get(b, set()):
+                return False
+    return True
 
 
 def _remove_alias_from_dict(dictionary_obj, canon, alias):
@@ -693,7 +729,10 @@ def _load_dictionary() -> (dict, dict):
     # log all collisions for visibility; some may later be corrected
     for alias, names in conflicts.items():
         if len(names) > 1:
-            logger.warning(f"alias '{alias}' maps to multiple units: {names}")
+            if _are_co_aliases(names, dictionary) or alias in SILENT_AMBIGUOUS_ALIASES:
+                logger.debug(f"alias '{alias}' is shared by co-aliases (same unit): {names}")
+            else:
+                logger.warning(f"alias '{alias}' maps to multiple units: {names}")
             # if we have a priority rule, enforce it now
             if alias in ALIAS_PRIORITY and ALIAS_PRIORITY[alias] in names:
                 preferred = ALIAS_PRIORITY[alias]

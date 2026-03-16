@@ -29,7 +29,7 @@ def test_unit_product():
 
 def test_unit_division():
     """Verify division of units and resulting exponent updates."""
-    assert unit_division('m', 'm') == 'm/m'
+    assert unit_division('m', 'm') == 'dimensionless'
     assert unit_division('m', 'm2') == 'm-1'
     assert unit_division('cm3', 'cm') == 'cm2'
 

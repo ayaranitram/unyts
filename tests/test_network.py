@@ -59,7 +59,7 @@ def test_udigraph_node_edge_operations(tmp_path):
     assert 'a->b' in str(g)
 
 
-def test_fvf_set_get_and_errors():
+def test_fvf_set_get_and_errors(monkeypatch):
     g = UDigraph()
     # invalid types
     with pytest.raises(TypeError):
@@ -77,7 +77,6 @@ def test_fvf_set_get_and_errors():
     unyts_parameters_.gui = False
     # simulate user entering invalid then valid via monkeypatch
     inputs = iter(['-1', '0', '3'])
-    monkeypatch = pytest.monkeypatch
     monkeypatch.setattr('builtins.input', lambda prompt='': next(inputs))
     assert g2.get_fvf() == 3
 

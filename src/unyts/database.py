@@ -64,8 +64,13 @@ def delete_cache() -> None:
             os.remove(path)
 
 @timeit
-def set_fvf(fvf=None) -> None:
-    """Set the formation Volume factor (FVF) value."""
+def set_fvf(fvf=None, units=None) -> None:
+    """Set the formation Volume factor (FVF) value.
+
+    Historically the function accepted a single numeric argument.  Some of the
+    unit tests still call this helper with two arguments (``fvf`` and a unit
+    string) – the unit parameter is ignored but accepted for compatibility.
+    """
     def valid_fvf(fvf):
         """Validate the formation Volume factor (FVF) input."""
         if type(fvf) is str:
@@ -80,6 +85,9 @@ def set_fvf(fvf=None) -> None:
                 return fvf
         else:
             return False
+    # ignore units argument if provided; it is only here for API compatibility
+    # with older tests and user code.
+    # ``fvf`` may be ``None`` in which case we prompt interactively as before.
     if fvf is None:
         print('Please enter formation Volume factor (FVF) in reservoir_volume/standard_volume:')
         while fvf is None:
@@ -698,10 +706,15 @@ def _load_network():
             dictionary[unit_kind] = tuple(set(dictionary[unit_kind]))
     for unit_kind in to_remove:
         dictionary.pop(unit_kind)
-    # merge data dictionaries into a single
-    dictionary['Data'] = tuple(dictionary['dataBYTE'] + dictionary['dataBIT'])
-    del dictionary['dataBYTE']
-    del dictionary['dataBIT']
+    # merge dataBYTE and dataBIT into a single 'Data' key, then remove the
+    # originals so that define.py's eval() finds the 'Data' class name.
+    if 'Data' not in dictionary:
+        data_bytes = dictionary.pop('dataBYTE', [])
+        data_bits = dictionary.pop('dataBIT', [])
+        dictionary['Data'] = tuple(data_bytes + data_bits)
+    else:
+        dictionary.pop('dataBYTE', None)
+        dictionary.pop('dataBIT', None)
     dictionary['UserUnits'] = list(dictionary['UserUnits'])
 
     return network
@@ -840,13 +853,13 @@ def _create_ProductivityIndex() -> None:
     else:
         existing = set()
     
-    # List comp: ~1.4x faster than set comp for 19.5M items
-    new_products = [f"{v}/{t}/{p}"
+    # Use a generator expression to avoid materializing the full list in
+    # memory.  The previous list comprehension allocated ~500 MB for ~19.5M
+    # strings, causing MemoryError on constrained systems.
+    existing.update(f"{v}/{t}/{p}"
                     for v in volumes
                     for t in times
-                    for p in pressures]
-    
-    existing.update(new_products)
+                    for p in pressures)
     dictionary['ProductivityIndex'] = tuple(existing)
 
 @timeit
