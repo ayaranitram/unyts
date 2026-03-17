@@ -303,6 +303,7 @@ All notable changes to the unyts project are documented in this file.
 - `set_parallel(enabled)` - Enable/disable parallel processing
 - `set_timeout(seconds)` - Configure search timeout
 - `set_logging_level(level)` - Adjust log level
+- `reset_default_parameters()` - Restore all tuning/configuration parameters to package defaults
 
 #### Cache Management Functions
 - `save_memory()` - Persist conversion path cache to disk

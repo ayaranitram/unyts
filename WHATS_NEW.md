@@ -103,6 +103,7 @@ python -m unyts
 | `set_parallel(flag)` | Enable / disable parallel search threads |
 | `get_parallel()` | Return the current parallel setting |
 | `set_logging_level(level)` | Adjust log verbosity at runtime (`DEBUG`, `INFO`, `WARNING`, `ERROR`) |
+| `reset_default_parameters()` | Restore all tuning/configuration parameters to package defaults |
 | `set_fvf(value)` | Set the formation‑volume‑factor for reservoir conversions |
 | `set_density(value)` | Set the default density for mass ↔ volume conversions |
 | `is_Unit(obj)` | Check whether an object is a Unit instance |

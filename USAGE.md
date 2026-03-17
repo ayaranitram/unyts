@@ -146,6 +146,7 @@ Requires `openpyxl` or `pandas` to be installed.
 | `set_density(value)` | Set the default density for mass ↔ volume conversions |
 | `get_density()` / `get_fvf()` | Retrieve current density / FVF values |
 | `set_logging_level(level)` | Adjust log verbosity: `'DEBUG'`, `'INFO'`, `'WARNING'`, `'ERROR'` |
+| `reset_default_parameters()` | Restore all tuning/configuration parameters to package defaults |
 
 ### Unit operators
 

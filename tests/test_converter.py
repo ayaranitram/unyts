@@ -5,7 +5,7 @@ Created on Fri Aug 26 21:34:21 2022
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-from unyts import convert, clean_memory
+from unyts import convert, clean_memory, set_unit, set_conversion
 from pandas import read_excel
 from math import isnan
 from unyts.converter import _apply_conversion, _get_conversion, _converter, _clean_print_conversion_path, convert_for_SimPandas, convertible
@@ -123,3 +123,25 @@ def test_case_insensitive_convert():
     assert convert(1, 'METER', 'INCH') == pytest.approx(convert(1, 'meter', 'inch'))
     assert convert(1, 'rm3', 'SM3') == pytest.approx(convert(1, 'rm3', 'sm3'))
     assert convert(1, 'RB', 'STB') == pytest.approx(convert(1, 'rb', 'stb'))
+
+
+def test_custom_units_snoot_regression():
+    """Custom units should convert after registration, even if a prior lookup failed and was cached."""
+    import unyts
+
+    prev_raise_error = unyts.unyts_parameters_.raise_error_
+    try:
+        # Force a failed lookup first so older behavior would cache a None path.
+        unyts.unyts_parameters_.raise_error_ = False
+        assert convert(10, 'snoot', 'm') is None
+
+        # Register custom unit and conversion pair.
+        set_unit('snoot')
+        set_conversion('snoot', 'm', lambda x: x * 1.7018)
+        set_conversion('m', 'snoot', lambda x: x / 1.7018)
+
+        # Conversion must work now (regression guard for stale cache entries).
+        unyts.unyts_parameters_.raise_error_ = True
+        assert convert(10, 'snoot', 'm') == pytest.approx(17.018)
+    finally:
+        unyts.unyts_parameters_.raise_error_ = prev_raise_error

@@ -167,6 +167,9 @@ class UDigraph(object):
                 logger.debug(f"skipping duplicate node {node}")
             return
         self.edges[node] = [], []
+        # Invalidate cached string view of edges so search algorithms that
+        # depend on it (e.g. lean_BFS) see newly added nodes.
+        self._edges_str = None
 
     def add_edge(self, edge, reverse=False) -> None:
         """Add an edge to the UDigraph."""
@@ -178,6 +181,9 @@ class UDigraph(object):
         if dest not in self.edges[src][0]:  # avoid duplication
             self.edges[src][0].append(dest)
             self.edges[src][1].append(conv)
+            # Changing the graph invalidates the cached string view used by
+            # some search algorithms (e.g. lean_BFS), so clear it.
+            self._edges_str = None
 
     def children_of(self, node):
         """Return the list of child nodes for a given node in the UDigraph."""

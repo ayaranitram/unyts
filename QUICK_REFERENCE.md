@@ -194,6 +194,10 @@ set_timeout(60)  # 60 seconds
 from unyts import set_logging_level
 set_logging_level('INFO')  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
+# Reset all tuning parameters to package defaults
+from unyts import reset_default_parameters
+reset_default_parameters()
+
 # Direct parameter access
 unyts_parameters_.max_generations_ = 25  # Search depth
 unyts_parameters_.reduce_parentheses_ = True  # Simplify notation

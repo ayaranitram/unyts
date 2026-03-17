@@ -53,7 +53,16 @@ def set_unit(unit_name: str) -> bool:
     """Add a new unit name to the UserUnits class and the database."""
     from ..database import units_network
     from ..network import UNode
+    unit_name = unit_name.strip()
+    if type(dictionary['UserUnits']) is tuple:
+        dictionary['UserUnits'] = list(dictionary['UserUnits'])
+    if unit_name not in dictionary['UserUnits']:
+        dictionary['UserUnits'].append(unit_name)
     units_network.add_node(UNode(unit_name))
+    # Invalidate stale cached searches that involve this user unit.
+    units_network.memory = {k: v for k, v in units_network.memory.items() if unit_name not in k}
+    units_network.previous = [k for k in units_network.previous if unit_name not in k]
+    return True
 
 
 def set_conversion(from_units: str, to_units: str, conversion, reverse_conversion=None) -> bool:
@@ -83,11 +92,45 @@ def set_conversion(from_units: str, to_units: str, conversion, reverse_conversio
     if not hasattr(reverse_conversion, '__call__') and hasattr(reverse_conversion, '__getitem__'):
         raise TypeError("`reverse_conversion` must be callable.")
 
+    if type(dictionary['UserUnits']) is tuple:
+        dictionary['UserUnits'] = list(dictionary['UserUnits'])
+    if from_units not in dictionary['UserUnits']:
+        dictionary['UserUnits'].append(from_units)
+    if to_units not in dictionary['UserUnits']:
+        dictionary['UserUnits'].append(to_units)
+
     units_network.add_node(UNode(from_units))
     units_network.add_node(UNode(to_units))
-    units_network.add_edge(Conversion(units_network.get_node(from_units),
-                                      units_network.get_node(to_units),
-                                      conversion))
-    units_network.add_edge(Conversion(units_network.get_node(to_units),
-                                      units_network.get_node(from_units),
-                                      reverse_conversion))
+
+    def _upsert_edge(src_name, dst_name, conv):
+        """Insert edge if missing, otherwise replace conversion callable."""
+        src = units_network.get_node(src_name)
+        dst = units_network.get_node(dst_name)
+        children = units_network.edges[src][0]
+        converters = units_network.edges[src][1]
+        if dst in children:
+            converters[children.index(dst)] = conv
+        else:
+            units_network.add_edge(Conversion(src, dst, conv))
+
+    _upsert_edge(from_units, to_units, conversion)
+    _upsert_edge(to_units, from_units, reverse_conversion)
+
+    # Reset cached string representation of edges so search algorithms that rely
+    # on it (e.g. lean_BFS via _get_descendants) see the new conversion edge.
+    try:
+        units_network._edges_str = None
+    except Exception:
+        pass
+
+    # Clear stale cache entries from previous failed searches or older custom mappings.
+    impacted = {from_units, to_units}
+    units_network.memory = {
+        k: v for k, v in units_network.memory.items()
+        if (k[0] not in impacted and k[1] not in impacted)
+    }
+    units_network.previous = [
+        k for k in units_network.previous
+        if (k[0] not in impacted and k[1] not in impacted)
+    ]
+    return True
