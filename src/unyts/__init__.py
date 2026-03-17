@@ -10,12 +10,13 @@ __version__ = '0.10.5'
 __release__ = 20260227
 __all__ = ['units', 'convert', 'converter', 'convertible', 'Unit', 'is_Unit', 'valid_unit',
            'set_unit', 'set_conversion', 'set_density', 'get_density',
-           'save', 'start_gui', 'set_fvf', 'set_algorithm', 'set_parallel', 'set_timeout', 'verbose']
+           'save', 'start_gui', 'set_fvf', 'set_algorithm', 'set_parallel', 'set_timeout', 'verbose',
+           'reset_default_parameters']
 
 # Only import lightweight modules at startup
 from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density,\
     recursion_limit, verbose, set_algorithm, get_algorithm, set_parallel, get_parallel, set_timeout, get_timeout,\
-    set_logging_level
+    set_logging_level, reset_default_parameters
 from .helpers.logger import logger
 
 # Import lightweight infrastructure that doesn't trigger database

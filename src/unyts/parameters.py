@@ -9,7 +9,7 @@ Created on Sat Oct 24 18:24:20 2020
 __version__ = '0.6.13'
 __release__ = 20260225
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'set_density', 'get_density',
-           'recursion_limit', 'verbose', 'set_algorithm', 'set_parallel']
+           'recursion_limit', 'verbose', 'set_algorithm', 'set_parallel', 'reset_default_parameters']
 
 import os.path
 from json import load as json_load, dump as json_dump
@@ -29,6 +29,31 @@ __timeout__ = 30
 __default_density__ = 0.997
 __default_fvf__ = 1.0
 __default_logger_level__ = "INFO"
+
+
+def _default_params() -> dict:
+    """Return the default persisted parameters for unyts."""
+    return {
+        'print_path': False,
+        'cache': True,
+        'reload': True,
+        'raise_error': True,
+        'verbose': False,
+        'verbose_details': 0,
+        'reduce_parentheses': True,
+        'show_version': False,
+        'density': __default_density__,
+        'fvf': __default_fvf__,
+        'max_recursion': __max_recursion_default__,
+        'algorithm': 'lean_BFS',
+        'max_generations': __max_generations_default__,
+        'timeout': __timeout__,
+        'parallel': False,
+        'config_files_folder': None,
+        'timing': False,
+        'testing': False,
+        'logger_level': __default_logger_level__,
+    }
 
 class UnytsParameters(object):
     """
@@ -89,24 +114,7 @@ class UnytsParameters(object):
             with open(ini_path, 'r') as f:
                 params = json_load(f)
         else:
-            params = {'print_path': False,
-                      'cache': True,
-                      'reload': True,
-                      'raise_error': True,
-                      'verbose': False,
-                      'verbose_details': 0,
-                      'reduce_parentheses': True,
-                      'show_version': False,
-                      'density': __default_density__, # g/cm3
-                      'fvf': __default_fvf__,
-                      'max_recursion': __max_recursion_default__,
-                      'algorithm': 'lean_BFS',
-                      'max_generations': __max_generations_default__,
-                      'timeout': __timeout__,
-                      'parallel': False,
-                      'config_files_folder': None,
-                      'timing': False,
-                      'testing': False}
+            params = _default_params()
             with open(ini_path, 'w') as f:
                 json_dump(params, f)
         self.print_path_ = params['print_path'] if 'print_path' in params else False
@@ -388,6 +396,32 @@ class UnytsParameters(object):
         """Reset the start time for timeout checking."""
         self._start_time = 0
 
+    def reset_default_parameters(self) -> None:
+        """Reset user-tunable parameters to their package defaults."""
+        defaults = _default_params()
+        self.print_path_ = defaults['print_path']
+        self.cache_ = defaults['cache']
+        self.reload_ = defaults['reload']
+        self.raise_error_ = defaults['raise_error']
+        self.verbose_ = defaults['verbose']
+        self.verbose_details_ = defaults['verbose_details']
+        self.reduce_parentheses_ = defaults['reduce_parentheses']
+        self.show_version_ = defaults['show_version']
+        self.density_ = defaults['density']
+        self.fvf_ = defaults['fvf']
+        self.max_recursion_ = defaults['max_recursion']
+        self.algorithm_ = defaults['algorithm']
+        self.max_generations_ = defaults['max_generations']
+        self.timeout_ = defaults['timeout']
+        self.parallel_ = defaults['parallel']
+        self._timing = defaults['timing']
+        self._testing = defaults['testing']
+        self._warnings = []
+        self.reset_start_time()
+        logger.set_level(defaults['logger_level'])
+        self.save_params()
+        logger.info("Parameters reset to default values.")
+
     def set_user_folder(self, path=None):
         """Define the folder where the configuration files are stored. If path is None, it will be set to the default folder."""
         if path is None:
@@ -545,4 +579,9 @@ def get_timeout():
 def set_logging_level(level:str="WARNING"):
     """Set the logging level."""
     unyts_parameters_.set_logger_level(level)
+
+
+def reset_default_parameters() -> None:
+    """Reset user-tunable parameters to their package defaults."""
+    unyts_parameters_.reset_default_parameters()
 
