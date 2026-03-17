@@ -161,7 +161,7 @@ def lean_BFS(graph, start, end, verbose=False, max_generations_screening=25) -> 
     selected_edges = {k: v for k, v in graph.edges.items() if k.get_name() in selection}
     if len(selected_edges) > 0:
         if verbose:
-            logger.info(f"<lean BFS> search graph slimmed from {len(graph.edges)} to {len(selected_edges)} nodes, in {generations} generations.")
+            logger.debug(f"<lean BFS> search graph slimmed from {len(graph.edges)} to {len(selected_edges)} nodes, in {generations} generations.")
         slim_graph = SlimUDigraph(selected_edges)
         return BFS(slim_graph, start, end, verbose=verbose and unyts_parameters_.verbose_details_ > 0)
 

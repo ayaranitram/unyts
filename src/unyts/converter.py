@@ -622,13 +622,13 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     # get and set recursion limit
     recursion = _get_recursion_limit(recursion)
     if unyts_parameters_.verbose_:
-        logger.info(f"_converter: {recursion} remaining recursions, converting from {from_unit} to {to_unit}")
+        logger.debug(f"_converter: {recursion} remaining recursions, converting from {from_unit} to {to_unit}")
     if recursion < 0:
         return None, None
 
     # try to convert
     if unyts_parameters_.verbose_:
-        logger.info(f"_converter: {recursion} remaining recursions, attempting direct conversion")
+        logger.debug(f"_converter: {recursion} remaining recursions, attempting direct conversion")
     conv, conv_path = _get_conversion(value, from_unit, to_unit, recursion=recursion, use_cache=use_cache)
     # if Conversion found
     if conv is Empty:
@@ -640,7 +640,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
    
     # look for conversions of parts in ratio or product units
     if unyts_parameters_.verbose_:
-        logger.info(f"_converter: {recursion} remaining recursions, attempting to convert ratio or product of units.")
+        logger.debug(f"_converter: {recursion} remaining recursions, attempting to convert ratio or product of units.")
     list_conversion = []
     list_conversion_path = []
     split_from = _split_unit(from_unit)
@@ -688,7 +688,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     # look for one-to-pair conversion path
     if ('/' in to_unit or '*' in to_unit) and ('/' not in from_unit and '*' not in from_unit):
         if unyts_parameters_.verbose_:
-            logger.info(f"_converter: {recursion} remaining recursions, looking for one-to-pair conversion path")
+            logger.debug(f"_converter: {recursion} remaining recursions, looking for one-to-pair conversion path")
         from_unit_child = _get_pair_child(from_unit)
         if from_unit_child is not None:
             base_conversion, base_conversion_path = _converter(None, from_unit, from_unit_child, recursion=recursion, use_cache=use_cache)
@@ -707,7 +707,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     # look for pair-to-one conversion path
     elif ('/' in from_unit or '*' in from_unit) and ('/' not in to_unit and '*' not in to_unit):
         if unyts_parameters_.verbose_:
-            logger.info(f"_converter: {recursion} remaining recursions, looking for pair-to-one conversion path")
+            logger.debug(f"_converter: {recursion} remaining recursions, looking for pair-to-one conversion path")
         to_unit_child = _get_pair_child(to_unit)
         if to_unit_child is not None:
             final_conversion, final_conversion_path = _converter(None, to_unit_child, to_unit, recursion=recursion, use_cache=use_cache)
@@ -726,7 +726,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
     # look for pair to pair conversion path considering children
     if ('/' in from_unit) and ('/' in to_unit) and len(from_unit.split('/')) == 2 and len(to_unit.split('/')) == 2:
         if unyts_parameters_.verbose_:
-            logger.info(f"_converter: {recursion} remaining recursions, looking for pair-to-pair conversion path considering children")
+            logger.debug(f"_converter: {recursion} remaining recursions, looking for pair-to-pair conversion path considering children")
         conversion, conversion_path = _ratio_conversion_including_children(from_unit, to_unit, recursion=recursion)
         if conversion is not None:        
             units_network.memory[(from_unit, to_unit)] = conversion, conversion_path
@@ -736,7 +736,7 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
                 return conversion(value), conversion_path
 
     if unyts_parameters_.verbose_:
-        logger.error(f"_converter: {recursion} remaining recursions, no conversion found")
+        logger.debug(f"_converter: {recursion} remaining recursions, no conversion found")
     units_network.memory[(from_unit, to_unit)] = None, None
     return None, None
 
@@ -1005,7 +1005,7 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty,
     unyts_parameters_.reset_start_time()
 
     if unyts_parameters_.verbose_:
-        logger.info("convert: STARTING...")
+        logger.debug("convert: STARTING...")
     # cleaning inputs
     value, from_unit, to_unit = _clean_input(value, from_unit, to_unit)
     print_conversion_path = _clean_print_conversion_path(print_conversion_path)
