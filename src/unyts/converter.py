@@ -545,7 +545,10 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
 
     # keep only intersection between families
     common = from_family.intersection(to_family)
-    
+    if not common:
+        # nothing in common => no conversion path via child descendants
+        return None, None
+
     def total_generations(u):
         """Helper function to calculate the total generations from from_unit to u and from u to to_unit."""
         return generations_until_common(from_unit, u) + generations_until_common(u, to_unit)
@@ -561,16 +564,24 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
             break
         from_child_conversion, from_child_conversion_path = _converter(None, from_unit, child, recursion=recursion, use_cache=use_cache)
         child_to_conversion, child_to_conversion_path = _converter(None, child, to_unit, recursion=recursion, use_cache=use_cache)
-        if from_child_conversion is not None and child_to_conversion is not None:
-            this_path_len = len([step for step in (from_child_conversion_path + child_to_conversion_path) if step != '1/'])
-            if this_path_len < shortest_path:
-                conversion_path = from_child_conversion_path + child_to_conversion_path
-                def conversion(x):
-                    """Return the result of converting x from from_unit to to_unit."""
-                    return child_to_conversion(from_child_conversion(x))
-                shortest_path = this_path_len
-            if path == max_paths:
-                break
+
+        # If either conversion is missing or the paths are missing, skip this candidate.
+        if from_child_conversion is None or child_to_conversion is None:
+            path += 1
+            continue
+        if from_child_conversion_path is None or child_to_conversion_path is None:
+            path += 1
+            continue
+
+        this_path_len = len([step for step in (from_child_conversion_path + child_to_conversion_path) if step != '1/'])
+        if this_path_len < shortest_path:
+            conversion_path = from_child_conversion_path + child_to_conversion_path
+            def conversion(x):
+                """Return the result of converting x from from_unit to to_unit."""
+                return child_to_conversion(from_child_conversion(x))
+            shortest_path = this_path_len
+        if path == max_paths:
+            break
         path += 1
     return conversion, conversion_path
     

@@ -10,7 +10,8 @@ __version__ = '0.10.5'
 __release__ = 20260227
 __all__ = ['units', 'convert', 'converter', 'convertible', 'Unit', 'is_Unit', 'valid_unit',
            'set_unit', 'set_conversion', 'set_density', 'get_density',
-           'save', 'start_gui', 'set_fvf', 'set_algorithm', 'set_parallel', 'set_timeout', 'verbose',
+           'save', 'load', 'save_memory', 'load_memory', 'clean_memory',
+           'start_gui', 'set_fvf', 'set_algorithm', 'set_parallel', 'set_timeout', 'verbose',
            'reset_default_parameters']
 
 # Only import lightweight modules at startup
