@@ -247,7 +247,7 @@ class Unit(object, metaclass=UnytType):
             return self.kind((self.value + other) * 100, self.unit)
         elif isinstance(other, _numeric):
             return self.kind(self.value + other, self.unit)
-        elif ((hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame')) or type(other) in (SimSeries, SimDataFrame)) or type(other) in (SimSeries, SimDataFrame):
+        elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__radd__(self)
         else:
             raise NotImplementedError(f"Addition of {type(self)} and {type(other)} not implemented.")
