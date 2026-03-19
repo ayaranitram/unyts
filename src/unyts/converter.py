@@ -1058,7 +1058,7 @@ def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str,
     Particular implementation of `convert` function, specially set for SimDataFrames and SimSeries.
     If possible to convert the units, the returns the received value (integer, float, array, Series, Frame, ...)
     transformed from the units 'from_unit' to the units 'to_units'.
-    If not possible to convert, return the original `value`.
+    If not possible to convert, return the original `value` with original units.
 
     Parameters
     ----------
@@ -1087,5 +1087,5 @@ def convert_for_SimPandas(value: numeric, from_unit: str, to_unit: str,
     if print_conversion_path and conv is not None and conv is not Empty:
         logger.info(f"converting from '{from_unit}' to '{to_unit}':\n {print_path(conv_path)}")
     elif print_conversion_path and conv is None:
-        logger.warning("conversion not found, returning original values.")
+        logger.warning("conversion not found, returning original values with original units.")
     return value if (conv is None or conv is Empty) else conv
