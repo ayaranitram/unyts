@@ -4,6 +4,11 @@
 from concurrent.futures import Future
 import threading
 import time
+import os
+import subprocess
+import sys
+
+import pytest
 
 
 def test_staged_fallback_executes_each_function_once_on_parallel_failure():
@@ -119,3 +124,39 @@ def test_initialize_startup_build_runs_once_with_concurrent_calls(monkeypatch):
 
     assert calls['count'] == 1
     assert db._STARTUP_INIT_DONE is True
+
+
+@pytest.mark.skipif(
+    os.environ.get('UNYTS_ENABLE_STRESS_SMOKE') != '1',
+    reason='Set UNYTS_ENABLE_STRESS_SMOKE=1 to run startup stress smoke test.',
+)
+def test_python314_startup_stress_smoke_memory_budget():
+    pytest.importorskip('psutil')
+
+    max_rss_mb = int(os.environ.get('UNYTS_STRESS_MAX_RSS_MB', '6144'))
+    loops = int(os.environ.get('UNYTS_STRESS_LOOPS', '200'))
+
+    code = (
+        "import psutil\n"
+        "from unyts import convert\n"
+        f"loops = {loops}\n"
+        "for _ in range(loops):\n"
+        "    convert(1.0, 'psi', 'bar')\n"
+        "rss = psutil.Process().memory_info().rss\n"
+        "print(rss)\n"
+    )
+
+    env = os.environ.copy()
+    env.setdefault('UNYTS_PARALLEL_3_14', '0')
+    proc = subprocess.run(
+        [sys.executable, '-c', code],
+        capture_output=True,
+        text=True,
+        timeout=300,
+        env=env,
+        check=False,
+    )
+
+    assert proc.returncode == 0, proc.stderr
+    rss_bytes = int(proc.stdout.strip().splitlines()[-1])
+    assert rss_bytes <= max_rss_mb * 1024 * 1024
