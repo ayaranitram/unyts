@@ -2,6 +2,8 @@
 """Regression tests for startup staged parallel orchestration."""
 
 from concurrent.futures import Future
+import threading
+import time
 
 
 def test_staged_fallback_executes_each_function_once_on_parallel_failure():
@@ -91,3 +93,29 @@ def test_parallel_execute_explicit_max_workers_overrides_cap(monkeypatch):
     ph.parallel_execute(fns, max_workers=3)
 
     assert captured['max_workers'] == 3
+
+
+def test_initialize_startup_build_runs_once_with_concurrent_calls(monkeypatch):
+    from unyts import database as db
+
+    calls = {'count': 0}
+
+    def fake_run_startup(_parallel_enabled, _parallel_execute_fn):
+        calls['count'] += 1
+        time.sleep(0.05)
+
+    monkeypatch.setattr(db, '_run_startup_create_stages', fake_run_startup)
+    monkeypatch.setattr(db, '_STARTUP_INIT_DONE', False)
+    monkeypatch.setattr(db, '_STARTUP_INIT_LOCK', threading.Lock())
+
+    threads = [
+        threading.Thread(target=db._initialize_startup_build, args=(False, lambda _fns: None))
+        for _ in range(4)
+    ]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+
+    assert calls['count'] == 1
+    assert db._STARTUP_INIT_DONE is True

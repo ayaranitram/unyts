@@ -29,6 +29,9 @@ from .helpers.timer import timeit
 from os.path import isfile
 from json import dump as json_dump
 
+_STARTUP_INIT_LOCK = threading.Lock()
+_STARTUP_INIT_DONE = False
+
 try:
     from cloudpickle import dump as cloudpickle_dump, load as cloudpickle_load
     _cloudpickle_ = True
@@ -1068,6 +1071,18 @@ def _run_startup_create_stages(parallel_3_14, parallel_execute_fn, stage_a=None,
     complete_products_fn()
 
 
+def _initialize_startup_build(parallel_3_14, parallel_execute_fn):
+    """Run startup build once per module import context."""
+    global _STARTUP_INIT_DONE
+    if _STARTUP_INIT_DONE:
+        return
+    with _STARTUP_INIT_LOCK:
+        if _STARTUP_INIT_DONE:
+            return
+        _run_startup_create_stages(parallel_3_14, parallel_execute_fn)
+        _STARTUP_INIT_DONE = True
+
+
 # load the network into an instance of the graph database
 if not unyts_parameters_.reload_ and \
         isfile(f"{unyts_parameters_.get_user_folder()}units_network.cache") and \
@@ -1116,7 +1131,7 @@ else:
     except Exception:
         PARALLEL_3_14 = False
 
-    _run_startup_create_stages(PARALLEL_3_14, parallel_execute)
+    _initialize_startup_build(PARALLEL_3_14, parallel_execute)
 
     # clean empty edges
     _clean_network()
