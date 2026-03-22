@@ -78,7 +78,7 @@ def test_logger_basic(caplog):
     assert log.get_current_level() == 'INFO'
     assert log.set_level('invalid') is False
     # writing messages should not raise
-    caplog.set_level('INFO')
+    caplog.set_level('INFO', logger='TestLogger')
     log.info('hello')
     log.warning('warn')
     log.error('err')

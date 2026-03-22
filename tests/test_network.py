@@ -103,7 +103,7 @@ def test_memory_save_load(tmp_path, caplog):
 
     # corrupt the file and ensure warnings are logged
     cache_file.write_text('not a pickle')
-    caplog.set_level('WARNING')
+    caplog.set_level('WARNING', logger='Unyt')
     g2.load_memory(path=str(cache_file))
     assert 'Failed to load memory' in caplog.text or 'corrupted' in caplog.text
 
@@ -112,7 +112,7 @@ def test_clean_memory_logs(caplog):
     g = UDigraph()
     g.memory = {'a': 1}
     unyts_parameters_.verbose_ = True
-    caplog.set_level('INFO')
+    caplog.set_level('INFO', logger='Unyt')
     g.clean_memory()
     assert g.memory == {}
     assert 'memory cleaned' in caplog.text

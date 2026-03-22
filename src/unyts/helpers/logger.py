@@ -77,6 +77,14 @@ class UnytLogger:
         if self.logger.hasHandlers():
             self.logger.handlers.clear()
 
+        # Prevent propagation to the root logger so that the underlying
+        # logging.Logger record does not get printed a second time by
+        # Python's lastResort handler or any root handler (e.g. pytest
+        # live-logging).  A NullHandler absorbs the record locally so
+        # that the lastResort fallback is never triggered.
+        self.logger.propagate = False
+        self.logger.addHandler(logging.NullHandler())
+
         # Set initial level
         self.set_level(default_level)
 
