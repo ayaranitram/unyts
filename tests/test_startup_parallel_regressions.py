@@ -126,6 +126,24 @@ def test_initialize_startup_build_runs_once_with_concurrent_calls(monkeypatch):
     assert db._STARTUP_INIT_DONE is True
 
 
+def test_productivity_index_guard_skips_combinatorial_oom(monkeypatch):
+    from unyts import database as db
+
+    test_dictionary = {
+        'Volume': tuple(f'v{i}' for i in range(1000)),
+        'Time': tuple(f't{i}' for i in range(1000)),
+        'Pressure': tuple(f'p{i}' for i in range(1000)),
+        'ProductivityIndex': ('existing/unit',),
+    }
+
+    monkeypatch.setattr(db, 'dictionary', test_dictionary)
+    monkeypatch.setenv('UNYTS_MAX_PRODUCTIVITY_INDEX_COMBINATIONS', '1000000')
+
+    db._create_ProductivityIndex()
+
+    assert db.dictionary['ProductivityIndex'] == ('existing/unit',)
+
+
 @pytest.mark.skipif(
     os.environ.get('UNYTS_ENABLE_STRESS_SMOKE') != '1',
     reason='Set UNYTS_ENABLE_STRESS_SMOKE=1 to run startup stress smoke test.',

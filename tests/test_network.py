@@ -89,7 +89,7 @@ def test_fvf_set_get_and_errors(monkeypatch):
     unyts_parameters_.gui = False
 
 
-def test_memory_save_load(tmp_path, caplog):
+def test_memory_save_load(tmp_path, capsys):
     g = UDigraph()
     g.memory = {'foo': 1}
     cache_file = tmp_path / 'cache.bin'
@@ -101,19 +101,19 @@ def test_memory_save_load(tmp_path, caplog):
     g2.load_memory(path=str(cache_file))
     assert g2.memory == {'foo': 1}
 
-    # corrupt the file and ensure warnings are logged
+    # corrupt the file and ensure warning is emitted
     cache_file.write_text('not a pickle')
-    caplog.set_level('WARNING', logger='Unyt')
     g2.load_memory(path=str(cache_file))
-    assert 'Failed to load memory' in caplog.text or 'corrupted' in caplog.text
+    out = capsys.readouterr().out
+    assert 'Failed to load memory' in out or 'corrupted' in out
 
 
-def test_clean_memory_logs(caplog):
+def test_clean_memory_logs(capsys):
     g = UDigraph()
     g.memory = {'a': 1}
     unyts_parameters_.verbose_ = True
-    caplog.set_level('INFO', logger='Unyt')
     g.clean_memory()
     assert g.memory == {}
-    assert 'memory cleaned' in caplog.text
+    out = capsys.readouterr().out
+    assert 'memory cleaned' in out
     unyts_parameters_.verbose_ = False

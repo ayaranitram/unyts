@@ -855,6 +855,22 @@ def _create_ProductivityIndex() -> None:
         existing = set(dictionary['ProductivityIndex'])
     else:
         existing = set()
+
+    try:
+        import os
+        cap_env = os.environ.get('UNYTS_MAX_PRODUCTIVITY_INDEX_COMBINATIONS')
+        max_combinations = int(cap_env) if cap_env is not None else 2000000
+    except Exception:
+        max_combinations = 2000000
+
+    estimated_combinations = len(volumes) * len(times) * len(pressures)
+    if estimated_combinations > max_combinations:
+        logger.warning(
+            f"Skipping ProductivityIndex expansion: {estimated_combinations} combinations exceed "
+            f"safety cap {max_combinations}. Set UNYTS_MAX_PRODUCTIVITY_INDEX_COMBINATIONS to override."
+        )
+        dictionary['ProductivityIndex'] = tuple(existing)
+        return
     
     # Use a generator expression to avoid materializing the full list in
     # memory.  The previous list comprehension allocated ~500 MB for ~19.5M

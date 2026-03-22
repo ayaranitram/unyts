@@ -71,18 +71,18 @@ def test_is_unit():
         is_unit(123)
 
 
-def test_logger_basic(caplog):
+def test_logger_basic(capsys):
     log = UnytLogger(name='TestLogger', default_level='debug', mode='console')
     assert log.get_current_level() == 'DEBUG'
     assert log.set_level('info') is True
     assert log.get_current_level() == 'INFO'
     assert log.set_level('invalid') is False
     # writing messages should not raise
-    caplog.set_level('INFO', logger='TestLogger')
     log.info('hello')
     log.warning('warn')
     log.error('err')
-    assert '[Unyts INFO]' in caplog.text or 'hello' in caplog.text
+    out = capsys.readouterr().out
+    assert '[Unyts INFO]: hello' in out
 
     log.force_console_mode()
     assert log.mode == 'console'
