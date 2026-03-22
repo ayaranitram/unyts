@@ -245,10 +245,10 @@ class Unit(object, metaclass=UnytType):
             return tuple(result) if flag else other + (self,)
         elif self.kind is Percentage:
             return self.kind((self.value + other) * 100, self.unit)
-        elif isinstance(other, _numeric):
-            return self.kind(self.value + other, self.unit)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__radd__(self)
+        elif isinstance(other, _numeric):
+            return self.kind(self.value + other, self.unit)
         else:
             raise NotImplementedError(f"Addition of {type(self)} and {type(other)} not implemented.")
 
@@ -287,10 +287,10 @@ class Unit(object, metaclass=UnytType):
             return tuple(result)
         elif self.kind is Percentage:
             return self.kind(self.value * other * 100, self.unit)
-        elif isinstance(other, _numeric):
-            return self.kind(self.value * other, self.unit)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rmul__(self)
+        elif isinstance(other, _numeric):
+            return self.kind(self.value * other, self.unit)
         else:
             raise NotImplementedError(f"Product of {type(self)} and {type(other)} not implemented.")
 
@@ -383,10 +383,10 @@ class Unit(object, metaclass=UnytType):
             return tuple(result) if flag else other + (self,)
         elif self.kind is Percentage:
             return self.kind((self.value - other) * 100, self.unit)
-        elif isinstance(other, _numeric):
-            return self.kind(self.value - other, self.unit)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rsub__(self)
+        elif isinstance(other, _numeric):
+            return self.kind(self.value - other, self.unit)
         else:
             raise NotImplementedError(f"Subtraction of {type(self)} and {type(other)} not implemented.")
 
@@ -422,10 +422,10 @@ class Unit(object, metaclass=UnytType):
             return tuple(result)
         elif self.kind is Percentage:
             return self.kind(self.value / other * 100, self.unit)
-        elif isinstance(other, _numeric):
-            return units(self.value / other, self.unit)
         elif hasattr(other, 'type') and other.type in ('SimSeries', 'SimDataFrame'):
             return other.__rtruediv__(self)
+        elif isinstance(other, _numeric):
+            return units(self.value / other, self.unit)
         else:
             raise NotImplementedError(f"Division of {type(self)} by {type(other)} not implemented.")
 
