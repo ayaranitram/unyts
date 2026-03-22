@@ -90,3 +90,20 @@ def test_all_units():
     allu = _all_units()
     assert isinstance(allu, set)
     assert len(allu) > 0
+
+
+def test_pressure_gradient_derived_units_are_generated():
+    """PressureGradient should include derived Pressure/Length combinations."""
+    pressure_units = set(dictionary.get('Pressure', ()))
+    length_units = set(dictionary.get('Length', ()))
+    pressure_gradient_units = set(dictionary.get('PressureGradient', ()))
+
+    # Use a pair that comes from generated combinations (not only seed aliases).
+    if 'psi' in pressure_units and 'yard' in length_units:
+        assert 'psi/yard' in pressure_gradient_units
+    elif 'bar' in pressure_units and 'yard' in length_units:
+        assert 'bar/yard' in pressure_gradient_units
+    else:
+        # Fallback sanity: at least one pressure-length combination should exist.
+        generated = [f"{p}/{l}" for p in list(pressure_units)[:5] for l in list(length_units)[:5]]
+        assert any(unit in pressure_gradient_units for unit in generated)

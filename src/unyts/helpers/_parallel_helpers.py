@@ -41,7 +41,14 @@ def parallel_execute(functions, max_workers=None, timeout=None):
     """
     if max_workers is None:
         try:
-            max_workers = min(len(functions), os.cpu_count() or 1)
+            cpu_workers = os.cpu_count() or 1
+            # Keep startup concurrency conservative by default; callers can
+            # still override max_workers explicitly.
+            cap_env = os.environ.get('UNYTS_STARTUP_MAX_WORKERS')
+            cap = int(cap_env) if cap_env is not None else 4
+            if cap < 1:
+                cap = 1
+            max_workers = min(len(functions), cpu_workers, cap)
         except Exception:
             max_workers = min(len(functions), 4)
 

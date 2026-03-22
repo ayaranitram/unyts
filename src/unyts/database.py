@@ -1015,6 +1015,59 @@ def _save_cache():
     cache_thread.start()
 
 
+def _run_startup_create_stages(parallel_3_14, parallel_execute_fn, stage_a=None, stage_b=None,
+                               complete_products_fn=None):
+    """Run staged unit-creation startup sequence.
+
+    Exposed as a helper to make startup orchestration testable without
+    re-importing the full module in every regression test.
+    """
+    if stage_a is None:
+        stage_a = [
+            _create_Rates,
+            _create_VolumeRatio,
+            _create_Density,
+            _create_Velocity,
+            _create_Acceleration,
+            _create_Pressure,
+            _create_TemperatureGradient,
+            _create_Power,
+            _create_Frequency,
+            _create_Conductance,
+            _create_Capacitance_Charge,
+        ]
+    if stage_b is None:
+        stage_b = [
+            _create_ProductivityIndex,
+            _create_PressureGradient,
+            _create_Voltage_Current_Resistance,
+        ]
+    if complete_products_fn is None:
+        complete_products_fn = _complete_products
+
+    def _run_stage(functions, use_parallel=False):
+        if use_parallel and len(functions) > 1:
+            parallel_execute_fn(functions)
+            return
+        for fn in functions:
+            try:
+                fn()
+            except Exception:
+                logger.exception(f"Error running create function {getattr(fn, '__name__', fn)}")
+
+    logger.info(f"Startup staged build mode: parallel={parallel_3_14}")
+
+    try:
+        _run_stage(stage_a, use_parallel=parallel_3_14)
+        _run_stage(stage_b, use_parallel=parallel_3_14)
+    except Exception:
+        logger.exception('Parallel staged execution failed; falling back to sequential staged execution')
+        _run_stage(stage_a, use_parallel=False)
+        _run_stage(stage_b, use_parallel=False)
+
+    complete_products_fn()
+
+
 # load the network into an instance of the graph database
 if not unyts_parameters_.reload_ and \
         isfile(f"{unyts_parameters_.get_user_folder()}units_network.cache") and \
@@ -1049,74 +1102,21 @@ else:
 
     PARALLEL_3_14 = False
     try:
-        if sys.version_info >= (3, 14):
-            # default on 3.14+, can be disabled by env var UNYTS_PARALLEL_3_14=0
-            PARALLEL_3_14 = True
+        # On 3.14+ we keep parallel startup opt-in to reduce risk of startup
+        # memory spikes in constrained environments.
         env = os.environ.get('UNYTS_PARALLEL_3_14')
-        if env is not None:
-            if env in ('0', 'False', 'false'):
-                PARALLEL_3_14 = False
-            elif env in ('1', 'True', 'true'):
-                PARALLEL_3_14 = True
+        if env in ('1', 'True', 'true'):
+            PARALLEL_3_14 = True
+        elif env in ('0', 'False', 'false', None):
+            PARALLEL_3_14 = False
+        else:
+            logger.warning(f"Invalid UNYTS_PARALLEL_3_14={env}. Using safe default (disabled).")
+        if sys.version_info < (3, 14):
+            PARALLEL_3_14 = False
     except Exception:
         PARALLEL_3_14 = False
 
-    create_functions = [
-        _create_Rates,
-        _create_VolumeRatio,
-        _create_Density,
-        _create_Velocity,
-        _create_Acceleration,
-        _create_ProductivityIndex,
-        _create_Pressure,
-        _create_TemperatureGradient,
-        _create_Power,
-        _create_Frequency,
-        _create_Conductance,
-        _create_Capacitance_Charge,
-        _create_Voltage_Current_Resistance,
-    ]
-
-    if PARALLEL_3_14:
-        try:
-            # Run all independent _create_* functions in parallel (safe on 3.14+)
-            parallel_execute(create_functions)
-        except Exception:
-            # If parallel execution fails, fallback to overlapped approach
-            logger.exception('Parallel create_functions failed; falling back to overlapped execution')
-            productivity_thread = threading.Thread(target=_create_ProductivityIndex, daemon=False)
-            complete_products_thread = threading.Thread(target=_complete_products, daemon=False)
-            productivity_thread.start()
-            complete_products_thread.start()
-
-            # Run remaining create functions while heavy tasks compute
-            for fn in create_functions:
-                try:
-                    fn()
-                except Exception:
-                    logger.exception('Error running create function %s', getattr(fn, '__name__', fn))
-
-            productivity_thread.join()
-            complete_products_thread.join()
-    else:
-        # Overlapped execution for Python < 3.14: start heavy tasks and run others
-        productivity_thread = threading.Thread(target=_create_ProductivityIndex, daemon=False)
-        complete_products_thread = threading.Thread(target=_complete_products, daemon=False)
-        productivity_thread.start()
-        complete_products_thread.start()
-
-        # Run other create functions while heavy tasks compute
-        for fn in create_functions:
-            # Skip ProductivityIndex and complete_products because already running
-            if fn in (_create_ProductivityIndex, _complete_products):
-                continue
-            try:
-                fn()
-            except Exception:
-                logger.exception('Error running create function %s', getattr(fn, '__name__', fn))
-
-        productivity_thread.join()
-        complete_products_thread.join()
+    _run_startup_create_stages(PARALLEL_3_14, parallel_execute)
 
     # clean empty edges
     _clean_network()
