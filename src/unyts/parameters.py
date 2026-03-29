@@ -17,6 +17,7 @@ from os.path import isfile, isdir
 from pathlib import Path
 from sys import getrecursionlimit
 from time import time
+from math import isfinite
 from .helpers.logger import logger
 
 ini_path = Path(__file__).with_name('parameters.ini').absolute()
@@ -427,7 +428,8 @@ class UnytsParameters(object):
         if path is None:
             self.config_files_folder_ = dir_path
         elif isdir(path):
-            self.config_files_folder_ = path + '' if not path.endswith('/') and not path.endswith('\\') else '/'
+            # Keep the full directory path and ensure exactly one trailing separator.
+            self.config_files_folder_ = os.path.join(str(Path(path)), '')
         else:
             logger.warning(f"Folder {path} doesn't exists, user folder not changed.")
 
@@ -503,6 +505,8 @@ def set_density(density: float = None, units: str = 'g/cm3') -> None:
             raise ValueError("density 'units' are not valid.")
         if density is None:
             raise ValueError("density 'units' are not valid.")
+    if not isfinite(float(density)) or float(density) <= 0:
+        raise ValueError("'density' must be a positive finite number.")
     unyts_parameters_.density_ = density
     logger.info(f"density set to {density} g/cm³")
     unyts_parameters_.save_params()

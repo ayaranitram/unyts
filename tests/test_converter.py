@@ -118,6 +118,39 @@ def test_convert_for_SimPandas():
     assert (convert_for_SimPandas(array, 'm', 'yd') == convert(array, 'm', 'yd')).all()
 
 
+def test_convert_numeric_range_boundaries():
+    """Validate conversion behavior on extreme finite values and infinities."""
+    assert convert(1e300, 'm', 'cm') == pytest.approx(1e302)
+    assert convert(1e-300, 'm', 'cm') == pytest.approx(1e-298)
+    assert np.isposinf(convert(np.inf, 'm', 'cm'))
+    assert np.isneginf(convert(-np.inf, 'm', 'cm'))
+
+
+def test_convert_for_simpandas_handles_nan_and_inf_arrays():
+    """Vectorized conversion should preserve NaN/Inf semantics."""
+    arr = np.array([0.0, np.nan, np.inf, -np.inf])
+    result = convert_for_SimPandas(arr, 'm', 'cm')
+    assert result[0] == pytest.approx(0.0)
+    assert np.isnan(result[1])
+    assert np.isposinf(result[2])
+    assert np.isneginf(result[3])
+
+
+def test_convert_complex_value_end_to_end():
+    """Complex values should preserve complex arithmetic through conversion."""
+    v = 1 + 2j
+    out = convert(v, 'm', 'cm')
+    assert out == pytest.approx((1 + 2j) * 100)
+
+
+def test_convert_complex_array_end_to_end():
+    """Complex ndarray conversion should scale each element correctly."""
+    arr = np.array([1 + 1j, -2 + 0.5j], dtype=complex)
+    result = convert_for_SimPandas(arr, 'm', 'cm')
+    expected = arr * 100
+    assert np.allclose(result, expected)
+
+
 def test_case_insensitive_convert():
     # both low and mixed/upper case should work
     assert convert(1, 'METER', 'INCH') == pytest.approx(convert(1, 'meter', 'inch'))
@@ -145,3 +178,30 @@ def test_custom_units_snoot_regression():
         assert convert(10, 'snoot', 'm') == pytest.approx(17.018)
     finally:
         unyts.unyts_parameters_.raise_error_ = prev_raise_error
+
+
+def test_convertible_stb_day_sm3_day_warmup_regression():
+    """Regression test for false-negative convertible on repeated calls after convert."""
+    import unyts
+
+    unyts.clean_memory()
+
+    # initial convertible may be True/False depending on network warm-up, but convert must always succeed
+    assert unyts.convertible('stb/day', 'sm3/day') is True
+    assert unyts.convert(1, 'stb/day', 'sm3/day') == pytest.approx(0.1589872132943836)
+
+    # after convert, convertible must remain True (no stale previous-state false negative)
+    assert unyts.convertible('stb/day', 'sm3/day') is True
+
+
+def test_convertible_with_previous_state_sentinel():
+    """Emulate startup containing stale previous search state and still get true."""
+    import unyts
+    from unyts.database import units_network
+
+    unyts.clean_memory()
+    units_network.previous.append(('stb/day', 'sm3/day'))
+
+    assert unyts.convertible('stb/day', 'sm3/day') is True
+    assert unyts.convert(1, 'stb/day', 'sm3/day') == pytest.approx(0.1589872132943836)
+    assert unyts.convertible('stb/day', 'sm3/day') is True

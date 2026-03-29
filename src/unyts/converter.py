@@ -626,6 +626,10 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
         else:
             return value, [from_unit, 'identity', to_unit]
 
+    # normalize search state for each independent call to avoid stale recursive markers
+    if recursion is None:
+        units_network.previous = []
+
     # avoid infinite looping, do not repeat searches
     if (from_unit, to_unit) in units_network.previous:
         return None, None
@@ -884,6 +888,10 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str, use_cache:
             from_unit in dictionary['Volume'] and to_unit in dictionary['Weight']:
         density = _get_density()
         this_units_density, _ = _converter(density, 'g/cm3', f"{to_unit}/{from_unit}", use_cache=use_cache)
+        if this_units_density is Empty:
+            return Empty, None
+        if this_units_density is None:
+            return None, None
         if value is None:
             def conv(x):
                 """Density conversion function."""
@@ -895,6 +903,10 @@ def _density_conversion(value: numeric, from_unit: str, to_unit: str, use_cache:
             to_unit in dictionary['Volume'] and from_unit in dictionary['Weight']:
         density = _get_density()
         this_units_density, _ = _converter(density, 'g/cm3', f"{from_unit}/{to_unit}", use_cache=use_cache)
+        if this_units_density is Empty:
+            return Empty, None
+        if this_units_density is None:
+            return None, None
         if value is None:
             def conv(x):
                 """Density conversion function."""
@@ -960,7 +972,7 @@ def _search_network(from_unit, to_unit, algorithm:str=None):
 @timeit
 def convertible(from_unit: str, to_unit: str, use_cache:bool=None) -> bool:
     """
-    Returns True if a conversion path from `from_unit` to `to_unit` is found, otherwise returns True.
+    Returns True if a conversion path from `from_unit` to `to_unit` is found, otherwise returns False.
 
     Parameters.
     ----------
@@ -982,7 +994,15 @@ def convertible(from_unit: str, to_unit: str, use_cache:bool=None) -> bool:
         to_unit = to_unit.get_unit()
 
     try:
-        conv, conv_path = _converter(1, from_unit, to_unit, use_cache=use_cache)
+        # First attempt: try fast path (cache-enabled by default)
+        conv, _ = _converter(1, from_unit, to_unit, use_cache=use_cache)
+        if conv is not None and conv is not Empty:
+            return True
+
+        # If first attempt failed due transient graph warmup states, retry with a cache bypass.
+        from .database import units_network
+        units_network.previous = []
+        conv, _ = _converter(1, from_unit, to_unit, use_cache=False)
         return False if (conv is None or conv is Empty) else True
     except NoConversionFoundError:
         return False

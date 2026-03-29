@@ -1,6 +1,7 @@
 import json
 import os
 import pytest
+from pathlib import Path
 from unyts import parameters
 from unyts.parameters import unyts_parameters_, ini_path, ini_backup
 
@@ -89,8 +90,27 @@ def test_timeout_and_is_intime():
 
 def test_user_folder(tmp_path):
     unyts_parameters_.set_user_folder(tmp_path.as_posix())
-    assert unyts_parameters_.get_user_folder().startswith(tmp_path.as_posix())
+    stored = unyts_parameters_.get_user_folder()
+    assert Path(stored).resolve() == tmp_path.resolve()
+    assert stored.endswith('/') or stored.endswith('\\')
+
+    # Explicit trailing separator should keep the same target directory.
+    unyts_parameters_.set_user_folder(tmp_path.as_posix() + '/')
+    stored_with_sep = unyts_parameters_.get_user_folder()
+    assert Path(stored_with_sep).resolve() == tmp_path.resolve()
+    assert stored_with_sep.endswith('/') or stored_with_sep.endswith('\\')
+
     # nonexistent should not change
     before = unyts_parameters_.get_user_folder()
     unyts_parameters_.set_user_folder(str(tmp_path / 'doesnotexist'))
     assert unyts_parameters_.get_user_folder() == before
+
+
+@pytest.mark.parametrize('suffix', ['', '/', '\\'])
+def test_user_folder_separator_permutations(tmp_path, suffix):
+    candidate = str(tmp_path) + suffix
+
+    unyts_parameters_.set_user_folder(candidate)
+    stored = unyts_parameters_.get_user_folder()
+    assert Path(stored).resolve() == Path(tmp_path).resolve()
+    assert stored.endswith('/') or stored.endswith('\\')

@@ -3,6 +3,7 @@ import numpy as np
 from unyts import units
 from unyts.unit_class import Unit
 from unyts.errors import WrongUnitsError, NoConversionFoundError
+from unyts.parameters import unyts_parameters_
 
 
 def test_basic_properties_and_str():
@@ -82,3 +83,17 @@ def test_check_value_behaviors():
 
     with pytest.raises(Exception):
         units(object(), 'm')
+
+
+def test_unit_constructor_honors_raise_error_flag(caplog):
+    prev = unyts_parameters_.raise_error_
+    try:
+        unyts_parameters_.raise_error_ = False
+        u = Unit(1, 'not_a_real_unit')
+        assert u.unit == 'not_a_real_unit'
+
+        unyts_parameters_.raise_error_ = True
+        with pytest.raises(WrongUnitsError):
+            Unit(1, 'not_a_real_unit')
+    finally:
+        unyts_parameters_.raise_error_ = prev
