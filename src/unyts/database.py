@@ -32,6 +32,21 @@ from json import dump as json_dump
 _STARTUP_INIT_LOCK = threading.Lock()
 _STARTUP_INIT_DONE = False
 
+
+def _get_max_combinations() -> int:
+    """Return the maximum number of preloaded combinations for compound unit types.
+
+    Configurable via the UNYTS_MAX_COMBINATIONS environment variable.
+    With dynamic validation as a fallback, the preloaded set only needs to
+    cover the most common units; defaults to 50 000.
+    """
+    import os
+    try:
+        val = os.environ.get('UNYTS_MAX_COMBINATIONS')
+        return int(val) if val is not None else 50_000
+    except (ValueError, TypeError):
+        return 50_000
+
 try:
     from cloudpickle import dump as cloudpickle_dump, load as cloudpickle_load
     _cloudpickle_ = True
@@ -725,21 +740,41 @@ def _load_network():
 @timeit
 def _create_Rates() -> None:
     """Create Rate units from Volume, Weight and Data units."""
-    # volumes / Time
-    rates = list(dictionary['Rate']) if 'Rate' in dictionary else []
-    rates += [f"{volume}/{time}" for volume in dictionary['Volume'] for time in dictionary['Time']]
-    rates += [f"{weight}/{time}" for weight in dictionary['Weight'] for time in dictionary['Time']]
-    rates += [f"{data}/{time}" for data in dictionary['Data'] for time in dictionary['Time']]
-    dictionary['Rate'] = tuple(set(rates))
+    volumes = dictionary.get('Volume', [])
+    weights = dictionary.get('Weight', [])
+    data = dictionary.get('Data', [])
+    times = dictionary.get('Time', [])
+    existing = set(dictionary['Rate']) if 'Rate' in dictionary else set()
+    estimated = (len(volumes) + len(weights) + len(data)) * len(times)
+    max_combinations = _get_max_combinations()
+    if estimated > max_combinations:
+        logger.debug(
+            f"Skipping Rate expansion: {estimated} combinations exceed "
+            f"safety cap {max_combinations}. Dynamic validation will handle missing units."
+        )
+        dictionary['Rate'] = tuple(existing)
+        return
+    existing.update(f"{volume}/{time}" for volume in volumes for time in times)
+    existing.update(f"{weight}/{time}" for weight in weights for time in times)
+    existing.update(f"{data_u}/{time}" for data_u in data for time in times)
+    dictionary['Rate'] = tuple(existing)
 
 @timeit
 def _create_VolumeRatio() -> None:
     """Create VolumeRatio units from Volume units."""
-    # Volume / Volume
-    ratio = list(dictionary['VolumeRatio']) if 'VolumeRatio' in dictionary else []
-    ratio += [f"{numerator}/{denominator}" for numerator in dictionary['Volume'] for denominator in
-              dictionary['Volume']]
-    dictionary['VolumeRatio'] = tuple(set(ratio))
+    volumes = dictionary.get('Volume', [])
+    existing = set(dictionary['VolumeRatio']) if 'VolumeRatio' in dictionary else set()
+    estimated = len(volumes) ** 2
+    max_combinations = _get_max_combinations()
+    if estimated > max_combinations:
+        logger.debug(
+            f"Skipping VolumeRatio expansion: {estimated} combinations exceed "
+            f"safety cap {max_combinations}. Dynamic validation will handle missing units."
+        )
+        dictionary['VolumeRatio'] = tuple(existing)
+        return
+    existing.update(f"{num}/{den}" for num in volumes for den in volumes)
+    dictionary['VolumeRatio'] = tuple(existing)
 
 @timeit
 def _create_Density() -> None:
@@ -843,38 +878,19 @@ def _create_Pressure() -> None:
 @timeit
 def _create_ProductivityIndex() -> None:
     """Create ProductivityIndex units from Volume, Time and Pressure units."""
-    # Volume / Time / Pressure
-    # Optimize: use list comprehension (faster than set comp for large iteration counts)
-    # then update(): allocates list once, then set processes it, more efficient than
-    # set comp which does hashing and resizing during comprehension.
     volumes = dictionary.get('Volume', [])
     times = dictionary.get('Time', [])
     pressures = dictionary.get('Pressure', [])
-    
-    if 'ProductivityIndex' in dictionary:
-        existing = set(dictionary['ProductivityIndex'])
-    else:
-        existing = set()
-
-    try:
-        import os
-        cap_env = os.environ.get('UNYTS_MAX_PRODUCTIVITY_INDEX_COMBINATIONS')
-        max_combinations = int(cap_env) if cap_env is not None else 2000000
-    except Exception:
-        max_combinations = 2000000
-
-    estimated_combinations = len(volumes) * len(times) * len(pressures)
-    if estimated_combinations > max_combinations:
-        logger.warning(
-            f"Skipping ProductivityIndex expansion: {estimated_combinations} combinations exceed "
-            f"safety cap {max_combinations}. Set UNYTS_MAX_PRODUCTIVITY_INDEX_COMBINATIONS to override."
+    existing = set(dictionary['ProductivityIndex']) if 'ProductivityIndex' in dictionary else set()
+    estimated = len(volumes) * len(times) * len(pressures)
+    max_combinations = _get_max_combinations()
+    if estimated > max_combinations:
+        logger.debug(
+            f"Skipping ProductivityIndex expansion: {estimated} combinations exceed "
+            f"safety cap {max_combinations}. Dynamic validation will handle missing units."
         )
         dictionary['ProductivityIndex'] = tuple(existing)
         return
-    
-    # Use a generator expression to avoid materializing the full list in
-    # memory.  The previous list comprehension allocated ~500 MB for ~19.5M
-    # strings, causing MemoryError on constrained systems.
     existing.update(f"{v}/{t}/{p}"
                     for v in volumes
                     for t in times
@@ -884,11 +900,20 @@ def _create_ProductivityIndex() -> None:
 @timeit
 def _create_PressureGradient() -> None:
     """Create PressureGradient units from Pressure and Length units."""
-    # Pressure / Length
-    pressureGradient = list(dictionary['PressureGradient']) if 'PressureGradient' in dictionary else []
-    pressureGradient += [f"{pressure}/{length}" for pressure in dictionary['Pressure'] for length in
-                         dictionary['Length']]
-    dictionary['PressureGradient'] = tuple(set(pressureGradient))
+    pressures = dictionary.get('Pressure', [])
+    lengths = dictionary.get('Length', [])
+    existing = set(dictionary['PressureGradient']) if 'PressureGradient' in dictionary else set()
+    estimated = len(pressures) * len(lengths)
+    max_combinations = _get_max_combinations()
+    if estimated > max_combinations:
+        logger.debug(
+            f"Skipping PressureGradient expansion: {estimated} combinations exceed "
+            f"safety cap {max_combinations}. Dynamic validation will handle missing units."
+        )
+        dictionary['PressureGradient'] = tuple(existing)
+        return
+    existing.update(f"{p}/{l}" for p in pressures for l in lengths)
+    dictionary['PressureGradient'] = tuple(existing)
 
 @timeit
 def _create_TemperatureGradient() -> None:
@@ -902,12 +927,22 @@ def _create_TemperatureGradient() -> None:
 @timeit
 def _create_Acceleration() -> None:
     """Create Acceleration units from Length and Time units."""
-    # Length / Time / Time
+    lengths = dictionary.get('Length', [])
+    times = dictionary.get('Time', [])
     existing = set(dictionary.get('Acceleration', []))
+    estimated = len(lengths) * len(times) ** 2
+    max_combinations = _get_max_combinations()
+    if estimated > max_combinations:
+        logger.debug(
+            f"Skipping Acceleration expansion: {estimated} combinations exceed "
+            f"safety cap {max_combinations}. Dynamic validation will handle missing units."
+        )
+        dictionary['Acceleration'] = tuple(existing)
+        return
     existing |= {f"{length}/{t1}2" if t1 == t2 else f"{length}/{t1}/{t2}"
-                 for length in dictionary.get('Length', [])
-                 for t1 in dictionary.get('Time', [])
-                 for t2 in dictionary.get('Time', [])}
+                 for length in lengths
+                 for t1 in times
+                 for t2 in times}
     dictionary['Acceleration'] = tuple(existing)
 
 @timeit
