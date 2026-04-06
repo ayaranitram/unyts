@@ -93,17 +93,17 @@ def test_all_units():
 
 
 def test_pressure_gradient_derived_units_are_generated():
-    """PressureGradient should include derived Pressure/Length combinations."""
+    """PressureGradient should recognize derived Pressure/Length combinations."""
+    from unyts.units.ratios import PressureGradient
     pressure_units = set(dictionary.get('Pressure', ()))
     length_units = set(dictionary.get('Length', ()))
-    pressure_gradient_units = set(dictionary.get('PressureGradient', ()))
 
-    # Use a pair that comes from generated combinations (not only seed aliases).
+    # With dynamic validation, combinations may not be preloaded but should
+    # still be recognized by PressureGradient._dynamic_validate.
     if 'psi' in pressure_units and 'yard' in length_units:
-        assert 'psi/yard' in pressure_gradient_units
+        assert PressureGradient._dynamic_validate('psi/yard')
     elif 'bar' in pressure_units and 'yard' in length_units:
-        assert 'bar/yard' in pressure_gradient_units
+        assert PressureGradient._dynamic_validate('bar/yard')
     else:
-        # Fallback sanity: at least one pressure-length combination should exist.
         generated = [f"{p}/{l}" for p in list(pressure_units)[:5] for l in list(length_units)[:5]]
-        assert any(unit in pressure_gradient_units for unit in generated)
+        assert any(PressureGradient._dynamic_validate(unit) for unit in generated)

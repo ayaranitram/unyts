@@ -10,6 +10,8 @@ __version__ = '0.5.4'
 __release__ = 20240521
 __all__ = ['unit_product', 'unit_division', 'unit_base_power', 'unit_power', 'unit_addition', 'unit_inverse']
 
+import unicodedata
+
 from .dictionaries import dictionary, unitless_names
 from .converter import convertible
 from .helpers.is_number import is_number
@@ -56,6 +58,9 @@ def unit_base_power(unit_string: str) -> tuple:  # tuple[str, int]
             else:
                 u_pow = '-' + u_pow
         inv = False
+    # Normalize Unicode digit characters (e.g. ² ³) to ASCII
+    if u_pow and any(ord(c) > 127 for c in u_pow):
+        u_pow = ''.join(str(unicodedata.digit(c)) if c.isdigit() else c for c in u_pow)
     u_pow = 1 if u_pow == '' else float(u_pow) if '.' in u_pow else int(u_pow)
     if inv:
         u_pow = u_pow * -1 * (float(inv_pow) if '.' in inv_pow else int(inv_pow))

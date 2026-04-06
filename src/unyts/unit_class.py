@@ -727,6 +727,8 @@ class Unit(object, metaclass=UnytType):
             raise WrongUnitsError(f"'{units}' for '{type(self)}'.")
         if units in self.kind.class_units:
             return units
+        elif hasattr(self.kind, '_dynamic_validate') and self.kind._dynamic_validate(units):
+            return units
         else:
             raise WrongUnitsError(f"'{units}' for '{type(self)}'.")
 

@@ -40,6 +40,21 @@ class Pressure(Unit):
         self.kind = Pressure
         self.__unit = self.check_unit(units)
 
+    @classmethod
+    def _dynamic_validate(cls, units: str) -> bool:
+        parts = units.split('/')
+        if len(parts) != 2:
+            return False
+        weight, area = parts
+        if weight in _dictionary.get('Weight', ()) and area in _dictionary.get('Area', ()):
+            if isinstance(cls.class_units, tuple):
+                cls.class_units = cls.class_units + (units,)
+            else:
+                cls.class_units = list(cls.class_units) + [units]
+            _dictionary['Pressure'] = cls.class_units
+            return True
+        return False
+
 
 class Weight(Unit):
     """A class to represent weight quantities with associated units, supporting arithmetic operations and unit conversions."""
