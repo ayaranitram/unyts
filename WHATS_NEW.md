@@ -1,6 +1,6 @@
-# What's New in unyts — from v0.9.15 to v0.10.5
+# What's New in unyts — from release v0.9.15 to v0.10.5
 
-This document summarizes everything that has changed since the last stable release v0.9.15 (commit 9525a4f).  It is written from a **user perspective** — what you can do now that you couldn't before, what got faster, and what was fixed.
+This document summarizes everything that has changed since the last stable release, **unyts v0.9.15** (commit 9525a4f), through the current release **v0.10.5**.  It is written from a **user perspective** — what you can do now that you couldn't before, what got faster, and what was fixed.
 
 ---
 
