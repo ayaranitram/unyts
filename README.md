@@ -20,6 +20,8 @@ This package is intended to be used in three ways:
 - Calling the function `units()` to define instances of the __Units__ class, that holds _values associated to units_, or, _quantities_.  
 - As unit converter with the function `convert()` to explicitly make conversion of numeric variables and instances.
 - As unit converter for single numerical values, using the GUI.
+  
+A comprehensive user manual is also available here: [UNYTS_User_Manual.pdf](UNYTS_User_Manual.pdf)
 
 ### To launch the GUI
 From an OS terminal or console, execute `python -m unyts`  
