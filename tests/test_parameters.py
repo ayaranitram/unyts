@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import pytest
 from pathlib import Path
 from unyts import parameters
@@ -106,7 +107,13 @@ def test_user_folder(tmp_path):
     assert unyts_parameters_.get_user_folder() == before
 
 
-@pytest.mark.parametrize('suffix', ['', '/', '\\'])
+@pytest.mark.parametrize('suffix', [
+    '',
+    '/',
+    pytest.param('\\', marks=pytest.mark.skipif(
+        sys.platform != 'win32',
+        reason='Backslash is not a path separator on Unix')),
+])
 def test_user_folder_separator_permutations(tmp_path, suffix):
     candidate = str(tmp_path) + suffix
 
