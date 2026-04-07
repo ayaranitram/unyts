@@ -11,8 +11,13 @@ __release__ = 20230724
 __all__ = ['units']
 
 from ..dictionaries import dictionary as _dictionary, uncertain_names
-from .custom import UserUnits
+from .custom import UserUnits, OtherUnits as otherUnits
 from .data import *
+
+# aliases so eval(kind + "(...)" ) works for dictionary keys that don't
+# match any class name exactly
+dataBYTE = Data
+dataBIT = Data
 from .date import *
 from .energy import *
 from .force import *
