@@ -20,17 +20,23 @@
 
 % Font setup using actual font files
 \setmainfont{Saira-VariableFont_wdth,wght.ttf}[
-  Path=../font/Saira/
+  Path=../font/Saira/,
+  AutoFakeBold=2,
+  AutoFakeSlant=0.2
 ]
 
 \setsansfont{Domine-VariableFont_wght.ttf}[
-  Path=../font/Domine/
+  Path=../font/Domine/,
+  AutoFakeBold=2,
+  AutoFakeSlant=0.2
 ]
 
 \setmonofont{Inconsolata-VariableFont_wdth,wght.ttf}[
   Path=../font/Inconsolata/,
   Extension=.ttf,
-  Scale=0.95
+  Scale=0.95,
+  AutoFakeBold=2,
+  AutoFakeSlant=0.2
 ]
 
 \hypersetup{
@@ -93,14 +99,14 @@
 % Headers and footers
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[LE,RO]{\sffamily\thepage}
-\fancyhead[RE]{\sffamily\nouppercase{\leftmark}}
-\fancyhead[LO]{\sffamily\nouppercase{\rightmark}}
+\fancyhead[L]{\sffamily\nouppercase{\rightmark}}
+\fancyhead[R]{\sffamily\thepage}
+\setlength{\headheight}{14pt}
 \renewcommand{\headrulewidth}{0.4pt}
 
 \title{\sffamily\Huge\bfseries unyts User Manual}
 \author{unyts Project}
-\date{March 5, 2026 \\ Version 0.10.1}
+\date{April 7, 2026 \\ Version 1.0.0}
 
 \begin{document}
 
@@ -134,8 +140,8 @@ Powered by Graph Search Algorithms\par}
 
 % Version and date
 {\sffamily\large
-Version 0.10.1\\[0.3cm]
-March 5, 2026\par}
+Version 1.0.0\\[0.3cm]
+April 7, 2026\par}
 
 \vspace{1cm}
 
@@ -212,6 +218,54 @@ Four specialized algorithms optimize different scenarios:
 
 \subsection{Dimensional Validation}
 The graph architecture also protects against invalid conversions. When a user requests a conversion between inherently incompatible dimensions (e.g., meters to kilograms without a density bridge), the search algorithms detect disconnected subgraphs and fail fast---returning an error in near-constant time rather than exhaustively exploring the entire network.
+
+\section{What's New in v1.0.0}
+
+This release adds practical APIs and diagnostics that are useful in day-to-day workflows.
+
+\subsection{New Utility APIs}
+\begin{itemize}[leftmargin=*]
+  \item \texttt{convertible(from\_unit, to\_unit)}: check whether a conversion path exists before converting.
+  \item \texttt{network\_to\_frame()}: export the conversion network as a pandas DataFrame.
+  \item \texttt{set\_logging\_level(level)}: control runtime log verbosity.
+  \item \texttt{delete\_cache()}: clear all cache artifacts to force clean rebuilds.
+\end{itemize}
+
+\begin{lstlisting}[style=pythonstyle, caption={v1.0.0 utility functions}]
+from unyts import convertible, network_to_frame, set_logging_level
+from unyts import delete_cache
+
+print(convertible('ft', 'm'))      # True
+print(convertible('ft', 'kg'))     # False
+
+df = network_to_frame()
+print(df.head())
+
+set_logging_level('INFO')
+
+# Optional after upgrades/troubleshooting
+# delete_cache()
+\end{lstlisting}
+
+\subsection{Alias Conflict Diagnostics}
+Ambiguous aliases can now be inspected programmatically, which helps when validating domain dictionaries and avoiding unexpected interpretations:
+
+\begin{lstlisting}[style=pythonstyle, caption={Inspecting alias conflicts}]
+from unyts.dictionaries import collect_alias_conflicts
+from unyts.dictionaries import dictionary
+
+conflicts = collect_alias_conflicts(dictionary)
+print(f"Detected conflicts: {len(conflicts)}")
+\end{lstlisting}
+
+\subsection{Expanded SI Prefix Range}
+The SI range now includes the newest prefixes, extending practical coverage from $10^{-30}$ to $10^{30}$:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Large}: quetta (Q), ronna (R)
+  \item \textbf{Small}: ronto (r), quecto (q)
+\end{itemize}
+
+These prefixes are applied consistently across supported base units and compound expressions.
 
 \section{Use Cases}
 
@@ -306,7 +360,7 @@ Verify the installation by checking the version:
 
 \begin{lstlisting}[style=pythonstyle]
 import unyts
-print(unyts.__version__)  # Should print: 0.10.1 (or later)
+print(unyts.__version__)  # Should print: 1.0.0 (or later)
 \end{lstlisting}
 
 Test basic functionality:
