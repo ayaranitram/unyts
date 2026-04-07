@@ -1,4 +1,4 @@
-# Migration Guide: v0.9.15 → v0.10.1
+# Migration Guide: v0.9.15 → v1.0.0
 
 ## Quick Summary
 
@@ -10,7 +10,7 @@
 
 ## Automatic Migration (No Action Required)
 
-The upgrade from v0.9.15 to v0.10.1 is **completely automatic**. Your existing code will continue to work without any modifications.
+The upgrade from v0.9.15 to v1.0.0 is **completely automatic**. Your existing code will continue to work without any modifications.
 
 ```bash
 # Simply upgrade
@@ -27,7 +27,7 @@ That's it! All your existing code will immediately benefit from:
 
 ## Optional: Maximizing Performance Benefits
 
-While no changes are required, these optional steps will help you get the most from v0.10.1.
+While no changes are required, these optional steps will help you get the most from v1.0.0.
 
 ### 1. Clear Old Caches (Recommended)
 
@@ -55,7 +55,7 @@ New parameters available for fine-tuning:
 ```python
 from unyts import unyts_parameters_
 
-# Lean BFS already default in 0.10.1, but you can confirm:
+# Lean BFS already default in 1.0.0, but you can confirm:
 unyts_parameters_.algorithm_ = 'lean_BFS'  # Faster search
 
 # Adjust search depth if needed (higher = slower but finds more paths)
@@ -77,7 +77,7 @@ unyts_parameters_.save_params()
 ```python
 from unyts import convertible
 
-# New in 0.10.1: Check before converting
+# New in 1.0.0: Check before converting
 if convertible('joule', 'BTU'):
     result = convert(1000, 'joule', 'BTU')
 else:
@@ -88,7 +88,7 @@ else:
 ```python
 from unyts import network_to_frame
 
-# New in 0.10.1: Export for analysis
+# New in 1.0.0: Export for analysis
 df = network_to_frame()
 print(df.head())
 # Columns: source, target, lambda (conversion factor)
@@ -118,7 +118,7 @@ start = time.time()
 import unyts
 print(f"Import took: {time.time() - start:.2f}s")  # ~14.5s
 
-# After (v0.10.1)
+# After (v1.0.0)
 import time
 start = time.time()
 import unyts
@@ -151,7 +151,7 @@ result = convert(100, 'm', 'ft')  # <0.001s (cache hit) ⚡
 ### Example 1: Basic Usage (No Changes Needed)
 
 ```python
-# v0.9.15 code (still works in v0.10.1)
+# v0.9.15 code (still works in v1.0.0)
 from unyts import units, convert
 
 distance = units(100, 'm')
@@ -166,7 +166,7 @@ print(result)  # Works identically
 ### Example 2: Leveraging New Features
 
 ```python
-# v0.10.1 - New capabilities
+# v1.0.0 - New capabilities
 from unyts import units, convert, convertible, network_to_frame
 
 # Check feasibility first (NEW)
@@ -192,7 +192,7 @@ from unyts import print_path, verbose
 print_path(True)  # Still works
 verbose(2)  # Still works
 
-# v0.10.1 - Additional options
+# v1.0.0 - Additional options
 from unyts import set_algorithm, set_logging_level
 set_algorithm('lean_BFS')  # NEW: Faster search
 set_logging_level('INFO')  # NEW: More control
@@ -235,7 +235,7 @@ delete_cache()  # Will rebuild on next use
 
 ### Want to Disable Version Display
 
-**Problem**: "loaded unyts version 0.10.1" printed on every import  
+**Problem**: "loaded unyts version 1.0.0" printed on every import  
 **Solution**:
 ```python
 from unyts import unyts_parameters_
@@ -250,7 +250,7 @@ unyts_parameters_.save_params()  # Save permanently
 ### Verify Installation
 ```python
 import unyts
-print(f"unyts version: {unyts.__version__}")  # Should be 0.10.1
+print(f"unyts version: {unyts.__version__}")  # Should be 1.0.0
 
 # Test basic conversion
 from unyts import convert
@@ -289,7 +289,7 @@ If you need to rollback to v0.9.15:
 pip install unyts==0.9.15
 ```
 
-**Note**: We don't expect you'll need this - v0.10.1 is fully compatible!
+**Note**: We don't expect you'll need this - v1.0.0 is fully compatible!
 
 ---
 
@@ -327,4 +327,4 @@ After migration, you get:
 4. ✅ Explore new features: Try `convertible()` and `network_to_frame()`
 5. ✅ Enjoy 200× faster imports! 🚀
 
-**Welcome to unyts v0.10.1!**
+**Welcome to unyts v1.0.0!**

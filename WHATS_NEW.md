@@ -1,6 +1,6 @@
-# What's New in unyts — from release v0.9.15 to v0.10.5
+# What's New in unyts — from release v0.9.15 to v1.0.0
 
-This document summarizes everything that has changed since the last stable release, **unyts v0.9.15** (commit 9525a4f), through the current release **v0.10.5**.  It is written from a **user perspective** — what you can do now that you couldn't before, what got faster, and what was fixed.
+This document summarizes everything that has changed since the last stable release, **unyts v0.9.15** (commit 9525a4f), through the current release **v1.0.0**.  It is written from a **user perspective** — what you can do now that you couldn't before, what got faster, and what was fixed.
 
 ---
 
@@ -28,7 +28,7 @@ The package now uses **PEP 562 lazy loading**: heavy modules such as the databas
 
 ### Faster network building
 
-| Scenario | v0.9.15 | v0.10.5 |
+| Scenario | v0.9.15 | v1.0.0 |
 |----------|---------|---------|
 | `import unyts` | 14.5 s | 0.08 s |
 | First conversion (triggers build) | ~40 s | 16–17 s |
@@ -278,7 +278,7 @@ These are the most significant bugs fixed since v0.9.15:
 
 ## 11  Compatibility
 
-**unyts v0.10.5 is 100% backward compatible with v0.9.15.**  No code changes are required to upgrade.
+**unyts v1.0.0 is 100% backward compatible with v0.9.15.**  No code changes are required to upgrade.
 
 ```bash
 pip install --upgrade unyts

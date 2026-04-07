@@ -1,6 +1,6 @@
 # unyts Quick Reference Card
 
-**Version**: 0.10.1 | **Updated**: 2026-02-27
+**Version**: 1.0.0 | **Updated**: 2026-04-07
 
 ---
 
@@ -143,7 +143,7 @@ flat = arr.flatten()     # [1, 2, 3, 4] m
 
 ---
 
-## Advanced Features (v0.10.1)
+## Advanced Features (v1.0.0)
 
 ### Check Conversion Feasibility
 ```python
@@ -402,7 +402,7 @@ arr[1:3]  # [2, 3] km
 | [README.md](README.md) | Overview and quick start |
 | [USAGE.md](USAGE.md) | Comprehensive guide |
 | [CHANGELOG.md](CHANGELOG.md) | Complete version history |
-| [RELEASE_NOTES.md](RELEASE_NOTES.md) | v0.10.1 highlights |
+| [RELEASE_NOTES.md](RELEASE_NOTES.md) | v1.0.0 highlights |
 | [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) | Upgrade from v0.9.15 |
 | [VERSION_HISTORY.md](VERSION_HISTORY.md) | Module versions |
 | [unyts_demo.ipynb](unyts_demo.ipynb) | Interactive tutorial |
@@ -444,4 +444,4 @@ grad_si = grad.convert('kPa/m')  # 10.515 kPa/m
 
 ---
 
-**Version 0.10.1** - The fastest unit conversion library for Python! 🚀
+**Version 1.0.0** - The fastest unit conversion library for Python! 🚀

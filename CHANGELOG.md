@@ -2,7 +2,7 @@
 
 All notable changes to the unyts project are documented in this file.
 
-## [0.10.1] - 2026-02-27
+## [1.0.0] - 2026-04-07
 
 ### 🚀 Major Performance Optimizations
 
@@ -318,7 +318,7 @@ All notable changes to the unyts project are documented in this file.
 
 ### 📊 Statistics
 
-- **Version increment**: 0.9.15 → 0.10.1
+- **Version increment**: 0.9.15 → 1.0.0
 - **Performance gain**: 200× faster imports, 78% faster rebuilds
 - **Module versions updated**: 38 files with version tracking
 - **Test modules**: 9+ comprehensive test files
@@ -330,7 +330,7 @@ All notable changes to the unyts project are documented in this file.
 
 ## Version History Summary
 
-### [0.10.1] - 2026-02-27
+### [1.0.0] - 2026-04-07
 Major performance overhaul with lazy loading, comprehensive testing, and enhanced features.
 
 ### [0.10.0] - 2026-02-25
@@ -341,7 +341,7 @@ Pre-optimization baseline versions.
 
 ---
 
-## Migration Guide from 0.9.15 to 0.10.1
+## Migration Guide from 0.9.15 to 1.0.0
 
 ### Breaking Changes
 **None** - All changes are backward compatible. Existing code will continue to work without modifications.
@@ -367,7 +367,7 @@ Pre-optimization baseline versions.
 4. **Enable lean BFS for faster searches** (already default):
    ```python
    from unyts import set_algorithm
-   set_algorithm('lean_BFS')  # Default in 0.10.1
+  set_algorithm('lean_BFS')  # Default in 1.0.0
    ```
 
 5. **Clear old caches** if upgrading:

@@ -1,6 +1,6 @@
-# unyts v0.10.1 Release Notes
+# unyts v1.0.0 Release Notes
 
-**Release Date**: February 27, 2026
+**Release Date**: April 7, 2026
 
 ## 🎉 Major Release Highlights
 
@@ -168,7 +168,7 @@ start_gui()
 
 ## 📊 Performance Comparison
 
-| Operation | v0.9.15 | v0.10.1 | Improvement |
+| Operation | v0.9.15 | v1.0.0 | Improvement |
 |-----------|---------|---------|-------------|
 | **Import** | 14.5s | 0.08s | **200× faster** |
 | **First Build** | 40s | 16-17s | **60% faster** |

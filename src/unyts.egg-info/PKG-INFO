@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: unyts
-Version: 0.10.1
+Version: 1.0.0
 Summary: an unit converter based on graph network and classes to operate with units.
 Author-email: Martin Carlos Araya <martinaraya@gmail.com>
 License: MIT License

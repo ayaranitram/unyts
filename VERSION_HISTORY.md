@@ -2,7 +2,7 @@
 
 ## Recent Releases
 
-### v0.10.5 (2026-06) - Current Release ⭐
+### v1.0.0 (2026-04-07) - Current Release ⭐
 **Stability & Correctness Release**
 
 - All optimizations from v0.10.0/v0.10.1 verified and stabilized
@@ -69,11 +69,11 @@ Series focused on feature development and stability improvements before the majo
 
 ---
 
-## Module Version Matrix (v0.10.5)
+## Module Version Matrix (v1.0.0)
 
 | Module | Version | Release Date |
 |--------|---------|--------------|
-| **Core Package** | 0.10.1 | 2026-02-27 |
+| **Core Package** | 1.0.0 | 2026-04-07 |
 | converter.py | 0.8.10 | 2026-02-25 |
 | database.py | 0.8.1 | 2026-03-05 |
 | dictionaries.py | 0.6.0 | 2026-02-27 |
@@ -128,7 +128,7 @@ Series focused on feature development and stability improvements before the majo
 
 | Period | Releases | Focus |
 |--------|----------|-------|
-| 2026-06 | v0.10.5 | Stability & correctness |
+| 2026-04-07 | v1.0.0 | Stable major release |
 | 2026-02-25 to 2026-03-05 | v0.10.0 - v0.10.1 | Performance optimization |
 | Pre-2026 | v0.0.x - v0.9.15 | Feature development |
 
@@ -136,7 +136,7 @@ Series focused on feature development and stability improvements before the majo
 
 ## Upgrade Path
 
-### From v0.9.15 to v0.10.5
+### From v0.9.15 to v1.0.0
 ✅ **Direct upgrade** - Fully backward compatible
 
 ```bash
@@ -157,7 +157,7 @@ delete_cache()
 ## Python Version Support
 
 | unyts Version | Python Versions |
-|---------------|-----------------|| 0.10.5 | 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14 || 0.10.1 | 3.7, 3.8, 3.9, 3.10, 3.11 |
+|---------------|-----------------|| 1.0.0 | 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14 || 0.10.1 | 3.7, 3.8, 3.9, 3.10, 3.11 |
 | 0.10.0 | 3.7, 3.8, 3.9, 3.10, 3.11 |
 | 0.9.x | 3.7, 3.8, 3.9, 3.10 |
 
