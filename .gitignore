@@ -20,3 +20,5 @@ experiments/*
 pytest.out
 docs/backup*
 docs/*_AUDIT_REPORT_*.md
+dist_windows
+src/unyts.egg-info
