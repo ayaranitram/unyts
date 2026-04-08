@@ -4,7 +4,7 @@
 [![PyPI license](https://img.shields.io/pypi/l/unyts.svg)](https://pypi.org/project/unyts/)
 
 # `unyts`
-<p align="center"><img src="unyts_icon_web.png" /></p>  
+<p align="center"><img src="https://github.com/ayaranitram/unyts/blob/master/unyts_icon_web.png" /></p>  
 
 I identified the opportunity to use a *directed graph (digraph) network* to build a unit converter capable of converting between any two units without the need to populate an endless table of predefined conversions. Powered by the *Breadth-First Search (BFS)* algorithm to traverse the network, the converter determines conversion paths from a given unit (or ratio of units) to any other compatible unit (or ratio), provided that a connecting path exists.  
 
@@ -21,12 +21,12 @@ This package is intended to be used in three ways:
 - As unit converter with the function `convert()` to explicitly make conversion of numeric variables and instances.
 - As unit converter for single numerical values, using the GUI.
   
-A comprehensive user manual is also available here: [UNYTS_User_Manual.pdf](UNYTS_User_Manual.pdf)
+A comprehensive user manual is also available here: <a href="https://github.com/ayaranitram/unyts/blob/master/UNYTS_User_Manual.pdf">**UNYTS_User_Manual**.
 
 ### To launch the GUI
 From an OS terminal or console, execute `python -m unyts`  
 
-<img src="unyts_gui_.jpg" alt="drawing" width="300"/>  
+<img src="https://github.com/ayaranitram/unyts/blob/master/unyts_gui_.jpg" alt="drawing" width="300"/>  
 
 In the interface, simply type in the units to convert and the value to be converted and click the *convert* button or hit _Enter_ key. 
 
