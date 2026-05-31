@@ -26,3 +26,6 @@ pytest.out.txt
 unyts_cpp_native*.pyd
 cpp/build*/
 cpp/build/
+# Android release keystore — NEVER commit private keys
+*.jks
+*.keystore
