@@ -24,6 +24,8 @@ env:
 # Each job calls "Add SDK tools to PATH" before any sdkmanager call because
 # $ANDROID_HOME/cmdline-tools/latest/bin is not on PATH by default on
 # ubuntu-latest runners.
+# gradle-wrapper.jar and gradle-wrapper.properties are committed, so no
+# wrapper-generation step is needed.
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
@@ -57,12 +59,6 @@ jobs:
           sdkmanager \
             "ndk;${{ env.NDK_VERSION }}" \
             "cmake;${{ env.CMAKE_VERSION }}"
-
-      - name: Generate Gradle wrapper jar
-        # The .jar binary is intentionally not committed; regenerate it here.
-        # The ubuntu-latest runner ships Gradle in /usr/share/gradle/bin/gradle.
-        run: |
-          gradle wrapper --gradle-version=8.9 --distribution-type=bin
 
       - name: Run JVM unit tests
         run: |
@@ -109,9 +105,6 @@ jobs:
           sdkmanager \
             "ndk;${{ env.NDK_VERSION }}" \
             "cmake;${{ env.CMAKE_VERSION }}"
-
-      - name: Generate Gradle wrapper jar
-        run: gradle wrapper --gradle-version=8.9 --distribution-type=bin
 
       - name: Build debug APK
         run: |
@@ -171,9 +164,6 @@ jobs:
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: echo "$KEYSTORE_BASE64" | base64 --decode > "${{ github.workspace }}/release.jks"
-
-      - name: Generate Gradle wrapper jar
-        run: gradle wrapper --gradle-version=8.9 --distribution-type=bin
 
       - name: Build release APK
         env:
