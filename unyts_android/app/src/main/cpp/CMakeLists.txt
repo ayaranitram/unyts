@@ -5,6 +5,9 @@ project(unyts_jni)
 # so going up 5 directories reaches the repo root.
 set(REPO_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../../../..")
 
+# Must match the value in cpp/CMakeLists.txt.
+set(UNYTS_CACHE_SCHEMA_VERSION 1)
+
 # Collect all C++ core source files.
 file(GLOB UNYTS_CORE_SRC "${REPO_ROOT}/cpp/src/*.cpp")
 
@@ -18,6 +21,10 @@ add_library(unyts_jni SHARED
 
 target_include_directories(unyts_jni PRIVATE
     "${REPO_ROOT}/cpp/include"
+)
+
+target_compile_definitions(unyts_jni PRIVATE
+    UNYTS_CACHE_SCHEMA_VERSION=${UNYTS_CACHE_SCHEMA_VERSION}
 )
 
 target_compile_options(unyts_jni PRIVATE
