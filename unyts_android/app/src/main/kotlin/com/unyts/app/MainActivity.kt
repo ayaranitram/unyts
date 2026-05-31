@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.*
@@ -14,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unyts.app.ui.ConvertScreen
+import com.unyts.app.ui.HistoryScreen
 import com.unyts.app.ui.SettingsScreen
 import com.unyts.app.ui.theme.UnytsTheme
 import com.unyts.app.viewmodel.ConvertViewModel
@@ -47,6 +49,12 @@ fun UnytsApp(viewModel: ConvertViewModel = viewModel()) {
                 NavigationBarItem(
                     selected = selectedTab == 1,
                     onClick  = { selectedTab = 1 },
+                    icon     = { Icon(Icons.Default.History, contentDescription = "History") },
+                    label    = { Text("History") },
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 2,
+                    onClick  = { selectedTab = 2 },
                     icon     = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
                     label    = { Text("Settings") },
                 )
@@ -55,7 +63,8 @@ fun UnytsApp(viewModel: ConvertViewModel = viewModel()) {
     ) { innerPadding ->
         when (selectedTab) {
             0 -> ConvertScreen(viewModel, Modifier.padding(innerPadding))
-            1 -> SettingsScreen(viewModel, Modifier.padding(innerPadding))
+            1 -> HistoryScreen(viewModel, Modifier.padding(innerPadding))
+            2 -> SettingsScreen(viewModel, Modifier.padding(innerPadding))
         }
     }
 }

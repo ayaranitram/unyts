@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.unyts.app.jni.UnytsService
+import com.unyts.app.model.ConversionRecord
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +23,7 @@ data class ConvertUiState(
     val isLoading:    Boolean = false,
     val fvf:          Double  = 1.0,
     val timeoutMs:    Int     = 5000,
+    val history:      List<ConversionRecord> = emptyList(),
 )
 
 class ConvertViewModel(app: Application) : AndroidViewModel(app) {
@@ -72,7 +74,16 @@ class ConvertViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             service.convert(value, state.fromUnit, state.toUnit)
                 .onSuccess { result ->
-                    _uiState.update { it.copy(toValue = formatResult(result), errorMessage = "") }
+                    val record = ConversionRecord(
+                        fromValue = value,
+                        fromUnit  = state.fromUnit,
+                        toValue   = result,
+                        toUnit    = state.toUnit,
+                    )
+                    _uiState.update {
+                        val newHistory = (listOf(record) + it.history).take(50)
+                        it.copy(toValue = formatResult(result), errorMessage = "", history = newHistory)
+                    }
                 }
                 .onFailure { err ->
                     _uiState.update { it.copy(toValue = "", errorMessage = err.message ?: "Conversion failed") }
@@ -114,6 +125,10 @@ class ConvertViewModel(app: Application) : AndroidViewModel(app) {
     fun onUpdateTimeoutMs(ms: Int) {
         viewModelScope.launch { service.persistTimeoutMs(ms) }
         _uiState.update { it.copy(timeoutMs = ms) }
+    }
+
+    fun onClearHistory() {
+        _uiState.update { it.copy(history = emptyList()) }
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

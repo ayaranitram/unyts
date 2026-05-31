@@ -12,4 +12,7 @@
     <string name="timeout_label">Search timeout (ms)</string>
     <string name="apply">Apply</string>
     <string name="invalid_number">Invalid number</string>
+    <string name="history">History</string>
+    <string name="no_history">No history yet.\nCompleted conversions will appear here.</string>
+    <string name="clear_history">Clear history</string>
 </resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Window theme used while the Compose content is being inflated.
+      Keep it as a plain windowless theme to avoid a white flash on cold start.
+    -->
+    <style name="Theme.Unyts" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+</resources>
