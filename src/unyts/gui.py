@@ -6,8 +6,8 @@ Created on Sat Feb 11 10:38:47 2024
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.4.8'
-__release__ = 20260225
+__version__ = '1.0.2'
+__release__ = 20260531
 __all__ = ['start_gui']
 
 import tkinter as tk
@@ -335,18 +335,13 @@ class UnytsApp(tk.Frame):
             self.path_str.set("")
 
     def check_temporary_message(self):
-        """Check and update the temporary path message visibility."""
-        if self.user_print_path_ is not unyts_parameters_.print_path_:
-            unyts_parameters_.print_path_ = bool(self.user_print_path_)
-            if self.user_print_path_:
-                self.path.pack()
-            else:
-                self.path.pack_forget()
+        """Restore path frame visibility to match the user's print_path setting."""
+        if not unyts_parameters_.print_path_:
+            self.path.pack_forget()
 
     def show_temporary_message(self):
-        """Show a temporary path message in the GUI."""
+        """Show the path frame temporarily (e.g. to display an error message)."""
         if not unyts_parameters_.print_path_:
-            self.user_print_path_ = bool(unyts_parameters_.print_path_)
             self.path.pack()
 
     def _get_input(self):
@@ -378,6 +373,7 @@ def start_gui():
     def print_path():
         """Set the print_path parameter and update the GUI accordingly."""
         unyts_parameters_.print_path()
+        unyts_gui.user_print_path_ = unyts_parameters_.print_path_  # keep in sync with menu toggle
         if unyts_parameters_.print_path_:
             unyts_gui.path.pack()
             unyts_gui._display_path()

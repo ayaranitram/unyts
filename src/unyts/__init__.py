@@ -6,8 +6,8 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '1.0.0'
-__release__ = 20260407
+__version__ = '1.0.2'
+__release__ = 20260531
 __all__ = ['units', 'convert', 'converter', 'convertible', 'Unit', 'is_Unit', 'valid_unit',
            'set_unit', 'set_conversion', 'set_density', 'get_density',
            'save', 'load', 'save_memory', 'load_memory', 'clean_memory',

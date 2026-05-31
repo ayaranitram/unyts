@@ -6,8 +6,8 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '0.8.10'
-__release__ = 20260225
+__version__ = '1.0.2'
+__release__ = 20260531
 __all__ = ['convert', 'convertible']
 
 from .parameters import unyts_parameters_, _get_density
@@ -559,6 +559,7 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
     # look for conversion between children  
     conversion, conversion_path = None, None
     path, shortest_path = 0, 9999
+    _current_bridge_is_gauge = False  # tracks whether the current best bridge is a gauge unit
     for child in common_sorted:
         if conversion_path is not None and common_sorted[child] > min_generations:
             break
@@ -574,12 +575,20 @@ def _ratio_conversion_including_children(from_unit, to_unit, recursion=None, max
             continue
 
         this_path_len = len([step for step in (from_child_conversion_path + child_to_conversion_path) if step != '1/'])
-        if this_path_len < shortest_path:
+        _is_gauge = any(g in child.lower() for g in ('psig', 'barg', 'gauge', 'kpag', 'mpag'))
+        _prefer = (this_path_len < shortest_path or
+                   (this_path_len == shortest_path and not _is_gauge and _current_bridge_is_gauge))
+        if _prefer:
             conversion_path = from_child_conversion_path + child_to_conversion_path
-            def conversion(x):
-                """Return the result of converting x from from_unit to to_unit."""
-                return child_to_conversion(from_child_conversion(x))
+            # Capture loop variables by value to avoid closure-over-loop-variable bug
+            def _make_conversion(f, t):
+                def conversion(x):
+                    """Return the result of converting x from from_unit to to_unit."""
+                    return t(f(x))
+                return conversion
+            conversion = _make_conversion(from_child_conversion, child_to_conversion)
             shortest_path = this_path_len
+            _current_bridge_is_gauge = _is_gauge
         if path == max_paths:
             break
         path += 1
@@ -675,6 +684,14 @@ def _converter(value, from_unit, to_unit, recursion=None, use_cache:bool=None):
             if conv is Empty:
                 return Empty, None
             elif conv is not None:
+                # For ratio/compound units, use the differential (slope) of the conversion
+                # rather than the absolute value at 1.  This prevents affine conversions
+                # (gauge pressure: psig→psia adds +14.696; temperature: °C→K adds +273.15)
+                # from leaking their offset into ratio units such as psig/ft or °C/m.
+                # For pure multiplicative units conv0==0, so conv is unchanged.
+                conv0, _ = _get_conversion(0, split_from[f], split_to[t], recursion=recursion, use_cache=use_cache)
+                if conv0 is not None and conv0 is not Empty and conv0 != 0:
+                    conv = conv - conv0  # slope of affine conversion
                 flag = True
                 if len(list_conversion_path) > 0:
                     conv_path = [1] + conv_path
