@@ -35,6 +35,21 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Signing credentials are injected at build time via -P flags (CI)
+            // or via a local keystore.properties file (local dev).
+            // See .github/workflows/android.yml for the CI approach.
+            val storeFile  = findProperty("android.injected.signing.store.file")  as String?
+            val storePass  = findProperty("android.injected.signing.store.password") as String?
+            val keyAlias   = findProperty("android.injected.signing.key.alias")   as String?
+            val keyPass    = findProperty("android.injected.signing.key.password") as String?
+            if (storeFile != null) {
+                signingConfig = signingConfigs.create("release") {
+                    this.storeFile     = file(storeFile)
+                    this.storePassword = storePass
+                    this.keyAlias      = keyAlias
+                    this.keyPassword   = keyPass
+                }
+            }
         }
     }
 
