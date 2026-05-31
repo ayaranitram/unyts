@@ -3,7 +3,7 @@ project(unyts_jni)
 
 # Repo root — this file is at unyts_android/app/src/main/cpp/CMakeLists.txt
 # so going up 5 directories reaches the repo root.
-set(REPO_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../..")
+set(REPO_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../../../..")
 
 # Collect all C++ core source files.
 file(GLOB UNYTS_CORE_SRC "${REPO_ROOT}/cpp/src/*.cpp")
