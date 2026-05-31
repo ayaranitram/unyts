@@ -10,10 +10,10 @@
 
 | Phase | Status | Date | Notes |
 |-------|--------|------|-------|
-| 0 — Prerequisites | ⬜ Not started | — | Needs Android Studio, NDK 25+, Google Play account |
-| 1 — JNI Bridge | ⬜ Not started | — | `unyts_jni.cpp` + `UnytsJNI.kt` |
-| 2 — Core UI | ⬜ Not started | — | Jetpack Compose `ConvertScreen` |
-| 3 — Settings + Extras | ⬜ Not started | — | FVF, algorithm, history |
+| 0 — Prerequisites | ✅ Done | 2026-05-31 | Gradle 8.9 project scaffold; libs.versions.toml; CMakeLists.txt wired to `cpp/` core |
+| 1 — JNI Bridge | ✅ Done | 2026-05-31 | `unyts_jni.cpp` (all C API entry points); `UnytsJNI.kt` (`external fun`); `UnytsService.kt` (coroutines + DataStore); `UnytsJNITest.kt` (10 instrumented tests) |
+| 2 — Core UI | ✅ Done | 2026-05-31 | `ConvertViewModel`, `ConvertScreen` (autocomplete dropdown), `SettingsScreen`, `UnytsTheme`; bottom nav bar |
+| 3 — Settings + Extras | ⏳ Partial | 2026-05-31 | FVF + timeout in `SettingsScreen` + DataStore; history screen placeholder only |
 | 4 — Polish + Device Testing | ⬜ Not started | — | Real hardware, accessibility, adaptive icon |
 | 5 — Google Play Submission | ⬜ Not started | — | AAB signing, store listing, rollout |
 

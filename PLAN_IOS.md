@@ -10,11 +10,11 @@
 
 | Phase | Status | Date | Notes |
 |-------|--------|------|-------|
-| 0 — Prerequisites | ⬜ Not started | — | Needs macOS + Xcode 15+, Apple Developer account, iOS CMake toolchain |
-| 1 — Bridge Layer | ⬜ Not started | — | `UnytsWrapper.h/.mm` + `UnytsService.swift` |
-| 2 — Core UI | ⬜ Not started | — | SwiftUI `ConvertView` with autocomplete |
-| 3 — Settings + Extras | ⬜ Not started | — | FVF, algorithm, history, `UserDefaults` |
-| 4 — Polish + Device Testing | ⬜ Not started | — | Real iPhone/iPad, VoiceOver, Privacy Manifest |
+| 0 — Prerequisites | ✅ Done | 2026-05-31 | `CMakeLists.txt` for device + simulator + XCFramework build; `.gitignore`; project directory layout |
+| 1 — Bridge Layer | ✅ Done | 2026-05-31 | `UnytsWrapper.h/.mm` (full Obj-C++ impl); `UnytsService.swift`; bridging header; `AppState` with FVF + timeout + history |
+| 2 — Core UI | ✅ Done | 2026-05-31 | `ConvertView` (GroupBox layout, swap button), `UnitTextField` (filtered autocomplete dropdown), `HistoryView`, `ContentView` tab bar |
+| 3 — Settings + Extras | ✅ Done | 2026-05-31 | `SettingsView` (FVF, timeout, version info); `@AppStorage` persistence; history with swipe-to-delete + clear |
+| 4 — Polish + Device Testing | ⬜ Not started | — | Real iPhone/iPad, VoiceOver, Privacy Manifest, app icon |
 | 5 — App Store Submission | ⬜ Not started | — | TestFlight → App Store Connect review |
 
 ---
