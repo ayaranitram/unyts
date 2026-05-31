@@ -22,3 +22,7 @@ docs/backup*
 docs/*_AUDIT_REPORT_*.md
 dist_windows
 src/unyts.egg-info
+pytest.out.txt
+unyts_cpp_native*.pyd
+cpp/build*/
+cpp/build/

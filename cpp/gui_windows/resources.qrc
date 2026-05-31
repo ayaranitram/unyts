@@ -1,0 +1,6 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+        <file alias="unyts_icon.ico">../../src/unyts/unyts_icon.ico</file>
+    </qresource>
+</RCC>

@@ -1,3 +1,25 @@
+# unyts Release Notes
+
+---
+
+## v1.0.2 — May 31, 2026
+
+### 🐛 Bug Fixes
+
+#### Compound-Unit Gradient Correction (`converter.py`)
+
+Two bugs caused incorrect results whenever an **affine** (offset-based) unit appeared as a token inside a ratio/compound unit — e.g. `psig/ft`, `g/cc`, `lb/ft³`, `SgO`:
+
+1. **Closure-over-loop-variable in bridge selection** — conversion functions in `_ratio_conversion_including_children` captured loop variables by reference, so all bridge candidates silently used the last iteration's values. Fixed with a `_make_conversion(f, t)` factory that captures each pair by value.
+
+2. **Affine offset leaked into compound factor** — the token conversion factor was computed as the absolute value `f(1)`, which includes the additive offset for gauge pressure (`1 psig ≈ 108 kPa` absolute). This inflated compound results by ~14.696×: `psig/ft → kPa/m` returned **355** instead of the correct **22.62**; `g/cc → MPa/km` returned **154** instead of **9.807**. Fixed by using the slope `f(1) − f(0)` instead of the raw absolute value.
+
+### 🧪 Test Coverage
+- Added Excel reference rows for pressure-gradient and density-gradient conversions: `psig/ft → kPa/m`, `psia/ft → kPa/m`, `psi/ft → kPa/m`, `psig/ft → MPa/km`, `g/cc → MPa/km`, `lb/ft³ → kPa/m`, `SgO → MPa/km`
+- Documented known C++/Python gauge-naming divergence in parity test suite (`_CPP_GAUGE_DIVERGENCE_ROWS`)
+
+---
+
 # unyts v1.0.0 Release Notes
 
 **Release Date**: April 7, 2026

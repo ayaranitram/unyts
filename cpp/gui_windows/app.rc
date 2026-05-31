@@ -1,0 +1,2 @@
+// Windows resource file — sets the EXE icon shown in Explorer / taskbar
+IDI_ICON1 ICON "..\\..\\src\\unyts\\unyts_icon.ico"
