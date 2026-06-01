@@ -1,6 +1,9 @@
 package com.unyts.app.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -102,8 +105,10 @@ fun ConvertScreen(
 }
 
 /**
- * Text field with a dropdown showing up to 10 unit name suggestions filtered
- * by the current input (case-insensitive substring match).
+ * Text field with a list of up to 10 unit name suggestions filtered by the
+ * current input (case-insensitive substring match). Suggestions are shown to
+ * the right of the input field so they never obscure it, and focus stays on
+ * the text field while typing.
  */
 @Composable
 fun UnitAutoCompleteField(
@@ -113,29 +118,44 @@ fun UnitAutoCompleteField(
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var showSuggestions by remember { mutableStateOf(false) }
     val suggestions = remember(value, allUnits) {
         if (value.isBlank()) emptyList()
         else allUnits.filter { it.contains(value, ignoreCase = true) }.take(10)
     }
 
-    Box(modifier = modifier.fillMaxWidth()) {
+    Row(
+        modifier          = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top,
+    ) {
         OutlinedTextField(
             value         = value,
-            onValueChange = { onChange(it); expanded = it.isNotBlank() },
+            onValueChange = { onChange(it); showSuggestions = it.isNotBlank() },
             label         = { Text(label) },
-            modifier      = Modifier.fillMaxWidth(),
+            modifier      = Modifier.weight(1f),
             singleLine    = true,
         )
-        DropdownMenu(
-            expanded         = expanded && suggestions.isNotEmpty(),
-            onDismissRequest = { expanded = false },
-        ) {
-            suggestions.forEach { unit ->
-                DropdownMenuItem(
-                    text    = { Text(unit) },
-                    onClick = { onChange(unit); expanded = false },
-                )
+        if (showSuggestions && suggestions.isNotEmpty()) {
+            Card(
+                modifier  = Modifier
+                    .width(180.dp)
+                    .heightIn(max = 200.dp)
+                    .padding(start = 4.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            ) {
+                LazyColumn {
+                    items(suggestions) { unit ->
+                        Text(
+                            text     = unit,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onChange(unit); showSuggestions = false }
+                                .padding(horizontal = 8.dp, vertical = 6.dp),
+                            style    = MaterialTheme.typography.bodyMedium,
+                        )
+                        HorizontalDivider()
+                    }
+                }
             }
         }
     }
