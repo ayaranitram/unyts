@@ -1,0 +1,11 @@
+# Gradle wrapper shell script must always use LF line endings on all platforms.
+# A CRLF gradlew will silently corrupt JVM argument parsing on Linux CI.
+gradlew        text eol=lf
+*.sh           text eol=lf
+
+# Windows batch files keep CRLF.
+gradlew.bat    text eol=crlf
+*.bat          text eol=crlf
+
+# Treat all other text files normally (core.autocrlf handles them).
+*              text=auto
