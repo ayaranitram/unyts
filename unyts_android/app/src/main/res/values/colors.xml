@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Launcher icon background colour (Material Blue 700) -->
-    <color name="ic_launcher_background">#1976D2</color>
+    <color name="ic_launcher_background">#FFFFFF</color>
 </resources>
