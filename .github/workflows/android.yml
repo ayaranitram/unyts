@@ -7,6 +7,7 @@ on:
       - 'unyts_android/**'
       - 'cpp/**'
       - '.github/workflows/android.yml'
+    tags: ['v*']          # version tags trigger the release build
   pull_request:
     branches: [main]
     paths:
