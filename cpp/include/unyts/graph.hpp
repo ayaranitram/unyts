@@ -9,6 +9,7 @@
 // Search algorithms (BFS, DFS, lean_BFS, hybrid_BFS) are free functions
 // declared at the bottom of this header and implemented in graph.cpp.
 
+#include <atomic>
 #include <chrono>
 #include <functional>
 #include <optional>
@@ -182,11 +183,14 @@ inline TimePoint no_deadline() {
 // ─── Search algorithms ────────────────────────────────────────────────────────
 
 /// Breadth-first search.  Returns the shortest path from start to end,
-/// or std::nullopt if unreachable or if the deadline is exceeded.
+/// or std::nullopt if unreachable, the deadline is exceeded, or `stop`
+/// is set (checked once per loop iteration; used by hybrid_BFS to cancel
+/// the losing side of a race).
 std::optional<Path> BFS(const UDigraph& g,
                         const UNode& start, const UNode& end,
                         TimePoint deadline = no_deadline(),
-                        bool verbose = false);
+                        bool verbose = false,
+                        const std::atomic<bool>* stop = nullptr);
 
 /// Depth-first search with optional branch pruning.
 /// branch_depth: max hops to look ahead when deciding whether a branch can
@@ -205,7 +209,8 @@ std::optional<Path> lean_BFS(const UDigraph& g,
                              const UNode& start, const UNode& end,
                              TimePoint deadline = no_deadline(),
                              bool verbose = false,
-                             int max_generations = 25);
+                             int max_generations = 25,
+                             const std::atomic<bool>* stop = nullptr);
 
 /// Hybrid BFS: launches BFS and lean_BFS in separate threads and returns
 /// whichever result arrives first.

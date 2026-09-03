@@ -6,7 +6,12 @@
 #include "unyts/graph.hpp"
 
 #include <algorithm>
-#include <future>
+#include <atomic>
+#include <condition_variable>
+#include <deque>
+#include <functional>
+#include <memory>
+#include <mutex>
 #include <queue>
 #include <sstream>
 #include <stdexcept>
@@ -191,7 +196,8 @@ std::unordered_set<std::string> get_descendants(
 
 std::optional<Path> BFS(const UDigraph& g,
                         const UNode& start, const UNode& end,
-                        TimePoint deadline, bool /*verbose*/) {
+                        TimePoint deadline, bool /*verbose*/,
+                        const std::atomic<bool>* stop) {
     if (start == end) return Path{start};
 
     // path_queue: each entry is a complete path from start to some node
@@ -201,8 +207,9 @@ std::optional<Path> BFS(const UDigraph& g,
     std::unordered_set<std::string> visited;
 
     while (!path_queue.empty()) {
-        // Timeout check
+        // Timeout / cancellation check
         if (Clock::now() > deadline) return std::nullopt;
+        if (stop && stop->load(std::memory_order_relaxed)) return std::nullopt;
 
         Path conv_path = std::move(path_queue.front());
         path_queue.pop();
@@ -295,7 +302,8 @@ std::optional<Path> DFS(const UDigraph& g,
 std::optional<Path> lean_BFS(const UDigraph& g,
                              const UNode& start, const UNode& end,
                              TimePoint deadline, bool verbose,
-                             int max_generations) {
+                             int max_generations,
+                             const std::atomic<bool>* stop) {
     // Generation sequence from Python lean_BFS
     static const int gen_steps[] = {0,1,2,3,4,5,7,10,13,16,20,25,30,40,50};
     std::unordered_set<std::string> selection;
@@ -316,7 +324,7 @@ std::optional<Path> lean_BFS(const UDigraph& g,
 
     if (selection.empty()) {
         // Fall back to full BFS
-        return BFS(g, start, end, deadline, verbose);
+        return BFS(g, start, end, deadline, verbose, stop);
     }
 
     // Also include start and end themselves
@@ -337,6 +345,7 @@ std::optional<Path> lean_BFS(const UDigraph& g,
 
     while (!path_queue.empty()) {
         if (Clock::now() > deadline) return std::nullopt;
+        if (stop && stop->load(std::memory_order_relaxed)) return std::nullopt;
 
         Path conv_path = std::move(path_queue.front());
         path_queue.pop();
@@ -365,45 +374,130 @@ std::optional<Path> lean_BFS(const UDigraph& g,
 }
 
 // ─── hybrid_BFS ──────────────────────────────────────────────────────────────
-// Launches BFS and lean_BFS in separate threads; returns the first result.
-// Mirrors Python hybrid_BFS which uses Thread/Process depending on settings.
+// Races BFS and lean_BFS on two long-lived worker threads, taking whichever
+// finds a path first and cancelling the other via a shared stop flag (both
+// algorithms poll it once per loop iteration).
+//
+// The previous implementation spawned two brand-new std::async threads on
+// *every* call and never cancelled the loser (its std::future destructor
+// just blocked until it finished on its own). A full conversion run makes
+// hundreds of such calls, so that was hundreds of raw OS thread creations in
+// a tight loop -- combined with unyts_capi.dll's thread-attach notifications,
+// that reliably hung/starved on Windows. Two dedicated persistent workers
+// bound thread creation to a constant 2 for the process lifetime, and the
+// stop flag lets the loser bail out almost immediately once a winner is
+// found instead of running to its own deadline.
+
+namespace {
+
+// A single-worker FIFO job queue: a persistent thread that pops and runs
+// std::function<void()> tasks, blocking when idle.
+class JobQueue {
+public:
+    JobQueue() {
+        // Runs for the lifetime of the process; the queue itself is a
+        // function-local static (see bfs_queue()/lean_queue() below), so
+        // there is no shutdown path -- the thread is simply detached.
+        std::thread(&JobQueue::run, this).detach();
+    }
+
+    void push(std::function<void()> job) {
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            queue_.push_back(std::move(job));
+        }
+        cv_.notify_one();
+    }
+
+private:
+    void run() {
+        for (;;) {
+            std::function<void()> job;
+            {
+                std::unique_lock<std::mutex> lock(mutex_);
+                cv_.wait(lock, [this] { return !queue_.empty(); });
+                job = std::move(queue_.front());
+                queue_.pop_front();
+            }
+            job();
+        }
+    }
+
+    std::mutex                          mutex_;
+    std::condition_variable             cv_;
+    std::deque<std::function<void()>>   queue_;
+};
+
+JobQueue& bfs_worker()  { static JobQueue* q = new JobQueue(); return *q; }
+JobQueue& lean_worker() { static JobQueue* q = new JobQueue(); return *q; }
+
+// Shared result slot for one hybrid_BFS race: each worker fills in its slot
+// and notifies; the waiter wakes immediately instead of polling on a timer
+// (a poll-and-sleep loop was tried first but Windows' default ~15ms timer
+// resolution made every single-digit-microsecond conversion cost ~12ms).
+struct RaceState {
+    std::mutex              mutex;
+    std::condition_variable cv;
+    bool                    lean_done = false;
+    bool                    bfs_done  = false;
+    std::optional<Path>     lean_result;
+    std::optional<Path>     bfs_result;
+};
+
+} // anonymous namespace
 
 std::optional<Path> hybrid_BFS(const UDigraph& g,
                                const UNode& start, const UNode& end,
                                TimePoint deadline, bool verbose,
                                int max_generations) {
-    // Use std::async with std::launch::async for true parallel execution.
-    // Both tasks share the (read-only) graph — safe because UDigraph is
-    // not mutated during search.
+    auto stop  = std::make_shared<std::atomic<bool>>(false);
+    auto state = std::make_shared<RaceState>();
 
-    auto fut_lean = std::async(std::launch::async,
-        [&]() { return lean_BFS(g, start, end, deadline, verbose, max_generations); });
-
-    auto fut_bfs  = std::async(std::launch::async,
-        [&]() { return BFS(g, start, end, deadline, verbose); });
-
-    // Poll until one of them finishes (or we time out)
-    using namespace std::chrono_literals;
-    while (true) {
-        if (Clock::now() > deadline) return std::nullopt;
-
-        auto lean_status = fut_lean.wait_for(0ms);
-        if (lean_status == std::future_status::ready) {
-            auto result = fut_lean.get();
-            if (result) return result;
-            // lean_BFS failed, wait for BFS
-            return fut_bfs.get();
+    // `g` is always unyts::global_graph(), a static-storage-duration object,
+    // so capturing it by reference is safe even if a job outlives this call
+    // (the deadline-exceeded path below can return before a job finishes).
+    lean_worker().push([&g, start, end, deadline, verbose, max_generations, stop, state] {
+        auto result = lean_BFS(g, start, end, deadline, verbose, max_generations, stop.get());
+        {
+            std::lock_guard<std::mutex> lock(state->mutex);
+            state->lean_result = std::move(result);
+            state->lean_done   = true;
         }
-
-        auto bfs_status = fut_bfs.wait_for(0ms);
-        if (bfs_status == std::future_status::ready) {
-            auto result = fut_bfs.get();
-            if (result) return result;
-            // BFS failed, wait for lean_BFS
-            return fut_lean.get();
+        state->cv.notify_all();
+    });
+    bfs_worker().push([&g, start, end, deadline, verbose, stop, state] {
+        auto result = BFS(g, start, end, deadline, verbose, stop.get());
+        {
+            std::lock_guard<std::mutex> lock(state->mutex);
+            state->bfs_result = std::move(result);
+            state->bfs_done   = true;
         }
+        state->cv.notify_all();
+    });
 
-        std::this_thread::sleep_for(1ms);
+    std::unique_lock<std::mutex> lock(state->mutex);
+    for (;;) {
+        if (state->lean_done) {
+            if (state->lean_result) { stop->store(true); return state->lean_result; }
+            // lean_BFS found nothing; still need BFS's answer (bounded by
+            // the same deadline via wait_until below).
+            if (state->cv.wait_until(lock, deadline, [&] { return state->bfs_done; }))
+                return state->bfs_result;
+            stop->store(true);
+            return std::nullopt;
+        }
+        if (state->bfs_done) {
+            if (state->bfs_result) { stop->store(true); return state->bfs_result; }
+            if (state->cv.wait_until(lock, deadline, [&] { return state->lean_done; }))
+                return state->lean_result;
+            stop->store(true);
+            return std::nullopt;
+        }
+        if (!state->cv.wait_until(lock, deadline,
+                [&] { return state->lean_done || state->bfs_done; })) {
+            stop->store(true); // deadline reached, neither side finished
+            return std::nullopt;
+        }
     }
 }
 
