@@ -65,6 +65,17 @@ def test_algorithm_setting(caplog):
     assert unyts_parameters_.algorithm_ == 'BFS'
 
 
+def test_engine_setting():
+    original_engine = unyts_parameters_.get_engine()
+    try:
+        parameters.set_engine('python')
+        assert parameters.get_engine() == 'python'
+        with pytest.raises(ValueError):
+            parameters.set_engine('invalid')
+    finally:
+        parameters.set_engine(original_engine)
+
+
 def test_parallel_setting(caplog):
     unyts_parameters_.set_parallel(None)
     assert unyts_parameters_.parallel_ is True

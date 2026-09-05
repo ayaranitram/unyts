@@ -18,6 +18,49 @@ from .searches import BFS, lean_BFS, DFS, hybrid_BFS, print_path
 
 # cached map of alias conflicts; populated lazily
 _alias_conflicts_cache = None
+_cpp_module = None
+_cpp_import_attempted = False
+_cpp_unsafe_aliases = {'psi', 'bars', 'pounds per square inch', 'pound/square inch'}
+
+
+def _uses_cpp_unsafe_alias(unit: str) -> bool:
+    """Return whether a unit spelling has Python-only gauge-pressure semantics."""
+    return isinstance(unit, str) and unit.strip().casefold() in _cpp_unsafe_aliases
+
+
+def _get_cpp_module():
+    """Load the optional native backend once it has been explicitly selected."""
+    global _cpp_module, _cpp_import_attempted
+    if not _cpp_import_attempted:
+        _cpp_import_attempted = True
+        try:
+            import unyts_cpp_native as native
+            _cpp_module = native
+        except ImportError:
+            _cpp_module = None
+    return _cpp_module
+
+
+def _can_use_cpp(value, from_unit: str, to_unit: str, print_conversion_path: bool) -> bool:
+    """Return whether the native backend can preserve this public API call."""
+    return (
+        unyts_parameters_.engine_ == 'cpp'
+        and type(value) in (int, float)
+        and not print_conversion_path
+        and unyts_parameters_.timeout_ > 0
+        and not _uses_cpp_unsafe_alias(from_unit)
+        and not _uses_cpp_unsafe_alias(to_unit)
+    )
+
+
+def _cpp_convert(value, from_unit: str, to_unit: str):
+    """Perform one scalar conversion through the configured native backend."""
+    native = _get_cpp_module()
+    if native is None:
+        raise ImportError("C++ engine is not available; install a compatible unyts_cpp_native extension.")
+    native.set_timeout(unyts_parameters_.timeout_ * 1000)
+    native.global_graph().fvf = unyts_parameters_.fvf_
+    return native.convert(value, from_unit, to_unit)
 
 def _get_alias_conflicts():
     global _alias_conflicts_cache
@@ -1011,6 +1054,19 @@ def convertible(from_unit: str, to_unit: str, use_cache:bool=None) -> bool:
         to_unit = to_unit.get_unit()
 
     try:
+        if (
+            unyts_parameters_.engine_ == 'cpp'
+            and unyts_parameters_.timeout_ > 0
+            and not _uses_cpp_unsafe_alias(from_unit)
+            and not _uses_cpp_unsafe_alias(to_unit)
+        ):
+            native = _get_cpp_module()
+            if native is None:
+                raise ImportError("C++ engine is not available; install a compatible unyts_cpp_native extension.")
+            native.set_timeout(unyts_parameters_.timeout_ * 1000)
+            native.global_graph().fvf = unyts_parameters_.fvf_
+            return native.convertible(from_unit, to_unit)
+
         # First attempt: try fast path (cache-enabled by default)
         conv, _ = _converter(1, from_unit, to_unit, use_cache=use_cache)
         if conv is not None and conv is not Empty:
@@ -1064,9 +1120,11 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty,
     conv, conv_path = _density_conversion(value, from_unit, to_unit, use_cache=use_cache)
 
     if conv is None:
-        # regular conversion
-        #conv, conv_path = _converter(value, from_unit, to_unit, use_cache=use_cache)
-        conv, conv_path = _converter(value, from_unit, to_unit, use_cache=use_cache)
+        if _can_use_cpp(value, from_unit, to_unit, print_conversion_path):
+            conv = _cpp_convert(value, from_unit, to_unit)
+            conv_path = None
+        else:
+            conv, conv_path = _converter(value, from_unit, to_unit, use_cache=use_cache)
 
     if conv is None:
         if unyts_parameters_.raise_error_:
@@ -1082,7 +1140,7 @@ def convert(value: numeric, from_unit: str, to_unit: str_Empty = Empty,
         else:
             return Empty
 
-    unyts_parameters_.last_path_str = print_path(conv_path)
+    unyts_parameters_.last_path_str = '' if conv_path is None else print_path(conv_path)
     if print_conversion_path:
         logger.info(f"converting from '{from_unit}' to '{to_unit}':\n {unyts_parameters_.last_path_str}")
 

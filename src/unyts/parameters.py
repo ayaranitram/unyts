@@ -9,7 +9,8 @@ Created on Sat Oct 24 18:24:20 2020
 __version__ = '0.6.13'
 __release__ = 20260225
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'set_density', 'get_density',
-           'recursion_limit', 'verbose', 'set_algorithm', 'set_parallel', 'reset_default_parameters']
+           'recursion_limit', 'verbose', 'set_algorithm', 'set_engine', 'get_engine', 'cpp_available',
+           'set_parallel', 'reset_default_parameters']
 
 import os.path
 from json import load as json_load, dump as json_dump
@@ -47,6 +48,7 @@ def _default_params() -> dict:
         'fvf': __default_fvf__,
         'max_recursion': __max_recursion_default__,
         'algorithm': 'lean_BFS',
+        'engine': 'python',
         'max_generations': __max_generations_default__,
         'timeout': __timeout__,
         'parallel': False,
@@ -75,6 +77,7 @@ class UnytsParameters(object):
         self.fvf_ = __default_fvf__  # res_vol/std_vol
         self.max_recursion_ = __max_recursion_default__
         self.algorithm_ = 'lean_BFS'
+        self.engine_ = 'python'
         self.max_generations_ = __max_generations_default__
         self.timeout_ = __timeout__
         self._timing = False
@@ -130,6 +133,7 @@ class UnytsParameters(object):
         self.fvf_ = params['fvf'] if 'fvf' in params else __default_fvf__
         self.max_recursion_ = params['max_recursion'] if 'max_recursion' in params else __max_recursion_default__
         self.algorithm_ = params['algorithm'] if 'algorithm' in params else 'BFS'
+        self.engine_ = params['engine'] if params.get('engine') in ('python', 'cpp') else 'python'
         self.max_generations_ = params['max_generations'] if 'max_generations' in params else __max_generations_default__
         self.timeout_ = params['timeout'] if 'timeout' in params else __timeout__
         self.parallel_ = params['parallel'] if 'parallel' in params else False
@@ -153,6 +157,7 @@ class UnytsParameters(object):
             self.fvf_ = params['fvf'] if 'fvf' in params else __default_fvf__
             self.max_recursion_ = params['max_recursion'] if 'max_recursion' in params else __max_recursion_default__
             self.algorithm_ = params['algorithm'] if 'algorithm' in params else 'BFS'
+            self.engine_ = params['engine'] if params.get('engine') in ('python', 'cpp') else 'python'
             self.max_generations_ = params['max_generations'] if 'max_generations' in params else __max_generations_default__
             self.timeout_ = params['timeout'] if 'timeout' in params else __timeout__
             self.parallel_ = params['parallel'] if 'parallel' in params else True
@@ -176,6 +181,7 @@ class UnytsParameters(object):
                   'fvf': self.fvf_,
                   'max_recursion': self.max_recursion_,
                   'algorithm': self.algorithm_,
+                  'engine': self.engine_,
                   'max_generations': self.max_generations_,
                   'timeout': self.timeout_,
                   'parallel': self.parallel_,
@@ -316,6 +322,21 @@ class UnytsParameters(object):
         """Return the current search algorithm."""
         return self.algorithm_
 
+    def get_engine(self):
+        """Return the current conversion engine."""
+        return self.engine_
+
+    def set_engine(self, engine: str):
+        """Set the conversion engine to ``'python'`` or ``'cpp'``."""
+        if engine not in ('python', 'cpp'):
+            raise ValueError(f"valid engines are 'python' and 'cpp' not {engine!r}.")
+        if engine == 'cpp' and not cpp_available():
+            raise ImportError("C++ engine is not available; install a compatible unyts_cpp_native extension.")
+        self.engine_ = engine
+        if self.verbose_:
+            logger.info(f"{engine} set as conversion engine.")
+        self.save_params()
+
     def set_algorithm(self, algorithm:str):
         """Set the search algorithm."""
         if algorithm not in ['BFS', 'lean_BFS', 'DFS', 'hybrid_BFS']:
@@ -412,6 +433,7 @@ class UnytsParameters(object):
         self.fvf_ = defaults['fvf']
         self.max_recursion_ = defaults['max_recursion']
         self.algorithm_ = defaults['algorithm']
+        self.engine_ = defaults['engine']
         self.max_generations_ = defaults['max_generations']
         self.timeout_ = defaults['timeout']
         self.parallel_ = defaults['parallel']
@@ -550,6 +572,27 @@ def set_algorithm(algorithm:str):
 def get_algorithm():
     """Return the current algorithm being used for path searches."""
     return unyts_parameters_.algorithm_
+
+
+def cpp_available() -> bool:
+    """Return whether the optional C++ conversion engine can be imported."""
+    try:
+        from importlib import import_module
+        native = import_module('unyts_cpp_native')
+    except ImportError:
+        return False
+    return all(hasattr(native, name) for name in (
+        'convert', 'convertible', 'set_timeout', 'global_graph'))
+
+
+def set_engine(engine: str):
+    """Set the conversion engine to ``'python'`` or ``'cpp'``."""
+    unyts_parameters_.set_engine(engine)
+
+
+def get_engine():
+    """Return the current conversion engine."""
+    return unyts_parameters_.get_engine()
 
 
 def set_parallel(method:str):
