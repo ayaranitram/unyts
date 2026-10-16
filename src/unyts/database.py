@@ -36,16 +36,24 @@ _STARTUP_INIT_DONE = False
 def _get_max_combinations() -> int:
     """Return the maximum number of preloaded combinations for compound unit types.
 
-    Configurable via the UNYTS_MAX_COMBINATIONS environment variable.
+    Configurable via the UNYTS_MAX_COMBINATIONS environment variable,
+    or via the set_max_combinations() function in the parameters module.
+    The environment variable takes precedence over the parameter function.
     With dynamic validation as a fallback, the preloaded set only needs to
     cover the most common units; defaults to 50 000.
     """
     import os
     try:
         val = os.environ.get('UNYTS_MAX_COMBINATIONS')
+        if val == 'unlimited':
+            return float('inf')
         return int(val) if val is not None else 50_000
     except (ValueError, TypeError):
-        return 50_000
+        try:
+            from .parameters import get_max_combinations
+            return get_max_combinations()
+        except (ImportError, AttributeError):
+            return 50_000
 
 try:
     from cloudpickle import dump as cloudpickle_dump, load as cloudpickle_load
@@ -55,6 +63,12 @@ except ModuleNotFoundError:
         logger.warning("Missing `cloudpickle` package. Not able to cache network dictionary.")
     _cloudpickle_ = False
 
+def database_size() -> tuple[int, int, int]:
+    """Return the size of the units network as a tuple (number of nodes, number of edges)."""
+    num_nodes = len(units_network.edges)
+    num_edges = sum(len(children) for children in units_network.edges.values())
+    dict_size = sum(map(len, dictionary))
+    return num_nodes, num_edges, dict_size
 
 @timeit
 def save_memory(path=None) -> None:
@@ -1133,6 +1147,34 @@ def _initialize_startup_build(parallel_3_14, parallel_execute_fn):
         _run_startup_create_stages(parallel_3_14, parallel_execute_fn)
         _STARTUP_INIT_DONE = True
 
+
+@timeit
+def _load_complete_database():
+    """Load the complete database, including network, dictionary, and other components, without limiting the number of combinations."""
+    import numpy as np
+    import os
+    global units_network, dictionary, temperatureRatioConversions, unitless_names
+
+    if 'UNYTS_MAX_COMBINATIONS' in os.environ:
+        os_env = True
+        previous_val = os.environ.get('UNYTS_MAX_COMBINATIONS')
+    else:
+        os_env = False
+
+    os.environ['UNYTS_MAX_COMBINATIONS'] = str('unlimited')
+    print("Setting UNYTS_MAX_COMBINATIONS to infinity for complete database load.")
+    print(f"UNYTS_MAX_COMBINATIONS value: {_get_max_combinations()}")
+    print(f"Database size before: {database_size()}")
+    units_network, dictionary, temperatureRatioConversions, unitless_names = _rebuild_units()
+    print("Complete database loaded.")
+    print(f"Database size after: {database_size()}")
+    if os_env:
+        if previous_val is not None:
+            os.environ['UNYTS_MAX_COMBINATIONS'] = previous_val
+        else:
+            del os.environ['UNYTS_MAX_COMBINATIONS']
+    else:
+        del os.environ['UNYTS_MAX_COMBINATIONS']
 
 # load the network into an instance of the graph database
 if not unyts_parameters_.reload_ and \

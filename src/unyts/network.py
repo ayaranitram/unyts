@@ -20,8 +20,8 @@ except ModuleNotFoundError:
     _cloudpickle_ = False
 
 
-__version__ = '0.4.25'
-__release__ = 20260225
+__version__ = '0.4.26'
+__release__ = 20260907
 __all__ = ['UNode', 'UDigraph', 'Conversion']
 
 
@@ -77,6 +77,10 @@ class UDigraph(object):
         # do not load the search memory here, wait until the network is built
         # if unyts_parameters_.cache_ and unyts_parameters_.memory_:
         #     self.load_memory()
+
+    def __len__(self):
+        """Return the number of edges in the UDigraph."""
+        return len(self.edges)
 
     def get_edges_str(self) -> dict:
         """Return a string representation of the edges in the UDigraph."""

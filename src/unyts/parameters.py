@@ -27,6 +27,7 @@ dir_path = os.path.dirname(ini_path) + '/'
 off_switches = ('false', 'off', 'no', 'none', 'null', 'not', '')
 __max_recursion_default__ = 12
 __max_generations_default__ = 25
+__max_combinations_default__ = 50000
 __timeout__ = 30
 __default_density__ = 0.997
 __default_fvf__ = 1.0
@@ -50,6 +51,7 @@ def _default_params() -> dict:
         'algorithm': 'lean_BFS',
         'engine': 'python',
         'max_generations': __max_generations_default__,
+        'max_combinations': __max_combinations_default__,
         'timeout': __timeout__,
         'parallel': False,
         'config_files_folder': None,
@@ -79,6 +81,7 @@ class UnytsParameters(object):
         self.algorithm_ = 'lean_BFS'
         self.engine_ = 'python'
         self.max_generations_ = __max_generations_default__
+        self.max_combinations_ = __max_combinations_default__
         self.timeout_ = __timeout__
         self._timing = False
         self._testing = False
@@ -135,6 +138,7 @@ class UnytsParameters(object):
         self.algorithm_ = params['algorithm'] if 'algorithm' in params else 'BFS'
         self.engine_ = params['engine'] if params.get('engine') in ('python', 'cpp') else 'python'
         self.max_generations_ = params['max_generations'] if 'max_generations' in params else __max_generations_default__
+        self.max_combinations_ = params['max_combinations'] if 'max_combinations' in params else __max_combinations_default__
         self.timeout_ = params['timeout'] if 'timeout' in params else __timeout__
         self.parallel_ = params['parallel'] if 'parallel' in params else False
         self.config_files_folder_ = dir_path if ('config_files_folder' not in params or params['config_files_folder'] is None) \
@@ -159,6 +163,7 @@ class UnytsParameters(object):
             self.algorithm_ = params['algorithm'] if 'algorithm' in params else 'BFS'
             self.engine_ = params['engine'] if params.get('engine') in ('python', 'cpp') else 'python'
             self.max_generations_ = params['max_generations'] if 'max_generations' in params else __max_generations_default__
+            self.max_combinations_ = params['max_combinations'] if 'max_combinations' in params else __max_combinations_default__
             self.timeout_ = params['timeout'] if 'timeout' in params else __timeout__
             self.parallel_ = params['parallel'] if 'parallel' in params else True
             self.config_files_folder_ = dir_path if ('config_files_folder' not in params or params['config_files_folder'] is None) \
@@ -183,6 +188,7 @@ class UnytsParameters(object):
                   'algorithm': self.algorithm_,
                   'engine': self.engine_,
                   'max_generations': self.max_generations_,
+                  'max_combinations': self.max_combinations_,
                   'timeout': self.timeout_,
                   'parallel': self.parallel_,
                   'config_files_folder': self.config_files_folder_ if self.config_files_folder_ != dir_path else None,
@@ -435,6 +441,7 @@ class UnytsParameters(object):
         self.algorithm_ = defaults['algorithm']
         self.engine_ = defaults['engine']
         self.max_generations_ = defaults['max_generations']
+        self.max_combinations_ = defaults['max_combinations']
         self.timeout_ = defaults['timeout']
         self.parallel_ = defaults['parallel']
         self._timing = defaults['timing']
@@ -632,3 +639,10 @@ def reset_default_parameters() -> None:
     """Reset user-tunable parameters to their package defaults."""
     unyts_parameters_.reset_default_parameters()
 
+def set_max_combinations(max_combinations:int):
+    """Set the maximum number of combinations to be limited during database build."""
+    unyts_parameters_.set_max_combinations(max_combinations)
+
+def get_max_combinations():
+    """Return the current maximum number of combinations considered during database build."""
+    return unyts_parameters_.get_max_combinations()
