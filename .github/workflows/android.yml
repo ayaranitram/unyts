@@ -2,14 +2,14 @@ name: Android — Build & Package
 
 on:
   push:
-    branches: [Cpp, main]
+    branches: [Cpp, main, master]
     paths:
       - 'unyts_android/**'
       - 'cpp/**'
       - '.github/workflows/android.yml'
     tags: ['v*']          # version tags trigger the release build
   pull_request:
-    branches: [main]
+    branches: [main, master]
     paths:
       - 'unyts_android/**'
       - 'cpp/**'
