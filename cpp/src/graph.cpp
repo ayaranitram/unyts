@@ -307,8 +307,6 @@ std::optional<Path> lean_BFS(const UDigraph& g,
     // Generation sequence from Python lean_BFS
     static const int gen_steps[] = {0,1,2,3,4,5,7,10,13,16,20,25,30,40,50};
     std::unordered_set<std::string> selection;
-    int used_gen = max_generations;
-
     for (int gen : gen_steps) {
         if (gen > max_generations) break;
         int hops = gen + 1;
@@ -319,7 +317,7 @@ std::optional<Path> lean_BFS(const UDigraph& g,
         for (const auto& s : start_desc) {
             if (end_desc.count(s)) selection.insert(s);
         }
-        if (!selection.empty()) { used_gen = hops; break; }
+        if (!selection.empty()) break;
     }
 
     if (selection.empty()) {

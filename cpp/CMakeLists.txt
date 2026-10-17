@@ -18,6 +18,7 @@ add_library(unyts_core STATIC
     src/database.cpp
     src/parser.cpp
 )
+set_target_properties(unyts_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(unyts_core PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
