@@ -11,6 +11,7 @@ __release__ = 202600305
 __all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf']
 
 import threading
+from typing import Tuple
 
 from .dictionaries import SI, SI_butK, SI_order, OGF, OGF_order, DATA, DATA_order, dictionary, _cache_all_units, _wait_for_all_units_cache, _save_all_units_cache
 
@@ -63,8 +64,8 @@ except ModuleNotFoundError:
         logger.warning("Missing `cloudpickle` package. Not able to cache network dictionary.")
     _cloudpickle_ = False
 
-def database_size() -> tuple[int, int, int]:
-    """Return the size of the units network as a tuple (number of nodes, number of edges)."""
+def database_size() -> Tuple[int, int, int]:
+    """Return the size of the units network as a tuple (number of nodes, number of edges, dictionary size)."""
     num_nodes = len(units_network.edges)
     num_edges = sum(len(children) for children in units_network.edges.values())
     dict_size = sum(map(len, dictionary))
