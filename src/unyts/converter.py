@@ -6,7 +6,7 @@ Created on Sat Oct 24 15:57:27 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '1.0.2'
+__version__ = '1.0.5'
 __release__ = 20260531
 __all__ = ['convert', 'convertible']
 

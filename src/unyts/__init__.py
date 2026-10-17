@@ -6,18 +6,20 @@ Created on Sat Oct 24 18:24:20 2020
 @author: Martín Carlos Araya <martinaraya@gmail.com>
 """
 
-__version__ = '1.0.2'
-__release__ = 20260531
+__version__ = '1.0.5'
+__release__ = 20261017
 __all__ = ['units', 'convert', 'converter', 'convertible', 'Unit', 'is_Unit', 'valid_unit',
            'set_unit', 'set_conversion', 'set_density', 'get_density',
            'save', 'load', 'save_memory', 'load_memory', 'clean_memory',
            'start_gui', 'set_fvf', 'set_algorithm', 'get_algorithm', 'set_engine', 'get_engine', 'cpp_available',
+           'set_max_combinations', 'get_max_combinations',
            'set_parallel', 'set_timeout', 'verbose',
            'reset_default_parameters']
 
 # Only import lightweight modules at startup
 from .parameters import unyts_parameters_, print_path, reload, raise_error, cache, set_density, get_density,\
     recursion_limit, verbose, set_algorithm, get_algorithm, set_engine, get_engine, cpp_available, set_parallel, get_parallel, set_timeout, get_timeout,\
+    set_max_combinations, get_max_combinations,\
     set_logging_level, reset_default_parameters
 from .helpers.logger import logger
 

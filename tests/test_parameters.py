@@ -132,3 +132,23 @@ def test_user_folder_separator_permutations(tmp_path, suffix):
     stored = unyts_parameters_.get_user_folder()
     assert Path(stored).resolve() == Path(tmp_path).resolve()
     assert stored.endswith('/') or stored.endswith('\\')
+
+
+def test_max_combinations_parameter(monkeypatch):
+    # import first: the database is built on first import and must not see the temporary cap
+    from unyts.database import _get_max_combinations
+    original = unyts_parameters_.get_max_combinations()
+    monkeypatch.delenv('UNYTS_MAX_COMBINATIONS', raising=False)
+    try:
+        assert parameters.set_max_combinations(1234) == 1234
+        assert parameters.get_max_combinations() == 1234
+        assert _get_max_combinations() == 1234
+        monkeypatch.setenv('UNYTS_MAX_COMBINATIONS', '99')
+        assert _get_max_combinations() == 99
+        monkeypatch.setenv('UNYTS_MAX_COMBINATIONS', 'unlimited')
+        assert _get_max_combinations() == float('inf')
+        for invalid in (0, -5, 1.5, True, 'many'):
+            with pytest.raises(ValueError):
+                parameters.set_max_combinations(invalid)
+    finally:
+        parameters.set_max_combinations(original)

@@ -190,6 +190,16 @@ set_algorithm('BFS')       # Classic BFS
 from unyts import set_timeout
 set_timeout(60)  # 60 seconds
 
+# Conversion engine (v1.0.5): 'python' (default) or the optional native 'cpp'
+from unyts import set_engine, get_engine, cpp_available
+if cpp_available():
+    set_engine('cpp')
+
+# Cap on preloaded compound-unit combinations (default 50000; 'unlimited' removes it)
+# The UNYTS_MAX_COMBINATIONS environment variable overrides this setting
+from unyts import set_max_combinations
+set_max_combinations(100_000)
+
 # Logging level
 from unyts import set_logging_level
 set_logging_level('INFO')  # DEBUG, INFO, WARNING, ERROR, CRITICAL

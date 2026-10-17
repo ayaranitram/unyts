@@ -8,7 +8,8 @@ Created on Tue Dec 03 23:15:37 2024
 
 __version__ = '0.8.1'
 __release__ = 202600305
-__all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf']
+__all__ = ['units_network', 'network_to_frame', 'save_memory', 'load_memory', 'clean_memory', 'delete_cache', 'set_fvf',
+           'database_size']
 
 import threading
 from typing import Tuple
@@ -44,17 +45,18 @@ def _get_max_combinations() -> int:
     cover the most common units; defaults to 50 000.
     """
     import os
-    try:
-        val = os.environ.get('UNYTS_MAX_COMBINATIONS')
-        if val == 'unlimited':
+    val = os.environ.get('UNYTS_MAX_COMBINATIONS')
+    if val is not None:
+        if val.strip().lower() == 'unlimited':
             return float('inf')
-        return int(val) if val is not None else 50_000
-    except (ValueError, TypeError):
         try:
-            from .parameters import get_max_combinations
-            return get_max_combinations()
-        except (ImportError, AttributeError):
-            return 50_000
+            return int(val)
+        except ValueError:
+            pass
+    try:
+        return unyts_parameters_.get_max_combinations()
+    except AttributeError:
+        return 50_000
 
 try:
     from cloudpickle import dump as cloudpickle_dump, load as cloudpickle_load

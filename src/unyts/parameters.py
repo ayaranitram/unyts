@@ -10,6 +10,7 @@ __version__ = '0.6.13'
 __release__ = 20260225
 __all__ = ['unyts_parameters_', 'print_path', 'reload', 'raise_error', 'cache', 'set_density', 'get_density',
            'recursion_limit', 'verbose', 'set_algorithm', 'set_engine', 'get_engine', 'cpp_available',
+           'set_max_combinations', 'get_max_combinations',
            'set_parallel', 'reset_default_parameters']
 
 import os.path
@@ -323,6 +324,20 @@ class UnytsParameters(object):
             raise ValueError(f"not valid generations limit, must be an integer or boolean.")
         self.save_params()
         return self.max_generations_
+
+    def get_max_combinations(self):
+        """Return the maximum number of preloaded unit combinations."""
+        return self.max_combinations_
+
+    def set_max_combinations(self, max_combinations):
+        """Set the maximum number of preloaded unit combinations (a positive integer or ``'unlimited'``)."""
+        if isinstance(max_combinations, str) and max_combinations.lower() == 'unlimited':
+            max_combinations = float('inf')
+        elif isinstance(max_combinations, bool) or not isinstance(max_combinations, int) or max_combinations < 1:
+            raise ValueError("max_combinations must be a positive integer or 'unlimited'.")
+        self.max_combinations_ = max_combinations
+        self.save_params()
+        return self.max_combinations_
 
     def get_algorithm(self):
         """Return the current search algorithm."""
@@ -639,9 +654,9 @@ def reset_default_parameters() -> None:
     """Reset user-tunable parameters to their package defaults."""
     unyts_parameters_.reset_default_parameters()
 
-def set_max_combinations(max_combinations:int):
+def set_max_combinations(max_combinations):
     """Set the maximum number of combinations to be limited during database build."""
-    unyts_parameters_.set_max_combinations(max_combinations)
+    return unyts_parameters_.set_max_combinations(max_combinations)
 
 def get_max_combinations():
     """Return the current maximum number of combinations considered during database build."""

@@ -2,6 +2,20 @@
 
 All notable changes to the unyts project are documented in this file.
 
+## [1.0.5] - 2026-10-17
+
+### Added
+- Optional C++ conversion engine: `set_engine('cpp' | 'python')`, `get_engine()`, `cpp_available()`.
+- `max_combinations` parameter with `set_max_combinations()` / `get_max_combinations()`; the `UNYTS_MAX_COMBINATIONS` environment variable (integer or `unlimited`) takes precedence.
+- `database.database_size()` and `len(UDigraph)`.
+- C++ core, C API, Qt Windows GUI and Android/iOS scaffolds; `cpp-core` CI workflow.
+
+### Fixed
+- C++ `hybrid_BFS` now cancels the losing thread.
+- C++ core built with position-independent code so the shared C API links on Linux.
+- `TypeError` on import under Python 3.7/3.8 (`tuple[...]` annotation).
+- Compound-unit gradient with affine unit tokens (`psig/ft`, `g/cc`), from 1.0.2.
+
 ## [1.0.0] - 2026-04-07
 
 ### 🚀 Major Performance Optimizations

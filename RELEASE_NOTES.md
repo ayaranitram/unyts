@@ -2,6 +2,40 @@
 
 ---
 
+## v1.0.5 — October 17, 2026
+
+Covers everything since v1.0.2 (the intermediate 1.0.3 and 1.0.4 builds were never published).
+
+### ✨ New Features
+
+#### Optional C++ conversion engine (`set_engine`, `get_engine`, `cpp_available`)
+- A native C++17 core (`cpp/`) mirrors the Python graph search and conversion logic. Select it with `unyts.set_engine('cpp')` and return to the default with `unyts.set_engine('python')`.
+- `unyts.cpp_available()` reports whether the `unyts_cpp_native` extension can be imported; selecting `'cpp'` without it raises `ImportError`, and any other value raises `ValueError`.
+- The engine is stored in `parameters.ini` (`"engine"`); the default stays `python`, so existing code is unaffected.
+- The C++ core also ships with a C API (`unyts_capi`), a Qt Windows GUI and Android/iOS project scaffolds (see `PLAN_CPP_WINDOWS.md`, `PLAN_ANDROID.md`, `PLAN_IOS.md`).
+
+#### Configurable database size limit (`set_max_combinations`, `get_max_combinations`)
+- New `max_combinations` parameter (default `50000`) caps how many compound-unit combinations are preloaded when the units database is built. Units beyond the cap are still resolved by dynamic validation.
+- Order of precedence: the `UNYTS_MAX_COMBINATIONS` environment variable (an integer, or `unlimited`), then `set_max_combinations()`, then the default. `set_max_combinations('unlimited')` removes the cap.
+- Invalid values (non-integers, zero, negatives, booleans) raise `ValueError`.
+
+#### Database introspection
+- `unyts.database.database_size()` returns `(nodes, edges, dictionary entries)` for the units network, and `len(UDigraph)` is now supported (`network.py` 0.4.26).
+
+### 🐛 Bug Fixes
+- **C++ `hybrid_BFS`**: the thread race now cancels the losing search instead of letting it run on.
+- **C++ build on Linux**: the core static library is now compiled as position-independent code, so the shared C API links with GNU `ld`.
+- **Python 3.7 / 3.8**: removed a `tuple[...]` annotation that raised `TypeError` on import before Python 3.9.
+
+### 🔧 Build & CI
+- New `cpp-core` workflow builds and runs the C++ tests on Linux, Windows and macOS.
+- The Android workflow now also runs for `master`; Android Gradle Plugin and Gradle wrapper upgraded.
+
+### 🧪 Test Coverage
+- Added C++/Python parity tests (`tests/test_cpp_parity.py`), engine-selection tests (`tests/test_cpp_engine_api.py`) and `max_combinations` tests.
+
+---
+
 ## v1.0.2 — May 31, 2026
 
 ### 🐛 Bug Fixes

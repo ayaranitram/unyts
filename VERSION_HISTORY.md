@@ -2,7 +2,20 @@
 
 ## Recent Releases
 
-### v1.0.0 (2026-04-07) - Current Release ⭐
+### v1.0.5 (2026-10-17) - Current Release ⭐
+**C++ Engine & Configuration Release**
+
+- Optional C++ conversion engine (`set_engine('cpp')`, `get_engine()`, `cpp_available()`); Python remains the default
+- Configurable database size cap (`set_max_combinations()`, `UNYTS_MAX_COMBINATIONS`)
+- `database_size()` and `len(UDigraph)` for network introspection
+- Fixes: C++ `hybrid_BFS` thread cancellation, Linux shared-library link, Python 3.7/3.8 import error
+- New CI for the C++ core on Linux, Windows and macOS
+
+[Release Notes](RELEASE_NOTES.md) | [Changelog](CHANGELOG.md)
+
+---
+
+### v1.0.0 (2026-04-07)
 **Stability & Correctness Release**
 
 - All optimizations from v0.10.0/v0.10.1 verified and stabilized
