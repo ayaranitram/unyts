@@ -69,6 +69,19 @@ Output: `build/unyts.xcframework`
 
 ## Create the Xcode project
 
+Easiest (reproducible, also used by CI): generate it with XcodeGen.
+
+```bash
+brew install xcodegen
+cd unyts_ios && ./build.sh && xcodegen generate
+open unyts_ios.xcodeproj
+```
+
+CI: `.github/workflows/ios.yml` does all of this on a `macos-14` runner and runs
+the tests on the simulator. Deployment target is iOS 17 (see `project.yml`).
+
+### Manual alternative
+
 Xcode projects (`.xcodeproj`) are not stored in git because they embed
 absolute paths and developer team IDs.  Create one from scratch:
 

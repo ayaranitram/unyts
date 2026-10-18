@@ -1,0 +1,60 @@
+name: iOS — Build & Test
+
+on:
+  push:
+    branches: [ios]
+    paths:
+      - 'unyts_ios/**'
+      - 'cpp/**'
+      - '.github/workflows/ios.yml'
+  pull_request:
+    paths:
+      - 'unyts_ios/**'
+      - 'cpp/**'
+  workflow_dispatch:
+
+jobs:
+  ios:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: brew install cmake xcodegen
+
+      - name: Fetch ios-cmake toolchain
+        working-directory: unyts_ios
+        run: |
+          mkdir -p cmake
+          curl -fsSL -o cmake/ios.toolchain.cmake \
+            https://raw.githubusercontent.com/leetal/ios-cmake/master/ios.toolchain.cmake
+
+      - name: Build XCFramework
+        working-directory: unyts_ios
+        run: |
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Generate Xcode project
+        working-directory: unyts_ios
+        run: xcodegen generate
+
+      - name: Build and test on simulator
+        working-directory: unyts_ios
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project unyts_ios.xcodeproj \
+            -scheme unyts_ios \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            -resultBundlePath build/TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO | tee build/xcodebuild.log
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-logs
+          path: |
+            unyts_ios/build/xcodebuild.log
+            unyts_ios/build/TestResults.xcresult
