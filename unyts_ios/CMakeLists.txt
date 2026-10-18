@@ -15,6 +15,7 @@ add_library(unyts STATIC
 
 target_include_directories(unyts PUBLIC "${CPP_ROOT}/include")
 target_compile_features(unyts PUBLIC cxx_std_17)
+target_compile_definitions(unyts PUBLIC UNYTS_CACHE_SCHEMA_VERSION=1)
 target_compile_options(unyts PRIVATE -fexceptions -frtti -Wall -Wextra -Wno-unused-parameter)
 
 set_target_properties(unyts PROPERTIES
