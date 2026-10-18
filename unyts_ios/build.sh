@@ -29,6 +29,7 @@ cmake -S "${SCRIPT_DIR}" \
       -G Xcode \
       -DCMAKE_TOOLCHAIN_FILE="${IOS_TOOLCHAIN}" \
       -DPLATFORM=OS64 \
+      -DDEPLOYMENT_TARGET=16.0 \
       -DCMAKE_BUILD_TYPE=Release
 
 cmake --build "${BUILD_DIR}/device" \
@@ -42,6 +43,7 @@ cmake -S "${SCRIPT_DIR}" \
       -G Xcode \
       -DCMAKE_TOOLCHAIN_FILE="${IOS_TOOLCHAIN}" \
       -DPLATFORM=SIMULATORARM64 \
+      -DDEPLOYMENT_TARGET=16.0 \
       -DCMAKE_BUILD_TYPE=Release
 
 cmake --build "${BUILD_DIR}/simulator" \
@@ -49,8 +51,8 @@ cmake --build "${BUILD_DIR}/simulator" \
       --target unyts
 
 # ── 3. Lipo-merge simulator slices if needed ─────────────────────────────────
-SIM_LIB_ARM64="${BUILD_DIR}/simulator/Release-iphonesimulator/libunyts.a"
-SIM_LIB_X86="${BUILD_DIR}/simulator_x86/Release-iphonesimulator/libunyts.a"
+SIM_LIB_ARM64="${BUILD_DIR}/simulator/lib/Release/libunyts.a"
+SIM_LIB_X86="${BUILD_DIR}/simulator_x86/lib/Release/libunyts.a"
 
 if [[ -f "${SIM_LIB_X86}" ]]; then
     echo "==> Creating fat simulator library..."
@@ -67,7 +69,7 @@ XCFW="${BUILD_DIR}/unyts.xcframework"
 rm -rf "${XCFW}"
 
 xcodebuild -create-xcframework \
-    -library "${BUILD_DIR}/device/Release-iphoneos/libunyts.a" \
+    -library "${BUILD_DIR}/device/lib/Release/libunyts.a" \
     -headers "${SCRIPT_DIR}/../cpp/include" \
     -library "${SIM_LIB_FINAL}" \
     -headers "${SCRIPT_DIR}/../cpp/include" \
