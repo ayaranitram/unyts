@@ -24,21 +24,16 @@ final class UnytsService: ObservableObject {
 
     func convert(value: Double, from: String, to: String) -> Result<Double, Error> {
         var result = 0.0
-        var error: NSError?
-        let ok = wrapper.convertValue(value, fromUnit: from, toUnit: to,
-                                      outValue: &result, error: &error)
-        if ok {
+        do {
+            try wrapper.convertValue(value, fromUnit: from, toUnit: to, outValue: &result)
             return .success(result)
-        } else {
-            return .failure(error ?? NSError(
-                domain: "com.unyts", code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "No conversion path: \(from) → \(to)"]
-            ))
+        } catch {
+            return .failure(error)
         }
     }
 
     func isConvertible(from: String, to: String) -> Bool {
-        wrapper.isConvertibleFrom(from, to: to)
+        wrapper.isConvertible(from: from, to: to)
     }
 
     func isKnownUnit(_ unit: String) -> Bool {
