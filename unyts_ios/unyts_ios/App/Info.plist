@@ -62,6 +62,10 @@
         <false/>
     </dict>
 
+    <!-- Launch screen: required for the app to use the full display -->
+    <key>UILaunchScreen</key>
+    <dict/>
+
     <!-- Status bar style — let the system choose based on colour scheme -->
     <key>UIStatusBarStyle</key>
     <string>UIStatusBarStyleDefault</string>
