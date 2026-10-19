@@ -15,7 +15,7 @@ on:
 
 jobs:
   ios:
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
 
@@ -43,10 +43,14 @@ jobs:
         working-directory: unyts_ios
         run: |
           set -o pipefail
+          mkdir -p build
+          xcodebuild -version
+          SIM_ID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in d.items() if 'iOS' in k for x in v if 'iPhone' in x['name']))")
+          echo "Using simulator $SIM_ID"
           xcodebuild test \
             -project unyts_ios.xcodeproj \
             -scheme unyts_ios \
-            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            -destination "platform=iOS Simulator,id=$SIM_ID" \
             -resultBundlePath build/TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO | tee build/xcodebuild.log
 
