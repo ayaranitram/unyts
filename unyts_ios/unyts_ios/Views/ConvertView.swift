@@ -66,6 +66,7 @@ struct ConvertView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
+                    .accessibilityIdentifier("convertButton")
 
                     // ── Error message ─────────────────────────────────────────
                     if !appState.errorMessage.isEmpty {

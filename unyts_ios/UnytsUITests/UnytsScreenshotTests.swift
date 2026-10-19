@@ -33,7 +33,7 @@ final class UnytsScreenshotTests: XCTestCase {
             value.typeText("100")
             let done = app.buttons["Done"].firstMatch
             if done.waitForExistence(timeout: 3) { done.tap() }
-            app.buttons["Convert"].firstMatch.tap()
+            app.buttons["convertButton"].tap()
         }
         sleep(1)
         snap("02-convert-result")
