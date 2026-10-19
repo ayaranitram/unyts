@@ -1,0 +1,90 @@
+name: iOS — Build & Test
+
+on:
+  push:
+    branches: [ios, master]
+    paths:
+      - 'unyts_ios/**'
+      - 'cpp/**'
+      - '.github/workflows/ios.yml'
+  pull_request:
+    paths:
+      - 'unyts_ios/**'
+      - 'cpp/**'
+  workflow_dispatch:
+
+jobs:
+  ios:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: brew install cmake xcodegen
+
+      - name: Fetch ios-cmake toolchain
+        working-directory: unyts_ios
+        run: |
+          mkdir -p cmake
+          curl -fsSL -o cmake/ios.toolchain.cmake \
+            https://raw.githubusercontent.com/leetal/ios-cmake/master/ios.toolchain.cmake
+
+      - name: Build XCFramework
+        working-directory: unyts_ios
+        run: |
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Generate Xcode project
+        working-directory: unyts_ios
+        run: xcodegen generate
+
+      - name: Build and test on simulator
+        working-directory: unyts_ios
+        run: |
+          set -o pipefail
+          mkdir -p build
+          xcodebuild -version
+          SIM_ID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in d.items() if 'iOS' in k for x in v if 'iPhone' in x['name']))")
+          echo "Using simulator $SIM_ID"
+          xcodebuild test \
+            -project unyts_ios.xcodeproj \
+            -scheme unyts_ios \
+            -destination "platform=iOS Simulator,id=$SIM_ID" \
+            -resultBundlePath build/TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO | tee build/xcodebuild.log
+
+      - name: Capture screenshots (UI test)
+        if: always()
+        working-directory: unyts_ios
+        run: |
+          set -o pipefail
+          mkdir -p build
+          SIM_ID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in d.items() if 'iOS' in k for x in v if 'iPhone' in x['name']))")
+          rm -rf build/Screenshots.xcresult build/screenshots
+          xcodebuild test \
+            -project unyts_ios.xcodeproj \
+            -scheme unyts_screenshots \
+            -destination "platform=iOS Simulator,id=$SIM_ID" \
+            -resultBundlePath build/Screenshots.xcresult \
+            CODE_SIGNING_ALLOWED=NO | tee build/xcodebuild-ui.log
+          xcrun xcresulttool export attachments \
+            --path build/Screenshots.xcresult --output-path build/screenshots
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-screenshots
+          path: |
+            unyts_ios/build/screenshots
+            unyts_ios/build/xcodebuild-ui.log
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-logs
+          path: |
+            unyts_ios/build/xcodebuild.log
+            unyts_ios/build/TestResults.xcresult

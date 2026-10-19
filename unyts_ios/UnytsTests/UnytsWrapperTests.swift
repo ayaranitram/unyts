@@ -33,33 +33,25 @@ final class UnytsWrapperTests: XCTestCase {
 
     func testMetresToFeet() throws {
         var result = 0.0
-        let ok = wrapper.convertValue(1.0, fromUnit: "m", toUnit: "ft",
-                                      outValue: &result, error: nil)
-        XCTAssertTrue(ok)
+        XCTAssertNoThrow(try wrapper.convertValue(1.0, fromUnit: "m", toUnit: "ft", outValue: &result))
         XCTAssertEqual(result, 3.28084, accuracy: 1e-4)
     }
 
     func testKilogramsToLbs() throws {
         var result = 0.0
-        let ok = wrapper.convertValue(1.0, fromUnit: "kg", toUnit: "lb",
-                                      outValue: &result, error: nil)
-        XCTAssertTrue(ok)
+        XCTAssertNoThrow(try wrapper.convertValue(1.0, fromUnit: "kg", toUnit: "lb", outValue: &result))
         XCTAssertEqual(result, 2.20462, accuracy: 1e-4)
     }
 
     func testInchesToCentimetres() throws {
         var result = 0.0
-        let ok = wrapper.convertValue(1.0, fromUnit: "in", toUnit: "cm",
-                                      outValue: &result, error: nil)
-        XCTAssertTrue(ok)
+        XCTAssertNoThrow(try wrapper.convertValue(1.0, fromUnit: "in", toUnit: "cm", outValue: &result))
         XCTAssertEqual(result, 2.54, accuracy: 1e-6)
     }
 
     func testPsiToBar() throws {
         var result = 0.0
-        let ok = wrapper.convertValue(1.0, fromUnit: "psi", toUnit: "bar",
-                                      outValue: &result, error: nil)
-        XCTAssertTrue(ok)
+        XCTAssertNoThrow(try wrapper.convertValue(1.0, fromUnit: "psi", toUnit: "bar", outValue: &result))
         XCTAssertGreaterThan(result, 0)
     }
 
@@ -67,31 +59,24 @@ final class UnytsWrapperTests: XCTestCase {
 
     func testUnknownUnitReturnsError() {
         var result = 0.0
-        var error: NSError?
-        let ok = wrapper.convertValue(1.0, fromUnit: "zonk", toUnit: "blarg",
-                                      outValue: &result, error: &error)
-        XCTAssertFalse(ok)
-        XCTAssertNotNil(error)
-        XCTAssertEqual(error?.domain, "com.unyts")
+        XCTAssertThrowsError(try wrapper.convertValue(1.0, fromUnit: "zonk", toUnit: "blarg", outValue: &result)) { error in
+            XCTAssertEqual((error as NSError).domain, "com.unyts")
+        }
     }
 
     func testIncompatibleUnitsReturnsError() {
         var result = 0.0
-        var error: NSError?
-        let ok = wrapper.convertValue(1.0, fromUnit: "kg", toUnit: "m",
-                                      outValue: &result, error: &error)
-        XCTAssertFalse(ok)
-        XCTAssertNotNil(error)
+        XCTAssertThrowsError(try wrapper.convertValue(1.0, fromUnit: "kg", toUnit: "m", outValue: &result))
     }
 
     // ── Convertible check ─────────────────────────────────────────────────────
 
     func testConvertibleMtoFt() {
-        XCTAssertTrue(wrapper.isConvertibleFrom("m", to: "ft"))
+        XCTAssertTrue(wrapper.isConvertible(from: "m", to: "ft"))
     }
 
     func testNotConvertibleKgToM() {
-        XCTAssertFalse(wrapper.isConvertibleFrom("kg", to: "m"))
+        XCTAssertFalse(wrapper.isConvertible(from: "kg", to: "m"))
     }
 
     // ── Unit list ─────────────────────────────────────────────────────────────
@@ -102,13 +87,13 @@ final class UnytsWrapperTests: XCTestCase {
     }
 
     func testAllUnitsIsSorted() {
-        let units = wrapper.allUnits() as! [String]
+        let units = wrapper.allUnits()
         let sorted = units.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
         XCTAssertEqual(units, sorted, "allUnits() should return a sorted array")
     }
 
     func testAllUnitsContainsMetres() {
-        let units = wrapper.allUnits() as! [String]
+        let units = wrapper.allUnits()
         XCTAssertTrue(units.contains("m"), "Expected 'm' in allUnits()")
     }
 
