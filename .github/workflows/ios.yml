@@ -54,6 +54,32 @@ jobs:
             -resultBundlePath build/TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO | tee build/xcodebuild.log
 
+      - name: Capture screenshots (UI test)
+        if: always()
+        working-directory: unyts_ios
+        run: |
+          set -o pipefail
+          mkdir -p build
+          SIM_ID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in d.items() if 'iOS' in k for x in v if 'iPhone' in x['name']))")
+          rm -rf build/Screenshots.xcresult build/screenshots
+          xcodebuild test \
+            -project unyts_ios.xcodeproj \
+            -scheme unyts_screenshots \
+            -destination "platform=iOS Simulator,id=$SIM_ID" \
+            -resultBundlePath build/Screenshots.xcresult \
+            CODE_SIGNING_ALLOWED=NO | tee build/xcodebuild-ui.log
+          xcrun xcresulttool export attachments \
+            --path build/Screenshots.xcresult --output-path build/screenshots
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-screenshots
+          path: |
+            unyts_ios/build/screenshots
+            unyts_ios/build/xcodebuild-ui.log
+
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v4

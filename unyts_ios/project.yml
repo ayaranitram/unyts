@@ -49,6 +49,17 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         SWIFT_OBJC_BRIDGING_HEADER: unyts_ios/Bridge/unyts_ios-Bridging-Header.h
         HEADER_SEARCH_PATHS: "$(SRCROOT)/unyts_ios/Bridge $(SRCROOT)/../cpp/include"
+  UnytsUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - UnytsUITests
+    dependencies:
+      - target: unyts_ios
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.unyts.app.uitests
+        GENERATE_INFOPLIST_FILE: YES
 schemes:
   unyts_ios:
     build:
@@ -57,3 +68,10 @@ schemes:
     test:
       targets:
         - UnytsTests
+  unyts_screenshots:
+    build:
+      targets:
+        unyts_ios: all
+    test:
+      targets:
+        - UnytsUITests
